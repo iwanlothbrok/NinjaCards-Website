@@ -16,6 +16,7 @@ const config: Config = {
       colors: {
         charcoal: '#36454F',
         orange: '#FFA500',
+        teil: '#006D77',
       },
     },
   },
