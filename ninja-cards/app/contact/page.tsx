@@ -12,7 +12,7 @@ const Contact: React.FC = () => {
                 <ContactForm />
             </section>
         </main>
-    );
+    );  
 };
 
 export default Contact;

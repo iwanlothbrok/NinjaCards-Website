@@ -29,25 +29,25 @@ const Profile: React.FC = () => {
             <div className="w-full max-w-3xl">
                 <div className="grid grid-cols-1 sm:grid-cols-2 mt-28 gap-4 mb-4">
                     <button
-                        className={`px-4 py-3 rounded transition transform hover:scale-105 duration-300 ${activeTab === 'settings' ? 'bg-teil text-orange' : 'bg-orange text-white'}`}
+                        className={`px-4 py-3 rounded transition transform hover:scale-105 duration-300 ${activeTab === 'settings' ? 'bg-teil text-white' : 'bg-orange text-white'}`}
                         onClick={() => setActiveTab('settings')}
                     >
                         Settings
                     </button>
                     <button
-                        className={`px-4 py-3 rounded transition transform hover:scale-105 duration-300 ${activeTab === 'information' ? 'bg-teil text-orange' : 'bg-orange text-white'}`}
+                        className={`px-4 py-3 rounded transition transform hover:scale-105 duration-300 ${activeTab === 'information' ? 'bg-teil text-white' : 'bg-orange text-white'}`}
                         onClick={() => setActiveTab('information')}
                     >
                         Information
                     </button>
                     <button
-                        className={`px-4 py-3 rounded transition transform hover:scale-105 duration-300 ${activeTab === 'links' ? 'bg-teil text-orange' : 'bg-orange text-white'}`}
+                        className={`px-4 py-3 rounded transition transform hover:scale-105 duration-300 ${activeTab === 'links' ? 'bg-teil text-white' : 'bg-orange text-white'}`}
                         onClick={() => setActiveTab('links')}
                     >
                         Important Links
                     </button>
                     <button
-                        className={`px-4 py-3 rounded transition transform hover:scale-105 duration-300 ${activeTab === 'preview' ? 'bg-teil text-orange' : 'bg-orange text-white'}`}
+                        className={`px-4 py-3 rounded transition transform hover:scale-105 duration-300 ${activeTab === 'preview' ? 'bg-teil text-white' : 'bg-orange text-white'}`}
                         onClick={() => setActiveTab('preview')}
                     >
                         Preview
