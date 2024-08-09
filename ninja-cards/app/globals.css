@@ -19,4 +19,5 @@
 body {
   color: rgb(var(--foreground-rgb));
   background-color: #36454F;
+  overflow-x: hidden;
 }
