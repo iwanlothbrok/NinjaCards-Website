@@ -3,16 +3,46 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    company: string;
+    position: string;
+    phone1: string;
+    phone2: string;
+    email2: string;
+    website1: string;
+    website2: string;
+    street1: string;
+    street2: string;
+    zipCode: string;
+    city: string;
+    state: string;
+    country: string;
+    bio: string;
+    facebook: string;
+    twitter: string;
+    instagram: string;
+    linkedin: string;
+    github: string;
+    youtube: string;
+    image: string;
+}
+
 interface AuthContextType {
-    user: any;
-    login: (token: string, userData: any) => void;
+    user: User | null;
+    login: (token: string, userData: User) => void;
     logout: () => void;
+    setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -22,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, []);
 
-    const login = (token: string, userData: any) => {
+    const login = (token: string, userData: User) => {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
@@ -37,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, setUser }}>
             {children}
         </AuthContext.Provider>
     );
