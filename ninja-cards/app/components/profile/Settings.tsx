@@ -64,7 +64,7 @@ const Settings: React.FC = () => {
         const updateData = {
             name: formData.name,
             email: formData.email,
-            password: formData.password,  // Only include password if it has been changed
+            password: formData.password,
         };
 
         try {
@@ -105,70 +105,72 @@ const Settings: React.FC = () => {
     };
 
     return (
-        <div className="flex items-center px-8 py-5 mb-0 rounded shadow-md justify-center min-h-screen text-black bg-gray-100 ">
-
-            <div className="w-full p-0 max-w-lg mt-0 mb-28">
-                <h2 className="text-2xl mt-0 font-bold mb-6 text-center">Profile Details</h2>
-                <form className="text-lg" onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label htmlFor="name" className="block text-gray-700">Добавете или сменете името в профила</label>
-                        <input
-                            id="name"
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            placeholder="Име *"
-                            className="w-full p-2 border border-gray-300 rounded mt-1"
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="email" className="block text-gray-700">Промени имейл</label>
-                        <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Имейл *"
-                            className="w-full p-2 border border-gray-300 rounded mt-1"
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="password" className="block text-gray-700">Смени парола</label>
-                        <input
-                            id="password"
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Нова парола *"
-                            className="w-full p-2 border border-gray-300 rounded mt-1"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="confirmPassword" className="block text-gray-700">Повтори паролата *</label>
-                        <input
-                            id="confirmPassword"
-                            type="password"
-                            name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            placeholder="Повтори паролата *"
-                            className="w-full p-2 border border-gray-300 rounded mt-1"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className={`w-full p-2 rounded transform transition-transform duration-300 ${loading ? 'bg-gray-400' : 'bg-teil hover:bg-orange hover:scale-105'}`}
-                        disabled={loading}
-                    >
-                        {loading ? 'Loading...' : 'Запази'}
-                    </button>
-                </form>
-            </div>
+        <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
+            <h2 className="text-4xl font-extrabold mb-6 text-white">Profile Details</h2>
+            <form onSubmit={handleSubmit} className="space-y-6 text-gray-300">
+                <div className="mb-4">
+                    <label htmlFor="name" className="block text-sm mb-1">Име на картата</label>
+                    <input
+                        id="name"
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Име *"
+                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="email" className="block text-sm mb-1">Промени имейл</label>
+                    <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Имейл *"
+                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="password" className="block text-sm mb-1">Смени парола</label>
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        placeholder="Нова парола *"
+                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="confirmPassword" className="block text-sm mb-1">Повтори паролата *</label>
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        placeholder="Повтори паролата *"
+                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    className={`w-full p-3 rounded-lg transform transition-transform duration-300 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500'}`}
+                    disabled={loading}
+                >
+                    {loading ? 'Loading...' : 'Запази'}
+                </button>
+            </form>
+            {alert && (
+                <div className={`mt-4 p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-orange-500'} text-white animate-fadeIn`}>
+                    <strong>{alert.title}: </strong> {alert.message}
+                </div>
+            )}
         </div>
     );
 };
