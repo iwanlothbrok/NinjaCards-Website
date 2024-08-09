@@ -39,26 +39,7 @@ const Information: React.FC = () => {
             return;
         }
 
-        const updateData = {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            name: formData.cardName,
-            company: formData.company,
-            position: formData.position,
-            phone1: formData.phone1,
-            phone2: formData.phone2,
-            email: formData.email1,
-            email2: formData.email2,
-            website1: formData.website1,
-            website2: formData.website2,
-            street1: formData.street1,
-            street2: formData.street2,
-            zipCode: formData.zipCode,
-            city: formData.city,
-            state: formData.state,
-            country: formData.country,
-            bio: formData.bio,
-        };
+        const updateData = { ...formData };
 
         try {
             const response = await fetch('/api/profile/updateProfile', {
@@ -85,252 +66,247 @@ const Information: React.FC = () => {
             alert('Failed to update information');
         }
     };
-    return (
-        <div className="w-full max-w-3xl mx-auto p-3 bg-darkBg rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4 text-white">Information</h2>
-            <form onSubmit={handleSubmit} className="space-y-4 text-gray-400">
-                <div className="information border border-white rounded p-2">
-                    <h3 className="text-lg font-bold  mb-2 text-white">Данни на картата</h3>
 
-                    {/* Card Name */}
+    return (
+        <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
+            <h2 className="text-3xl font-bold mb-6 text-white">Information</h2>
+            <form onSubmit={handleSubmit} className="space-y-6 text-gray-300">
+                <div className="information border border-gray-700 rounded p-4 mb-4">
+                    <h3 className="text-lg font-bold mb-4 text-white">Card Information</h3>
+
                     <div>
-                        <label className="block text-sm mb-1">Име на картата *</label>
+                        <label className="block text-sm mb-2">Card Name *</label>
                         <input
                             type="text"
                             name="cardName"
                             value={formData.cardName}
                             onChange={handleChange}
-                            placeholder="Dj Zdravko"
-                            className="block w-full p-2 mb-2 border border-gray-600 rounded bg-darkesBg text-white"
+                            placeholder="Enter Card Name"
+                            className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                         />
                     </div>
 
-                    {/* Name and Last Name */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                         <div>
-                            <label className="block text-sm mb-1">Име</label>
+                            <label className="block text-sm mb-2">First Name</label>
                             <input
                                 type="text"
                                 name="firstName"
                                 value={formData.firstName}
                                 onChange={handleChange}
-                                placeholder="Име"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="First Name"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm mb-1">Фамилия</label>
+                            <label className="block text-sm mb-2">Last Name</label>
                             <input
                                 type="text"
                                 name="lastName"
                                 value={formData.lastName}
                                 onChange={handleChange}
-                                placeholder="Фамилия"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Last Name"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                     </div>
 
-                    {/* Company and Position */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                         <div>
-                            <label className="block text-sm mb-1">Фирма</label>
+                            <label className="block text-sm mb-2">Company</label>
                             <input
                                 type="text"
                                 name="company"
                                 value={formData.company}
                                 onChange={handleChange}
-                                placeholder="Фирма"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Company"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm mb-1">Роля / Позиция</label>
+                            <label className="block text-sm mb-2">Position</label>
                             <input
                                 type="text"
                                 name="position"
                                 value={formData.position}
                                 onChange={handleChange}
-                                placeholder="Роля / Позиция"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Position"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                     </div>
-
                 </div>
 
-                <div className="contacts border border-white rounded p-2">
-                    {/* Contacts */}
-                    <h3 className="text-lg font-bold  mb-2 text-white">Контакти</h3>
+                <div className="contacts border border-gray-700 rounded p-4 mb-4">
+                    <h3 className="text-lg font-bold mb-4 text-white">Contact Information</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm mb-1">Телефон 1</label>
+                            <label className="block text-sm mb-2">Phone 1</label>
                             <input
                                 type="text"
                                 name="phone1"
                                 value={formData.phone1}
                                 onChange={handleChange}
-                                placeholder="Телефон 1"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Phone 1"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm mb-1">Телефон 2</label>
+                            <label className="block text-sm mb-2">Phone 2</label>
                             <input
                                 type="text"
                                 name="phone2"
                                 value={formData.phone2}
                                 onChange={handleChange}
-                                placeholder="Телефон 2"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Phone 2"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                         <div>
-                            <label className="block text-sm mb-1">Имейл 1</label>
+                            <label className="block text-sm mb-2">Email 1</label>
                             <input
                                 type="email"
                                 name="email1"
                                 value={formData.email1}
                                 onChange={handleChange}
-                                placeholder="Имейл 1"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Email 1"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm mb-1">Имейл 2</label>
+                            <label className="block text-sm mb-2">Email 2</label>
                             <input
                                 type="email"
                                 name="email2"
                                 value={formData.email2}
                                 onChange={handleChange}
-                                placeholder="Имейл 2"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Email 2"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                     </div>
 
-                    {/* Websites */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                         <div>
-                            <label className="block text-sm mb-1">Сайт 1</label>
+                            <label className="block text-sm mb-2">Website 1</label>
                             <input
                                 type="url"
                                 name="website1"
                                 value={formData.website1}
                                 onChange={handleChange}
-                                placeholder="Сайт 1"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Website 1"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm mb-1">Сайт 2</label>
+                            <label className="block text-sm mb-2">Website 2</label>
                             <input
                                 type="url"
                                 name="website2"
                                 value={formData.website2}
                                 onChange={handleChange}
-                                placeholder="Сайт 2"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Website 2"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="address border border-white rounded p-2">
-                    {/* Address */}
-                    <h3 className="text-lg font-bold mb-2 text-white">Адрес / Локация</h3>
+                <div className="address border border-gray-700 rounded p-4 mb-4">
+                    <h3 className="text-lg font-bold mb-4 text-white">Address</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm mb-1">Улица</label>
+                            <label className="block text-sm mb-2">Street 1</label>
                             <input
                                 type="text"
                                 name="street1"
                                 value={formData.street1}
                                 onChange={handleChange}
-                                placeholder="Улица"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Street 1"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm mb-1">Улица 2</label>
+                            <label className="block text-sm mb-2">Street 2</label>
                             <input
                                 type="text"
                                 name="street2"
                                 value={formData.street2}
                                 onChange={handleChange}
-                                placeholder="Улица 2"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Street 2"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                         <div>
-                            <label className="block text-sm mb-1">Пощенски код</label>
+                            <label className="block text-sm mb-2">Zip Code</label>
                             <input
                                 type="text"
                                 name="zipCode"
                                 value={formData.zipCode}
                                 onChange={handleChange}
-                                placeholder="Пощенски код"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="Zip Code"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm mb-1">Град</label>
+                            <label className="block text-sm mb-2">City</label>
                             <input
                                 type="text"
                                 name="city"
                                 value={formData.city}
                                 onChange={handleChange}
-                                placeholder="Град"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="City"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm mb-1">Област</label>
+                            <label className="block text-sm mb-2">State</label>
                             <input
                                 type="text"
                                 name="state"
                                 value={formData.state}
                                 onChange={handleChange}
-                                placeholder="Област"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm mb-1">Държава</label>
-                            <input
-                                type="text"
-                                name="country"
-                                value={formData.country}
-                                onChange={handleChange}
-                                placeholder="Държава"
-                                className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
+                                placeholder="State"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                     </div>
 
-                    {/* Bio */}
-                    <div>
-                        <label className="block text-sm mb-1">Повече информация за Вас / Описание</label>
-                        <textarea
-                            name="bio"
-                            value={formData.bio}
+                    <div className="mt-4">
+                        <label className="block text-sm mb-2">Country</label>
+                        <input
+                            type="text"
+                            name="country"
+                            value={formData.country}
                             onChange={handleChange}
-                            placeholder="Повече информация за Вас / Описание"
-                            className="block w-full p-2 border border-gray-600 rounded bg-darkesBg text-white"
-                        ></textarea>
+                            placeholder="Country"
+                            className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                        />
                     </div>
                 </div>
 
+                <div className="bio border border-gray-700 rounded p-4">
+                    <h3 className="text-lg font-bold mb-4 text-white">Bio</h3>
+                    <textarea
+                        name="bio"
+                        value={formData.bio}
+                        onChange={handleChange}
+                        placeholder="Tell us more about yourself"
+                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    ></textarea>
+                </div>
 
-                <button className="bg-teil text-white px-6 py-4 rounded mt-4 hover:bg-orange transition-colors">
-                    Запази
+                <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white p-3 rounded-lg mt-6 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-transform transform hover:scale-105"
+                >
+                    Save
                 </button>
             </form>
         </div>

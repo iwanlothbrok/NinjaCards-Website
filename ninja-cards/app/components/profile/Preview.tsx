@@ -33,46 +33,54 @@ const Preview: React.FC = () => {
         URL.revokeObjectURL(url);
     };
 
+    const sectionClass = "border border-gray-700 rounded p-4 mb-4";
+    const titleClass = "text-lg font-bold mb-4 text-white";
+    const textClass = "text-white";
+
     return (
-        <div className="w-full max-w-3xl mx-auto p-3 bg-darkBg rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4 text-white">Preview</h2>
-            <div className="information border border-white rounded p-2">
-                <h3 className="text-lg font-bold mb-2 text-white">Данни на картата</h3>
-                <p className="text-white"><strong>Име на картата:</strong> {user?.name}</p>
-                <p className="text-white"><strong>Име:</strong> {user?.firstName}</p>
-                <p className="text-white"><strong>Фамилия:</strong> {user?.lastName}</p>
+        <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
+            <h2 className="text-3xl font-bold mb-6 text-white">Preview</h2>
+
+            <div className={sectionClass}>
+                <h3 className={titleClass}>Card Information</h3>
+                <p className={textClass}><strong>Card Name:</strong> {user?.name}</p>
+                <p className={textClass}><strong>First Name:</strong> {user?.firstName}</p>
+                <p className={textClass}><strong>Last Name:</strong> {user?.lastName}</p>
             </div>
 
-            <div className="contacts border border-white rounded p-2 mt-4">
-                <h3 className="text-lg font-bold mb-2 text-white">Контакти</h3>
-                <p className="text-white"><strong>Телефон 1:</strong> {user?.phone1}</p>
-                <p className="text-white"><strong>Телефон 2:</strong> {user?.phone2}</p>
-                <p className="text-white"><strong>Имейл 1:</strong> {user?.email}</p>
-                <p className="text-white"><strong>Имейл 2:</strong> {user?.email2}</p>
+            <div className={sectionClass}>
+                <h3 className={titleClass}>Contacts</h3>
+                <p className={textClass}><strong>Phone 1:</strong> {user?.phone1}</p>
+                <p className={textClass}><strong>Phone 2:</strong> {user?.phone2}</p>
+                <p className={textClass}><strong>Email 1:</strong> {user?.email}</p>
+                <p className={textClass}><strong>Email 2:</strong> {user?.email2}</p>
             </div>
 
-            <div className="websites border border-white rounded p-2 mt-4">
-                <h3 className="text-lg font-bold mb-2 text-white">Websites</h3>
-                <p className="text-white"><strong>Сайт 1:</strong> {user?.website1}</p>
-                <p className="text-white"><strong>Сайт 2:</strong> {user?.website2}</p>
+            <div className={sectionClass}>
+                <h3 className={titleClass}>Websites</h3>
+                <p className={textClass}><strong>Website 1:</strong> {user?.website1}</p>
+                <p className={textClass}><strong>Website 2:</strong> {user?.website2}</p>
             </div>
 
-            <div className="address border border-white rounded p-2 mt-4">
-                <h3 className="text-lg font-bold mb-2 text-white">Адрес / Локация</h3>
-                <p className="text-white"><strong>Улица:</strong> {user?.street1}</p>
-                <p className="text-white"><strong>Улица 2:</strong> {user?.street2}</p>
-                <p className="text-white"><strong>Пощенски код:</strong> {user?.zipCode}</p>
-                <p className="text-white"><strong>Град:</strong> {user?.city}</p>
-                <p className="text-white"><strong>Област:</strong> {user?.state}</p>
-                <p className="text-white"><strong>Държава:</strong> {user?.country}</p>
+            <div className={sectionClass}>
+                <h3 className={titleClass}>Address</h3>
+                <p className={textClass}><strong>Street 1:</strong> {user?.street1}</p>
+                <p className={textClass}><strong>Street 2:</strong> {user?.street2}</p>
+                <p className={textClass}><strong>Zip Code:</strong> {user?.zipCode}</p>
+                <p className={textClass}><strong>City:</strong> {user?.city}</p>
+                <p className={textClass}><strong>State:</strong> {user?.state}</p>
+                <p className={textClass}><strong>Country:</strong> {user?.country}</p>
             </div>
 
-            <div className="bio border border-white rounded p-2 mt-4">
-                <h3 className="text-lg font-bold mb-2 text-white">Повече информация за Вас / Описание</h3>
-                <p className="text-white">{user?.bio}</p>
+            <div className={sectionClass}>
+                <h3 className={titleClass}>Bio</h3>
+                <p className={textClass}>{user?.bio}</p>
             </div>
 
-            <button onClick={generateVCF} className="bg-teil text-white px-6 py-3 rounded mt-4 hover:bg-orange transition transform hover:scale-105">
+            <button
+                onClick={generateVCF}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg mt-4 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-transform transform hover:scale-105"
+            >
                 Save to VCF
             </button>
         </div>
