@@ -17,6 +17,9 @@ const config: Config = {
         charcoal: '#36454F',
         orange: '#FFA500',
         teil: '#006D77',
+        darkBg: '#1d2225',
+        darkOrange: 'rgb(71 46 1)',
+        darkesBg: '#322001'
       },
     },
   },

@@ -16,7 +16,7 @@ const FeaturesSection: React.FC = () => {
                     imgSrc="/feature01.png"
                 />
                 <FeatureRow
-                    title="We invest in the world’s potential"
+                    title="Сканирай и получи всички нунжи контакти"
                     description="Deliver great service experiences fast - without the complexity of traditional ITSM solutions. Accelerate critical development work, eliminate toil, and deploy changes with ease."
                     listItems={[
                         "Dynamic reports and dashboards",
@@ -25,7 +25,7 @@ const FeaturesSection: React.FC = () => {
                         "Limitless business automation",
                         "Knowledge management"
                     ]}
-                    imgSrc="/feature01.png"
+                    imgSrc="/ninjas-scanning-cards.png"
                     reverse
                 />
             </div>
