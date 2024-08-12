@@ -8,12 +8,12 @@ const Information: React.FC = () => {
     const [formData, setFormData] = useState({
         firstName: user?.firstName || '',
         lastName: user?.lastName || '',
-        cardName: user?.name || '',
+        name: user?.name || '',
         company: user?.company || '',
         position: user?.position || '',
         phone1: user?.phone1 || '',
         phone2: user?.phone2 || '',
-        email1: user?.email || '',
+        email: user?.email || '',
         email2: user?.email2 || '',
         website1: user?.website1 || '',
         website2: user?.website2 || '',
@@ -78,13 +78,14 @@ const Information: React.FC = () => {
                         <label className="block text-sm mb-2">Card Name *</label>
                         <input
                             type="text"
-                            name="cardName"
-                            value={formData.cardName}
+                            name="name"
+                            value={formData.name}
                             onChange={handleChange}
                             placeholder="Enter Card Name"
                             className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                         />
                     </div>
+
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                         <div>
@@ -170,7 +171,7 @@ const Information: React.FC = () => {
                             <input
                                 type="email"
                                 name="email1"
-                                value={formData.email1}
+                                value={formData.email}
                                 onChange={handleChange}
                                 placeholder="Email 1"
                                 className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
