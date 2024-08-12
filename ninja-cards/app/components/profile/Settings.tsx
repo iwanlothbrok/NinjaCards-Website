@@ -9,6 +9,7 @@ interface FormData {
     email: string;
     password: string;
     confirmPassword: string;
+    photo: null;
 }
 
 interface Alert {
@@ -23,7 +24,8 @@ const Settings: React.FC = () => {
         name: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        photo: null
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<Alert | null>(null);
@@ -35,7 +37,8 @@ const Settings: React.FC = () => {
                 name: user.name || '',
                 email: user.email || '',
                 password: '',
-                confirmPassword: ''
+                confirmPassword: '',
+                photo: null
             });
         }
     }, [user]);
@@ -44,6 +47,14 @@ const Settings: React.FC = () => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, files } = e.target;
+        if (files && files[0]) {
+            setFormData({ ...formData, [name]: files[0] });
+        }
+    };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -66,6 +77,8 @@ const Settings: React.FC = () => {
             email: formData.email,
             password: formData.password,
         };
+
+
 
         try {
             const response = await fetch('/api/profile/updateProfile', {
@@ -158,6 +171,18 @@ const Settings: React.FC = () => {
                         className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
+
+
+                <div className="mb-4">
+                    <label className="block text-sm mb-2 text-white">Photo</label>
+                    <input
+                        type="file"
+                        name="photo"
+                        onChange={handleFileChange}
+                        className="block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+
                 <button
                     type="submit"
                     className={`w-full p-3 rounded-lg transform transition-transform duration-300 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500'}`}
