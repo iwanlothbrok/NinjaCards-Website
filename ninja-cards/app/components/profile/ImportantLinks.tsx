@@ -11,8 +11,7 @@ const ImportantLinks: React.FC = () => {
         linkedin: user?.linkedin || '',
         twitter: user?.twitter || '',
         website: '',//user?.website || '',
-        qrCode:'', //user?.qrCode || '',
-        photo: null
+        qrCode: '', //user?.qrCode || '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -20,12 +19,6 @@ const ImportantLinks: React.FC = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, files } = e.target;
-        if (files && files[0]) {
-            setFormData({ ...formData, [name]: files[0] });
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -49,11 +42,11 @@ const ImportantLinks: React.FC = () => {
     };
 
     return (
-        <div className="w-full max-w-lg mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
+        <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
             <h2 className="text-3xl font-bold mb-6 text-white">Important Links</h2>
             <form onSubmit={handleSubmit} className="space-y-4 text-gray-300">
                 <div className="flex items-center mb-4">
-                    <img src="/icons/facebook.svg" alt="Facebook" className="w-6 h-6 mr-2" />
+                    <img src="/logos/fb.png" alt="Facebook" className="w-6 h-6 mr-2" />
                     <input
                         type="url"
                         name="facebook"
@@ -65,7 +58,7 @@ const ImportantLinks: React.FC = () => {
                 </div>
 
                 <div className="flex items-center mb-4">
-                    <img src="/icons/instagram.svg" alt="Instagram" className="w-6 h-6 mr-2" />
+                    <img src="/logos/ig.png" alt="Instagram" className="w-6 h-6 mr-2" />
                     <input
                         type="url"
                         name="instagram"
@@ -77,7 +70,7 @@ const ImportantLinks: React.FC = () => {
                 </div>
 
                 <div className="flex items-center mb-4">
-                    <img src="/icons/linkedin.svg" alt="LinkedIn" className="w-6 h-6 mr-2" />
+                    <img src="/logos/lkd.png" alt="LinkedIn" className="w-6 h-6 mr-2" />
                     <input
                         type="url"
                         name="linkedin"
@@ -124,15 +117,6 @@ const ImportantLinks: React.FC = () => {
                     />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-sm mb-2 text-white">Photo</label>
-                    <input
-                        type="file"
-                        name="photo"
-                        onChange={handleFileChange}
-                        className="block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
 
                 <button
                     type="submit"
