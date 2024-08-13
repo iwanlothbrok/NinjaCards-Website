@@ -1,6 +1,6 @@
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://root:1234@localhost:3306/ninjadatabase"
 }
 
 generator client {
@@ -28,7 +28,7 @@ model User {
   state     String?
   country   String?
   bio       String?
-  image     String?
+  image     Bytes?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
