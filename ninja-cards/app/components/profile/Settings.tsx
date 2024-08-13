@@ -9,7 +9,7 @@ interface FormData {
     email: string;
     password: string;
     confirmPassword: string;
-    photo: null;
+    image: File | null;
 }
 
 interface Alert {
@@ -25,7 +25,7 @@ const Settings: React.FC = () => {
         email: '',
         password: '',
         confirmPassword: '',
-        photo: null
+        image: null
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<Alert | null>(null);
@@ -38,7 +38,7 @@ const Settings: React.FC = () => {
                 email: user.email || '',
                 password: '',
                 confirmPassword: '',
-                photo: null
+                image: null
             });
         }
     }, [user]);
@@ -49,13 +49,11 @@ const Settings: React.FC = () => {
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, files } = e.target;
-        if (files && files[0]) {
-            setFormData({ ...formData, [name]: files[0] });
+        const { files } = e.target;
+        if (files && files.length > 0) {
+            setFormData({ ...formData, image: files[0] });
         }
     };
-
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -72,21 +70,22 @@ const Settings: React.FC = () => {
             return;
         }
 
-        const updateData = {
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-        };
-
-
+        // Create FormData and append all fields
+        const updateData = new FormData();
+        updateData.append('id', user?.id); // Ensure ID is appended
+        updateData.append('name', formData.name);
+        updateData.append('email', formData.email);
+        if (formData.password) {
+            updateData.append('password', formData.password);
+        }
+        if (formData.image) {
+            updateData.append('image', formData.image);
+        }
 
         try {
             const response = await fetch('/api/profile/updateProfile', {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: user?.id, ...updateData }),
+                body: updateData,
             });
 
             if (!response.ok) {
@@ -109,6 +108,7 @@ const Settings: React.FC = () => {
             setLoading(false);
         }
     };
+
 
     const showAlert = (message: string, title: string, color: string) => {
         setAlert({ message, title, color });
@@ -177,7 +177,7 @@ const Settings: React.FC = () => {
                     <label className="block text-sm mb-2 text-white">Photo</label>
                     <input
                         type="file"
-                        name="photo"
+                        name="image"
                         onChange={handleFileChange}
                         className="block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
