@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
             <div className="container mx-auto">
                 <div className="relative flex items-center justify-between px-4">
                     <div className="flex-shrink-0">
-                        <Link href="/" className="block w-24 py-2 navbar-logo mx-auto">
+                        <Link href="/" className="block w-24 py-2 navbar-logo">
                             <img src="/navLogo.png" alt="logo" className="w-full" />
                         </Link>
                     </div>
@@ -68,36 +68,42 @@ const Navbar: React.FC = () => {
                         </div>
                         <nav
                             id="navbarCollapse"
-                            className={`absolute right-0 top-full ${isOpen ? 'block' : 'hidden'} w-full max-w-[250px] rounded-lg bg-darkesBg py-5 shadow-lg lg:static lg:block lg:w-full lg:max-w-full lg:bg-transparent lg:px-4 lg:py-0 lg:shadow-none xl:px-6`}>
-                            <ul className="block lg:flex 2xl:ml-20">
+                            className={`absolute top-full ${isOpen ? 'block' : 'hidden'} w-full max-w-[250px] rounded-lg bg-darkesBg py-5 shadow-lg lg:static lg:block lg:w-full lg:max-w-full lg:bg-transparent lg:px-4 lg:py-0 lg:shadow-none xl:px-6`}>
+                            <ul className="block lg:flex 2xl:ml-20 justify-center">
                                 <li className="relative group">
-                                    <Link href="/" className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:mr-0 lg:inline-flex lg:px-0 lg:py-6">
+                                    <Link
+                                        href="/"
+                                        className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:mr-0 lg:inline-flex lg:px-0 lg:pt-6 pb-2 relative after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-orange after:scale-x-0 after:origin-left after:transition-transform after:duration-300 group-hover:after:scale-x-100"
+                                    >
                                         Home
                                     </Link>
                                 </li>
                                 <li className="relative group">
-                                    <Link href="/about" className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:ml-7 lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 xl:ml-10">
+                                    <Link href="/about"
+                                        className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:mr-0 lg:inline-flex lg:px-0 lg:pt-6 pb-2 relative after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-orange after:scale-x-0 after:origin-left after:transition-transform after:duration-300 group-hover:after:scale-x-100"
+                                    >
                                         About
                                     </Link>
                                 </li>
                                 <li className="relative group">
-                                    <Link href="/pricing" className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:ml-7 lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 xl:ml-10">
+                                    <Link href="/pricing"
+                                        className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:mr-0 lg:inline-flex lg:px-0 lg:pt-6 pb-2 relative after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-orange after:scale-x-0 after:origin-left after:transition-transform after:duration-300 group-hover:after:scale-x-100"
+                                    >
                                         Pricing
                                     </Link>
                                 </li>
                                 <li className="relative group">
-                                    <Link href="/team" className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:ml-7 lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 xl:ml-10">
+                                    <Link href="/team"
+                                        className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:mr-0 lg:inline-flex lg:px-0 lg:pt-6 pb-2 relative after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-orange after:scale-x-0 after:origin-left after:transition-transform after:duration-300 group-hover:after:scale-x-100"
+                                    >
                                         Team
                                     </Link>
                                 </li>
                                 <li className="relative group">
-                                    <Link href="/contact" className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:ml-7 lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 xl:ml-10">
+                                    <Link href="/contact"
+                                        className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:mr-0 lg:inline-flex lg:px-0 lg:pt-6 pb-2 relative after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-orange after:scale-x-0 after:origin-left after:transition-transform after:duration-300 group-hover:after:scale-x-100"
+                                    >
                                         Contact
-                                    </Link>
-                                </li>
-                                <li className="relative group">
-                                    <Link href="blog-grids.html" className="flex py-2 mx-8 text-base font-medium text-white group-hover:text-orange lg:ml-7 lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 xl:ml-10">
-                                        Blog
                                     </Link>
                                 </li>
                                 {isAuthenticated && (
@@ -110,7 +116,7 @@ const Navbar: React.FC = () => {
                                             alt="User avatar"
                                         />
                                         {isDropdownOpen && (
-                                            <div id="userDropdown" className="absolute right-0 mt-2 w-44 rounded-lg shadow-lg bg-darkesBg divide-y divide-gray-100 dark:bg-gray-700 dark:divide-gray-600">
+                                            <div id="userDropdown" className="absolute  right-0 mt-2 w-44 rounded-lg shadow-lg bg-darkesBg divide-y divide-gray-100 dark:bg-gray-700 dark:divide-gray-600">
                                                 <div className="px-4 py-3 text-sm text-white">
                                                     <div>{user?.name}</div>
                                                     <div className="font-medium truncate">{user?.email}</div>
