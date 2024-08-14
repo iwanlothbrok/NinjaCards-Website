@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 
 interface FormData {
-    name: string;
+    // name: string;
     email: string;
     password: string;
     confirmPassword: string;
-    image: File | null;
+    // image: File | null;
 }
 
 interface Alert {
@@ -21,11 +21,11 @@ interface Alert {
 const Settings: React.FC = () => {
     const { user } = useAuth();
     const [formData, setFormData] = useState<FormData>({
-        name: '',
+        // name: '',
         email: '',
         password: '',
         confirmPassword: '',
-        image: null
+        // image: null
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<Alert | null>(null);
@@ -34,11 +34,11 @@ const Settings: React.FC = () => {
     useEffect(() => {
         if (user) {
             setFormData({
-                name: user.name || '',
+                // name: user.name || '',
                 email: user.email || '',
                 password: '',
                 confirmPassword: '',
-                image: null
+                // image: null
             });
         }
     }, [user]);
@@ -48,24 +48,29 @@ const Settings: React.FC = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { files } = e.target;
-        if (files && files.length > 0) {
-            setFormData({ ...formData, image: files[0] });
-        }
-    };
+    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { files } = e.target;
+    //     if (files && files.length > 0) {
+    //         setFormData({ ...formData, image: files[0] });
+    //     }
+    // };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         if (!user) {
-            showAlert('User not authenticated', 'Error', 'orange');
+            showAlert('User not authenticated', 'Warning', 'red');
             setLoading(false);
             return;
         }
-
+        if (!formData.email || !formData.password) {
+            showAlert('Попълнете всички полета', 'Warning', 'red');
+            setLoading(false);
+            return;
+        }
         if (formData.password !== formData.confirmPassword) {
-            showAlert('Passwords do not match', 'Error', 'orange');
+            showAlert('Passwords do not match', 'Warning', 'red');
             setLoading(false);
             return;
         }
@@ -73,17 +78,16 @@ const Settings: React.FC = () => {
         // Create FormData and append all fields
         const updateData = new FormData();
         updateData.append('id', user?.id); // Ensure ID is appended
-        updateData.append('name', formData.name);
+        // updateData.append('name', formData.name);
         updateData.append('email', formData.email);
-        if (formData.password) {
-            updateData.append('password', formData.password);
-        }
-        if (formData.image) {
-            updateData.append('image', formData.image);
-        }
+        updateData.append('password', formData.password);
+
+        // if (formData.image) {
+        //     updateData.append('image', formData.image);
+        // }
 
         try {
-            const response = await fetch('/api/profile/updateProfile', {
+            const response = await fetch('/api/profile/changePasswordAndEmail', {
                 method: 'PUT',
                 body: updateData,
             });
@@ -91,19 +95,23 @@ const Settings: React.FC = () => {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('Update error:', errorText);
-                showAlert('Failed to update profile', 'Error', 'orange');
+                showAlert('Failed to update profile', 'Error', 'red');
                 return;
             }
 
             const updatedUser = await response.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));
             showAlert('Profile updated successfully', 'Success', 'green');
+
             setTimeout(() => {
-                router.push('/');
-            }, 1000);
+                router.replace(`/?update=${new Date().getTime()}`); // Append a query to force reload
+            }, 1500);
+
+
+
         } catch (error) {
             console.error('Error:', error);
-            showAlert('Failed to update profile', 'Error', 'orange');
+            showAlert('Failed to update profile', 'Error', 'red');
         } finally {
             setLoading(false);
         }
@@ -120,8 +128,13 @@ const Settings: React.FC = () => {
     return (
         <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
             <h2 className="text-4xl font-extrabold mb-6 text-white">Profile Details</h2>
+            {alert && (
+                <div className={`my-2 p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}>
+                    <strong>{alert.title}: </strong> {alert.message}
+                </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6 text-gray-300">
-                <div className="mb-4">
+                {/* <div className="mb-4">
                     <label htmlFor="name" className="block text-sm mb-1">Име на картата</label>
                     <input
                         id="name"
@@ -133,7 +146,7 @@ const Settings: React.FC = () => {
                         className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
-                </div>
+                </div> */}
                 <div className="mb-4">
                     <label htmlFor="email" className="block text-sm mb-1">Промени имейл</label>
                     <input
@@ -173,7 +186,7 @@ const Settings: React.FC = () => {
                 </div>
 
 
-                <div className="mb-4">
+                {/* <div className="mb-4">
                     <label className="block text-sm mb-2 text-white">Photo</label>
                     <input
                         type="file"
@@ -181,7 +194,7 @@ const Settings: React.FC = () => {
                         onChange={handleFileChange}
                         className="block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                </div>
+                </div> */}
 
                 <button
                     type="submit"
@@ -191,11 +204,7 @@ const Settings: React.FC = () => {
                     {loading ? 'Loading...' : 'Запази'}
                 </button>
             </form>
-            {alert && (
-                <div className={`mt-4 p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-orange-500'} text-white animate-fadeIn`}>
-                    <strong>{alert.title}: </strong> {alert.message}
-                </div>
-            )}
+
         </div>
     );
 };
