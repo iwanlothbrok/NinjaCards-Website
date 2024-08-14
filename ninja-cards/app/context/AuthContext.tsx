@@ -2,6 +2,7 @@
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import { log } from 'console';
 
 interface User {
     id: string;
@@ -29,7 +30,7 @@ interface User {
     linkedin: string;
     github: string;
     youtube: string;
-    image: string;
+    image: Buffer;
 }
 
 interface AuthContextType {
@@ -47,6 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
+
         if (userData) {
             try {
                 setUser(JSON.parse(userData));
