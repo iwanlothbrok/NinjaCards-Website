@@ -152,7 +152,7 @@ const Navbar: React.FC = () => {
                                     <img
                                         id="avatarButton"
                                         onClick={handleDropdownClick}
-                                        className="w-28 h-24 rounded-full cursor-pointer border-2 border-orange shadow-md"
+                                        className="w-24 h-24 rounded-full cursor-pointer border-2 border-orange shadow-md"
                                         src={userImage || 'https://tecdn.b-cdn.net/img/new/avatars/2.webp'}
                                         alt="User avatar"
                                     />
