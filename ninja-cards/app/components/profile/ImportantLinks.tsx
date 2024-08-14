@@ -42,7 +42,7 @@ const ImportantLinks: React.FC = () => {
     };
 
     return (
-        <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
+        <div className="w-full max-w-3xl mt-0  mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
             <h2 className="text-3xl font-bold mb-6 text-white">Important Links</h2>
             <form onSubmit={handleSubmit} className="space-y-4 text-gray-300">
                 <div className="flex items-center mb-4">

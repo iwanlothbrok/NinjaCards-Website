@@ -5,16 +5,36 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
+const convertImageToBase64 = (imageData: { type: string, data: number[] }): string => {
+    if (imageData && imageData.type === 'Buffer') {
+        // Convert the array of bytes back into a Buffer
+        const buffer = Buffer.from(imageData.data);
+        // Convert the Buffer to a Base64 string
+        return `data:image/jpeg;base64,${buffer.toString('base64')}`;
+    } else {
+        console.error('Unsupported image data type:', typeof imageData);
+        return '';
+    }
+};
+
 const Navbar: React.FC = () => {
     const { user, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const pathname = usePathname();
     const [isAuthenticated, setIsAuthenticated] = useState(!!user);
+    const [userImage, setUserImage] = useState('');
+
 
     useEffect(() => {
         setIsAuthenticated(!!user);
+        if (user && user.image) {
+            const imageData = user.image; // Adjust according to your object structure
+            const base64Image = convertImageToBase64(imageData);
+            setUserImage(base64Image);
+        }
     }, [user]);
+
 
     const handleLogout = () => {
         logout();
@@ -85,9 +105,9 @@ const Navbar: React.FC = () => {
                                         <img
                                             id="avatarButton"
                                             onClick={handleDropdownClick}
-                                            className="w-14 h-14 ml-7 mt-2 rounded-full cursor-pointer border-2 border-orange shadow-md"
-                                            src={user?.image || 'https://tecdn.b-cdn.net/img/new/avatars/2.webp'}
-                                            alt="User dropdown"
+                                            className="w-16 h-16 ml-7 mt-2 rounded-full cursor-pointer border-2 border-orange shadow-md"
+                                            src={userImage || 'https://tecdn.b-cdn.net/img/new/avatars/2.webp'}
+                                            alt="User avatar"
                                         />
                                         {isDropdownOpen && (
                                             <div id="userDropdown" className="absolute right-0 mt-2 w-44 rounded-lg shadow-lg bg-darkesBg divide-y divide-gray-100 dark:bg-gray-700 dark:divide-gray-600">
@@ -126,9 +146,9 @@ const Navbar: React.FC = () => {
                                     <img
                                         id="avatarButton"
                                         onClick={handleDropdownClick}
-                                        className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md"
-                                        src={user?.image || 'https://tecdn.b-cdn.net/img/new/avatars/2.webp'}
-                                        alt="User dropdown"
+                                        className="w-28 h-24 rounded-full cursor-pointer border-2 border-orange shadow-md"
+                                        src={userImage || 'https://tecdn.b-cdn.net/img/new/avatars/2.webp'}
+                                        alt="User avatar"
                                     />
                                     {isDropdownOpen && (
                                         <div id="userDropdown" className="absolute right-0 mt-2 w-44 rounded-lg shadow-lg bg-darkesBg divide-y divide-gray-100 dark:bg-gray-700 dark:divide-gray-600">
