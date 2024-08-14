@@ -52,12 +52,14 @@ const ImportantLinks: React.FC = () => {
         instagram: user?.instagram || '',
         linkedin: user?.linkedin || '',
         twitter: user?.twitter || '',
-        revolute: user?.revolut || '',
+        revolut: user?.revolut || '',
         googleReview: user?.googleReview || '',
         tiktok: user?.tiktok || '',
         website: '',
         qrCode: '',
     });
+    const [loading, setLoading] = useState<boolean>(false);
+    const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -66,6 +68,8 @@ const ImportantLinks: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
+        setAlert({ message: '', type: null });
 
         const formDataObj = new FormData();
         formDataObj.append('id', user?.id || '');
@@ -75,27 +79,40 @@ const ImportantLinks: React.FC = () => {
             formDataObj.append(key, value);
         });
 
-        const response = await fetch('/api/profile/updateProfile', {
-            method: 'PUT',
-            body: formDataObj,  // Send the FormData object
-        });
+        try {
+            const response = await fetch('/api/profile/updateLinks', {
+                method: 'PUT',
+                body: formDataObj,  // Send the FormData object
+            });
 
-        if (response.ok) {
-            const updatedUser = await response.json();
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            setUser(updatedUser);
-            alert('Links updated successfully');
-        } else {
-            alert('Failed to update links');
+            if (response.ok) {
+                const updatedUser = await response.json();
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                setUser(updatedUser);
+                setAlert({ message: 'Links updated successfully', type: 'success' });
+            } else {
+                const errorData = await response.json();
+                setAlert({ message: errorData.error || 'Failed to update links', type: 'error' });
+            }
+        } catch (error) {
+            console.error('Error updating links:', error);
+            setAlert({ message: 'An unexpected error occurred. Please try again.', type: 'error' });
+        } finally {
+            setLoading(false);
         }
     };
-
 
     return (
         <div className="w-full max-w-3xl mt-0 mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
             <h2 className="text-3xl font-bold mb-6 text-white">Important Links</h2>
+            {alert.message && (
+                <div
+                    className={`p-4 rounded mb-6 ${alert.type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}
+                >
+                    {alert.message}
+                </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4 text-gray-300">
-
                 <LinkInput
                     name="facebook"
                     value={formData.facebook}
@@ -157,12 +174,12 @@ const ImportantLinks: React.FC = () => {
                 />
 
                 <LinkInput
-                    name="revolute"
-                    value={formData.revolute}
+                    name="revolut"
+                    value={formData.revolut}
                     onChange={handleChange}
-                    placeholder="Revolute URL"
-                    imgSrc="/logos/revolute.png"
-                    imgAlt="Revolute"
+                    placeholder="Revolut URL"
+                    imgSrc="/logos/revolut.png"
+                    imgAlt="Revolut"
                     focusRingColor="focus:ring-[#0075EB]"  // Revolut's brand color
                 />
 
@@ -190,9 +207,10 @@ const ImportantLinks: React.FC = () => {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white p-3 rounded-lg mt-6 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-transform transform hover:scale-105"
+                    className={`w-full bg-blue-600 text-white p-3 rounded-lg mt-6 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-transform transform hover:scale-105 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={loading}
                 >
-                    Save
+                    {loading ? 'Saving...' : 'Save'}
                 </button>
             </form>
         </div>
