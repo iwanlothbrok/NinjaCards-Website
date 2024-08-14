@@ -30,24 +30,58 @@ const parseForm = (req: NextApiRequest): Promise<{ fields: Fields; files: Files 
         });
     });
 };
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'PUT') {
         try {
             const { fields, files } = await parseForm(req);
-            const { id, name, email, password, ...rest } = fields;
 
+            // Extract values from arrays
+            const id = fields.id ? fields.id[0] : undefined;
+            const name = fields.name ? fields.name[0] : undefined;
+            const email = fields.email ? fields.email[0] : undefined;
+            const password = fields.password ? fields.password[0] : undefined;
+            
+            console.log(fields);
             // Log the fields received
-            console.log('Received fields:', fields);
+            console.log('Received fields:', { id, name, email, password });
 
-            // Validate the input
-            if (!id || (!name && !email && !password && Object.keys(rest).length === 0)) {
-                console.error('Validation failed:', { id, name, email, password, rest });
-                res.status(400).json({ error: 'Invalid input' });
+            // Validate that `id` is present
+            if (!id) {
+                console.error('Validation failed: Missing ID');
+                res.status(400).json({ error: 'ID is required' });
                 return;
             }
 
-            // Continue with the update logic...
+            // Construct the updated data object dynamically
+            const updatedData: any = {  };
+
+            console.log('hop trop');
+            console.log(updatedData);
+
+            if (name) {
+                updatedData.name = name;
+            }
+            if (email) {
+                updatedData.email = email;
+            }
+            if (password) {
+                updatedData.password = await bcrypt.hash(password, 10);
+            }
+
+            // Handle the image file if provided
+            if (files.image) {
+                const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+                const imageData = fs.readFileSync(imageFile.filepath);
+                updatedData.image = imageData;
+            }
+
+            // Update the user in the database only with provided fields
+            const updatedUser = await prisma.user.update({
+                where: { id: Number(id) }, // Ensure id is a number
+                data: updatedData,
+            });
+
+            res.status(200).json(updatedUser);
         } catch (error: any) {
             console.error('Error updating user:', error);
             res.status(500).json({ error: 'Failed to update user', details: error.message });
