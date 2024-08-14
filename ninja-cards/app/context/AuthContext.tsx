@@ -15,8 +15,6 @@ interface User {
     phone1: string;
     phone2: string;
     email2: string;
-    website1: string;
-    website2: string;
     street1: string;
     street2: string;
     zipCode: string;
@@ -31,6 +29,10 @@ interface User {
     github: string;
     youtube: string;
     image: Buffer;
+    tiktok: string;        // New field for TikTok URL
+    googleReview: string;  // New field for Google Review URL
+    revolut: string;       // New field for Revolut URL
+    qrCode: string;        // New field for QR Code URL
 }
 
 interface AuthContextType {
