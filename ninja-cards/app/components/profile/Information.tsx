@@ -2,9 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
+
+interface Alert {
+    message: string;
+    title: string;
+    color: string;
+}
 
 const Information: React.FC = () => {
     const { user, setUser } = useAuth();
+    const [loading, setLoading] = useState<boolean>(false);
+    const [alert, setAlert] = useState<Alert | null>(null);
     const [formData, setFormData] = useState({
         firstName: user?.firstName || '',
         lastName: user?.lastName || '',
@@ -26,50 +35,78 @@ const Information: React.FC = () => {
         bio: user?.bio || ''
     });
 
+    const router = useRouter();
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+    };
+
+    const showAlert = (message: string, title: string, color: string) => {
+        setAlert({ message, title, color });
+        setTimeout(() => {
+            setAlert(null);
+        }, 4000);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!user) {
-            alert('User not authenticated');
+            showAlert('User not authenticated', 'Danger', 'danger');
+
             return;
         }
 
-        const updateData = { ...formData };
+        const updateData = new FormData();
+        updateData.append('id', user.id); // Ensure ID is appended
+
+        // Append all formData fields to updateData
+        Object.keys(formData).forEach((key) => {
+            updateData.append(key, formData[key as keyof typeof formData]);
+        });
+
+        console.log(updateData);
 
         try {
             const response = await fetch('/api/profile/updateProfile', {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: user?.id, ...updateData }),
+                body: updateData,
             });
 
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('Update error:', errorText);
-                alert('Failed to update information');
+                showAlert('Failed to update information', 'Danger', 'danger');
                 return;
             }
 
             const updatedUser = await response.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));
+
             setUser(updatedUser);
-            alert('Information updated successfully');
+
+            showAlert('Profile updated successfully', 'Success', 'green');
+            setTimeout(() => {
+                router.push('/');
+            }, 1000);
+
+
         } catch (error) {
             console.error('Error:', error);
-            alert('Failed to update information');
+            showAlert('Failed to update information', 'Danger', 'danger');
+
         }
     };
 
     return (
         <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
             <h2 className="text-3xl font-bold mb-6 text-white">Information</h2>
+            {alert && (
+                <div className={`mt-4 p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-orange-500'} text-white animate-fadeIn`}>
+                    <strong>{alert.title}: </strong> {alert.message}
+                </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6 text-gray-300">
                 <div className="information border border-gray-700 rounded p-4 mb-4">
                     <h3 className="text-lg font-bold mb-4 text-white">Card Information</h3>
