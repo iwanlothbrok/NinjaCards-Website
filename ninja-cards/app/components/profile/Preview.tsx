@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const Preview: React.FC = () => {
     const { user } = useAuth();
+    console.log(user);
 
     const generateVCF = () => {
         const vCard = [
@@ -19,17 +20,16 @@ const Preview: React.FC = () => {
             `TITLE:${user?.position}`,
             `ADR;TYPE=WORK:;;${user?.street1};${user?.city};${user?.state};${user?.zipCode};${user?.country}`,
             `NOTE:${user?.bio}`,
-            `URL:${user?.facebook ? `Facebook: ${user.facebook}` : ''}`,
-            `URL:${user?.instagram ? `Instagram: ${user.instagram}` : ''}`,
-            `URL:${user?.linkedin ? `LinkedIn: ${user.linkedin}` : ''}`,
-            `URL:${user?.twitter ? `Twitter: ${user.twitter}` : ''}`,
-            `URL:${user?.tiktok ? `TikTok: ${user.tiktok}` : ''}`,
-            `URL:${user?.googleReview ? `Google Review: ${user.googleReview}` : ''}`,
-            `URL:${user?.revolut ? `Revolut: ${user.revolut}` : ''}`,
-            `URL:${user?.qrCode ? `QR Code: ${user.qrCode}` : ''}`,
-        ];
+            user?.facebook ? `URL:Facebook:${user.facebook}` : '',
+            user?.instagram ? `URL:Instagram:${user.instagram}` : '',
+            user?.linkedin ? `URL:LinkedIn:${user.linkedin}` : '',
+            user?.twitter ? `URL:Twitter:${user.twitter}` : '',
+            user?.tiktok ? `URL:TikTok:${user.tiktok}` : '',
+            user?.googleReview ? `URL:Google Review:${user.googleReview}` : '',
+            user?.revolut ? `URL:Revolut:${user.revolut}` : '',
+            user?.qrCode ? `URL:QR Code:${user.qrCode}` : '',
+        ].filter(Boolean); // Filter out any empty strings
 
-        // Add photo to vCard if available
         if (user?.image) {
             const base64Image = Buffer.from(user.image).toString('base64');
             vCard.push(`PHOTO;ENCODING=b;TYPE=JPEG:${base64Image}`);
@@ -78,7 +78,6 @@ const Preview: React.FC = () => {
                 <p className={textClass}><strong>TikTok:</strong> {user?.tiktok}</p>
                 <p className={textClass}><strong>Google Review:</strong> {user?.googleReview}</p>
                 <p className={textClass}><strong>Revolut:</strong> {user?.revolut}</p>
-                <p className={textClass}><strong>QR Code:</strong> {user?.qrCode}</p>
             </div>
 
             <div className={sectionClass}>
@@ -95,6 +94,13 @@ const Preview: React.FC = () => {
                 <h3 className={titleClass}>Bio</h3>
                 <p className={textClass}>{user?.bio}</p>
             </div>
+
+            {user?.qrCode && (
+                <div className={sectionClass}>
+                    <h3 className={titleClass}>QR Code</h3>
+                    <img src={user.qrCode} alt="QR Code" className="w-32 h-32 mx-auto" />
+                </div>
+            )}
 
             <button
                 onClick={generateVCF}

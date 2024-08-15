@@ -49,7 +49,7 @@ const ImportantLinks: React.FC = () => {
         googleReview: user?.googleReview || '',
         tiktok: user?.tiktok || '',
         website: '',
-        qrCode: '',
+        qrCode: user?.qrCode || '',
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
@@ -187,7 +187,7 @@ const ImportantLinks: React.FC = () => {
                 />
                 <LinkInput
                     name="qrCode"
-                    value={formData.website}
+                    value={formData.qrCode}
                     onChange={handleChange}
                     placeholder="QR Code URL"
                     IconComponent={AiOutlineQrcode}
