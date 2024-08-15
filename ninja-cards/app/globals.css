@@ -18,6 +18,19 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background-color: #36454F;
+  background-color: #36454f;
   overflow-x: hidden;
+}
+
+.fade-in {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.about-section,
+.text-section,
+.roadmap-step {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
 }
