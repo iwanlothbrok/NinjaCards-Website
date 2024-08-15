@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcryptjs';
 import { log } from 'console';
 import { NextApiRequest, NextApiResponse } from 'next';
+import QRCode from 'qrcode';
 
 
 const prisma = new PrismaClient();
@@ -36,8 +37,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 password: hashedPassword,
             },
         });
+        console.log('userid is ' + user.id);
 
-        res.status(201).json(user);
+        console.log(user.id);
+
+        const qrCodeUrl = `http://localhost:3000/profile?tab=profileDetails&id=${user.id}`;
+        console.log(qrCodeUrl);
+
+        // Generate the QR code from the URL
+        const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
+
+        // Update user with the QR code image
+        const updatedUser = await prisma.user.update({
+            where: { id: user.id },
+            data: { qrCode: qrCodeImage },
+        });
+
+
+        res.status(201).json(updatedUser);
     } else {
         res?.status(405).json({ error: 'Method not allowed' });
     }
