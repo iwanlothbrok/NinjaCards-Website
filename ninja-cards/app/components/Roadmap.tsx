@@ -23,11 +23,11 @@ const Roadmap: React.FC = () => {
     // Cleanup observer on unmount
     return () => {
       roadmapElements.forEach((el) => observer.unobserve(el));
-    }; 
+    };
   }, []);
 
   return (
-    <section className="min-h-screen bg-darkBg py-6 flex flex-col justify-center sm:py-12">
+    <section className="min-h-screen bg-darkBg pt-6 sm:pt-12 pb-0 sm:pb-0 flex flex-col justify-center">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-extrabold text-orange tracking-wider">
           Your Journey with Ninja NFC Card
@@ -38,14 +38,16 @@ const Roadmap: React.FC = () => {
         </p>
       </div>
 
-      <div className="py-3 sm:max-w-xl sm:mx-auto w-full px-2 sm:px-0">
+      <div className="py-3 sm:max-w-xl sm:mx-auto w-full px-2 sm:px-0 pb-0 pt-0">
         <div className="relative text-gray-200 antialiased text-sm font-semibold">
-          <div className="hidden sm:block w-1 bg-teil absolute h-full left-1/2 transform -translate-x-1/2"></div>
+          <div className="hidden sm:block w-1 bg-teil absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2"></div>
 
           {roadmapSteps.map((step, index) => (
             <div
               key={index}
-              className={`mt-6 sm:mt-0 sm:mb-12 flex ${
+              className={`mt-6 ${
+                index === roadmapSteps.length - 1 ? 'mb-0' : 'mb-12'
+              } flex ${
                 index % 2 === 0
                   ? 'justify-start sm:pr-8'
                   : 'justify-end sm:pl-8'
