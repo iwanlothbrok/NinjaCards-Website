@@ -237,114 +237,114 @@ const Information: React.FC = () => {
                             />
                         </div>
                     </div>
+                </div>
 
-                    <div className="address border border-gray-700 rounded p-4 mb-4">
-                        <h3 className="text-lg font-bold mb-4 text-white">Address</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm mb-2">Street 1</label>
-                                <input
-                                    type="text"
-                                    name="street1"
-                                    value={formData.street1}
-                                    onChange={handleChange}
-                                    placeholder="Street 1"
-                                    className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-2">Street 2</label>
-                                <input
-                                    type="text"
-                                    name="street2"
-                                    value={formData.street2}
-                                    onChange={handleChange}
-                                    placeholder="Street 2"
-                                    className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                            <div>
-                                <label className="block text-sm mb-2">Zip Code</label>
-                                <input
-                                    type="text"
-                                    name="zipCode"
-                                    value={formData.zipCode}
-                                    onChange={handleChange}
-                                    placeholder="Zip Code"
-                                    className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-2">City</label>
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={formData.city}
-                                    onChange={handleChange}
-                                    placeholder="City"
-                                    className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-2">State</label>
-                                <input
-                                    type="text"
-                                    name="state"
-                                    value={formData.state}
-                                    onChange={handleChange}
-                                    placeholder="State"
-                                    className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="mt-4">
-                            <label className="block text-sm mb-2">Country</label>
+                <div className="address border border-gray-700 rounded p-4 mb-4">
+                    <h3 className="text-lg font-bold mb-4 text-white">Address</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm mb-2">Street 1</label>
                             <input
                                 type="text"
-                                name="country"
-                                value={formData.country}
+                                name="street1"
+                                value={formData.street1}
                                 onChange={handleChange}
-                                placeholder="Country"
+                                placeholder="Street 1"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm mb-2">Street 2</label>
+                            <input
+                                type="text"
+                                name="street2"
+                                value={formData.street2}
+                                onChange={handleChange}
+                                placeholder="Street 2"
                                 className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                             />
                         </div>
                     </div>
 
-                    <div className="bio border border-gray-700 rounded p-4">
-                        <h3 className="text-lg font-bold mb-4 text-white">Bio</h3>
-                        <textarea
-                            name="bio"
-                            value={formData.bio}
-                            onChange={handleChange}
-                            placeholder="Tell us more about yourself"
-                            className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                        ></textarea>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                        <div>
+                            <label className="block text-sm mb-2">Zip Code</label>
+                            <input
+                                type="text"
+                                name="zipCode"
+                                value={formData.zipCode}
+                                onChange={handleChange}
+                                placeholder="Zip Code"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm mb-2">City</label>
+                            <input
+                                type="text"
+                                name="city"
+                                value={formData.city}
+                                onChange={handleChange}
+                                placeholder="City"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm mb-2">State</label>
+                            <input
+                                type="text"
+                                name="state"
+                                value={formData.state}
+                                onChange={handleChange}
+                                placeholder="State"
+                                className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                            />
+                        </div>
                     </div>
 
-                    <div className="mb-4">
-                        <label className="block text-sm mb-2">Profile Image</label>
+                    <div className="mt-4">
+                        <label className="block text-sm mb-2">Country</label>
                         <input
-                            type="file"
-                            name="image"
-                            accept="image/*"
-                            onChange={(e) => handleFileChange(e)}
+                            type="text"
+                            name="country"
+                            value={formData.country}
+                            onChange={handleChange}
+                            placeholder="Country"
                             className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                         />
                     </div>
-
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-600 text-white p-3 rounded-lg mt-6 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-transform transform hover:scale-105"
-                    >
-                        Save
-                    </button>
                 </div>
-            </form>
-        </div>
+
+                <div className="bio border border-gray-700 rounded p-4">
+                    <h3 className="text-lg font-bold mb-4 text-white">Bio</h3>
+                    <textarea
+                        name="bio"
+                        value={formData.bio}
+                        onChange={handleChange}
+                        placeholder="Tell us more about yourself"
+                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    ></textarea>
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-sm mb-2">Profile Image</label>
+                    <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e)}
+                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white p-3 rounded-lg mt-6 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-transform transform hover:scale-105"
+                >
+                    Save
+                </button>
+            </form >
+        </div >
     );
 };
 
