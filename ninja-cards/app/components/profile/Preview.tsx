@@ -18,13 +18,26 @@ const Preview: React.FC = () => {
             `ORG:${user?.company}`,
             `TITLE:${user?.position}`,
             `ADR;TYPE=WORK:;;${user?.street1};${user?.city};${user?.state};${user?.zipCode};${user?.country}`,
-            `URL:${user?.website1}`,
-            `URL:${user?.website2}`,
             `NOTE:${user?.bio}`,
-            "END:VCARD"
-        ].join("\r\n");
+            `URL:${user?.facebook ? `Facebook: ${user.facebook}` : ''}`,
+            `URL:${user?.instagram ? `Instagram: ${user.instagram}` : ''}`,
+            `URL:${user?.linkedin ? `LinkedIn: ${user.linkedin}` : ''}`,
+            `URL:${user?.twitter ? `Twitter: ${user.twitter}` : ''}`,
+            `URL:${user?.tiktok ? `TikTok: ${user.tiktok}` : ''}`,
+            `URL:${user?.googleReview ? `Google Review: ${user.googleReview}` : ''}`,
+            `URL:${user?.revolut ? `Revolut: ${user.revolut}` : ''}`,
+            `URL:${user?.qrCode ? `QR Code: ${user.qrCode}` : ''}`,
+        ];
 
-        const blob = new Blob([vCard], { type: 'text/vcard' });
+        // Add photo to vCard if available
+        if (user?.image) {
+            const base64Image = Buffer.from(user.image).toString('base64');
+            vCard.push(`PHOTO;ENCODING=b;TYPE=JPEG:${base64Image}`);
+        }
+
+        vCard.push("END:VCARD");
+
+        const blob = new Blob([vCard.join("\r\n")], { type: 'text/vcard' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -57,9 +70,15 @@ const Preview: React.FC = () => {
             </div>
 
             <div className={sectionClass}>
-                <h3 className={titleClass}>Websites</h3>
-                <p className={textClass}><strong>Website 1:</strong> {user?.website1}</p>
-                <p className={textClass}><strong>Website 2:</strong> {user?.website2}</p>
+                <h3 className={titleClass}>Social Media</h3>
+                <p className={textClass}><strong>Facebook:</strong> {user?.facebook}</p>
+                <p className={textClass}><strong>Instagram:</strong> {user?.instagram}</p>
+                <p className={textClass}><strong>LinkedIn:</strong> {user?.linkedin}</p>
+                <p className={textClass}><strong>Twitter:</strong> {user?.twitter}</p>
+                <p className={textClass}><strong>TikTok:</strong> {user?.tiktok}</p>
+                <p className={textClass}><strong>Google Review:</strong> {user?.googleReview}</p>
+                <p className={textClass}><strong>Revolut:</strong> {user?.revolut}</p>
+                <p className={textClass}><strong>QR Code:</strong> {user?.qrCode}</p>
             </div>
 
             <div className={sectionClass}>
