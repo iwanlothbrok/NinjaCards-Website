@@ -2,35 +2,28 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaTiktok, FaGoogle, FaCashRegister } from 'react-icons/fa';
+import { AiOutlineGlobal, AiOutlineQrcode } from 'react-icons/ai';
 
 type LinkInputProps = {
     name: string;
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     placeholder: string;
-    imgSrc: string;
-    imgAlt: string;
+    IconComponent: React.ElementType;
     focusRingColor: string;
 };
 
-const LinkInput: React.FC<LinkInputProps> = ({ name, value, onChange, placeholder, imgSrc, imgAlt, focusRingColor }) => {
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        const prevSibling = e.target.previousElementSibling as HTMLElement;
-        if (prevSibling) {
-            prevSibling.classList.remove('grayscale');
-        }
-    };
+const LinkInput: React.FC<LinkInputProps> = ({ name, value, onChange, placeholder, IconComponent, focusRingColor }) => {
+    const [isFocused, setIsFocused] = useState(false);
 
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-        const prevSibling = e.target.previousElementSibling as HTMLElement;
-        if (prevSibling) {
-            prevSibling.classList.add('grayscale');
-        }
-    };
+    const handleFocus = () => setIsFocused(true);
+    const handleBlur = () => setIsFocused(false);
 
     return (
         <div className="flex items-center mb-4">
-            <img src={imgSrc} alt={imgAlt} className="w-7 h-7 mr-2 filter grayscale transition-all duration-300" />
+            <IconComponent className={`text-2xl mr-2 transition-colors duration-300 ${isFocused ? focusRingColor : 'text-gray-400'}`} />
             <input
                 type="url"
                 name={name}
@@ -61,6 +54,8 @@ const ImportantLinks: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
 
+    const router = useRouter();
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -71,10 +66,14 @@ const ImportantLinks: React.FC = () => {
         setLoading(true);
         setAlert({ message: '', type: null });
 
-        const formDataObj = new FormData();
-        formDataObj.append('id', user?.id || '');
+        if (!user || user.id === undefined) {
+            setAlert({ message: 'User not authenticated', type: 'error' });
+            return;
+        }
 
-        // Append all form data fields to the FormData object
+        const formDataObj = new FormData();
+        formDataObj.append('id', user.id); // Ensure ID is appended
+
         Object.entries(formData).forEach(([key, value]) => {
             formDataObj.append(key, value);
         });
@@ -88,8 +87,10 @@ const ImportantLinks: React.FC = () => {
             if (response.ok) {
                 const updatedUser = await response.json();
                 localStorage.setItem('user', JSON.stringify(updatedUser));
-                setUser(updatedUser);
                 setAlert({ message: 'Links updated successfully', type: 'success' });
+                setTimeout(() => {
+                    router.replace(`/?update=${new Date().getTime()}`); // Append a query to force reload
+                }, 1500);
             } else {
                 const errorData = await response.json();
                 setAlert({ message: errorData.error || 'Failed to update links', type: 'error' });
@@ -118,9 +119,8 @@ const ImportantLinks: React.FC = () => {
                     value={formData.facebook}
                     onChange={handleChange}
                     placeholder="Facebook URL"
-                    imgSrc="/logos/fb.png"
-                    imgAlt="Facebook"
-                    focusRingColor="focus:ring-[#1877F2]"  // Facebook's brand color
+                    IconComponent={FaFacebook}
+                    focusRingColor="text-[#1877F2]"  // Facebook's brand color
                 />
 
                 <LinkInput
@@ -128,9 +128,8 @@ const ImportantLinks: React.FC = () => {
                     value={formData.instagram}
                     onChange={handleChange}
                     placeholder="Instagram URL"
-                    imgSrc="/logos/ig.png"
-                    imgAlt="Instagram"
-                    focusRingColor="focus:ring-[#E4405F]"  // Instagram's brand color
+                    IconComponent={FaInstagram}
+                    focusRingColor="text-[#E4405F]"  // Instagram's brand color
                 />
 
                 <LinkInput
@@ -138,9 +137,8 @@ const ImportantLinks: React.FC = () => {
                     value={formData.linkedin}
                     onChange={handleChange}
                     placeholder="LinkedIn URL"
-                    imgSrc="/logos/lkd.png"
-                    imgAlt="LinkedIn"
-                    focusRingColor="focus:ring-[#0077B5]"  // LinkedIn's brand color
+                    IconComponent={FaLinkedin}
+                    focusRingColor="text-[#0077B5]"  // LinkedIn's brand color
                 />
 
                 <LinkInput
@@ -148,9 +146,8 @@ const ImportantLinks: React.FC = () => {
                     value={formData.twitter}
                     onChange={handleChange}
                     placeholder="Twitter URL"
-                    imgSrc="/logos/x.png"
-                    imgAlt="X"
-                    focusRingColor="focus:ring-[#1DA1F2]"  // Twitter's brand color
+                    IconComponent={FaTwitter}
+                    focusRingColor="text-[#1DA1F2]"  // Twitter's brand color
                 />
 
                 <LinkInput
@@ -158,9 +155,8 @@ const ImportantLinks: React.FC = () => {
                     value={formData.tiktok}
                     onChange={handleChange}
                     placeholder="TikTok URL"
-                    imgSrc="/logos/tiktok.svg"
-                    imgAlt="TikTok"
-                    focusRingColor="focus:ring-[#69C9D0]"  // TikTok's brand color
+                    IconComponent={FaTiktok}
+                    focusRingColor="text-[#69C9D0]"  // TikTok's brand color
                 />
 
                 <LinkInput
@@ -168,9 +164,8 @@ const ImportantLinks: React.FC = () => {
                     value={formData.googleReview}
                     onChange={handleChange}
                     placeholder="Google Review URL"
-                    imgSrc="/logos/googleReview.svg"
-                    imgAlt="Google Review"
-                    focusRingColor="focus:ring-[#4285F4]"  // Google's brand color
+                    IconComponent={FaGoogle}
+                    focusRingColor="text-[#4285F4]"  // Google's brand color
                 />
 
                 <LinkInput
@@ -178,9 +173,8 @@ const ImportantLinks: React.FC = () => {
                     value={formData.revolut}
                     onChange={handleChange}
                     placeholder="Revolut URL"
-                    imgSrc="/logos/revolut.png"
-                    imgAlt="Revolut"
-                    focusRingColor="focus:ring-[#0075EB]"  // Revolut's brand color
+                    IconComponent={FaCashRegister}
+                    focusRingColor="text-[#0075EB]"  // Revolut's brand color
                 />
 
                 <LinkInput
@@ -188,22 +182,18 @@ const ImportantLinks: React.FC = () => {
                     value={formData.website}
                     onChange={handleChange}
                     placeholder="Website URL"
-                    imgSrc="/logos/tinder.png"
-                    imgAlt="Website"
-                    focusRingColor="focus:ring-green-500"  // You may adjust this color based on the specific website
+                    IconComponent={AiOutlineGlobal}
+                    focusRingColor="text-green-500"  // Website brand color (customizable)
+                />
+                <LinkInput
+                    name="qrCode"
+                    value={formData.website}
+                    onChange={handleChange}
+                    placeholder="QR Code URL"
+                    IconComponent={AiOutlineQrcode}
+                    focusRingColor="text-green-500"  // Website brand color (customizable)
                 />
 
-                <div className="mb-4">
-                    <label className="block text-sm mb-2 text-white">QR Code</label>
-                    <input
-                        type="text"
-                        name="qrCode"
-                        value={formData.qrCode}
-                        onChange={handleChange}
-                        placeholder="QR Code URL"
-                        className="block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
 
                 <button
                     type="submit"
