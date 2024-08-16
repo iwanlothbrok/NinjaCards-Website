@@ -34,7 +34,6 @@ const Information: React.FC = () => {
         image: null as File | null, // Ensure image is either a File or null
     });
 
-
     const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -52,6 +51,14 @@ const Information: React.FC = () => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+
+            console.log(file);
+
+            // Check file size before setting it
+            if (file.size > 500 * 1024) {
+                showAlert('Image size exceeds the 500 KB limit', 'Error', 'red');
+                return;
+            }
             setFormData({ ...formData, image: file });
         }
     };
@@ -87,9 +94,8 @@ const Information: React.FC = () => {
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Update error:', errorText);
-                showAlert('Failed to update information', 'Danger', 'danger');
+                const errorText = await response.json();
+                showAlert(errorText.error || 'Failed to update information', 'Error', 'red');
                 return;
             }
 
@@ -108,7 +114,6 @@ const Information: React.FC = () => {
             showAlert('Failed to update information', 'Danger', 'danger');
         }
     };
-
 
     return (
         <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
