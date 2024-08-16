@@ -2,9 +2,9 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Navbar from './components/Navigation'
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], display: 'swap' })
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -18,10 +18,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} text-gray-200 antialiased`}>
         <AuthProvider>
-          <Navbar />
-          {children}
+          <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-800 via-gray-900 to-black">
+            <header className="sticky top-0 z-50 bg-gray-900 shadow-md transition-transform duration-300 ease-in-out">
+              <Navbar />
+            </header>
+            <main className="flex-grow">
+              {children}
+            </main>
+            <footer className="text-center py-4">
+              <p className="text-sm text-gray-500">© 2024 My App. All rights reserved.</p>
+            </footer>
+          </div>
         </AuthProvider>
       </body>
     </html>
