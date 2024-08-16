@@ -3,29 +3,38 @@ import React, { useEffect } from 'react';
 
 const Roadmap: React.FC = () => {
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in');
-          } else {
-            entry.target.classList.remove('fade-in');
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
+    const roadmapTitles = document.querySelectorAll('.roadmap-step-title');
+    const roadmapLine = document.querySelector('.roadmap-line');
 
-    const roadmapElements = document.querySelectorAll('.roadmap-step');
-    roadmapElements.forEach((el) => observer.observe(el));
+    const handleScroll = () => {
+      let activeStepIndex = -1;
 
+      roadmapTitles.forEach((title, index) => {
+        const rect = title.getBoundingClientRect();
+        if (rect.top <= window.innerHeight / 2) {
+          activeStepIndex = index;
+        }
+      });
+
+      if (roadmapLine && activeStepIndex >= 0) {
+        const totalSteps = roadmapTitles.length;
+        const percentageScrolled = (activeStepIndex + 1) / totalSteps;
+
+        // Adjust the height calculation to ensure the line reaches the checkpoint
+        roadmapLine.style.height = `${percentageScrolled * 100}%`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup event listener on component unmount
     return () => {
-      roadmapElements.forEach((el) => observer.unobserve(el));
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   return (
-    <section className="min-h-screen bg-darkBg pt-6 sm:pt-12 pb-0 flex flex-col justify-center">
+    <section className="min-h-screen bg-darkBg pt-6 sm:pt-12 pb-0 flex flex-col justify-center roadmap-section">
       <div className="text-center mb-12 px-4">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-orange tracking-wider">
           Your Journey with Ninja NFC Card
@@ -37,7 +46,10 @@ const Roadmap: React.FC = () => {
       </div>
       <div className="py-3 max-w-4xl mx-auto w-full px-2 sm:px-4">
         <div className="relative text-gray-200 antialiased text-sm font-semibold">
-          <div className="block w-1 bg-teil absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2"></div>
+          {/* Vertical Line */}
+          <div className="roadmap-line-container">
+            <div className="roadmap-line"></div>
+          </div>
           {roadmapSteps.map((step, index) => (
             <div
               key={index}
@@ -45,7 +57,7 @@ const Roadmap: React.FC = () => {
                 index === roadmapSteps.length - 1 ? 'mb-0' : 'mb-12'
               } flex ${
                 index % 2 === 0 ? 'justify-start pr-8' : 'justify-end pl-8'
-              } roadmap-step opacity-0 transform transition-all duration-700 ease-in-out`}
+              } roadmap-step transform transition-all duration-700 ease-in-out`}
             >
               <div className="flex items-center w-full mx-auto">
                 <div
@@ -60,7 +72,7 @@ const Roadmap: React.FC = () => {
                   />
                 </div>
                 <div className="w-2/3 p-4 bg-charcoal rounded-lg shadow-lg transform transition-colors duration-300 hover:bg-darkOrange">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-orange mb-4">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-orange mb-4 roadmap-step-title">
                     {step.title}
                   </h3>
                   <p className="text-gray-200 text-sm sm:text-base">
