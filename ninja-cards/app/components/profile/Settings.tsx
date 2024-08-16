@@ -5,11 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 
 interface FormData {
-    // name: string;
     email: string;
     password: string;
     confirmPassword: string;
-    // image: File | null;
 }
 
 interface Alert {
@@ -21,11 +19,9 @@ interface Alert {
 const Settings: React.FC = () => {
     const { user } = useAuth();
     const [formData, setFormData] = useState<FormData>({
-        // name: '',
         email: '',
         password: '',
         confirmPassword: '',
-        // image: null
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<Alert | null>(null);
@@ -48,13 +44,6 @@ const Settings: React.FC = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const { files } = e.target;
-    //     if (files && files.length > 0) {
-    //         setFormData({ ...formData, image: files[0] });
-    //     }
-    // };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -75,16 +64,11 @@ const Settings: React.FC = () => {
             return;
         }
 
-        // Create FormData and append all fields
         const updateData = new FormData();
-        updateData.append('id', user?.id); // Ensure ID is appended
-        // updateData.append('name', formData.name);
+        updateData.append('id', user?.id);
         updateData.append('email', formData.email);
         updateData.append('password', formData.password);
 
-        // if (formData.image) {
-        //     updateData.append('image', formData.image);
-        // }
 
         try {
             const response = await fetch('/api/profile/changePasswordAndEmail', {
@@ -106,8 +90,6 @@ const Settings: React.FC = () => {
             setTimeout(() => {
                 router.replace(`/?update=${new Date().getTime()}`); // Append a query to force reload
             }, 1500);
-
-
 
         } catch (error) {
             console.error('Error:', error);
@@ -134,19 +116,7 @@ const Settings: React.FC = () => {
                 </div>
             )}
             <form onSubmit={handleSubmit} className="space-y-6 text-gray-300">
-                {/* <div className="mb-4">
-                    <label htmlFor="name" className="block text-sm mb-1">Име на картата</label>
-                    <input
-                        id="name"
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Име *"
-                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div> */}
+
                 <div className="mb-4">
                     <label htmlFor="email" className="block text-sm mb-1">Промени имейл</label>
                     <input
