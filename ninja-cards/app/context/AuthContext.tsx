@@ -28,7 +28,7 @@ interface User {
     linkedin: string;
     github: string;
     youtube: string;
-    image: Buffer;
+    image: string;
     tiktok: string;        // New field for TikTok URL
     googleReview: string;  // New field for Google Review URL
     revolut: string;       // New field for Revolut URL
