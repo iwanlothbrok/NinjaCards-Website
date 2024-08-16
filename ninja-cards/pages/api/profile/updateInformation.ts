@@ -74,11 +74,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (country) updatedData.country = country;
             if (bio) updatedData.bio = bio;
 
-            // Handle the image file if provided
+            // Validate image file size
             if (files.image) {
                 const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+
+                // Check if the image size exceeds 500 KB
+                if (imageFile.size > 500 * 1024) {
+                    res.status(400).json({ error: 'Image size exceeds the 500 KB limit' });
+                    return;
+                }
+
                 const imageData = fs.readFileSync(imageFile.filepath);
-                updatedData.image = imageData;
+                const base64Image = imageData.toString('base64');
+                updatedData.image = base64Image; // Store the image as a base64 string
             }
 
             // Update the user in the database

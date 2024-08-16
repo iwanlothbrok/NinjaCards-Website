@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const name = fields.name ? fields.name[0] : undefined;
             const email = fields.email ? fields.email[0] : undefined;
             const password = fields.password ? fields.password[0] : undefined;
-            
+
             console.log(fields);
             // Log the fields received
             console.log('Received fields:', { id, name, email, password });
@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             // Construct the updated data object dynamically
-            const updatedData: any = {  };
+            const updatedData: any = {};
 
             console.log('hop trop');
             console.log(updatedData);
@@ -72,8 +72,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (files.image) {
                 const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
                 const imageData = fs.readFileSync(imageFile.filepath);
-                updatedData.image = imageData;
+                const base64Image = imageData.toString('base64');
+                updatedData.image = base64Image; // Store the image as a base64 string
             }
+
 
             // Update the user in the database only with provided fields
             const updatedUser = await prisma.user.update({
