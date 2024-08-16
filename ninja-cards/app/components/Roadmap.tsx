@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 const Roadmap: React.FC = () => {
   useEffect(() => {
     const roadmapTitles = document.querySelectorAll('.roadmap-step-title');
-    const roadmapLine = document.querySelector('.roadmap-line');
+    const roadmapLine = document.querySelector('.roadmap-line') as HTMLElement;
 
     const handleScroll = () => {
       let activeStepIndex = -1;
