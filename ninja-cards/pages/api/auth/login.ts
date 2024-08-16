@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
 
-        return res.status(200).json({ token, user: { id: user.id, email: user.email, name: user.name } });
+        return res.status(200).json({ token, user: user });
     } else {
         return res.status(405).json({ error: 'Method not allowed' });
     }
