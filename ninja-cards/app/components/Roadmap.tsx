@@ -64,7 +64,7 @@ const Roadmap: React.FC = () => {
                   <img
                     src={`/ninja-steps/ninja-step-${index + 1}.png`}
                     alt={`Step ${index + 1}`}
-                    className="rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-110"
+                    className="transform transition-transform duration-300 hover:scale-110"
                   />
                 </div>
                 <div className="w-full sm:w-2/3 p-4 bg-charcoal rounded-lg shadow-lg transform transition-colors duration-300 hover:bg-darkOrange">
