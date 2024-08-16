@@ -1,21 +1,29 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
+import path from 'path';
 
 const schema = yup.object().shape({
     email: yup.string().email('Invalid email format').required('Email is required'),
     password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
 });
 
+interface Alert {
+    message: string;
+    title: string;
+    color: string;
+}
+
 const Login: React.FC = () => {
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
     const router = useRouter();
+    const [alert, setAlert] = useState<Alert | null>(null);
 
     const onSubmit = async (data: any) => {
         const res = await fetch('/api/auth/login', {
@@ -27,24 +35,45 @@ const Login: React.FC = () => {
         });
 
         if (res.ok) {
+
             const { token, user } = await res.json();
+            console.log(token + ' token');
+            console.log(user + ' user');
+
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
-            router.push('/');
-            // window.location.reload();
+
+            showAlert('Logged', 'Success', 'green');
+
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1500);
+            
+
         } else {
             const errorData = await res.json();
-            alert(`Login failed: ${errorData.error}`);
+            showAlert('Неуспешно влизане в профила', 'Warning', 'red');
         }
     };
 
+    const showAlert = (message: string, title: string, color: string) => {
+        setAlert({ message, title, color });
+        setTimeout(() => {
+            setAlert(null);
+        }, 4000);
+    };
     return (
-        <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <section className="w-full max-w-md p-8 bg-white rounded shadow-md">
-                <h2 className="text-2xl font-bold mb-6">Login</h2>
+        <main className="flex flex-col items-center justify-center min-h-screen ">
+            <section className="w-full max-w-md p-8  rounded shadow-md bg-blue-900">
+                {alert && (
+                    <div className={`my-2 w-full p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}>
+                        <strong>{alert.title}: </strong> {alert.message}
+                    </div>
+                )}
+                <h2 className="text-2xl font-bold mb-6 text-orange">Login</h2>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                        <label className="block text-orange text-sm font-bold mb-2" htmlFor="email">
                             Email
                         </label>
                         <input
@@ -57,7 +86,7 @@ const Login: React.FC = () => {
                         {errors.email && <p className="text-red-500 text-xs italic">{errors.email.message}</p>}
                     </div>
                     <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                        <label className="block text-orange text-sm font-bold mb-2" htmlFor="password">
                             Password
                         </label>
                         <input
