@@ -26,7 +26,7 @@ model User {
   state         String?
   country       String?
   bio           String?
-  image         Bytes?
+  image         String?  @db.LongText // Change to LongText for MySQL or keep as Text for PostgreSQL
   facebook      String?  // New field for Facebook URL
   instagram     String?  // New field for Instagram URL
   linkedin      String?  // New field for LinkedIn URL
