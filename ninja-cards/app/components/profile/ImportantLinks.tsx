@@ -85,17 +85,22 @@ const ImportantLinks: React.FC = () => {
                 body: formDataObj,
             });
 
-            if (response.ok) {
-                const updatedUser = await response.json();
-                localStorage.setItem('user', JSON.stringify(updatedUser));
-                setAlert({ message: 'Links updated successfully', type: 'success' });
-                setTimeout(() => {
-                    router.replace(`/?update=${new Date().getTime()}`);
-                }, 1500);
-            } else {
-                const errorData = await response.json();
-                setAlert({ message: errorData.error || 'Failed to update links', type: 'error' });
+            if (!response.ok) {
+                const errorText = await response.json();
+                setAlert({ message: errorText.error || 'Failed to update links', type: 'error' });
+                return;
             }
+
+            const updatedUser = await response.json();
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setUser(updatedUser);
+
+            setAlert({ message: 'Links updated successfully', type: 'success' });
+            setTimeout(() => {
+                router.push('/');
+            }, 1000);
+
+
         } catch (error) {
             console.error('Error updating links:', error);
             setAlert({ message: 'An unexpected error occurred. Please try again.', type: 'error' });
