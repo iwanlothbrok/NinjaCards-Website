@@ -151,7 +151,7 @@ const ProfileDetails: React.FC = () => {
                 <p className="text-white mb-2">{address}</p>
                 <iframe
                     title="User Address"
-                    src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyCrPyVxRucGPRQDdxjwzz-S-yKTK59zsU4&q=${encodeURIComponent(address)}`}
+                    src={`https://www.google.com/maps/embed/v1/place?key={PUT YOUR ENV}=${encodeURIComponent(address)}`}
                     width="100%"
                     height="200"
                     className="rounded-lg"
