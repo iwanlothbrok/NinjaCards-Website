@@ -55,8 +55,8 @@ const Information: React.FC = () => {
             console.log(file);
 
             // Check file size before setting it
-            if (file.size > 500 * 1024) {
-                showAlert('Image size exceeds the 500 KB limit', 'Error', 'red');
+            if (file.size > 700 * 1024) {
+                showAlert('Image size exceeds the 700 KB limit', 'Error', 'red');
                 return;
             }
             setFormData({ ...formData, image: file });
