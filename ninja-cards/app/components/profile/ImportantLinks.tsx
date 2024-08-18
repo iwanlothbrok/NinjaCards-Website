@@ -22,7 +22,7 @@ const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange,
     const handleBlur = () => setIsFocused(false);
     return (
         <div className="flex items-center bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <IconComponent className={`text-6xl sm:text-6xl md:text-4xl lg:text-3xl mr-4 transition-colors duration-300 ${isFocused ? focusRingColor : 'text-gray-400'} !important`} />
+            <IconComponent className={`text-4xl sm:text-2xl md:text-3xl lg:text-3xl mr-4 transition-colors duration-300 ${isFocused ? focusRingColor : 'text-gray-400'} !important`} />
             <input
                 type="url"
                 name={name}
@@ -63,6 +63,8 @@ const ImportantLinks: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
         setLoading(true);
         setAlert({ message: '', type: null });
 
@@ -98,7 +100,7 @@ const ImportantLinks: React.FC = () => {
             setAlert({ message: 'Links updated successfully', type: 'success' });
             setTimeout(() => {
                 router.push('/');
-            }, 1000);
+            }, 1500);
 
 
         } catch (error) {
