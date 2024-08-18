@@ -2,57 +2,44 @@
 
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
+import {
+    FaFacebook, FaInstagram, FaLinkedin,
+    FaTwitter, FaTiktok, FaGoogle, FaCashRegister
+} from 'react-icons/fa';
+import { AiOutlineGlobal } from 'react-icons/ai';
+
+const socialMediaIcons = {
+    facebook: FaFacebook,
+    instagram: FaInstagram,
+    linkedin: FaLinkedin,
+    twitter: FaTwitter,
+    tiktok: FaTiktok,
+    googleReview: FaGoogle,
+    revolut: FaCashRegister,
+    website: AiOutlineGlobal,
+};
 
 const Preview: React.FC = () => {
     const { user } = useAuth();
-    console.log(user);
 
-    const generateVCF = () => {
-        const vCard = [
-            "BEGIN:VCARD",
-            "VERSION:3.0",
-            `FN:${user?.firstName} ${user?.lastName}`,
-            `N:${user?.lastName};${user?.firstName};;;`,
-            `EMAIL:${user?.email}`,
-            `TEL;TYPE=CELL:${user?.phone1}`,
-            `TEL;TYPE=CELL:${user?.phone2}`,
-            `ORG:${user?.company}`,
-            `TITLE:${user?.position}`,
-            `ADR;TYPE=WORK:;;${user?.street1};${user?.city};${user?.state};${user?.zipCode};${user?.country}`,
-            `NOTE:${user?.bio}`,
-            user?.facebook ? `URL:Facebook:${user.facebook}` : '',
-            user?.instagram ? `URL:Instagram:${user.instagram}` : '',
-            user?.linkedin ? `URL:LinkedIn:${user.linkedin}` : '',
-            user?.twitter ? `URL:Twitter:${user.twitter}` : '',
-            user?.tiktok ? `URL:TikTok:${user.tiktok}` : '',
-            user?.googleReview ? `URL:Google Review:${user.googleReview}` : '',
-            user?.revolut ? `URL:Revolut:${user.revolut}` : '',
-            user?.qrCode ? `URL:QR Code:${user.qrCode}` : '',
-        ].filter(Boolean); // Filter out any empty strings
-
-        if (user?.image) {
-            const base64Image = Buffer.from(user.image).toString('base64');
-            vCard.push(`PHOTO;ENCODING=b;TYPE=JPEG:${base64Image}`);
-        }
-
-        vCard.push("END:VCARD");
-
-        const blob = new Blob([vCard.join("\r\n")], { type: 'text/vcard' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${user?.firstName}_${user?.lastName}.vcf`;
-        link.click();
-        URL.revokeObjectURL(url);
-    };
-
-    const sectionClass = "border border-gray-700 rounded p-4 mb-4";
-    const titleClass = "text-lg font-bold mb-4 text-white";
-    const textClass = "text-white";
+    const sectionClass = "border border-gray-700 rounded-lg p-4 mb-6 bg-gray-800";
+    const titleClass = "text-2xl font-bold mb-4 text-teal-400";
+    const textClass = "text-lg text-gray-300";
+    const linkClass = "flex items-center space-x-3 text-lg text-teal-400 hover:text-orange-500 transition-colors duration-300";
 
     return (
-        <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
-            <h2 className="text-3xl font-bold mb-6 text-white">Preview</h2>
+        <div className="w-full max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-b from-gray-800 via-gray-900 to-gray-800 rounded-xl shadow-2xl">
+            <h2 className="text-4xl font-extrabold mb-8 text-center text-white">Profile Preview</h2>
+
+            {user?.image && (
+                <div className="flex justify-center mb-6">
+                    <img
+                        src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'default-image-url.jpg'}
+                        alt={`${user?.firstName} ${user?.lastName}`}
+                        className="w-40 h-40 rounded-full border-4 border-teal-400 shadow-lg"
+                    />
+                </div>
+            )}
 
             <div className={sectionClass}>
                 <h3 className={titleClass}>Card Information</h3>
@@ -68,16 +55,26 @@ const Preview: React.FC = () => {
                 <p className={textClass}><strong>Email 1:</strong> {user?.email}</p>
                 <p className={textClass}><strong>Email 2:</strong> {user?.email2}</p>
             </div>
-
             <div className={sectionClass}>
                 <h3 className={titleClass}>Social Media</h3>
-                <p className={textClass}><strong>Facebook:</strong> {user?.facebook}</p>
-                <p className={textClass}><strong>Instagram:</strong> {user?.instagram}</p>
-                <p className={textClass}><strong>LinkedIn:</strong> {user?.linkedin}</p>
-                <p className={textClass}><strong>Twitter:</strong> {user?.twitter}</p>
-                <p className={textClass}><strong>TikTok:</strong> {user?.tiktok}</p>
-                <p className={textClass}><strong>Google Review:</strong> {user?.googleReview}</p>
-                <p className={textClass}><strong>Revolut:</strong> {user?.revolut}</p>
+                <div className="grid grid-cols-4 gap-4">
+                    {Object.keys(socialMediaIcons).map((key) => {
+                        const IconComponent = socialMediaIcons[key as keyof typeof socialMediaIcons];
+                        const url = user?.[key as keyof typeof user] as string;
+                        if (!url) return null;
+                        return (
+                            <a
+                                key={key}
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-5xl text-teal-400 hover:text-orange transition-transform transform hover:scale-125"
+                            >
+                                <IconComponent />
+                            </a>
+                        );
+                    })}
+                </div>
             </div>
 
             <div className={sectionClass}>
@@ -98,16 +95,9 @@ const Preview: React.FC = () => {
             {user?.qrCode && (
                 <div className={sectionClass}>
                     <h3 className={titleClass}>QR Code</h3>
-                    <img src={user.qrCode} alt="QR Code" className="w-32 h-32 mx-auto" />
+                    <img src={user.qrCode} alt="QR Code" className="w-40 h-40 mx-auto mt-2" />
                 </div>
             )}
-
-            <button
-                onClick={generateVCF}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg mt-4 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-transform transform hover:scale-105"
-            >
-                Save to VCF
-            </button>
         </div>
     );
 };
