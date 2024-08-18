@@ -8,6 +8,9 @@ const Roadmap: React.FC = () => {
     const roadmapContainer = document.querySelector(
       '.roadmap-section'
     ) as HTMLElement;
+    const lastStep = document.querySelector(
+      '.roadmap-step:last-child'
+    ) as HTMLElement;
 
     const handleScroll = () => {
       let activeStepIndex = -1;
@@ -23,12 +26,14 @@ const Roadmap: React.FC = () => {
         const totalSteps = roadmapTitles.length;
         const percentageScrolled = (activeStepIndex + 1) / totalSteps;
 
-        // Adjust the height calculation to ensure the line reaches the last item
+        // Calculate the height of the line and stop it at the last step
         const roadmapContainerHeight =
           roadmapContainer.getBoundingClientRect().height;
-        roadmapLine.style.height = `${
-          percentageScrolled * roadmapContainerHeight
-        }px`;
+        const lastStepOffset = lastStep.offsetTop + lastStep.clientHeight / 2;
+        const lineHeight = percentageScrolled * roadmapContainerHeight;
+
+        // Ensure the line does not exceed the position of the last step
+        roadmapLine.style.height = `${Math.min(lineHeight, lastStepOffset)}px`;
       }
     };
 
