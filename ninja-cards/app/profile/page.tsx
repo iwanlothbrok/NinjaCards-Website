@@ -10,7 +10,7 @@ import { useAuth } from '../context/AuthContext';
 
 const TabCard: React.FC<{ tab: string; label: string; description: string; image: string; activeTab: string; onClick: () => void }> = ({ tab, label, description, image, activeTab, onClick }) => (
     <div
-        className={`relative p-4 rounded-lg shadow-md transition-all duration-500 transform hover:scale-105 cursor-pointer text-center ${activeTab === tab ? 'bg-gradient-to-r from-teal-400 to-orange text-white' : 'bg-gradient-to-r  text-white'}`}
+        className={`relative p-4 rounded-lg shadow-md transition-all duration-500 transform hover:scale-105 cursor-pointer text-center ${activeTab === tab ? 'bg-gradient-to-r from-teal-600 to-orange text-white' : 'bg-gradient-to-r  text-white'}`}
         onClick={onClick}
         aria-pressed={activeTab === tab}
     >
@@ -69,7 +69,7 @@ const Profile: React.FC = () => {
                     <TabCard tab="preview" label="Preview" description="Preview your profile" image="/ninja-steps/ninja-step-1.png" activeTab={activeTab} onClick={() => handleTabClick('preview')} />
                     <TabCard tab="profileDetails" label="Profile Details" description="Edit your profile details" image="/ninja-steps/ninja-step-1.png" activeTab={activeTab} onClick={() => handleTabClick('profileDetails')} />
                 </div>
-                <div className="p-6 transition-all" style={{ backgroundImage: 'url(/images/background-pattern.png)', backgroundSize: 'cover' }}>
+                <div className="transition-all" >
                     {renderContent}
                 </div>
             </div>

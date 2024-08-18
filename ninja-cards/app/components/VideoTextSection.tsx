@@ -28,7 +28,7 @@ const VideoTextSection: React.FC = () => {
       <div className="container mx-auto flex flex-col md:flex-row items-center">
         <div className="md:w-1/2 mb-8 md:mb-0 video-section opacity-0 transform translate-y-8 transition-all duration-700 ease-in-out">
           <div className="overflow-hidden rounded-lg shadow-2xl transform transition-transform duration-500 hover:scale-105 hover:shadow-darkOrange">
-            <video className="w-full h-auto" controls>
+            <video className="w-96 h-96" controls>
               <source src="/test.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>

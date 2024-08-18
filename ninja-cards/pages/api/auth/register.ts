@@ -36,14 +36,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 email,
                 password: hashedPassword,
             },
-        });
-        console.log('userid is ' + user.id);
-
-        console.log(user.id);
-        
+        });      
+          
         const qrCodeUrl = `http://localhost:3000/profileDetails?id=${user.id}`;
-        console.log(qrCodeUrl);
-
+        
         // Generate the QR code from the URL
         const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
 
