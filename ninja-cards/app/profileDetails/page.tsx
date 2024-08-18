@@ -1,11 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-    FaFacebook, FaInstagram, FaLinkedin, FaTwitter,
-    FaGithub, FaYoutube, FaTiktok, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaShareAlt
-} from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaGithub, FaYoutube, FaTiktok, FaEnvelope, FaShareAlt, FaDownload } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 interface User {
@@ -38,12 +35,7 @@ interface User {
     revolut: string;
     qrCode: string;
 }
-
-interface Alert {
-    message: string;
-    title: string;
-    color: string;
-}
+const googleApiKey = process.env.GOOGLE_API_KEY;
 
 const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateAction<User | null>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, showAlert: (message: string, title: string, color: string) => void) => {
     setLoading(true);
@@ -63,9 +55,10 @@ const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateA
 const ProfileDetails: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState<Alert | null>(null);
-    const router = useRouter();
+    const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
+    const [bgColor, setBgColor] = useState("#ffffff");  // Default background color
 
+    const router = useRouter();
     const searchParams = useSearchParams();
     const userId = searchParams?.get('id');
 
@@ -114,150 +107,87 @@ const ProfileDetails: React.FC = () => {
         URL.revokeObjectURL(url);
     };
 
-    const ProfileImage = () => (
-        <motion.div
-            className="relative z-10 w-48 h-48 mx-auto mb-4 rounded-full overflow-hidden border-4 border-teal-500 shadow-lg"
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5 }}
-        >
-            <img className="w-full h-full object-cover"
-                src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'default-image-url.jpg'}
-                alt="Profile image"
-            />
-        </motion.div>
-    );
-
-    const SocialLinks = () => (
-        <div className="flex justify-center mb-6 space-x-4">
-            {user?.facebook && <a href={user.facebook} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-transform transform hover:scale-125"><FaFacebook size={32} /></a>}
-            {user?.instagram && <a href={user.instagram} target="_blank" rel="noopener noreferrer" className="text-pink-500 hover:text-pink-700 transition-transform transform hover:scale-125"><FaInstagram size={32} /></a>}
-            {user?.linkedin && <a href={user.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 transition-transform transform hover:scale-125"><FaLinkedin size={32} /></a>}
-            {user?.twitter && <a href={user.twitter} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-600 transition-transform transform hover:scale-125"><FaTwitter size={32} /></a>}
-            {user?.github && <a href={user.github} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-900 transition-transform transform hover:scale-125"><FaGithub size={32} /></a>}
-            {user?.youtube && <a href={user.youtube} target="_blank" rel="noopener noreferrer" className="text-red-600 hover:text-red-800 transition-transform transform hover:scale-125"><FaYoutube size={32} /></a>}
-            {user?.tiktok && <a href={user.tiktok} target="_blank" rel="noopener noreferrer" className="text-black hover:text-gray-800 transition-transform transform hover:scale-125"><FaTiktok size={32} /></a>}
-        </div>
-    );
-
-    const Address = () => {
-        if (!user?.street1 || !user.city || !user.country) return null;
-        const address = `${user.street1}, ${user.city}, ${user.state}, ${user.country}`;
-        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
-
-        return (
-            <div className="my-6">
-                <h3 className="text-teal-400 font-semibold">Address</h3>
-                <p className="text-white mb-2">{address}</p>
-                <iframe
-                    title="User Address"
-                    src={`https://www.google.com/maps/embed/v1/place?key={PUT YOUR ENV}=${encodeURIComponent(address)}`}
-                    width="100%"
-                    height="200"
-                    className="rounded-lg"
-                    allowFullScreen
-                ></iframe>
-                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-lg text-teal-300 hover:text-orange-500 transition-transform transform hover:scale-105 inline-flex items-center mt-4">
-                    <FaMapMarkerAlt className="mr-2" /> View Address on Map
-                </a>
-            </div>
-        );
+    const shareContact = () => {
+        if (navigator.share) {
+            navigator.share({
+                title: `Contact ${user?.name}`,
+                text: `Check out the contact details of ${user?.name}`,
+                url: window.location.href,
+            });
+        } else {
+            generateVCF(); // Fallback to downloading the VCF if sharing isn't supported
+        }
     };
-
-    const ActionButtons = () => (
-        <div className="flex justify-around mt-6 mb-8">
-            <button
-                onClick={generateVCF}
-                className="bg-teal-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-teal-600 transition-transform transform hover:scale-105"
-            >
-                Save VCF
-            </button>
-            {user?.phone1 && (
-                <a href={`tel:${user.phone1}`} className="bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-600 transition-transform transform hover:scale-105">
-                    <FaPhoneAlt /> Call
-                </a>
-            )}
-            {user?.email && (
-                <a href={`mailto:${user.email}`} className="bg-orange text-white px-4 py-2 rounded-full shadow-lg hover:bg-orange-600 transition-transform transform hover:scale-105">
-                    <FaEnvelope /> Email
-                </a>
-            )}
-            <button
-                onClick={() => navigator.share && navigator.share({
-                    title: user?.name,
-                    text: `Contact ${user?.name}`,
-                    url: window.location.href
-                })}
-                className="bg-purple-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-purple-600 transition-transform transform hover:scale-105"
-            >
-                <FaShareAlt /> Share
-            </button>
-        </div>
-    );
 
     if (loading) return <div className="text-center py-20 text-white">Loading...</div>;
     if (!user) return <div className="text-center py-20 text-white">No profile data available.</div>;
 
     return (
-        <div className="container mt-20 w-full mx-auto max-w-2xl rounded-lg overflow-hidden shadow-lg bg-gradient-to-b from-gray-100 via-white to-gray-100 text-gray-900 relative">
-            {alert && (
-                <div className={`my-2 p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
-                    <strong>{alert.title}: </strong> {alert.message}
+        <div className="min-h-screen flex items-center justify-center" >
+            <div style={{ backgroundColor: bgColor }} className="relative z-10  text-gray-900 w-full max-w-md p-6 rounded-lg shadow-xl">
+                <div className="text-center">
+                    <motion.div
+                        className="relative w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-teal-500 shadow-lg"
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <img className="w-full h-full object-cover"
+                            src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'https://via.placeholder.com/150'}
+                            alt="Profile image"
+                        />
+                    </motion.div>
+                    <h1 className="text-2xl font-bold">{user?.name}</h1>
+                    <p className="text-teal-400">{user?.position} at {user?.company}</p>
                 </div>
-            )}
-            <Suspense fallback={<div>Loading...</div>}>
-                <ProfileImage />
-            </Suspense>
-            <Suspense fallback={<div>Loading...</div>}>
-                <SocialLinks />
-            </Suspense>
-            <div className="px-6 py-4">
-                <h2 className="text-2xl font-bold text-center mb-4">{user?.name}</h2>
-                <p className="text-sm text-center mb-6">{user?.bio}</p>
-                <div className="grid grid-cols-1 gap-4 mb-6">
-                    {user?.company && (
-                        <div>
-                            <h3 className="text-teal-400 font-semibold">Company</h3>
-                            <p className="text-teal-600">{user?.company}</p>
-                        </div>
-                    )}
-                    {user?.position && (
-                        <div>
-                            <h3 className="text-teal-400 font-semibold">Position</h3>
-                            <p className="text-teal-600">{user?.position}</p>
-                        </div>
-                    )}
-                    {user?.phone1 && (
-                        <div>
-                            <h3 className="text-teal-400 font-semibold">Phone 1</h3>
-                            <p className="text-teal-600">{user?.phone1}</p>
-                        </div>
-                    )}
-                    {user?.phone2 && (
-                        <div>
-                            <h3 className="text-teal-400 font-semibold">Phone 2</h3>
-                            <p className="text-teal-600">{user?.phone2}</p>
-                        </div>
-                    )}
-                    {user?.email && (
-                        <div>
-                            <h3 className="text-teal-400 font-semibold">Email</h3>
-                            <p className="text-teal-600">{user?.email}</p>
-                        </div>
-                    )}
-                    {user?.email2 && (
-                        <div>
-                            <h3 className="text-teal-400 font-semibold">Email 2</h3>
-                            <p className="text-teal-600">{user?.email2}</p>
-                        </div>
-                    )}
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <Address />
-                    </Suspense>
+
+                <div className="mt-6 text-center">
+                    <h3 className="text-lg font-semibold">About {user?.firstName}</h3>
+                    <p className="text-gray-600 mt-2">{user?.bio}</p>
                 </div>
-                <Suspense fallback={<div>Loading...</div>}>
-                    <ActionButtons />
-                </Suspense>
+
+                <div className="mt-6 text-center">
+                    <h3 className="text-lg font-semibold">Location</h3>
+                    <p className="text-gray-600 mt-2">{`${user?.street1}, ${user?.city}, ${user?.state}, ${user?.zipCode}, ${user?.country}`}</p>
+                    <iframe
+                        className="w-full h-48 mt-4 rounded"
+                        title="User Location"
+                        src={`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${encodeURIComponent(user?.street1 + ', ' + user?.city + ', ' + user?.state + ', ' + user?.zipCode + ', ' + user?.country)}`}
+                        allowFullScreen
+                    ></iframe>
+                </div>
+
+                <div className="mt-6 flex justify-between">
+                    <button
+                        onClick={generateVCF}
+                        className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-transform transform hover:scale-105"
+                    >
+                        <FaDownload className="mr-2" /> Download VCF
+                    </button>
+                    <button
+                        onClick={shareContact}
+                        className="flex items-center px-4 py-2 bg-purple-500 text-white rounded-full shadow-lg hover:bg-purple-600 transition-transform transform hover:scale-105"
+                    >
+                        <FaShareAlt className="mr-2" /> Share Contact
+                    </button>
+                    <a
+                        href={`mailto:${user?.email}`}
+                        className="flex items-center px-4 py-2 bg-orange text-white rounded-full shadow-lg hover:bg-orange transition-transform transform hover:scale-105"
+                    >
+                        <FaEnvelope className="mr-2" /> Send Email
+                    </a>
+                </div>
+
+                {/* Background Color Picker */}
+                <div className="mt-6 text-center">
+                    <h3 className="text-lg font-semibold">Customize Background</h3>
+                    <input
+                        type="color"
+                        value={bgColor}
+                        onChange={(e) => setBgColor(e.target.value)}
+                        className="mt-2 p-1 border rounded"
+                    />
+                </div>
             </div>
         </div>
     );
