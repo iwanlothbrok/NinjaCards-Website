@@ -3,6 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
+// Validation schema using Yup
+const schema = yup.object().shape({
+    email: yup.string().email('Invalid email format').required('Email is required'),
+    password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+    confirmPassword: yup.string()
+        .oneOf([yup.ref('password'), ''], 'Passwords must match')
+        .required('Confirm Password is required'),
+});
 
 interface FormData {
     email: string;
@@ -17,35 +29,24 @@ interface Alert {
 }
 
 const Settings: React.FC = () => {
-    const { user } = useAuth();
-    const [formData, setFormData] = useState<FormData>({
-        email: '',
-        password: '',
-        confirmPassword: '',
-    });
+    const { user, setUser } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<Alert | null>(null);
     const router = useRouter();
 
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
+        resolver: yupResolver(schema),
+    });
+
     useEffect(() => {
         if (user) {
-            setFormData({
-                // name: user.name || '',
-                email: user.email || '',
-                password: '',
-                confirmPassword: '',
-                // image: null
-            });
+            setValue('email', user.email || '');
+            setValue('password', '');
+            setValue('confirmPassword', '');
         }
-    }, [user]);
+    }, [user, setValue]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const onSubmit = async (data: FormData) => {
         setLoading(true);
 
         if (!user) {
@@ -53,22 +54,11 @@ const Settings: React.FC = () => {
             setLoading(false);
             return;
         }
-        if (!formData.email || !formData.password) {
-            showAlert('Попълнете всички полета', 'Warning', 'red');
-            setLoading(false);
-            return;
-        }
-        if (formData.password !== formData.confirmPassword) {
-            showAlert('Passwords do not match', 'Warning', 'red');
-            setLoading(false);
-            return;
-        }
 
         const updateData = new FormData();
         updateData.append('id', user?.id);
-        updateData.append('email', formData.email);
-        updateData.append('password', formData.password);
-
+        updateData.append('email', data.email);
+        updateData.append('password', data.password);
 
         try {
             const response = await fetch('/api/profile/changePasswordAndEmail', {
@@ -85,11 +75,12 @@ const Settings: React.FC = () => {
 
             const updatedUser = await response.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));
+            setUser(updatedUser);
             showAlert('Profile updated successfully', 'Success', 'green');
 
             setTimeout(() => {
-                router.replace(`/?update=${new Date().getTime()}`); // Append a query to force reload
-            }, 1500);
+                router.push('/');
+            }, 2000);
 
         } catch (error) {
             console.error('Error:', error);
@@ -99,7 +90,6 @@ const Settings: React.FC = () => {
         }
     };
 
-
     const showAlert = (message: string, title: string, color: string) => {
         setAlert({ message, title, color });
         setTimeout(() => {
@@ -108,73 +98,68 @@ const Settings: React.FC = () => {
     };
 
     return (
-        <div className="w-full max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-lg animate-fadeIn">
-            <h2 className="text-4xl font-extrabold mb-6 text-white">Profile Details</h2>
+        <div className="w-full max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-b from-gray-800 via-gray-900 to-gray-800 rounded-xl shadow-2xl">
+            <h2 className="text-4xl font-extrabold mb-6 text-center text-white">Profile Settings</h2>
             {alert && (
-                <div className={`my-2 p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}>
-                    <strong>{alert.title}: </strong> {alert.message}
+                <div className={`p-4 rounded-lg mb-6 text-white transition-all duration-300 ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} animate-fadeIn`}>
+                    <strong>{alert.title}:</strong> {alert.message}
                 </div>
             )}
-            <form onSubmit={handleSubmit} className="space-y-6 text-gray-300">
-
-                <div className="mb-4">
-                    <label htmlFor="email" className="block text-sm mb-1">Промени имейл</label>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="relative">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+                        Change Email
+                    </label>
                     <input
                         id="email"
                         type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="Имейл *"
-                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
+                        {...register('email')}
+                        placeholder="Enter your new email"
+                        className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                     />
+                    {errors.email && (
+                        <div className="text-red-500 mt-2">{errors.email.message}</div>
+                    )}
                 </div>
-                <div className="mb-4">
-                    <label htmlFor="password" className="block text-sm mb-1">Смени парола</label>
+                <div className="relative">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
+                        Change Password
+                    </label>
                     <input
                         id="password"
                         type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        placeholder="Нова парола *"
-                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        {...register('password')}
+                        placeholder="Enter new password"
+                        className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                     />
+                    {errors.password && (
+                        <div className="text-red-500 mt-2">{errors.password.message}</div>
+                    )}
                 </div>
-                <div className="mb-4">
-                    <label htmlFor="confirmPassword" className="block text-sm mb-1">Повтори паролата *</label>
+                <div className="relative">
+                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-1">
+                        Confirm Password
+                    </label>
                     <input
                         id="confirmPassword"
                         type="password"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        placeholder="Повтори паролата *"
-                        className="block w-full p-3 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        {...register('confirmPassword')}
+                        placeholder="Confirm new password"
+                        className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                     />
+                    {errors.confirmPassword && (
+                        <div className="text-red-500 mt-2">{errors.confirmPassword.message}</div>
+                    )}
                 </div>
-
-
-                {/* <div className="mb-4">
-                    <label className="block text-sm mb-2 text-white">Photo</label>
-                    <input
-                        type="file"
-                        name="image"
-                        onChange={handleFileChange}
-                        className="block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div> */}
 
                 <button
                     type="submit"
-                    className={`w-full p-3 rounded-lg transform transition-transform duration-300 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500'}`}
+                    className="w-full bg-gradient-to-r from-teal-600 to-orange text-white py-3 md:py-4 rounded-lg hover:from-teal-600 hover:to-orange hover:opacity-70 focus:outline-none focus:ring-4 focus:ring-teal-400 transition-transform transform hover:scale-105"
                     disabled={loading}
                 >
-                    {loading ? 'Loading...' : 'Запази'}
+                    {loading ? 'Saving...' : 'Save'}
                 </button>
             </form>
-
         </div>
     );
 };
