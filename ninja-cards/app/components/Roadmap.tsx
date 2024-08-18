@@ -5,6 +5,9 @@ const Roadmap: React.FC = () => {
   useEffect(() => {
     const roadmapTitles = document.querySelectorAll('.roadmap-step-title');
     const roadmapLine = document.querySelector('.roadmap-line') as HTMLElement;
+    const roadmapContainer = document.querySelector(
+      '.roadmap-section'
+    ) as HTMLElement;
 
     const handleScroll = () => {
       let activeStepIndex = -1;
@@ -20,8 +23,12 @@ const Roadmap: React.FC = () => {
         const totalSteps = roadmapTitles.length;
         const percentageScrolled = (activeStepIndex + 1) / totalSteps;
 
-        // Adjust the height calculation to ensure the line reaches the checkpoint
-        roadmapLine.style.height = `${percentageScrolled * 100}%`;
+        // Adjust the height calculation to ensure the line reaches the last item
+        const roadmapContainerHeight =
+          roadmapContainer.getBoundingClientRect().height;
+        roadmapLine.style.height = `${
+          percentageScrolled * roadmapContainerHeight
+        }px`;
       }
     };
 
@@ -48,7 +55,7 @@ const Roadmap: React.FC = () => {
         <div className="relative text-gray-200 antialiased text-sm font-semibold">
           {/* Vertical Line */}
           <div className="roadmap-line-container">
-            <div className="roadmap-line"></div>
+            <div className="roadmap-line bg-orange absolute left-1/2 transform -translate-x-1/2 w-1 z-0"></div>
           </div>
           {roadmapSteps.map((step, index) => (
             <div
