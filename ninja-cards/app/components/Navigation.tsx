@@ -122,7 +122,7 @@ const Navbar: React.FC = () => {
                                     ✕
                                 </button>
                             </div>
-                            <ul className="flex flex-col items-center justify-center h-full lg:flex-row lg:space-x-8">
+                            <ul className="flex flex-col items-center justify-center h-2/3 lg:flex-row lg:space-x-8">
                                 {['/', '/about', '/pricing', '/team', '/contact'].map((path, idx) => (
                                     <li key={idx} className="relative group">
                                         <Link href={path}
