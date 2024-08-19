@@ -36,6 +36,8 @@ model User {
   revolut       String?  // New field for Revolut URL
   website       String?  // New field for Website URL (additional)
   qrCode        String?  @db.Text // New field for QR Code URL
+  selectedColor String?  // New field for selected color
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
 }
