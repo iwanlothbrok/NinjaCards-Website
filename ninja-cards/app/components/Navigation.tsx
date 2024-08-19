@@ -68,6 +68,7 @@ const Navbar: React.FC = () => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsDropdownOpen(false);
+                toggleMenu();
             }
             if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
                 setIsOpen(false); // Close the menu if clicking outside of it
@@ -83,12 +84,16 @@ const Navbar: React.FC = () => {
     const handleLogout = useCallback(() => {
         logout();
         setIsDropdownOpen(false);
+        toggleMenu();
     }, [logout]);
 
     const handleDropdownClick = () => {
         setIsDropdownOpen(!isDropdownOpen);
+        toggleMenu();
     };
-
+    const handleDropdownImgClick = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
@@ -136,7 +141,7 @@ const Navbar: React.FC = () => {
                                 {isAuthenticated ? (
                                     <li className="relative flex items-center group mt-8 lg:mt-0">
                                         <img
-                                            onClick={handleDropdownClick}
+                                            onClick={handleDropdownImgClick}
                                             className="w-16 h-16 rounded-full cursor-pointer border-2 border-orange shadow-md"
                                             src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'https://tecdn.b-cdn.net/img/new/avatars/2.webp'}
                                             alt="User avatar"
