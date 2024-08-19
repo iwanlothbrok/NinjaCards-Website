@@ -2,7 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaGithub, FaYoutube, FaTiktok, FaEnvelope, FaShareAlt, FaDownload } from 'react-icons/fa';
+import {
+    FaFacebook, FaInstagram, FaLinkedin, FaTwitter,
+    FaGithub, FaYoutube, FaTiktok, FaEnvelope, FaPhoneAlt, FaShareAlt, FaDownload, FaClipboard
+} from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 interface User {
@@ -56,7 +59,12 @@ const ProfileDetails: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
-    const [bgColor, setBgColor] = useState("#ffffff");  // Default background color
+    const [cardStyle, setCardStyle] = useState({
+        bgClass: "bg-white",
+        textClass: "text-gray-900",
+        borderClass: "border-orange",
+        highlightClass: "text-orange",
+    });
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -119,36 +127,115 @@ const ProfileDetails: React.FC = () => {
         }
     };
 
+    const copyContactDetails = () => {
+        if (!user) return;
+        const contactInfo = `
+        Name: ${user.name}
+        Email: ${user.email}
+        Phone: ${user.phone1}
+        Company: ${user.company}
+        Position: ${user.position}
+        Address: ${user.street1}, ${user.city}, ${user.state}, ${user.zipCode}, ${user.country}
+        `;
+
+        navigator.clipboard.writeText(contactInfo).then(() => {
+            showAlert('Contact details copied to clipboard', 'Success', 'green');
+        }, () => {
+            showAlert('Failed to copy contact details', 'Error', 'red');
+        });
+    };
+
     if (loading) return <div className="text-center py-20 text-white">Loading...</div>;
     if (!user) return <div className="text-center py-20 text-white">No profile data available.</div>;
 
+    const cardBackgroundOptions = [
+        {
+            bgClass: "bg-white",
+            textClass: "text-gray-900",
+            borderClass: "border-orange", // Made border more vibrant with teal for better visibility.
+            highlightClass: "text-orange" // Darkened highlight color for stronger visibility against white.
+        },
+        {
+            bgClass: "bg-gray-800",
+            textClass: "text-gray-100",
+            borderClass: "border-orange", // Made border more vibrant with teal for better visibility.
+            highlightClass: "text-orange"
+        },
+        {
+            bgClass: "bg-gradient-to-r from-blue-500 via-teal-600 to-teal-800",
+            textClass: "text-white",
+            borderClass: "border-yellow-400", // Switched to a brighter yellow for better visibility.
+            highlightClass: "text-yellow-400" // Brightened yellow for more pop against the gradient.
+        },
+        {
+            bgClass: "bg-gradient-to-r from-purple-500 via-indigo-500 to-indigo-700",
+            textClass: "text-white",
+            borderClass: "border-yellow-400", // Switched to a brighter yellow for better visibility.
+            highlightClass: "text-yellow-400" // Brightened yellow for more pop against the gradient.
+        },
+        {
+            bgClass: "bg-gradient-to-r from-green-500 via-blue-500 to-blue-700",
+            textClass: "text-white",
+            borderClass: "border-yellow-400", // Brightened the yellow border to stand out more.
+            highlightClass: "text-yellow-400" // Stronger yellow highlight for better visibility.
+        },
+        {
+            bgClass: "bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500",
+            textClass: "text-gray-900",
+            borderClass: "border-teal-900", // Darkened the teal border for more contrast.
+            highlightClass: "text-teal-900" // Darkened teal for stronger visibility against the warm gradient.
+        },
+    ];
+
+
     return (
-        <div className="min-h-screen flex items-center justify-center" >
-            <div style={{ backgroundColor: bgColor }} className="relative z-10  text-gray-900 w-full max-w-md p-6 rounded-lg shadow-xl">
-                <div className="text-center">
+        <div className={`min-h-screen flex items-center justify-center ${cardStyle.bgClass}`}>
+            <div
+                className={`relative z-10 w-full max-w-md p-6 rounded-lg shadow-xl mt-20 mb-20 ${cardStyle.bgClass} ${cardStyle.textClass}`}
+            >
+                {/* Social Media Links */}
+                <div className="mt-4 text-center">
+                    <h3 className="text-xl font-semibold">Connect with Me</h3>
+                    <div className="flex justify-center space-x-6 mt-4">
+                        {user?.facebook && <a href={user.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook size={36} className="hover:text-blue-600" /></a>}
+                        {user?.instagram && <a href={user.instagram} target="_blank" rel="noopener noreferrer"><FaInstagram size={36} className="hover:text-pink-500" /></a>}
+                        {user?.linkedin && <a href={user.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin size={36} className="hover:text-blue-700" /></a>}
+                        {user?.twitter && <a href={user.twitter} target="_blank" rel="noopener noreferrer"><FaTwitter size={36} className="hover:text-blue-400" /></a>}
+                        {user?.github && <a href={user.github} target="_blank" rel="noopener noreferrer"><FaGithub size={36} className="hover:text-gray-900" /></a>}
+                        {user?.youtube && <a href={user.youtube} target="_blank" rel="noopener noreferrer"><FaYoutube size={36} className="hover:text-red-600" /></a>}
+                        {user?.tiktok && <a href={user.tiktok} target="_blank" rel="noopener noreferrer"><FaTiktok size={36} className="hover:text-black" /></a>}
+                    </div>
+                </div>
+
+                {/* Profile Image */}
+                <div className="text-center mt-6">
                     <motion.div
-                        className="relative w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-teal-500 shadow-lg"
+                        className={`relative w-40 h-40 mx-auto mb-4 rounded-full overflow-hidden border-4 shadow-2xl shadow-cyan-600/50 ${cardStyle.borderClass}`}
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <img className="w-full h-full object-cover"
+                        <img className={`w-full h-full object-cover `}
                             src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'https://via.placeholder.com/150'}
                             alt="Profile image"
                         />
                     </motion.div>
-                    <h1 className="text-2xl font-bold">{user?.name}</h1>
-                    <p className="text-teal-400">{user?.position} at {user?.company}</p>
+                    <h1 className={`text-4xl font-bold ${cardStyle.highlightClass}`}>{user?.name}</h1>
+                    <p className={`${cardStyle.highlightClass}`}>{user?.position} at {user?.company}</p>
+                    <p className="mt-2"><FaEnvelope className="inline mr-2" />{user?.email}</p>
+                    <p className=""><FaPhoneAlt className="inline mr-2" />{user?.phone1}</p>
                 </div>
 
+                {/* About Section */}
                 <div className="mt-6 text-center">
-                    <h3 className="text-lg font-semibold">About {user?.firstName}</h3>
-                    <p className="text-gray-600 mt-2">{user?.bio}</p>
+                    <h3 className="text-xl font-semibold">About {user?.firstName}</h3>
+                    <p className="mt-2">{user?.bio}</p>
                 </div>
 
+                {/* Location Section */}
                 <div className="mt-6 text-center">
-                    <h3 className="text-lg font-semibold">Location</h3>
-                    <p className="text-gray-600 mt-2">{`${user?.street1}, ${user?.city}, ${user?.state}, ${user?.zipCode}, ${user?.country}`}</p>
+                    <h3 className="text-xl font-semibold">Location</h3>
+                    <p className="mt-2">{`${user?.street1}, ${user?.city}, ${user?.state}, ${user?.zipCode}, ${user?.country}`}</p>
                     <iframe
                         className="w-full h-48 mt-4 rounded"
                         title="User Location"
@@ -157,36 +244,45 @@ const ProfileDetails: React.FC = () => {
                     ></iframe>
                 </div>
 
+                {/* Action Buttons */}
                 <div className="mt-6 flex justify-between">
-                    <button
-                        onClick={generateVCF}
-                        className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-transform transform hover:scale-105"
-                    >
-                        <FaDownload className="mr-2" /> Download VCF
-                    </button>
                     <button
                         onClick={shareContact}
                         className="flex items-center px-4 py-2 bg-purple-500 text-white rounded-full shadow-lg hover:bg-purple-600 transition-transform transform hover:scale-105"
                     >
                         <FaShareAlt className="mr-2" /> Share Contact
                     </button>
-                    <a
-                        href={`mailto:${user?.email}`}
-                        className="flex items-center px-4 py-2 bg-orange text-white rounded-full shadow-lg hover:bg-orange transition-transform transform hover:scale-105"
+                    <button
+                        onClick={copyContactDetails}
+                        className="flex items-center px-4 py-2 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition-transform transform hover:scale-105"
                     >
-                        <FaEnvelope className="mr-2" /> Send Email
-                    </a>
+                        <FaClipboard className="mr-2" /> Copy Details
+                    </button>
                 </div>
 
-                {/* Background Color Picker */}
+                {/* Fixed Save to VCF Button */}
+                <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-20">
+                    <button
+                        onClick={generateVCF}
+                        className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-full shadow-xl hover:bg-blue-700 transition-transform transform hover:scale-110"
+                    >
+                        <FaDownload className="mr-2" /> Save to VCF
+                    </button>
+                </div>
+
+                {/* Background Animation Selector */}
                 <div className="mt-6 text-center">
-                    <h3 className="text-lg font-semibold">Customize Background</h3>
-                    <input
-                        type="color"
-                        value={bgColor}
-                        onChange={(e) => setBgColor(e.target.value)}
-                        className="mt-2 p-1 border rounded"
-                    />
+                    <h3 className="text-xl font-semibold">Customize Card Background</h3>
+                    <div className="flex justify-center space-x-2 mt-2">
+                        {cardBackgroundOptions.map(({ bgClass, textClass, borderClass, highlightClass }) => (
+                            <button
+                                key={bgClass}
+                                onClick={() => setCardStyle({ bgClass, textClass, borderClass, highlightClass })}
+                                className={`w-8 h-8 rounded-full border border-gray-300 focus:outline-none ${bgClass}`}
+                                style={{ borderColor: borderClass.split("-")[1] }}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
