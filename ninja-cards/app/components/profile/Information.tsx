@@ -314,18 +314,23 @@ const Information: React.FC = () => {
                         ></textarea>
                     </div>
                     <div className="mb-6">
-                        <label className="block text-sm font-medium mb-2 text-gray-300">Profile Image</label>
+                        <label className="block text-sm font-medium mb-2 text-gray-300">
+                            Profile Image
+                        </label>
                         {imageError && (
-                            <div className="text-red-500 mb-2">{imageError}</div>
+                            <div className="text-red-500 mb-2">
+                                {imageError}
+                            </div>
                         )}
                         <input
                             type="file"
                             name="image"
                             accept="image/*"
                             onChange={handleFileChange}
-                            className="block w-full p-3 md:p-4 text-lg border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                            className="block w-full px-4 py-3 text-sm md:text-base border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 ease-in-out"
                         />
                     </div>
+
                 </div>
 
                 <button

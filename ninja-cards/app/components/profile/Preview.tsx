@@ -57,7 +57,7 @@ const Preview: React.FC = () => {
             </div>
             <div className={sectionClass}>
                 <h3 className={titleClass}>Social Media</h3>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-4 ml-4 sm:ml-10">
                     {Object.keys(socialMediaIcons).map((key) => {
                         const IconComponent = socialMediaIcons[key as keyof typeof socialMediaIcons];
                         const url = user?.[key as keyof typeof user] as string;
@@ -68,7 +68,7 @@ const Preview: React.FC = () => {
                                 href={url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-5xl text-teal-400 hover:text-orange transition-transform transform hover:scale-125"
+                                className="text-2xl sm:text-3xl text-teal-400 hover:text-orange transition-transform transform hover:scale-110 sm:hover:scale-125"
                             >
                                 <IconComponent />
                             </a>

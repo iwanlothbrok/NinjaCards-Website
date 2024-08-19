@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaTiktok, FaGoogle, FaCashRegister } from 'react-icons/fa';
 import { AiOutlineGlobal } from 'react-icons/ai';
 
+
 type LinkInputProps = {
     name: string;
     value: string;
