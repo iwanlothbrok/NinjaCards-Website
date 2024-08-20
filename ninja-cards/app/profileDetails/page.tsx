@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaUser,
-    FaGithub, FaYoutube, FaTiktok, FaEnvelope, FaPhoneAlt, FaShareAlt, FaDownload, FaClipboard, FaPeopleCarry
+    FaGithub, FaYoutube, FaTiktok, FaChevronDown, FaPhoneAlt, FaShareAlt, FaDownload, FaClipboard, FaPeopleCarry
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-
+import { Menu, Transition } from '@headlessui/react';
+import { } from 'react';
 interface User {
     id: string;
     name: string;
@@ -38,6 +39,7 @@ interface User {
     revolut: string;
     qrCode: string;
     selectedColor: string; // New field for selected color
+    cv: string;
 }
 const googleApiKey = process.env.GOOGLE_API_KEY;
 const cardBackgroundOptions = [
@@ -122,11 +124,14 @@ const ProfileDetails: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]); // Default to first option
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 
     const router = useRouter();
     const searchParams = useSearchParams();
     const userId = searchParams?.get('id');
+
+    const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
     useEffect(() => {
         if (userId) {
@@ -216,6 +221,15 @@ const ProfileDetails: React.FC = () => {
         }
     };
 
+    const downloadCv = () => {
+        if (!user) return;
+
+        const link = document.createElement('a');
+        link.href = `/api/profile/downloadCv?id=${user.id}`;
+        link.download = `${user.firstName}_${user.lastName}_CV.pdf`;
+        link.click();
+    };
+
     const copyContactDetails = () => {
         if (!user) return;
 
@@ -247,16 +261,53 @@ const ProfileDetails: React.FC = () => {
     if (loading) return <div className="text-center text-2xl py-72 text-red-600 ">Зарежда...</div>;
     if (!user) return <div className="text-center text-2xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
 
-
     return (
         <div className={`min-h-screen flex items-center justify-center ${cardStyle.bgClass}`}>
-            <div
-                className={`relative z-10 w-full max-w-md p-6 rounded-lg mt-20 mb-20 ${cardStyle.bgClass} ${cardStyle.textClass} shadow-lg`}
-            >
+            <div className={`relative z-10 w-full max-w-md p-6 rounded-lg mt-20 mb-20 ${cardStyle.bgClass} ${cardStyle.textClass} shadow-lg`}>
+                {/* Cover Image */}
+                <div className="w-full h-40 overflow-hidden bg-black relative">
+                    <img
+                        className="object-cover w-full h-full"
+                        src="/profileCover.png"
+                        alt="Cover"
+                    />
+                    <svg className="absolute bottom-0 left-0 w-full h-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                        <path fill="white" d="M0,128L48,160C96,192,192,256,288,256C384,256,480,192,576,160C672,128,768,128,864,160C960,192,1056,256,1152,256C1248,256,1344,192,1392,160L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
+                            <animate
+                                attributeName="d"
+                                dur="10s"
+                                repeatCount="indefinite"
+                                values="
+        M0,128L48,160C96,192,192,256,288,256C384,256,480,192,576,160C672,128,768,128,864,160C960,192,1056,256,1152,256C1248,256,1344,192,1392,160L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
+        M0,160L48,192C96,224,192,288,288,288C384,288,480,224,576,192C672,160,768,160,864,192C960,224,1056,288,1152,288C1248,288,1344,224,1392,192L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
+        M0,192L48,224C96,256,192,320,288,320C384,320,480,256,576,224C672,192,768,192,864,224C960,256,1056,320,1152,320C1248,320,1344,256,1392,224L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
+        M0,128L48,160C96,192,192,256,288,256C384,256,480,192,576,160C672,128,768,128,864,160C960,192,1056,256,1152,256C1248,256,1344,192,1392,160L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z
+      " />
+                        </path>
+                    </svg>
+                </div>
 
-                {/* Социални медии */}
+                {/* Profile Picture and Name/Position */}
+                <div className="text-center relative -mt-16">
+                    <motion.div
+                        className={`relative w-32 h-32 mx-auto mb-2 rounded-full overflow-hidden border-4 border-white shadow-xl`}
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <img className={`w-full h-full object-cover `}
+                            src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'https://via.placeholder.com/150'}
+                            alt="Profile"
+                        />
+                    </motion.div>
+                    <h1 className={`text-xl font-bold mt-2 ${cardStyle.highlightClass}`}>{user?.name}</h1>
+                    <p className={`text-sm ${cardStyle.highlightClass}`}>{user?.position}</p>
+                    <p className={`text-sm ${cardStyle.highlightClass}`}>{user?.company}</p>
+                </div>
+
+                {/* Social Media Links */}
                 <div className="mt-4 text-center">
-                    <h3 className="text-xl font-semibold">Свържете се с мен</h3>
+                    <h3 className="text-xl font-semibold">Connect with me</h3>
                     <div className="flex justify-center space-x-6 mt-4">
                         {user?.facebook && <a href={user.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook size={36} className="hover:text-blue-600" /></a>}
                         {user?.instagram && <a href={user.instagram} target="_blank" rel="noopener noreferrer"><FaInstagram size={36} className="hover:text-pink-500" /></a>}
@@ -268,94 +319,84 @@ const ProfileDetails: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Профилна снимка */}
-                <div className="text-center mt-6">
-                    <motion.div
-                        className={`relative w-40 h-40 mx-auto mb-4 rounded-full overflow-hidden border-4 shadow-2xl shadow-cyan-600/50 ${cardStyle.borderClass}`}
-                        initial={{ scale: 0.9 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <img className={`w-full h-full object-cover `}
-                            src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'https://via.placeholder.com/150'}
-                            alt="Профилна снимка"
-                        />
-                    </motion.div>
-                    <h1 className={`text-4xl font-bold ${cardStyle.highlightClass}`}>{user?.name}</h1>
-                    <p className={`${cardStyle.highlightClass}`}>{user?.position} в {user?.company}</p>
-                    <p className="mt-2"><FaUser className="inline mr-2" />{user?.firstName + ' ' + user?.lastName}</p>
-                    <p className=""><FaEnvelope className="inline mr-2" />{user?.email}</p>
-                    <p className=""><FaPhoneAlt className="inline mr-2" />{user?.phone1}</p>
-
-                </div>
-
-                {/* За секцията */}
+                {/* About Section */}
                 <div className="mt-6 text-center">
-                    <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>За {user?.firstName}</h3>
+                    <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>About {user?.firstName}</h3>
                     <p className="mt-2">{user?.bio}</p>
                 </div>
 
-                {/* Секция за местоположение */}
+                {/* Location Section */}
                 <div className="mt-6 text-center">
-                    <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Местоположение</h3>
+                    <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Location</h3>
                     <p className="mt-2">{`${user?.street1}, ${user?.city}, ${user?.state}, ${user?.zipCode}, ${user?.country}`}</p>
                     <iframe
                         className="w-full h-48 mt-4 rounded"
-                        title="Местоположение на потребителя"
+                        title="User Location"
                         src={`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${encodeURIComponent(user?.street1 + ', ' + user?.city + ', ' + user?.state + ', ' + user?.zipCode + ', ' + user?.country)}`}
                         allowFullScreen
                     ></iframe>
                 </div>
 
-                {/* Бутони за действия */}
-                <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Action Buttons in Dropdown */}
+                <div className="relative inline-block text-left">
                     <button
-                        onClick={shareContact}
-                        className="flex flex-col items-center justify-center w-full py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-md hover:from-purple-700 hover:to-purple-900 hover:shadow-lg transition-all duration-300 ease-in-out"
+                        onClick={toggleDropdown}
+                        className="inline-flex justify-center w-full py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-md hover:from-purple-700 hover:to-purple-900 hover:shadow-lg transition-all duration-300 ease-in-out"
                     >
-                        <FaShareAlt className="text-xl mb-1" />
-                        <span className="text-sm font-medium">Сподели контакт</span>
+                        <FaChevronDown className="mr-2" />
+                        Actions
                     </button>
 
-                    <button
-                        onClick={copyContactDetails}
-                        className="flex flex-col items-center justify-center w-full py-2 bg-gradient-to-r from-green-600 to-green-800 text-white rounded-lg shadow-md hover:from-green-700 hover:to-green-900 hover:shadow-lg transition-all duration-300 ease-in-out"
-                    >
-                        <FaClipboard className="text-xl mb-1" />
-                        <span className="text-sm font-medium">Копирай данни</span>
-                    </button>
-
-                    <button
-                        onClick={() => window.location.href = `tel:${user?.phone1}`}
-                        className="flex flex-col items-center justify-center w-full py-2 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg shadow-md hover:from-red-700 hover:to-red-900 hover:shadow-lg transition-all duration-300 ease-in-out"
-                    >
-                        <FaPhoneAlt className="text-xl mb-1" />
-                        <span className="text-sm font-medium">Обади се {user?.phone1}</span>
-                    </button>
-
-                    <button
-                        onClick={() => window.location.href}// = //user?.portfolio}
-                        className="flex flex-col items-center justify-center w-full py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg shadow-md hover:from-blue-700 hover:to-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
-                    >
-                        <FaDownload className="text-xl mb-1" />
-                        <span className="text-sm font-medium">Изтегли портфолио</span>
-                    </button>
+                    {isDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-56 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg">
+                            <div className="py-1">
+                                <div
+                                    onClick={shareContact}
+                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                                >
+                                    <FaShareAlt className="mr-2" />
+                                    Share Contact
+                                </div>
+                                <div
+                                    onClick={copyContactDetails}
+                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                                >
+                                    <FaClipboard className="mr-2" />
+                                    Copy Contact Details
+                                </div>
+                                <div
+                                    onClick={() => window.location.href = `tel:${user?.phone1}`}
+                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                                >
+                                    <FaPhoneAlt className="mr-2" />
+                                    Call {user?.phone1}
+                                </div>
+                                <div
+                                    onClick={downloadCv}
+                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                                >
+                                    <FaDownload className="mr-2" />
+                                    Download CV
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {/* Фиксиран бутон за запазване във VCF */}
+                {/* Floating Save VCF Button */}
                 <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-20">
                     <button
                         onClick={generateVCF}
                         className="flex items-center px-8 py-6 bg-orange text-white rounded-full shadow-2xl hover:shadow-3xl hover:from-blue-600 hover:to-teal-600 transition-all duration-300 ease-in-out transform hover:scale-105"
                     >
                         <FaDownload className="mr-3 text-2xl" />
-                        <span className="text-lg font-semibold">Запази контанти</span>
+                        <span className="text-lg font-semibold">Save Contact</span>
                     </button>
                 </div>
 
-                {/* Селектор за анимация на фона */}
+                {/* Background Selector */}
                 <div className="mt-6 text-center">
-                    <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Персонализирай фон на картата</h3>
+                    <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Customize Card Background</h3>
                     <div className="flex justify-center space-x-2 mt-2">
                         {cardBackgroundOptions.map(({ name, bgClass }) => (
                             <button
@@ -371,5 +412,6 @@ const ProfileDetails: React.FC = () => {
         </div>
     );
 };
+
 
 export default ProfileDetails;
