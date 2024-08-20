@@ -4,6 +4,7 @@ import { HomePage } from './components/Home'
 import Features from './components/Features'
 import About from './components/About'
 import Roadmap from './components/Roadmap'
+import Roadmap2 from './components/Roadmap2'
 import VideoTextSection from './components/VideoTextSection'
 import FeaturesSection from './components/FeaturesSection'
 import Testimonies from './components/Testimonies'
@@ -17,7 +18,8 @@ export default function Home() {
       <Features />
       {/* <About /> */}
       <VideoTextSection />
-      <Roadmap />
+      {/* <Roadmap /> */}
+      <Roadmap2 />
       <Testimonies />
       <ProductGallery />
       <FeaturesSection />
