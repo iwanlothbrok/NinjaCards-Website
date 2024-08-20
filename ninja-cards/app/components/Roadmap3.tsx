@@ -36,7 +36,7 @@ const RoadmapHybrid: React.FC = () => {
                 <img
                   src={`/ninja-steps/ninja-step-${index + 1}.png`}
                   alt={`Step ${index + 1}`}
-                  className="h-28 w-auto mx-auto mt-4 object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"
+                  className="h-28 w-auto mx-auto mt-4 object-contain transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
             </li>
