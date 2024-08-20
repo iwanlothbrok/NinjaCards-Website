@@ -27,17 +27,17 @@ const RoadmapHybrid: React.FC = () => {
               {/* END OF NUMBERS */}
 
               <div className="space-y-4 text-center mt-6">
-                <h3 className="text-lg sm:text-xl font-bold group-hover:font-extrabold text-orange mb-2 group-hover:text-black text-center transition-colors duration-300">
-                  {step.title}
-                </h3>
-                <p className="text-gray-300 text-sm sm:text-base group-hover:text-black text-center transition-opacity duration-300 group-hover:opacity-90">
-                  {step.description}
-                </p>
                 <img
                   src={`/ninja-steps/ninja-step-${index + 1}.png`}
                   alt={`Step ${index + 1}`}
                   className="h-28 w-auto mx-auto mt-4 object-contain transition-transform duration-500 group-hover:scale-110"
                 />
+                <h3 className="text-lg sm:text-xl font-bold group-hover:font-extrabold text-orange mb-2 group-hover:text-charcoal text-center transition-colors duration-300">
+                  {step.title}
+                </h3>
+                <p className="text-gray-300 text-sm sm:text-base group-hover:text-black text-center transition-opacity duration-300 group-hover:opacity-90">
+                  {step.description}
+                </p>
               </div>
             </li>
           ))}
