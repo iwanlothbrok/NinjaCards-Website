@@ -37,25 +37,27 @@ const FrequentlyAskedQuestions: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen bg-darkBg pt-12 pb-24 flex flex-col justify-center px-4 sm:px-6">
-      <div className="max-w-5xl mx-auto">
+    <section className="min-h-screen bg-gradient-to-b from-darkBg to-darkBg2 pt-12 pb-24 flex flex-col justify-center px-4 sm:px-6">
+      <div className="max-w-4xl mx-auto">
         <h2 className="text-4xl sm:text-5xl font-extrabold text-orange tracking-wide text-center mb-12">
           Frequently Asked Questions
         </h2>
-        <div className="space-y-4">
+        <div className="space-y-6">
           {faqData.map((faq, index) => (
             <div
               key={index}
-              className="bg-gray-800 rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-2xl"
+              className={`bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-lg p-6 transition-all duration-500 transform ${
+                activeIndex === index ? 'scale-105' : 'hover:scale-105'
+              }`}
             >
               <div
                 onClick={() => toggleFAQ(index)}
                 className="flex justify-between items-center cursor-pointer"
               >
-                <h3 className="text-lg sm:text-xl font-bold text-orange">
+                <h3 className="text-lg sm:text-xl font-bold text-white">
                   {faq.question}
                 </h3>
-                <span className="text-orange">
+                <span className="text-orange transform transition-transform duration-500">
                   {activeIndex === index ? (
                     <FaChevronUp size={20} />
                   ) : (
@@ -64,7 +66,7 @@ const FrequentlyAskedQuestions: React.FC = () => {
                 </span>
               </div>
               {activeIndex === index && (
-                <div className="mt-4 text-gray-300 text-sm sm:text-base">
+                <div className="mt-4 text-orange text-sm sm:text-base opacity-90 transition-opacity duration-500">
                   {faq.answer}
                 </div>
               )}
