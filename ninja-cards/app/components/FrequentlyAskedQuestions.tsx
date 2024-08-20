@@ -47,7 +47,7 @@ const FrequentlyAskedQuestions: React.FC = () => {
             <div
               key={index}
               className={`bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-lg p-6 transition-all duration-500 transform ${
-                activeIndex === index ? 'scale-105' : 'hover:scale-105'
+                activeIndex === index ? '' : 'hover:scale-105'
               }`}
             >
               <div
@@ -66,7 +66,10 @@ const FrequentlyAskedQuestions: React.FC = () => {
                 </span>
               </div>
               {activeIndex === index && (
-                <div className="mt-4 text-orange text-sm sm:text-base opacity-90 transition-opacity duration-500">
+                <div
+                  onClick={() => toggleFAQ(index)}
+                  className="mt-4 text-orange text-sm sm:text-base opacity-90 transition-opacity duration-500 cursor-pointer"
+                >
                   {faq.answer}
                 </div>
               )}
