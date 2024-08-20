@@ -11,6 +11,7 @@ import FeaturesSection from './components/FeaturesSection'
 import Testimonies from './components/Testimonies'
 import { motion } from 'framer-motion';
 import ProductGallery from './components/ProductCard';
+import FrequentlyAskedQuestions from './components/FrequentlyAskedQuestions';
 
 export default function Home() {
   return (
@@ -25,6 +26,7 @@ export default function Home() {
       <Testimonies />
       <ProductGallery />
       <FeaturesSection />
+      <FrequentlyAskedQuestions/>
     </main>
   )
 }
