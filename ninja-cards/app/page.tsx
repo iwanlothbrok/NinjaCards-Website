@@ -9,7 +9,6 @@ import FeaturesSection from './components/FeaturesSection'
 import Testimonies from './components/Testimonies'
 import { motion } from 'framer-motion';
 import ProductGallery from './components/ProductCard';
-import Product from './components/Product';
 
 export default function Home() {
   return (
