@@ -13,12 +13,12 @@ const Roadmap2: React.FC = () => {
           Card
         </p>
       </div>
-      <div className="max-w-5xl mx-auto w-full px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto w-full px-4  sm:px-5 sm:py-2">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {roadmapSteps.map((step, index) => (
             <div
               key={index}
-              className="relative flex flex-col items-center hover:bg-orange bg-charcoal rounded-lg shadow-lg p-6 transform transition-transform duration-300 hover:-translate-y-2 group hover:shadow-2xl"
+              className="relative flex flex-col items-center hover:bg-orange bg-charcoal rounded-lg shadow-lg p-3 sm:py-5 transform transition-transform duration-300 hover:-translate-y-2 group hover:shadow-2xl"
             >
               <div
                 className="absolute inset-0 blur opacity-0 group-hover:opacity-100 group-hover:duration-200 rounded-lg"
