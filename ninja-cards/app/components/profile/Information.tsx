@@ -15,6 +15,8 @@ const Information: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<Alert | null>(null);
     const [imageError, setImageError] = useState<string | null>(null);
+    const [cvError, setCvError] = useState<string | null>(null);
+
     const [formData, setFormData] = useState({
         firstName: user?.firstName || '',
         lastName: user?.lastName || '',
@@ -33,6 +35,8 @@ const Information: React.FC = () => {
         country: user?.country || '',
         bio: user?.bio || '',
         image: null as File | null,
+        cv: null as File | null,
+
     });
 
     const alertRef = useRef<HTMLDivElement>(null);
@@ -55,14 +59,29 @@ const Information: React.FC = () => {
 
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+        const { name } = e.target;
+
         if (file) {
-            if (file.size > 700 * 1024) {
+            if (name === 'image' && file.size > 700 * 1024) {
                 setImageError('Image size exceeds the 700 KB limit');
                 setFormData((prevData) => ({ ...prevData, image: null }));
                 return;
             }
-            setImageError(null);
-            setFormData((prevData) => ({ ...prevData, image: file }));
+            if (name === 'cv' && file.size > 2 * 1024 * 1024) {
+                setCvError('CV size exceeds the 2 MB limit');
+                setFormData((prevData) => ({ ...prevData, cv: null }));
+                return;
+            }
+
+            if (name === 'image') {
+                setImageError(null);
+                setFormData((prevData) => ({ ...prevData, image: file }));
+            }
+
+            if (name === 'cv') {
+                setCvError(null);
+                setFormData((prevData) => ({ ...prevData, cv: file }));
+            }
         }
     }, []);
 
@@ -94,6 +113,10 @@ const Information: React.FC = () => {
 
         if (formData.image) {
             updateData.append('image', formData.image);
+        }
+
+        if (formData.cv) {
+            updateData.append('cv', formData.cv);
         }
 
         try {
@@ -302,17 +325,22 @@ const Information: React.FC = () => {
 
                 {/* Bio and Profile Image */}
                 <div className="border border-gray-700 rounded-lg p-4 md:p-6 mb-6">
-                    <h3 className="text-2xl font-semibold mb-4 text-white">Bio and Profile Image</h3>
+                    <h3 className="text-2xl font-semibold mb-4 text-white">Bio</h3>
                     <div className="mb-6">
                         <label className="block text-sm font-medium mb-2 text-gray-300">Bio</label>
                         <textarea
                             name="bio"
+                            rows={5}
                             value={formData.bio}
                             onChange={handleChange}
                             placeholder="Tell us more about yourself"
                             className="block w-full p-3 md:p-4 text-lg border border-gray-600 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                         ></textarea>
                     </div>
+                </div>
+
+                <div className="border border-gray-700 rounded-lg p-4 md:p-6 mb-6">
+                    <h3 className="text-2xl font-semibold mb-4 text-white">Profile Image and CV</h3>
                     <div className="mb-6">
                         <label className="block text-sm font-medium mb-2 text-gray-300">
                             Profile Image
@@ -327,10 +355,24 @@ const Information: React.FC = () => {
                             name="image"
                             accept="image/*"
                             onChange={handleFileChange}
-                            className="block w-full px-4 py-3 text-sm md:text-base border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 ease-in-out"
-                        />
+                            className="w-full text-gray-500 font-medium text-lg bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-3 file:px-4 file:mr-4 file:bg-orange file:hover:bg-opacity-60 file:text-white rounded" />
                     </div>
-
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium mb-2 text-gray-300">
+                            Upload CV
+                        </label>
+                        {cvError && (
+                            <div className="text-red-500 mb-2">
+                                {cvError}
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            name="cv"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleFileChange}
+                            className="w-full text-gray-500 font-medium text-lg bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-3 file:px-4 file:mr-4 file:bg-teal-400 file:hover:bg-teal-600 file:text-white rounded" />
+                    </div>
                 </div>
 
                 <button

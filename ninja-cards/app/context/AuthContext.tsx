@@ -34,6 +34,7 @@ interface User {
     revolut: string;       // New field for Revolut URL
     qrCode: string;        // New field for QR Code URL
     selectedColor: string;        // New field for QR Code URL
+    cv: string;        // New field for QR Code URL
 
 }
 

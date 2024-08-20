@@ -89,6 +89,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 updatedData.image = base64Image; // Store the image as a base64 string
             }
 
+            if (files.cv) {
+                const cvFile = Array.isArray(files.cv) ? files.cv[0] : files.cv;
+                const cvData = fs.readFileSync(cvFile.filepath);
+                const base64CV = cvData.toString('base64');
+                updatedData.cv = base64CV;
+            }
             // Update the user in the database
             const updatedUser = await prisma.user.update({
                 where: { id: Number(id) },
