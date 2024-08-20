@@ -26,55 +26,51 @@ const Roadmap: React.FC = () => {
         const totalSteps = roadmapTitles.length;
         const percentageScrolled = (activeStepIndex + 1) / totalSteps;
 
-        // Calculate the height of the line and stop it at the last step
         const roadmapContainerHeight =
           roadmapContainer.getBoundingClientRect().height;
         const lastStepOffset = lastStep.offsetTop + lastStep.clientHeight / 2;
         const lineHeight = percentageScrolled * roadmapContainerHeight;
 
-        // Ensure the line does not exceed the position of the last step
         roadmapLine.style.height = `${Math.min(lineHeight, lastStepOffset)}px`;
       }
     };
 
     window.addEventListener('scroll', handleScroll);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   return (
-    <section className="min-h-screen bg-darkBg pt-6 sm:pt-12 pb-0 flex flex-col justify-center roadmap-section">
-      <div className="text-center mb-12 px-4">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-orange tracking-wider">
+    <section className="min-h-screen bg-darkBg pt-2 sm:pt-6 pb-0 flex flex-col justify-center roadmap-section">
+      <div className="text-center mb-6 px-2">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-orange tracking-wider">
           Your Journey with Ninja NFC Card
         </h1>
-        <p className="text-base sm:text-lg text-gray-300 mt-4">
+        <p className="text-xs sm:text-sm text-gray-300 mt-2">
           Follow these steps to get started with your personalized Ninja NFC
           Card
         </p>
       </div>
-      <div className="py-3 max-w-4xl mx-auto w-full px-2 sm:px-4">
-        <div className="relative text-gray-200 antialiased text-sm font-semibold">
-          {/* Vertical Line */}
+      <div className="py-1 max-w-2xl mx-auto w-full px-1 sm:px-2">
+        <div className="relative text-gray-200 antialiased text-xs font-semibold">
           <div className="roadmap-line-container">
             <div className="roadmap-line bg-orange absolute left-1/2 transform -translate-x-1/2 w-1 z-0"></div>
           </div>
           {roadmapSteps.map((step, index) => (
             <div
               key={index}
-              className={`mt-6 ${
-                index === roadmapSteps.length - 1 ? 'mb-0' : 'mb-12'
+              className={`mt-3 ${
+                index === roadmapSteps.length - 1 ? 'mb-0' : 'mb-6'
               } flex ${
-                index % 2 === 0 ? 'justify-start pr-8' : 'justify-end pl-8'
+                index % 2 === 0 ? 'justify-start pr-2' : 'justify-end pl-2'
               } roadmap-step transform transition-all duration-700 ease-in-out`}
             >
               <div className="flex items-center w-full mx-auto">
                 <div
-                  className={`w-1/3 ${
-                    index % 2 === 0 ? 'mr-8 order-first' : 'ml-8 order-last'
+                  className={`w-1/5 ${
+                    index % 2 === 0 ? 'mr-2 order-first' : 'ml-2 order-last'
                   }`}
                 >
                   <img
@@ -83,11 +79,11 @@ const Roadmap: React.FC = () => {
                     className="transform transition-transform duration-300 hover:scale-110 w-full mx-auto"
                   />
                 </div>
-                <div className="w-2/3 p-4 bg-charcoal rounded-lg shadow-lg transform transition-colors duration-300 hover:bg-darkOrange">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-orange mb-4 roadmap-step-title">
+                <div className="w-4/5 p-4 bg-charcoal rounded-lg shadow-lg transform transition-colors duration-300 hover:bg-darkOrange">
+                  <h3 className="text-base sm:text-lg font-bold text-orange mb-1 roadmap-step-title">
                     {step.title}
                   </h3>
-                  <p className="text-gray-200 text-sm sm:text-base">
+                  <p className="text-gray-200 text-xs sm:text-sm">
                     {step.description}
                   </p>
                 </div>

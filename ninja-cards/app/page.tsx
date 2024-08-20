@@ -15,7 +15,7 @@ export default function Home() {
     <main className="">
       <HomePage />
       <Features />
-      <About />
+      {/* <About /> */}
       <VideoTextSection />
       <Roadmap />
       <Testimonies />
