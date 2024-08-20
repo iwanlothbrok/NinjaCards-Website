@@ -25,9 +25,12 @@ const Roadmap2: React.FC = () => {
                 aria-hidden="true"
               ></div>
               <div className="relative z-10 flex flex-col items-center">
+             {/* NUMBERS */}
                 <div className="flex items-center justify-center w-14 h-14 bg-orange group-hover:bg-charcoal group-hover:text-white text-darkBg font-bold rounded-full mb-4 text-2xl transition-all duration-300 group-hover:scale-110">
                   {index + 1}
                 </div>
+             {/* NUMBERS */}
+
                 <img
                   src={`/ninja-steps/ninja-step-${index + 1}.png`}
                   alt={`Step ${index + 1}`}
