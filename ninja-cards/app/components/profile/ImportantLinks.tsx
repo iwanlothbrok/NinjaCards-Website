@@ -3,29 +3,28 @@
 import React, { useState, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaTiktok, FaGoogle, FaCashRegister } from 'react-icons/fa';
-import { AiOutlineGlobal } from 'react-icons/ai';
-
+import Image from 'next/image';
 
 type LinkInputProps = {
     name: string;
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     placeholder: string;
-    IconComponent: React.ElementType;
+    iconSrc: string;
     focusRingColor: string;
 };
 
-const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange, placeholder, IconComponent, focusRingColor }) => {
+const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange, placeholder, iconSrc, focusRingColor }) => {
     const [isFocused, setIsFocused] = useState(false);
 
     const handleFocus = () => setIsFocused(true);
     const handleBlur = () => setIsFocused(false);
+
     return (
         <div className="flex items-center bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <IconComponent className={`text-4xl sm:text-2xl md:text-3xl lg:text-3xl mr-4 transition-colors duration-300 ${isFocused ? focusRingColor : 'text-gray-400'} !important`} />
+            <Image src={iconSrc} alt={`${name} icon`} width={40} height={40} className={`mr-4 transition-colors duration-300 ${isFocused ? focusRingColor : 'text-gray-400'} !important`} />
             <input
-                type="url"
+                type="text"
                 name={name}
                 value={value}
                 onChange={onChange}
@@ -36,8 +35,6 @@ const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange,
             />
         </div>
     );
-
-
 });
 
 const ImportantLinks: React.FC = () => {
@@ -50,7 +47,13 @@ const ImportantLinks: React.FC = () => {
         revolut: user?.revolut || '',
         googleReview: user?.googleReview || '',
         tiktok: user?.tiktok || '',
-        website: '',
+        website: user?.website || '',
+        viber: user?.viber || '',
+        whatsapp: user?.whatsapp || '',
+        github: user?.github || '',
+        behance: user?.behance || '',
+        paypal: user?.paypal || '',
+        trustpilot: user?.trustpilot || '',
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
@@ -102,8 +105,6 @@ const ImportantLinks: React.FC = () => {
             setTimeout(() => {
                 router.push('/');
             }, 1500);
-
-
         } catch (error) {
             console.error('Error updating links:', error);
             setAlert({ message: 'An unexpected error occurred. Please try again.', type: 'error' });
@@ -128,7 +129,7 @@ const ImportantLinks: React.FC = () => {
                     value={formData.facebook}
                     onChange={handleChange}
                     placeholder="Facebook URL"
-                    IconComponent={FaFacebook}
+                    iconSrc="/logos/fb.png"
                     focusRingColor="text-[#1877F2]"
                 />
                 <LinkInput
@@ -136,7 +137,7 @@ const ImportantLinks: React.FC = () => {
                     value={formData.instagram}
                     onChange={handleChange}
                     placeholder="Instagram URL"
-                    IconComponent={FaInstagram}
+                    iconSrc="/logos/ig.png"
                     focusRingColor="text-[#E4405F]"
                 />
                 <LinkInput
@@ -144,15 +145,15 @@ const ImportantLinks: React.FC = () => {
                     value={formData.linkedin}
                     onChange={handleChange}
                     placeholder="LinkedIn URL"
-                    IconComponent={FaLinkedin}
+                    iconSrc="/logos/lk.png"
                     focusRingColor="text-[#0077B5]"
                 />
                 <LinkInput
                     name="twitter"
                     value={formData.twitter}
                     onChange={handleChange}
-                    placeholder="Twitter URL"
-                    IconComponent={FaTwitter}
+                    placeholder="Twitter (X) URL"
+                    iconSrc="/logos/x.png"
                     focusRingColor="text-[#1DA1F2]"
                 />
                 <LinkInput
@@ -160,7 +161,7 @@ const ImportantLinks: React.FC = () => {
                     value={formData.tiktok}
                     onChange={handleChange}
                     placeholder="TikTok URL"
-                    IconComponent={FaTiktok}
+                    iconSrc="/logos/tiktok.png"
                     focusRingColor="text-[#69C9D0]"
                 />
                 <LinkInput
@@ -168,23 +169,71 @@ const ImportantLinks: React.FC = () => {
                     value={formData.googleReview}
                     onChange={handleChange}
                     placeholder="Google Review URL"
-                    IconComponent={FaGoogle}
+                    iconSrc="/logos/gr.png"
                     focusRingColor="text-[#4285F4]"
                 />
                 <LinkInput
                     name="revolut"
                     value={formData.revolut}
                     onChange={handleChange}
-                    placeholder="Revolut URL"
-                    IconComponent={FaCashRegister}
+                    placeholder="Revolut Username"
+                    iconSrc="/logos/rev.png"
                     focusRingColor="text-[#0075EB]"
+                />
+                <LinkInput
+                    name="viber"
+                    value={formData.viber}
+                    onChange={handleChange}
+                    placeholder="Viber Phone Number"
+                    iconSrc="/logos/viber.png"
+                    focusRingColor="text-purple-500"
+                />
+                <LinkInput
+                    name="whatsapp"
+                    value={formData.whatsapp}
+                    onChange={handleChange}
+                    placeholder="WhatsApp Phone Number"
+                    iconSrc="/logos/wa.png"
+                    focusRingColor="text-green-500"
+                />
+                <LinkInput
+                    name="github"
+                    value={formData.github}
+                    onChange={handleChange}
+                    placeholder="GitHub URL"
+                    iconSrc="/logos/git.png"
+                    focusRingColor="text-gray-800"
+                />
+                <LinkInput
+                    name="behance"
+                    value={formData.behance}
+                    onChange={handleChange}
+                    placeholder="Behance URL"
+                    iconSrc="/logos/be.png"
+                    focusRingColor="text-blue-600"
+                />
+                <LinkInput
+                    name="paypal"
+                    value={formData.paypal}
+                    onChange={handleChange}
+                    placeholder="PayPal URL"
+                    iconSrc="/logos/icons8-paypal-48.png"
+                    focusRingColor="text-blue-500"
+                />
+                <LinkInput
+                    name="trustpilot"
+                    value={formData.trustpilot}
+                    onChange={handleChange}
+                    placeholder="TrustPilot URL"
+                    iconSrc="/logos/tp.png"
+                    focusRingColor="text-green-500"
                 />
                 <LinkInput
                     name="website"
                     value={formData.website}
                     onChange={handleChange}
                     placeholder="Website URL"
-                    IconComponent={AiOutlineGlobal}
+                    iconSrc="/logos/website.png"
                     focusRingColor="text-green-500"
                 />
 
@@ -195,7 +244,6 @@ const ImportantLinks: React.FC = () => {
                 >
                     {loading ? 'Saving...' : 'Save'}
                 </button>
-
             </form>
         </div>
     );
