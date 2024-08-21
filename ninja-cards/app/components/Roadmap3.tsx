@@ -3,7 +3,7 @@ import React from 'react';
 
 const RoadmapHybrid: React.FC = () => {
   return (
-    <section className="min-h-screen bg-darkBg pt-6 pb-10 flex flex-col justify-center">
+    <section className="min-h-screen bg-darkBg mt-10 pt-6 pb-10 flex flex-col justify-center">
       <div className="text-center mb-12 px-4">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-orange tracking-wide">
           Your Journey with Ninja NFC Card
