@@ -1,13 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     FaFacebook, FaInstagram, FaLinkedin, FaTwitter,
-    FaGithub, FaYoutube, FaTiktok, FaChevronDown, FaFileDownload,
+    FaGithub, FaYoutube, FaTiktok, FaFileDownload,
     FaPhoneAlt, FaShareAlt, FaDownload, FaClipboard
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import classNames from 'classnames';
 
 interface User {
     id: string;
@@ -38,8 +41,14 @@ interface User {
     googleReview: string;
     revolut: string;
     qrCode: string;
-    selectedColor: string; // New field for selected color
+    selectedColor: string;
     cv: string;
+    behance: string;
+    paypal: string;
+    trustpilot: string;
+    viber: string;
+    whatsapp: string;
+    website: string;
 }
 
 interface GradientStop {
@@ -48,57 +57,57 @@ interface GradientStop {
 }
 
 const googleApiKey = process.env.GOOGLE_API_KEY;
+
 const cardBackgroundOptions = [
     {
-        name: 'white',
-        bgClass: "bg-white",
-        textClass: "text-gray-900",
-        borderClass: "border-orange",
-        highlightClass: "text-orange",
-        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
-    },
-    {
         name: 'gray',
-        bgClass: "bg-gray-800",
-        textClass: "text-gray-100",
+        bgClass: "bg-orange",
+        textClass: "text-gray-200",
         borderClass: "border-orange",
         highlightClass: "text-orange",
-        buttonBgClass: "bg-white" // Bright orange button to stand out against gray
+        buttonBgClass: "bg-gray-700"
     },
     {
-        name: 'blue-teal-gradient',
-        bgClass: "bg-gradient-to-r from-blue-600 via-teal-600 to-teal-800",
-        textClass: "text-white", // Bright yellow for high contrast
-        borderClass: "border-white", // White border for maximum contrast
-        highlightClass: "text-yellow-400", // Strong yellow for highlighted elements
-        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
+        name: 'blue',
+        bgClass: "bg-blue-500",
+        textClass: "text-white",
+        borderClass: "border-blue-500",
+        highlightClass: "text-blue-500",
+        buttonBgClass: "bg-gray-700"
     },
     {
-        name: 'purple-indigo-gradient',
-        bgClass: "bg-gradient-to-r from-purple-600 via-indigo-700 to-indigo-800",
-        textClass: "text-white", // Bright cyan for clear visibility against the dark gradient
-        borderClass: "border-white", // White border for strong contrast
-        highlightClass: "text-cyan-300", // Bold cyan to make highlights pop
-        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
+        name: 'purple',
+        bgClass: "bg-purple-500",
+        textClass: "text-white",
+        borderClass: "border-purple-500",
+        highlightClass: "text-purple-500",
+        buttonBgClass: "bg-gray-700"
     },
     {
-        name: 'green-blue-gradient',
-        bgClass: "bg-gradient-to-r from-green-600 via-blue-600 to-blue-700",
-        textClass: "text-white", // Bright orange for clear visibility
-        borderClass: "border-white", // White border for contrast
-        highlightClass: "text-orange", // Strong orange to make important elements stand out
-        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
+        name: 'green',
+        bgClass: "bg-green-500",
+        textClass: "text-white",
+        borderClass: "border-green-500",
+        highlightClass: "text-green-500",
+        buttonBgClass: "bg-gray-700"
     },
     {
-        name: 'yellow-orange-red-gradient',
-        bgClass: "bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500",
-        textClass: "text-gray-800", // Black for maximum contrast
-        borderClass: "border-white", // White border for clarity
-        highlightClass: "text-gray-800", // Strong black for high contrast highlights
-        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
+        name: 'yellow',
+        bgClass: "bg-yellow-400",
+        textClass: "text-white",
+        borderClass: "border-yellow-400",
+        highlightClass: "text-yellow-400",
+        buttonBgClass: "bg-gray-700"
+    },
+    {
+        name: 'teil',
+        bgClass: "bg-teal-400",
+        textClass: "text-white",
+        borderClass: "border-teal-400",
+        highlightClass: "text-teal-400",
+        buttonBgClass: "bg-gray-700"
     }
 ];
-
 
 const bgClassToGradientStops: Record<string, GradientStop[]> = {
     'bg-gradient-to-r from-blue-500 via-teal-600 to-teal-800': [
@@ -155,53 +164,11 @@ const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateA
     }
 };
 
-interface DynamicSvgProps {
-    bgClass: string;
-}
-
-const DynamicSvg: React.FC<DynamicSvgProps> = ({ bgClass }) => {
-    let gradientStops: GradientStop[] = [];
-
-    if (bgClass === "bg-white") {
-        gradientStops = [
-            { offset: '0%', color: '#FFFFFF' },
-            { offset: '100%', color: '#FFFFFF' }
-        ];
-    } else if (bgClass === "bg-gray-800") {
-        gradientStops = [
-            { offset: '0%', color: '#1F2937' }, // The color corresponding to gray-800
-            { offset: '100%', color: '#1F2937' }
-        ];
-    } else {
-        gradientStops = bgClassToGradientStops[bgClass] || [];
-    }
-    return (
-        <svg className="absolute bottom-0 left-0 w-full h-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 300">
-            <defs>
-                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-                    {gradientStops.map((stop, index) => (
-                        <stop
-                            key={index}
-                            offset={stop.offset}
-                            style={{ stopColor: stop.color, stopOpacity: 1 }}
-                        />
-                    ))}
-                </linearGradient>
-            </defs>
-            <path
-                fill="url(#grad1)"
-                d="M0,256L48,224C96,192,192,128,288,122.7C384,117,480,171,576,197.3C672,224,768,224,864,186.7C960,149,1056,75,1152,80C1248,85,1344,171,1392,213.3L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            >
-
-            </path>
-        </svg>);
-};
-
 const ProfileDetails: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
-    const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]); // Default to first option
+    const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
@@ -349,9 +316,9 @@ const ProfileDetails: React.FC = () => {
             className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
             style={{
                 backgroundImage: `
-            linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-            url('/profile01.png')
-        `,
+                linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                url('/profile01.png')
+            `,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
@@ -365,187 +332,334 @@ const ProfileDetails: React.FC = () => {
                     borderRadius: 'inherit',
                 }}
             >
-                {/* <div className={`w-full h-44 ${cardStyle.bgClass} relative overflow-hidden`}>
-                    <div
-                        className="absolute inset-0 bg-gradient-to-b from-black via-transparent opacity-60"
-                        style={{ clipPath: 'polygon(0 0, 100% 0, 100% 80%, 75% 95%, 50% 80%, 25% 95%, 0 80%)' }} // Matching the zigzag shape
-                    >
-
-                    </div>
-
-                    <img
-                        className="object-cover w-full h-full"
-                        src="/profileCover.png"
-                        alt="Cover"
-                        style={{ clipPath: 'polygon(0 0, 100% 0, 100% 80%, 75% 95%, 50% 80%, 25% 95%, 0 80%)' }} // Zigzag shape
-                    />
-                </div> */}
-
-                {/* Profile Picture and Name/Position */}
-                <div className="text-center relative -mt-16">
-                    <motion.div
-                        className={`relative w-32 h-32 mx-auto mb-2 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-lg`}
-                        initial={{ scale: 0.9 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <img
-                            className="w-full h-full object-cover"
-                            src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'https://via.placeholder.com/150'}
-                            alt="Profile"
-                        />
-                    </motion.div>
-                    <h1 className={`text-2xl font-bold mt-2 text-white`}>{user?.name}</h1>
-                    <p className={`text-sm text-gray-200`}>{user?.position}</p>
-                    <p className={`text-sm text-gray-200`}>{user?.company}</p>
-                </div>
-
-                {/* Social Media Links */}
-                <div className="mt-4 text-center">
-                    <h3 className="text-xl font-semibold">Connect with me</h3>
-                    <div className="flex justify-center space-x-6 mt-4">
-                        {user?.facebook && <a href={user.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook size={36} className="hover:text-blue-600" /></a>}
-                        {user?.instagram && <a href={user.instagram} target="_blank" rel="noopener noreferrer"><FaInstagram size={36} className="hover:text-pink-500" /></a>}
-                        {user?.linkedin && <a href={user.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin size={36} className="hover:text-blue-700" /></a>}
-                        {user?.twitter && <a href={user.twitter} target="_blank" rel="noopener noreferrer"><FaTwitter size={36} className="hover:text-blue-400" /></a>}
-                        {user?.github && <a href={user.github} target="_blank" rel="noopener noreferrer"><FaGithub size={36} className="hover:text-gray-900" /></a>}
-                        {user?.youtube && <a href={user.youtube} target="_blank" rel="noopener noreferrer"><FaYoutube size={36} className="hover:text-red-600" /></a>}
-                        {user?.tiktok && <a href={user.tiktok} target="_blank" rel="noopener noreferrer"><FaTiktok size={36} className="hover:text-black" /></a>}
-                    </div>
-                </div>
-
-                {/* About Section */}
-                <div className="mt-6 text-center">
-                    <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>About {user?.firstName}</h3>
-                    <p className="mt-2">{user?.bio}</p>
-                </div>
-
-                {/* Location Section */}
-                <div className="mt-6 text-center">
-                    <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Location</h3>
-                    <p className="mt-2">{`${user?.street1}, ${user?.city}, ${user?.state}, ${user?.zipCode}, ${user?.country}`}</p>
-                    <iframe
-                        className="w-full h-48 mt-4 rounded"
-                        title="User Location"
-                        src={`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${encodeURIComponent(user?.street1 + ', ' + user?.city + ', ' + user?.state + ', ' + user?.zipCode + ', ' + user?.country)}`}
-                        allowFullScreen
-                    ></iframe>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex justify-center space-x-6 mt-4">
-                    <div
-                        className="relative group"
-                        onTouchStart={() => handleTouchStart('Call')}
-                        onTouchEnd={handleTouchEnd}
-                        tabIndex={0}
-                        role="button"
-                        aria-label={`Call ${user?.phone1}`}
-                    >
-                        <div
-                            onClick={() => window.location.href = `tel:${user?.phone1}`}
-                            className={`p-4 ${cardStyle.buttonBgClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-green-100`}
-                        >
-                            <FaPhoneAlt className="text-green-500 text-2xl group-hover:text-green-700 transition-colors duration-300 ease-in-out" />
-                        </div>
-                        {(showTooltip === 'Call') && (
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
-                                Call {user?.phone1}
-                            </div>
-                        )}
-                    </div>
-
-                    <div
-                        className="relative group"
-                        onTouchStart={() => handleTouchStart('Share Contact')}
-                        onTouchEnd={handleTouchEnd}
-                        tabIndex={0}
-                        role="button"
-                        aria-label="Share Contact"
-                    >
-                        <div
-                            onClick={shareContact}
-                            className={`p-4 ${cardStyle.buttonBgClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-blue-100`}
-                        >
-                            <FaShareAlt className="text-blue-500 text-2xl group-hover:text-blue-700 transition-colors duration-300 ease-in-out" />
-                        </div>
-                        {(showTooltip === 'Share Contact') && (
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
-                                Share Contact
-                            </div>
-                        )}
-                    </div>
-
-                    <div
-                        className="relative group"
-                        onTouchStart={() => handleTouchStart('Copy Contact Details')}
-                        onTouchEnd={handleTouchEnd}
-                        tabIndex={0}
-                        role="button"
-                        aria-label="Copy Contact Details"
-                    >
-                        <div
-                            onClick={copyContactDetails}
-                            className={`p-4 ${cardStyle.buttonBgClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-yellow-100`}
-                        >
-                            <FaClipboard className="text-yellow-500 text-2xl group-hover:text-yellow-700 transition-colors duration-300 ease-in-out" />
-                        </div>
-                        {(showTooltip === 'Copy Contact Details') && (
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
-                                Copy Contact Details
-                            </div>
-                        )}
-                    </div>
-
-                    <div
-                        className="relative group"
-                        onTouchStart={() => handleTouchStart('Download CV')}
-                        onTouchEnd={handleTouchEnd}
-                        tabIndex={0}
-                        role="button"
-                        aria-label="Download CV"
-                    >
-                        <div
-                            onClick={downloadCv}
-                            className={`p-4 ${cardStyle.buttonBgClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-red-100`}
-                        >
-                            <FaFileDownload className="text-red-500 text-2xl group-hover:text-red-700 transition-colors duration-300 ease-in-out" />
-                        </div>
-                        {(showTooltip === 'Download CV') && (
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
-                                Download CV
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Floating Save VCF Button */}
-                <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-20">
-                    <button
-                        onClick={generateVCF}
-                        className={`flex items-center px-8 py-6 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 ease-in-out transform hover:scale-105`}
-                    >
-                        <FaDownload className="mr-3 text-2xl" />
-                        <span className="text-lg font-semibold">ЗАПАЗИ КОНТАКТ</span>
-                    </button>
-                </div>
-
-                {/* Background Selector */}
-                <div className="mt-6 text-center">
-                    <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Customize Card Background</h3>
-                    <div className="flex justify-center space-x-2 mt-2">
-                        {cardBackgroundOptions.map(({ name, bgClass }) => (
-                            <button
-                                key={name}
-                                onClick={() => handleColorSelection(name)}
-                                className={`w-8 h-8 rounded-full border ${bgClass}`}
-                            />
-                        ))}
-                    </div>
-                </div>
-
+                <ProfileHeader user={user} cardStyle={cardStyle} />
+                <SocialMediaLinks user={user} />
+                <AboutSection user={user} cardStyle={cardStyle} />
+                <LocationSection user={user} googleApiKey={googleApiKey || ''} cardStyle={cardStyle} />
+                <ActionButtons
+                    user={user}
+                    showTooltip={showTooltip}
+                    handleTouchStart={handleTouchStart}
+                    handleTouchEnd={handleTouchEnd}
+                    copyContactDetails={copyContactDetails}
+                    downloadCv={downloadCv}
+                    shareContact={shareContact}
+                />
+                <FloatingSaveButton generateVCF={generateVCF} />
+                <BackgroundSelector
+                    cardBackgroundOptions={cardBackgroundOptions}
+                    handleColorSelection={handleColorSelection}
+                    cardStyle={cardStyle}
+                />
             </div>
         </div>
     );
 }
+
+const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
+    <div className="text-center relative -mt-16">
+        <motion.div
+            className={`relative w-32 h-32 mx-auto mb-2 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-lg`}
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5 }}
+        >
+            <img
+                className="w-full h-full object-cover"
+                src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'https://via.placeholder.com/150'}
+                alt="Profile"
+            />
+        </motion.div>
+        <h1 className={`text-2xl font-bold mt-2 ${cardStyle.highlightClass}`}>{user?.name}</h1>
+        <p className={`text-sm text-gray-200 ${cardStyle.highlightClass}`}>{user?.position}</p>
+        <p className={`text-sm text-gray-200 ${cardStyle.highlightClass}`}>{user?.company}</p>
+    </div>
+);
+const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
+    <div className="mt-6 text-center">
+        <h3 className="text-2xl font-semibold mb-4">Connect with me</h3>
+        <div className="grid grid-cols-3 gap-6">
+            {user?.facebook && (
+                <a
+                    href={user.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/fb.png" alt="Facebook" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.instagram && (
+                <a
+                    href={user.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/ig.png" alt="Instagram" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.linkedin && (
+                <a
+                    href={user.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/lk.png" alt="LinkedIn" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.twitter && (
+                <a
+                    href={user.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/x.png" alt="Twitter" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.github && (
+                <a
+                    href={user.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/git.png" alt="GitHub" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.youtube && (
+                <a
+                    href={user.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/youtube.png" alt="YouTube" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.tiktok && (
+                <a
+                    href={user.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/tiktok.png" alt="TikTok" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.behance && (
+                <a
+                    href={user.behance}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/be.png" alt="Behance" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.paypal && (
+                <a
+                    href={user.paypal}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/icons8-paypal-48.png" alt="PayPal" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.trustpilot && (
+                <a
+                    href={user.trustpilot}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/tp.png" alt="TrustPilot" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.viber && (
+                <a
+                    href={`viber://chat?number=${user.viber}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/viber.png" alt="Viber" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.whatsapp && (
+                <a
+                    href={`https://wa.me/${user.whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/wa.png" alt="WhatsApp" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.website && (
+                <a
+                    href={user.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/gr.png" alt="Website" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+            {user?.revolut && (
+                <a
+                    href={`https://revolut.me/${user.revolut}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <Image src="/logos/rev.png" alt="Revolut" width={64} height={64} className="mx-auto" />
+                </a>
+            )}
+        </div>
+    </div>
+);
+
+const AboutSection: React.FC<{ user: User | null; cardStyle: any }> = ({ user, cardStyle }) => (
+    <div className="mt-6 text-center">
+        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>About {user?.firstName}</h3>
+        <p className="mt-2">{user?.bio}</p>
+    </div>
+);
+
+const LocationSection: React.FC<{ user: User | null; googleApiKey: string; cardStyle: any }> = ({ user, googleApiKey, cardStyle }) => (
+    <div className="mt-6 text-center">
+        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Location</h3>
+        <p className="mt-2">{`${user?.street1}, ${user?.city}, ${user?.state}, ${user?.zipCode}, ${user?.country}`}</p>
+        <iframe
+            className="w-full h-48 mt-4 rounded"
+            title="User Location"
+            src={`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${encodeURIComponent(user?.street1 + ', ' + user?.city + ', ' + user?.state + ', ' + user?.zipCode + ', ' + user?.country)}`}
+            allowFullScreen
+        ></iframe>
+    </div>
+);
+
+const ActionButtons: React.FC<{
+    user: User | null;
+    showTooltip: string | null;
+    handleTouchStart: (action: string) => void;
+    handleTouchEnd: () => void;
+    copyContactDetails: () => void;
+    downloadCv: () => void;
+    shareContact: () => void;
+}> = ({ user, showTooltip, handleTouchStart, handleTouchEnd, copyContactDetails, downloadCv, shareContact }) => (
+    <div className="flex justify-center space-x-6 mt-4">
+        <ActionButton
+            label={`Call ${user?.phone1}`}
+            icon={FaPhoneAlt}
+            colorClass="bg-green-200"
+            hoverColor="text-green-500"
+            tooltip={showTooltip === 'Call'}
+            onClick={() => window.location.href = `tel:${user?.phone1}`}
+            handleTouchStart={() => handleTouchStart('Call')}
+            handleTouchEnd={handleTouchEnd}
+        />
+        <ActionButton
+            label="Share Contact"
+            icon={FaShareAlt}
+            colorClass="bg-blue-200"
+            hoverColor="text-blue-500"
+
+            tooltip={showTooltip === 'Share Contact'}
+            onClick={shareContact}
+            handleTouchStart={() => handleTouchStart('Share Contact')}
+            handleTouchEnd={handleTouchEnd}
+        />
+        <ActionButton
+            label="Copy Contact Details"
+            icon={FaClipboard}
+            colorClass="bg-yellow-200"
+            hoverColor="text-yellow-500"
+
+            tooltip={showTooltip === 'Copy Contact Details'}
+            onClick={copyContactDetails}
+            handleTouchStart={() => handleTouchStart('Copy Contact Details')}
+            handleTouchEnd={handleTouchEnd}
+        />
+        <ActionButton
+            label="Download CV"
+            icon={FaFileDownload}
+            colorClass="bg-red-200"
+            hoverColor="text-red-500"
+            tooltip={showTooltip === 'Download CV'}
+            onClick={downloadCv}
+            handleTouchStart={() => handleTouchStart('Download CV')}
+            handleTouchEnd={handleTouchEnd}
+        />
+    </div>
+);
+
+const ActionButton: React.FC<{
+    label: string;
+    icon: React.ElementType;
+    colorClass: string;
+    hoverColor: string;
+    tooltip: boolean;
+    onClick: () => void;
+    handleTouchStart: () => void;
+    handleTouchEnd: () => void;
+}> = ({ label, icon: Icon, colorClass, hoverColor, tooltip, onClick, handleTouchStart, handleTouchEnd }) => (
+    <div
+        className="relative group"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        tabIndex={0}
+        role="button"
+        aria-label={label}
+        onClick={onClick}
+    >
+        <div className={`p-4 ${colorClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out`}>
+            <Icon className={classNames('text-2xl', 'text-gray-700', 'transition-colors', 'duration-300', 'ease-in-out', {
+                [`group-hover:${hoverColor}`]: hoverColor,
+            })} />
+        </div>
+        {tooltip && (
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
+                {label}
+            </div>
+        )}
+    </div>
+);
+
+
+const FloatingSaveButton: React.FC<{ generateVCF: () => void }> = ({ generateVCF }) => (
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-20">
+        <button
+            onClick={generateVCF}
+            className="flex items-center px-8 py-6 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 ease-in-out transform hover:scale-105"
+        >
+            <FaDownload className="mr-3 text-2xl" />
+            <span className="text-lg font-semibold">ЗАПАЗИ КОНТАКТ</span>
+        </button>
+    </div>
+);
+
+const BackgroundSelector: React.FC<{
+    cardBackgroundOptions: typeof cardBackgroundOptions;
+    handleColorSelection: (colorName: string) => void;
+    cardStyle: any;
+}> = ({ cardBackgroundOptions, handleColorSelection, cardStyle }) => (
+    <div className="mt-6 text-center">
+        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Customize Card Background</h3>
+        <div className="flex justify-center space-x-2 mt-2">
+            {cardBackgroundOptions.map(({ name, bgClass }) => (
+                <button
+                    key={name}
+                    onClick={() => handleColorSelection(name)}
+                    className={`w-8 h-8 rounded-full border ${bgClass}`}
+                />
+            ))}
+        </div>
+    </div>
+);
+
 export default ProfileDetails;
