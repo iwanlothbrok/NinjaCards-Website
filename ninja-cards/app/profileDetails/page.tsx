@@ -376,17 +376,26 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
     </div>
 );
 const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
-    <div className="mt-6 text-center">
-        <h3 className="text-2xl font-semibold mb-4">Connect with me</h3>
-        <div className="grid grid-cols-3 gap-6">
+    <div className="mt-10 text-center">
+        <h3 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-200">Connect with Me</h3>
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6">
             {user?.facebook && (
                 <a
                     href={user.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="Facebook"
+                    className="relative group"
                 >
-                    <Image src="/logos/fb.png" alt="Facebook" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/fb.png"
+                            alt="Facebook"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.instagram && (
@@ -394,9 +403,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="Instagram"
+                    className="relative group"
                 >
-                    <Image src="/logos/ig.png" alt="Instagram" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-pink-500 to-yellow-500 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/ig.png"
+                            alt="Instagram"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.linkedin && (
@@ -404,9 +422,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="LinkedIn"
+                    className="relative group"
                 >
-                    <Image src="/logos/lk.png" alt="LinkedIn" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-blue-700 to-blue-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/lk.png"
+                            alt="LinkedIn"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.twitter && (
@@ -414,9 +441,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="Twitter"
+                    className="relative group"
                 >
-                    <Image src="/logos/x.png" alt="Twitter" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/x.png"
+                            alt="Twitter"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.github && (
@@ -424,9 +460,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="GitHub"
+                    className="relative group"
                 >
-                    <Image src="/logos/git.png" alt="GitHub" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-gray-800 to-gray-600 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/git.png"
+                            alt="GitHub"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.youtube && (
@@ -434,9 +479,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.youtube}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="YouTube"
+                    className="relative group"
                 >
-                    <Image src="/logos/youtube.png" alt="YouTube" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-red-600 to-red-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/youtube.png"
+                            alt="YouTube"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.tiktok && (
@@ -444,9 +498,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.tiktok}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="TikTok"
+                    className="relative group"
                 >
-                    <Image src="/logos/tiktok.png" alt="TikTok" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-black to-gray-800 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/tiktok.png"
+                            alt="TikTok"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.behance && (
@@ -454,9 +517,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.behance}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="Behance"
+                    className="relative group"
                 >
-                    <Image src="/logos/be.png" alt="Behance" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/be.png"
+                            alt="Behance"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.paypal && (
@@ -464,9 +536,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.paypal}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="PayPal"
+                    className="relative group"
                 >
-                    <Image src="/logos/icons8-paypal-48.png" alt="PayPal" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-blue-500 to-blue-300 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/icons8-paypal-48.png"
+                            alt="PayPal"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.trustpilot && (
@@ -474,9 +555,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.trustpilot}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="TrustPilot"
+                    className="relative group"
                 >
-                    <Image src="/logos/tp.png" alt="TrustPilot" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-green-500 to-teal-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/tp.png"
+                            alt="TrustPilot"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.viber && (
@@ -484,9 +574,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={`viber://chat?number=${user.viber}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="Viber"
+                    className="relative group"
                 >
-                    <Image src="/logos/viber.png" alt="Viber" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-purple-600 to-purple-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/viber.png"
+                            alt="Viber"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.whatsapp && (
@@ -494,9 +593,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={`https://wa.me/${user.whatsapp}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="WhatsApp"
+                    className="relative group"
                 >
-                    <Image src="/logos/wa.png" alt="WhatsApp" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-green-500 to-green-300 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/wa.png"
+                            alt="WhatsApp"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.website && (
@@ -504,9 +612,18 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={user.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="Website"
+                    className="relative group"
                 >
-                    <Image src="/logos/gr.png" alt="Website" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-gray-500 to-gray-300 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/gr.png"
+                            alt="Website"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
             {user?.revolut && (
@@ -514,15 +631,23 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     href={`https://revolut.me/${user.revolut}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                    aria-label="Revolut"
+                    className="relative group"
                 >
-                    <Image src="/logos/rev.png" alt="Revolut" width={64} height={64} className="mx-auto" />
+                    <div className="bg-gradient-to-r from-blue-800 to-blue-600 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/rev.png"
+                            alt="Revolut"
+                            width={64}  // Mobile size
+                            height={64} // Mobile size
+                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                        />
+                    </div>
                 </a>
             )}
         </div>
     </div>
 );
-
 const AboutSection: React.FC<{ user: User | null; cardStyle: any }> = ({ user, cardStyle }) => (
     <div className="mt-6 text-center">
         <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>About {user?.firstName}</h3>
