@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE `user` ADD COLUMN `behance` VARCHAR(191) NULL,
+    ADD COLUMN `github` VARCHAR(191) NULL,
+    ADD COLUMN `paypal` VARCHAR(191) NULL,
+    ADD COLUMN `trustpilot` VARCHAR(191) NULL,
+    ADD COLUMN `viber` VARCHAR(191) NULL,
+    ADD COLUMN `whatsapp` VARCHAR(191) NULL;
