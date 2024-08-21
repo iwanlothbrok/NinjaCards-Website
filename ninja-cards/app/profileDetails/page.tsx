@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-    FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaUser,
-    FaGithub, FaYoutube, FaTiktok, FaChevronDown, FaPhoneAlt, FaShareAlt, FaDownload, FaClipboard, FaPeopleCarry
+    FaFacebook, FaInstagram, FaLinkedin, FaTwitter,
+    FaGithub, FaYoutube, FaTiktok, FaChevronDown, FaFileDownload,
+    FaPhoneAlt, FaShareAlt, FaDownload, FaClipboard
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { Menu, Transition } from '@headlessui/react';
-import { } from 'react';
+
 interface User {
     id: string;
     name: string;
@@ -41,6 +41,12 @@ interface User {
     selectedColor: string; // New field for selected color
     cv: string;
 }
+
+interface GradientStop {
+    offset: string;
+    color: string;
+}
+
 const googleApiKey = process.env.GOOGLE_API_KEY;
 const cardBackgroundOptions = [
     {
@@ -48,44 +54,74 @@ const cardBackgroundOptions = [
         bgClass: "bg-white",
         textClass: "text-gray-900",
         borderClass: "border-orange",
-        highlightClass: "text-orange"
+        highlightClass: "text-orange",
+        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
     },
     {
         name: 'gray',
         bgClass: "bg-gray-800",
         textClass: "text-gray-100",
         borderClass: "border-orange",
-        highlightClass: "text-orange"
+        highlightClass: "text-orange",
+        buttonBgClass: "bg-white" // Bright orange button to stand out against gray
     },
     {
         name: 'blue-teal-gradient',
-        bgClass: "bg-gradient-to-r from-blue-500 via-teal-600 to-teal-800",
-        textClass: "text-white",
-        borderClass: "border-yellow-400",
-        highlightClass: "text-yellow-400"
+        bgClass: "bg-gradient-to-r from-blue-600 via-teal-600 to-teal-800",
+        textClass: "text-white", // Bright yellow for high contrast
+        borderClass: "border-white", // White border for maximum contrast
+        highlightClass: "text-yellow-400", // Strong yellow for highlighted elements
+        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
     },
     {
         name: 'purple-indigo-gradient',
-        bgClass: "bg-gradient-to-r from-purple-500 via-indigo-600 to-indigo-700",
-        textClass: "text-white",
-        borderClass: "border-yellow-400",
-        highlightClass: "text-yellow-400"
+        bgClass: "bg-gradient-to-r from-purple-600 via-indigo-700 to-indigo-800",
+        textClass: "text-white", // Bright cyan for clear visibility against the dark gradient
+        borderClass: "border-white", // White border for strong contrast
+        highlightClass: "text-cyan-300", // Bold cyan to make highlights pop
+        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
     },
     {
         name: 'green-blue-gradient',
-        bgClass: "bg-gradient-to-r from-green-500 via-blue-500 to-blue-700",
-        textClass: "text-white",
-        borderClass: "border-yellow-400",
-        highlightClass: "text-yellow-400"
+        bgClass: "bg-gradient-to-r from-green-600 via-blue-600 to-blue-700",
+        textClass: "text-white", // Bright orange for clear visibility
+        borderClass: "border-white", // White border for contrast
+        highlightClass: "text-orange", // Strong orange to make important elements stand out
+        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
     },
     {
         name: 'yellow-orange-red-gradient',
-        bgClass: "bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500",
-        textClass: "text-gray-900",
-        borderClass: "border-teal-900",
-        highlightClass: "text-teal-900"
-    },
+        bgClass: "bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500",
+        textClass: "text-gray-800", // Black for maximum contrast
+        borderClass: "border-white", // White border for clarity
+        highlightClass: "text-gray-800", // Strong black for high contrast highlights
+        buttonBgClass: "bg-gray-800" // Bright yellow button for strong visibility
+    }
 ];
+
+
+const bgClassToGradientStops: Record<string, GradientStop[]> = {
+    'bg-gradient-to-r from-blue-500 via-teal-600 to-teal-800': [
+        { offset: '0%', color: '#3B82F6' },
+        { offset: '50%', color: '#0D9488' },
+        { offset: '100%', color: '#115E59' }
+    ],
+    'bg-gradient-to-r from-purple-500 via-indigo-600 to-indigo-700': [
+        { offset: '0%', color: '#A855F7' },
+        { offset: '50%', color: '#6366F1' },
+        { offset: '100%', color: '#4F46E5' }
+    ],
+    'bg-gradient-to-r from-green-500 via-blue-500 to-blue-700': [
+        { offset: '0%', color: '#10B981' },
+        { offset: '50%', color: '#3B82F6' },
+        { offset: '100%', color: '#1D4ED8' }
+    ],
+    'bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500': [
+        { offset: '0%', color: '#FCD34D' },
+        { offset: '50%', color: '#F97316' },
+        { offset: '100%', color: '#EF4444' }
+    ]
+};
 
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
     try {
@@ -119,19 +155,67 @@ const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateA
     }
 };
 
+interface DynamicSvgProps {
+    bgClass: string;
+}
+
+const DynamicSvg: React.FC<DynamicSvgProps> = ({ bgClass }) => {
+    let gradientStops: GradientStop[] = [];
+
+    if (bgClass === "bg-white") {
+        gradientStops = [
+            { offset: '0%', color: '#FFFFFF' },
+            { offset: '100%', color: '#FFFFFF' }
+        ];
+    } else if (bgClass === "bg-gray-800") {
+        gradientStops = [
+            { offset: '0%', color: '#1F2937' }, // The color corresponding to gray-800
+            { offset: '100%', color: '#1F2937' }
+        ];
+    } else {
+        gradientStops = bgClassToGradientStops[bgClass] || [];
+    }
+    return (
+        <svg className="absolute bottom-0 left-0 w-full h-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 300">
+            <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                    {gradientStops.map((stop, index) => (
+                        <stop
+                            key={index}
+                            offset={stop.offset}
+                            style={{ stopColor: stop.color, stopOpacity: 1 }}
+                        />
+                    ))}
+                </linearGradient>
+            </defs>
+            <path
+                fill="url(#grad1)"
+                d="M0,256L48,224C96,192,192,128,288,122.7C384,117,480,171,576,197.3C672,224,768,224,864,186.7C960,149,1056,75,1152,80C1248,85,1344,171,1392,213.3L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            >
+
+            </path>
+        </svg>);
+};
+
 const ProfileDetails: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]); // Default to first option
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+    const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
     const router = useRouter();
     const searchParams = useSearchParams();
     const userId = searchParams?.get('id');
 
-    const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+    const handleTouchStart = (action: string) => {
+        setTimeout(() => setShowTooltip(action), 500);
+    };
+
+    const handleTouchEnd = () => {
+        setShowTooltip(null);
+    };
 
     useEffect(() => {
         if (userId) {
@@ -158,11 +242,11 @@ const ProfileDetails: React.FC = () => {
         }
     };
 
-
     const showAlert = (message: string, title: string, color: string) => {
         setAlert({ message, title, color });
         setTimeout(() => setAlert(null), 4000);
     };
+
     const generateVCF = () => {
         if (!user) return;
 
@@ -207,7 +291,6 @@ const ProfileDetails: React.FC = () => {
         link.click();
         URL.revokeObjectURL(url);
     };
-
 
     const shareContact = () => {
         if (navigator.share) {
@@ -262,47 +345,59 @@ const ProfileDetails: React.FC = () => {
     if (!user) return <div className="text-center text-2xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
 
     return (
-        <div className={`min-h-screen flex items-center justify-center ${cardStyle.bgClass}`}>
-            <div className={`relative z-10 w-full max-w-md p-6 rounded-lg mt-20 mb-20 ${cardStyle.bgClass} ${cardStyle.textClass} shadow-lg`}>
-                {/* Cover Image */}
-                <div className="w-full h-40 overflow-hidden bg-black relative">
+        <div
+            className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
+            style={{
+                backgroundImage: `
+            linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url('/profile01.png')
+        `,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                opacity: 1,
+                boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
+            }}
+        >
+            <div
+                className={`relative z-10 w-full max-w-md p-6  mt-40 mb-20 rounded-lg ${cardStyle.textClass} shadow-2xl`}
+                style={{
+                    borderRadius: 'inherit',
+                }}
+            >
+                {/* <div className={`w-full h-44 ${cardStyle.bgClass} relative overflow-hidden`}>
+                    <div
+                        className="absolute inset-0 bg-gradient-to-b from-black via-transparent opacity-60"
+                        style={{ clipPath: 'polygon(0 0, 100% 0, 100% 80%, 75% 95%, 50% 80%, 25% 95%, 0 80%)' }} // Matching the zigzag shape
+                    >
+
+                    </div>
+
                     <img
                         className="object-cover w-full h-full"
                         src="/profileCover.png"
                         alt="Cover"
+                        style={{ clipPath: 'polygon(0 0, 100% 0, 100% 80%, 75% 95%, 50% 80%, 25% 95%, 0 80%)' }} // Zigzag shape
                     />
-                    <svg className="absolute bottom-0 left-0 w-full h-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-                        <path fill="white" d="M0,128L48,160C96,192,192,256,288,256C384,256,480,192,576,160C672,128,768,128,864,160C960,192,1056,256,1152,256C1248,256,1344,192,1392,160L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-                            <animate
-                                attributeName="d"
-                                dur="10s"
-                                repeatCount="indefinite"
-                                values="
-        M0,128L48,160C96,192,192,256,288,256C384,256,480,192,576,160C672,128,768,128,864,160C960,192,1056,256,1152,256C1248,256,1344,192,1392,160L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
-        M0,160L48,192C96,224,192,288,288,288C384,288,480,224,576,192C672,160,768,160,864,192C960,224,1056,288,1152,288C1248,288,1344,224,1392,192L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
-        M0,192L48,224C96,256,192,320,288,320C384,320,480,256,576,224C672,192,768,192,864,224C960,256,1056,320,1152,320C1248,320,1344,256,1392,224L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
-        M0,128L48,160C96,192,192,256,288,256C384,256,480,192,576,160C672,128,768,128,864,160C960,192,1056,256,1152,256C1248,256,1344,192,1392,160L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z
-      " />
-                        </path>
-                    </svg>
-                </div>
+                </div> */}
 
                 {/* Profile Picture and Name/Position */}
                 <div className="text-center relative -mt-16">
                     <motion.div
-                        className={`relative w-32 h-32 mx-auto mb-2 rounded-full overflow-hidden border-4 border-white shadow-xl`}
+                        className={`relative w-32 h-32 mx-auto mb-2 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-lg`}
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <img className={`w-full h-full object-cover `}
+                        <img
+                            className="w-full h-full object-cover"
                             src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'https://via.placeholder.com/150'}
                             alt="Profile"
                         />
                     </motion.div>
-                    <h1 className={`text-xl font-bold mt-2 ${cardStyle.highlightClass}`}>{user?.name}</h1>
-                    <p className={`text-sm ${cardStyle.highlightClass}`}>{user?.position}</p>
-                    <p className={`text-sm ${cardStyle.highlightClass}`}>{user?.company}</p>
+                    <h1 className={`text-2xl font-bold mt-2 text-white`}>{user?.name}</h1>
+                    <p className={`text-sm text-gray-200`}>{user?.position}</p>
+                    <p className={`text-sm text-gray-200`}>{user?.company}</p>
                 </div>
 
                 {/* Social Media Links */}
@@ -337,60 +432,101 @@ const ProfileDetails: React.FC = () => {
                     ></iframe>
                 </div>
 
-                {/* Action Buttons in Dropdown */}
-                <div className="relative inline-block text-left">
-                    <button
-                        onClick={toggleDropdown}
-                        className="inline-flex justify-center w-full py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-md hover:from-purple-700 hover:to-purple-900 hover:shadow-lg transition-all duration-300 ease-in-out"
+                {/* Action Buttons */}
+                <div className="flex justify-center space-x-6 mt-4">
+                    <div
+                        className="relative group"
+                        onTouchStart={() => handleTouchStart('Call')}
+                        onTouchEnd={handleTouchEnd}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`Call ${user?.phone1}`}
                     >
-                        <FaChevronDown className="mr-2" />
-                        Actions
-                    </button>
-
-                    {isDropdownOpen && (
-                        <div className="absolute right-0 mt-2 w-56 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg">
-                            <div className="py-1">
-                                <div
-                                    onClick={shareContact}
-                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <FaShareAlt className="mr-2" />
-                                    Share Contact
-                                </div>
-                                <div
-                                    onClick={copyContactDetails}
-                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <FaClipboard className="mr-2" />
-                                    Copy Contact Details
-                                </div>
-                                <div
-                                    onClick={() => window.location.href = `tel:${user?.phone1}`}
-                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <FaPhoneAlt className="mr-2" />
-                                    Call {user?.phone1}
-                                </div>
-                                <div
-                                    onClick={downloadCv}
-                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <FaDownload className="mr-2" />
-                                    Download CV
-                                </div>
-                            </div>
+                        <div
+                            onClick={() => window.location.href = `tel:${user?.phone1}`}
+                            className={`p-4 ${cardStyle.buttonBgClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-green-100`}
+                        >
+                            <FaPhoneAlt className="text-green-500 text-2xl group-hover:text-green-700 transition-colors duration-300 ease-in-out" />
                         </div>
-                    )}
+                        {(showTooltip === 'Call') && (
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
+                                Call {user?.phone1}
+                            </div>
+                        )}
+                    </div>
+
+                    <div
+                        className="relative group"
+                        onTouchStart={() => handleTouchStart('Share Contact')}
+                        onTouchEnd={handleTouchEnd}
+                        tabIndex={0}
+                        role="button"
+                        aria-label="Share Contact"
+                    >
+                        <div
+                            onClick={shareContact}
+                            className={`p-4 ${cardStyle.buttonBgClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-blue-100`}
+                        >
+                            <FaShareAlt className="text-blue-500 text-2xl group-hover:text-blue-700 transition-colors duration-300 ease-in-out" />
+                        </div>
+                        {(showTooltip === 'Share Contact') && (
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
+                                Share Contact
+                            </div>
+                        )}
+                    </div>
+
+                    <div
+                        className="relative group"
+                        onTouchStart={() => handleTouchStart('Copy Contact Details')}
+                        onTouchEnd={handleTouchEnd}
+                        tabIndex={0}
+                        role="button"
+                        aria-label="Copy Contact Details"
+                    >
+                        <div
+                            onClick={copyContactDetails}
+                            className={`p-4 ${cardStyle.buttonBgClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-yellow-100`}
+                        >
+                            <FaClipboard className="text-yellow-500 text-2xl group-hover:text-yellow-700 transition-colors duration-300 ease-in-out" />
+                        </div>
+                        {(showTooltip === 'Copy Contact Details') && (
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
+                                Copy Contact Details
+                            </div>
+                        )}
+                    </div>
+
+                    <div
+                        className="relative group"
+                        onTouchStart={() => handleTouchStart('Download CV')}
+                        onTouchEnd={handleTouchEnd}
+                        tabIndex={0}
+                        role="button"
+                        aria-label="Download CV"
+                    >
+                        <div
+                            onClick={downloadCv}
+                            className={`p-4 ${cardStyle.buttonBgClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-red-100`}
+                        >
+                            <FaFileDownload className="text-red-500 text-2xl group-hover:text-red-700 transition-colors duration-300 ease-in-out" />
+                        </div>
+                        {(showTooltip === 'Download CV') && (
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
+                                Download CV
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Floating Save VCF Button */}
                 <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-20">
                     <button
                         onClick={generateVCF}
-                        className="flex items-center px-8 py-6 bg-orange text-white rounded-full shadow-2xl hover:shadow-3xl hover:from-blue-600 hover:to-teal-600 transition-all duration-300 ease-in-out transform hover:scale-105"
+                        className={`flex items-center px-8 py-6 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 ease-in-out transform hover:scale-105`}
                     >
                         <FaDownload className="mr-3 text-2xl" />
-                        <span className="text-lg font-semibold">Save Contact</span>
+                        <span className="text-lg font-semibold">ЗАПАЗИ КОНТАКТ</span>
                     </button>
                 </div>
 
@@ -411,7 +547,5 @@ const ProfileDetails: React.FC = () => {
             </div>
         </div>
     );
-};
-
-
+}
 export default ProfileDetails;
