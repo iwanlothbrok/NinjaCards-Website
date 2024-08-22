@@ -21,7 +21,7 @@ const RoadmapHybrid: React.FC = () => {
               className="relative flex flex-col items-center bg-gray-800 rounded-xl shadow-lg p-6 m-2 transform transition-transform duration-300 hover:bg-orange group hover:scale-105 hover:text-black group-hover:shadow-2xl mb-8"
             >
               {/* NUMBERS WITH HOVER EFFECTS */}
-              <div className="relative block w-12 h-12 mx-auto -mt-16 rounded-full ring-8 ring-white bg-orange group-hover:bg-charcoal group-hover:text-white flex items-center justify-center text-lg font-bold text-darkBg shadow-lg transition-all duration-300 group-hover:scale-110">
+              <div className="relative  w-12 h-12 mx-auto -mt-16 rounded-full ring-8 ring-white bg-orange group-hover:bg-charcoal group-hover:text-white flex items-center justify-center text-lg font-bold text-darkBg shadow-lg transition-all duration-300 group-hover:scale-110">
                 {index + 1}
               </div>
               {/* END OF NUMBERS */}
