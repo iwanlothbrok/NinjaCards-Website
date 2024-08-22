@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-    FaUser, FaBuilding, FaBriefcase, FaPhone, FaEnvelope, FaFileDownload, FaUserCircle, FaInfo, FaRegIdBadge,
+    FaUser, FaBuilding, FaPlus, FaPhone, FaEnvelope, FaFileDownload, FaUserCircle, FaInfo, FaRegIdBadge,
     FaPhoneAlt, FaShareAlt, FaDownload, FaClipboard
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -359,14 +359,14 @@ const ProfileDetails: React.FC = () => {
                 >
                     <SocialMediaLinks user={user} cardStyle={cardStyle} />
                 </motion.div>
-                <motion.div
+                {/* <motion.div
                     className="mt-6"
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                 >
                     <UserInfoSection user={user} cardStyle={cardStyle} />
-                </motion.div>
+                </motion.div> */}
                 <motion.div
                     className="mt-6"
                     initial={{ opacity: 0, y: 20 }}
@@ -428,12 +428,17 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         <h1 className={`text-3xl font-bold mt-2 text-white shadow-md`}>
             {user?.name}
         </h1>
-        <p className={`text-sm  mt-1 ${cardStyle.highlightClass}`}>
+        <p className={`text-sm mt-1 ${cardStyle.highlightClass}`}>
             {user?.position}
         </p>
         <p className={`text-sm ${cardStyle.highlightClass}`}>
             {user?.company}
         </p>
+        {user?.bio && (
+            <p className="text-xs mt-4 text-gray-300 px-4">
+                {user.bio.length > 100 ? `${user.bio.substring(0, 97)}...` : user.bio}
+            </p>
+        )}
     </div>
 );
 
