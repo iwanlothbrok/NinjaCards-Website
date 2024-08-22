@@ -1,12 +1,18 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
     FaFacebook, FaInstagram, FaLinkedin,
     FaTwitter, FaTiktok, FaGoogle, FaCashRegister
 } from 'react-icons/fa';
 import { AiOutlineGlobal } from 'react-icons/ai';
+
+interface Alert {
+    message: string;
+    title: string;
+    color: string;
+}
 
 const socialMediaIcons = {
     facebook: FaFacebook,
@@ -20,26 +26,101 @@ const socialMediaIcons = {
 };
 
 const Preview: React.FC = () => {
-    const { user } = useAuth();
+    const { user, setUser } = useAuth();
+    const [alert, setAlert] = useState<Alert | null>(null);
+    const alertRef = useRef<HTMLDivElement>(null);
 
     const sectionClass = "border border-gray-700 rounded-lg p-4 mb-6 bg-gray-800";
     const titleClass = "text-2xl font-bold mb-4 text-teal-400";
     const textClass = "text-lg text-gray-300";
     const linkClass = "flex items-center space-x-3 text-lg text-teal-400 hover:text-orange-500 transition-colors duration-300";
+    const handleRemoveImage = async () => {
+        if (!user || !user.id) return;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
+        try {
+            const response = await fetch(`/api/profile/removeUsersImage?id=${user.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to remove image');
+            }
+
+            const updatedUser = await response.json();
+            setUser(updatedUser); // Assuming setUser updates the user's state
+
+            showAlert('Image removed successfully', 'Success', 'green');
+
+        } catch (error) {
+            showAlert('An unexpected error occurred. Please try again.', 'Error', 'red');
+
+        }
+    };
+
+    const handleCvRemove = async () => {
+        if (!user || !user.id) return;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        try {
+            const response = await fetch(`/api/profile/removeCV?id=${user.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to CV image');
+            }
+
+            const updatedUser = await response.json();
+            setUser(updatedUser); // Assuming setUser updates the user's state
+
+            showAlert('CV removed successfully', 'Success', 'green');
+
+        } catch (error) {
+            showAlert('An unexpected error occurred. Please try again.', 'Error', 'red');
+
+        }
+    };
+
+    const downloadCv = () => {
+        if (!user) return;
+
+        const link = document.createElement('a');
+        link.href = `/api/profile/downloadCv?id=${user.id}`;
+        link.download = `${user.firstName}_${user.lastName}_CV.pdf`;
+        link.click();
+    };
+
+    const showAlert = (message: string, title: string, color: string) => {
+        setAlert({ message, title, color });
+        setTimeout(() => {
+            setAlert(null);
+        }, 4000);
+    };
     return (
         <div className="w-full max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-b from-gray-800 via-gray-900 to-gray-800 rounded-xl shadow-2xl">
             <h2 className="text-4xl font-extrabold mb-8 text-center text-white">Profile Preview</h2>
-
+            {alert && (
+                <div ref={alertRef} className={`p-4 rounded-lg text-white animate-fadeIn transition-all duration-300 ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} mb-6`}>
+                    <strong>{alert.title}: </strong> {alert.message}
+                </div>
+            )}
             {user?.image && (
-                <div className="flex justify-center mb-6">
+                <div className="flex flex-col items-center mb-6">
                     <img
                         src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'default-image-url.jpg'}
                         alt={`${user?.firstName} ${user?.lastName}`}
-                        className="w-40 h-40 rounded-full border-4 border-teal-400 shadow-lg"
+                        className="w-40 h-40 rounded-full border-4 border-teal-400 shadow-lg mb-4"
                     />
+                    <button
+                        onClick={handleRemoveImage}
+                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
+                    >
+                        Remove Image
+                    </button>
                 </div>
             )}
+
 
             <div className={sectionClass}>
                 <h3 className={titleClass}>Card Information</h3>
@@ -98,6 +179,32 @@ const Preview: React.FC = () => {
                     <img src={user.qrCode} alt="QR Code" className="w-40 h-40 mx-auto mt-2" />
                 </div>
             )}
+            {user?.cv && (
+                <div className="flex flex-col items-center mb-6">
+                    <h3 className={titleClass}>Resume</h3>
+                    <iframe
+                        src={`data:application/pdf;base64,${user.cv}`}
+                        title="User CV"
+                        className="w-full h-96 mb-4 border-4 border-teal-400 shadow-lg"
+                        loading="lazy" // This enables lazy loading
+                    />
+                    <div className="flex space-x-4">
+                        <button
+                            onClick={downloadCv}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                        >
+                            Download CV
+                        </button>
+                        <button
+                            onClick={handleCvRemove}
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
+                        >
+                            Remove CV
+                        </button>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };
