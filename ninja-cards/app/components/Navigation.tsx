@@ -101,7 +101,9 @@ const Navbar: React.FC = () => {
 
   const handleDropdownClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
-    toggleMenu();
+    if (isPhone) {
+      toggleMenu();
+    }
   };
   const handleDropdownImgClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -112,9 +114,8 @@ const Navbar: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 z-40 w-full transition-all duration-500 ${
-        scrolled ? 'bg-darkBg shadow-md' : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 z-40 w-full transition-all duration-500 ${scrolled ? 'bg-darkBg shadow-md' : 'bg-transparent'
+        }`}
     >
       <div className="container mx-auto px-4 lg:px-8">
         <div className="relative flex items-center justify-between py-4 lg:py-6">
@@ -136,9 +137,8 @@ const Navbar: React.FC = () => {
             </button>
             <nav
               ref={menuRef}
-              className={`fixed top-0 left-0 w-full h-screen bg-darkBg transform transition-transform duration-500 ease-in-out lg:relative lg:h-auto lg:w-auto lg:bg-transparent lg:transform-none ${
-                isOpen ? 'translate-x-0' : '-translate-x-full'
-              } lg:translate-x-0`}
+              className={`fixed top-0 left-0 w-full h-screen bg-darkBg transform transition-transform duration-500 ease-in-out lg:relative lg:h-auto lg:w-auto lg:bg-transparent lg:transform-none ${isOpen ? 'translate-x-0' : '-translate-x-full'
+                } lg:translate-x-0`}
             >
               <div className="flex justify-end p-2 lg:hidden">
                 <button
@@ -161,9 +161,8 @@ const Navbar: React.FC = () => {
                   <li key={idx} className="relative group">
                     <Link
                       href={path}
-                      className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${
-                        pathname === path ? 'text-orange' : ''
-                      }`}
+                      className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === path ? 'text-orange' : ''
+                        }`}
                       onClick={() => setIsOpen(false)} // Close menu when link is clicked
                     >
                       {
@@ -178,10 +177,10 @@ const Navbar: React.FC = () => {
                   </li>
                 ))}
                 {isAuthenticated ? (
-                  <li className="relative flex items-center group mt-8 lg:mt-0">
+                  <li className="relative flex items-center group mt-5 lg:mt-0">
                     <img
                       onClick={handleDropdownImgClick}
-                      className="w-16 h-16 rounded-full cursor-pointer border-2 border-orange shadow-md"
+                      className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md"
                       src={
                         user?.image
                           ? `data:image/jpeg;base64,${user.image}`
@@ -221,12 +220,6 @@ const Navbar: React.FC = () => {
                           >
                             Earnings
                           </NavItem>
-                          <NavItem
-                            href="/askedQuestions"
-                            onClick={handleDropdownClick}
-                          >
-                            Frequently Asked Questions
-                          </NavItem>
                         </ul>
                         <div className="py-1">
                           <button
@@ -264,7 +257,7 @@ const Navbar: React.FC = () => {
                     <Link
                       href="/register"
                       className="px-6 py-3 text-lg font-semibold text-white bg-orange rounded-full transition-all duration-300 hover:bg-darkOrange focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => setIsOpen(true)}
                     >
                       {/* className="px-6 py-2 text-lg font-semibold text-white bg-orange rounded-full transition-all duration-300 hover:bg-darkOrange focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange" */}
                       Register
@@ -272,7 +265,7 @@ const Navbar: React.FC = () => {
                     <Link
                       href="/login"
                       className="px-6 py-3 text-lg font-semibold text-orange bg-transparent border border-orange rounded-full transition-all duration-300 hover:bg-orange hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => setIsOpen(true)}
                     >
                       Login
                     </Link>
