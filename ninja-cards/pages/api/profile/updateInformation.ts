@@ -15,8 +15,8 @@ export const config = {
 
 const parseForm = (req: NextApiRequest): Promise<{ fields: Fields; files: Files }> => {
     const form = new IncomingForm({
-        multiples: false, // Only single file upload is supported in this example
-        keepExtensions: true, // Keep the file extension
+        multiples: false,
+        keepExtensions: true,
     });
 
     return new Promise((resolve, reject) => {
@@ -32,53 +32,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const { fields, files } = await parseForm(req);
 
-            // Extract values from arrays
             const id = fields.id ? fields.id[0] : undefined;
-            const name = fields.name ? fields.name[0] : undefined;
-            const firstName = fields.firstName ? fields.firstName[0] : undefined;
-            const lastName = fields.lastName ? fields.lastName[0] : undefined;
-            const company = fields.company ? fields.company[0] : undefined;
-            const position = fields.position ? fields.position[0] : undefined;
-            const phone1 = fields.phone1 ? fields.phone1[0] : undefined;
-            const phone2 = fields.phone2 ? fields.phone2[0] : undefined;
-            const email2 = fields.email2 ? fields.email2[0] : undefined;
-            const street1 = fields.street1 ? fields.street1[0] : undefined;
-            const street2 = fields.street2 ? fields.street2[0] : undefined;
-            const zipCode = fields.zipCode ? fields.zipCode[0] : undefined;
-            const city = fields.city ? fields.city[0] : undefined;
-            const state = fields.state ? fields.state[0] : undefined;
-            const country = fields.country ? fields.country[0] : undefined;
-            const bio = fields.bio ? fields.bio[0] : undefined;
-
             if (!id) {
                 res.status(400).json({ error: 'ID is required' });
                 return;
             }
 
+            // Initialize an empty object to store the updated data
             const updatedData: any = {};
 
-            // Update fields if they are provided
-            if (name) updatedData.name = name;
-            if (firstName) updatedData.firstName = firstName;
-            if (lastName) updatedData.lastName = lastName;
-            if (company) updatedData.company = company;
-            if (position) updatedData.position = position;
-            if (phone1) updatedData.phone1 = phone1;
-            if (phone2) updatedData.phone2 = phone2;
-            if (email2) updatedData.email2 = email2;
-            if (street1) updatedData.street1 = street1;
-            if (street2) updatedData.street2 = street2;
-            if (zipCode) updatedData.zipCode = zipCode;
-            if (city) updatedData.city = city;
-            if (state) updatedData.state = state;
-            if (country) updatedData.country = country;
-            if (bio) updatedData.bio = bio;
+            // List of fields to update
+            const fieldsToCheck = [
+                'name',
+                'firstName',
+                'lastName',
+                'company',
+                'position',
+                'phone1',
+                'phone2',
+                'email2',
+                'street1',
+                'street2',
+                'zipCode',
+                'city',
+                'state',
+                'country',
+                'bio',
+            ];
 
-            // Validate image file size
+            // Dynamically set fields to the provided value or null if not provided
+            fieldsToCheck.forEach((field) => {
+                updatedData[field] = fields[field] ? fields[field][0] : null;
+            });
+
+            // Validate image file size and convert to base64 if it exists
             if (files.image) {
                 const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
 
-                // Check if the image size exceeds 500 KB
                 if (imageFile.size > 700 * 1024) {
                     res.status(400).json({ error: 'Image size exceeds the 700 KB limit' });
                     return;
@@ -86,15 +76,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 const imageData = fs.readFileSync(imageFile.filepath);
                 const base64Image = imageData.toString('base64');
-                updatedData.image = base64Image; // Store the image as a base64 string
+                updatedData.image = base64Image;
             }
 
+            // Convert CV to base64 if it exists
             if (files.cv) {
                 const cvFile = Array.isArray(files.cv) ? files.cv[0] : files.cv;
+
+                if (cvFile.size > 2000 * 1024) {
+                    res.status(400).json({ error: 'CV size exceeds the 2 MB limit' });
+                    return;
+                }
+
                 const cvData = fs.readFileSync(cvFile.filepath);
                 const base64CV = cvData.toString('base64');
                 updatedData.cv = base64CV;
             }
+
             // Update the user in the database
             const updatedUser = await prisma.user.update({
                 where: { id: Number(id) },
