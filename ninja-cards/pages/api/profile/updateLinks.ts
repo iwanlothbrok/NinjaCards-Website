@@ -1,7 +1,6 @@
 // pages/api/updateLinks.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import fs from 'fs';
 import formidable, { IncomingForm, Fields, Files } from 'formidable';
 
 const prisma = new PrismaClient();
@@ -14,8 +13,8 @@ export const config = {
 
 const parseForm = (req: NextApiRequest): Promise<{ fields: Fields; files: Files }> => {
     const form = new IncomingForm({
-        multiples: false, // Only single file upload is supported in this example
-        keepExtensions: true, // Keep the file extension
+        multiples: false,
+        keepExtensions: true,
     });
 
     return new Promise((resolve, reject) => {
@@ -29,39 +28,32 @@ const parseForm = (req: NextApiRequest): Promise<{ fields: Fields; files: Files 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'PUT') {
         try {
-            const { fields, files } = await parseForm(req);
+            const { fields } = await parseForm(req);
 
-            // const { id, facebook, instagram, linkedin, twitter, tiktok, googleReview, revolut, website, qrCode } = req.body;
             const id = fields.id ? fields.id[0] : undefined;
-            const facebook = fields.facebook ? fields.facebook[0] : undefined;
-            const instagram = fields.instagram ? fields.instagram[0] : undefined;
-            const linkedin = fields.linkedin ? fields.linkedin[0] : undefined;
-            const twitter = fields.twitter ? fields.twitter[0] : undefined;
-            const tiktok = fields.tiktok ? fields.tiktok[0] : undefined;
-            const googleReview = fields.googleReview ? fields.googleReview[0] : undefined;
-            const revolut = fields.revolut ? fields.revolut[0] : undefined;
-            const website = fields.website ? fields.website[0] : undefined;
-            const qrCode = fields.qrCode ? fields.qrCode[0] : undefined;
-
-            console.log('id is ' + id);
-
             if (!id) {
                 res.status(400).json({ error: 'ID is required' });
                 return;
             }
 
+            // Initialize an empty object to store the updated data
             const updatedData: any = {};
 
-            // Dynamically add links if provided
-            if (facebook) updatedData.facebook = facebook;
-            if (instagram) updatedData.instagram = instagram;
-            if (linkedin) updatedData.linkedin = linkedin;
-            if (twitter) updatedData.twitter = twitter;
-            if (tiktok) updatedData.tiktok = tiktok;
-            if (googleReview) updatedData.googleReview = googleReview;
-            if (revolut) updatedData.revolut = revolut;
-            if (website) updatedData.website = website;
-            if (qrCode) updatedData.qrCode = qrCode;
+            // Iterate over the expected fields and set them to null if not provided
+            const fieldsToCheck = [
+                'facebook',
+                'instagram',
+                'linkedin',
+                'twitter',
+                'tiktok',
+                'googleReview',
+                'revolut',
+                'website',
+            ];
+
+            fieldsToCheck.forEach((field) => {
+                updatedData[field] = fields[field] ? fields[field][0] : null;
+            });
 
             // Update the user in the database
             const updatedUser = await prisma.user.update({
