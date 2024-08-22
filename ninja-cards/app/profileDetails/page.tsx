@@ -5,8 +5,7 @@ import Image from 'next/image';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-    FaFacebook, FaInstagram, FaLinkedin, FaTwitter,
-    FaGithub, FaYoutube, FaTiktok, FaFileDownload,
+    FaUser, FaBuilding, FaBriefcase, FaPhone, FaEnvelope, FaFileDownload, FaUserCircle, FaInfo, FaRegIdBadge,
     FaPhoneAlt, FaShareAlt, FaDownload, FaClipboard
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -171,6 +170,7 @@ const ProfileDetails: React.FC = () => {
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showTooltip, setShowTooltip] = useState<string | null>(null);
+    const [isPhone, setIsPhone] = useState(false);
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -198,6 +198,23 @@ const ProfileDetails: React.FC = () => {
             }
         }
     }, [user]);
+
+    useEffect(() => {
+        const checkIfPhone = () => {
+            setIsPhone(window.innerWidth <= 768);
+        };
+
+        // Initial check
+        checkIfPhone();
+
+        // Listen for window resize
+        window.addEventListener('resize', checkIfPhone);
+
+        // Cleanup the event listener on component unmount
+        return () => {
+            window.removeEventListener('resize', checkIfPhone);
+        };
+    }, []);
 
     const handleColorSelection = (colorName: string) => {
         if (user && user.id) {
@@ -310,48 +327,81 @@ const ProfileDetails: React.FC = () => {
 
     if (loading) return <div className="text-center text-2xl py-72 text-red-600 ">Зарежда...</div>;
     if (!user) return <div className="text-center text-2xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
-
     return (
         <div
             className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
             style={{
                 backgroundImage: `
-                linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                url('/profile01.png')
-            `,
+                    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                    url('/profile01.png')
+                `,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
-                opacity: 1,
                 boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
             }}
         >
-            <div
-                className={`relative z-10 w-full max-w-md p-6  mt-40 mb-20 rounded-lg ${cardStyle.textClass} shadow-2xl`}
+            <motion.div
+                className={`relative z-10 w-full pt-50 pb-30 max-w-md p-8 rounded-lg ${cardStyle.bgClass} bg-opacity-5 shadow-2xl`}
                 style={{
                     borderRadius: 'inherit',
                 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
             >
                 <ProfileHeader user={user} cardStyle={cardStyle} />
-                <SocialMediaLinks user={user} />
-                <AboutSection user={user} cardStyle={cardStyle} />
-                <LocationSection user={user} googleApiKey={googleApiKey || ''} cardStyle={cardStyle} />
-                <ActionButtons
-                    user={user}
-                    showTooltip={showTooltip}
-                    handleTouchStart={handleTouchStart}
-                    handleTouchEnd={handleTouchEnd}
-                    copyContactDetails={copyContactDetails}
-                    downloadCv={downloadCv}
-                    shareContact={shareContact}
-                />
-                <FloatingSaveButton generateVCF={generateVCF} />
-                <BackgroundSelector
-                    cardBackgroundOptions={cardBackgroundOptions}
-                    handleColorSelection={handleColorSelection}
-                    cardStyle={cardStyle}
-                />
-            </div>
+                <motion.div
+                    className="mt-6"
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                >
+                    <SocialMediaLinks user={user} cardStyle={cardStyle} />
+                </motion.div>
+                <motion.div
+                    className="mt-6"
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
+                >
+                    <UserInfoSection user={user} cardStyle={cardStyle} />
+                </motion.div>
+                <motion.div
+                    className="mt-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.4 }}
+                >
+                    <LocationSection user={user} googleApiKey={googleApiKey || ''} cardStyle={cardStyle} />
+                </motion.div>
+                <motion.div
+                    className="mt-8"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.6 }}
+                >
+                    <BackgroundSelector
+                        cardBackgroundOptions={cardBackgroundOptions}
+                        handleColorSelection={handleColorSelection}
+                        cardStyle={cardStyle}
+                    />
+                </motion.div>
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
+                >
+                    <ActionButtons
+                        user={user}
+                        showTooltip={showTooltip}
+                        handleTouchStart={handleTouchStart}
+                        handleTouchEnd={handleTouchEnd}
+                        generateVCF={generateVCF}
+                        shareContact={shareContact}
+                    />
+                </motion.div>
+            </motion.div>
         </div>
     );
 }
@@ -359,26 +409,37 @@ const ProfileDetails: React.FC = () => {
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
     <div className="text-center relative -mt-16">
         <motion.div
-            className={`relative w-32 h-32 mx-auto mb-2 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-lg`}
+            className={`relative w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-xl`}
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
+            whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.5 }}
         >
-            <img
-                className="w-full h-full object-cover"
-                src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'https://via.placeholder.com/150'}
-                alt="Profile"
-            />
+            {user?.image ? (
+                <img
+                    className="w-full h-full object-cover"
+                    src={`data:image/jpeg;base64,${user.image}`}
+                    alt="Profile"
+                />
+            ) : (
+                <FaUserCircle className="w-full h-full text-gray-300" />
+            )}
         </motion.div>
-        <h1 className={`text-2xl font-bold mt-2 ${cardStyle.highlightClass}`}>{user?.name}</h1>
-        <p className={`text-sm text-gray-200 ${cardStyle.highlightClass}`}>{user?.position}</p>
-        <p className={`text-sm text-gray-200 ${cardStyle.highlightClass}`}>{user?.company}</p>
+        <h1 className={`text-3xl font-bold mt-2 text-white shadow-md`}>
+            {user?.name}
+        </h1>
+        <p className={`text-sm  mt-1 ${cardStyle.highlightClass}`}>
+            {user?.position}
+        </p>
+        <p className={`text-sm ${cardStyle.highlightClass}`}>
+            {user?.company}
+        </p>
     </div>
 );
-const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
+
+const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ user, cardStyle }) => (
     <div className="mt-10 text-center">
-        <h3 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-200">Connect with Me</h3>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6">
+        <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-6">
             {user?.facebook && (
                 <a
                     href={user.facebook}
@@ -387,13 +448,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="Facebook"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-500 to-purple-500  p-2 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/fb.png"
                             alt="Facebook"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -406,15 +467,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="Instagram"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-pink-500 to-yellow-500 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
-                        <Image
-                            src="/logos/ig.png"
-                            alt="Instagram"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
-                        />
-                    </div>
+                    <Image
+                        src="/logos/ig.png"
+                        alt="Instagram"
+                        width={40}
+                        height={40}
+                        className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                    />
                 </a>
             )}
             {user?.linkedin && (
@@ -425,13 +484,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="LinkedIn"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-700 to-blue-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-700 to-blue-300 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/lk.png"
                             alt="LinkedIn"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -444,13 +503,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="Twitter"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/x.png"
                             alt="Twitter"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -463,13 +522,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="GitHub"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-gray-800 to-gray-600 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-gray-800 to-gray-600 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/git.png"
                             alt="GitHub"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -482,13 +541,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="YouTube"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-red-600 to-red-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-red-600 to-red-400 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/youtube.png"
                             alt="YouTube"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -501,13 +560,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="TikTok"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-black to-gray-800 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-black to-gray-800 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/tiktok.png"
                             alt="TikTok"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -520,13 +579,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="Behance"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/be.png"
                             alt="Behance"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -539,13 +598,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="PayPal"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-500 to-blue-300 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-500 to-blue-300 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/icons8-paypal-48.png"
                             alt="PayPal"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -558,13 +617,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="TrustPilot"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-green-500 to-teal-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-green-500 to-teal-400 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/tp.png"
                             alt="TrustPilot"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -577,13 +636,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="Viber"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-purple-600 to-purple-400 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-purple-600 to-purple-400 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/viber.png"
                             alt="Viber"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -596,13 +655,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="WhatsApp"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-green-500 to-green-300 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-green-500 to-green-300 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/wa.png"
                             alt="WhatsApp"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -615,13 +674,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="Website"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-gray-500 to-gray-300 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-gray-500 to-gray-300 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/gr.png"
                             alt="Website"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -634,13 +693,13 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
                     aria-label="Revolut"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-800 to-blue-600 p-2 sm:p-4 md:p-6 rounded-full shadow-lg transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-gray-500 to-gray-200 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/rev.png"
                             alt="Revolut"
-                            width={64}  // Mobile size
-                            height={64} // Mobile size
-                            className="w-auto h-auto"  // Ensure the image retains aspect ratio
+                            width={40}
+                            height={40}
+                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -648,6 +707,8 @@ const SocialMediaLinks: React.FC<{ user: User | null }> = ({ user }) => (
         </div>
     </div>
 );
+
+
 const AboutSection: React.FC<{ user: User | null; cardStyle: any }> = ({ user, cardStyle }) => (
     <div className="mt-6 text-center">
         <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>About {user?.firstName}</h3>
@@ -657,67 +718,42 @@ const AboutSection: React.FC<{ user: User | null; cardStyle: any }> = ({ user, c
 
 const LocationSection: React.FC<{ user: User | null; googleApiKey: string; cardStyle: any }> = ({ user, googleApiKey, cardStyle }) => (
     <div className="mt-6 text-center">
-        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Location</h3>
-        <p className="mt-2">{`${user?.street1}, ${user?.city}, ${user?.state}, ${user?.zipCode}, ${user?.country}`}</p>
         <iframe
-            className="w-full h-48 mt-4 rounded"
+            className="w-full h-48 mt-1 rounded"
             title="User Location"
             src={`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${encodeURIComponent(user?.street1 + ', ' + user?.city + ', ' + user?.state + ', ' + user?.zipCode + ', ' + user?.country)}`}
             allowFullScreen
         ></iframe>
     </div>
 );
-
 const ActionButtons: React.FC<{
     user: User | null;
     showTooltip: string | null;
     handleTouchStart: (action: string) => void;
     handleTouchEnd: () => void;
-    copyContactDetails: () => void;
-    downloadCv: () => void;
+    generateVCF: () => void;
     shareContact: () => void;
-}> = ({ user, showTooltip, handleTouchStart, handleTouchEnd, copyContactDetails, downloadCv, shareContact }) => (
-    <div className="flex justify-center space-x-6 mt-4">
+}> = ({ user, showTooltip, handleTouchStart, handleTouchEnd, generateVCF, shareContact }) => (
+    <div className="fixed bottom-4 left-5 right-5 flex justify-center items-center space-x-8 z-20">
         <ActionButton
-            label={`Call ${user?.phone1}`}
-            icon={FaPhoneAlt}
-            colorClass="bg-green-200"
-            hoverColor="text-green-500"
-            tooltip={showTooltip === 'Call'}
-            onClick={() => window.location.href = `tel:${user?.phone1}`}
-            handleTouchStart={() => handleTouchStart('Call')}
-            handleTouchEnd={handleTouchEnd}
-        />
-        <ActionButton
-            label="Share Contact"
+            label="Share"
             icon={FaShareAlt}
-            colorClass="bg-blue-200"
-            hoverColor="text-blue-500"
-
+            colorClass="bg-gradient-to-r from-blue-400 to-blue-600"
+            hoverColor="text-blue-200"
             tooltip={showTooltip === 'Share Contact'}
             onClick={shareContact}
             handleTouchStart={() => handleTouchStart('Share Contact')}
             handleTouchEnd={handleTouchEnd}
         />
+        <FloatingSaveButton generateVCF={generateVCF} />
         <ActionButton
-            label="Copy Contact Details"
-            icon={FaClipboard}
-            colorClass="bg-yellow-200"
-            hoverColor="text-yellow-500"
-
-            tooltip={showTooltip === 'Copy Contact Details'}
-            onClick={copyContactDetails}
-            handleTouchStart={() => handleTouchStart('Copy Contact Details')}
-            handleTouchEnd={handleTouchEnd}
-        />
-        <ActionButton
-            label="Download CV"
-            icon={FaFileDownload}
-            colorClass="bg-red-200"
-            hoverColor="text-red-500"
-            tooltip={showTooltip === 'Download CV'}
-            onClick={downloadCv}
-            handleTouchStart={() => handleTouchStart('Download CV')}
+            label={`Call ${user?.phone1}`}
+            icon={FaPhoneAlt}
+            colorClass="bg-gradient-to-r from-green-400 to-green-600"
+            hoverColor="text-green-200"
+            tooltip={showTooltip === 'Call'}
+            onClick={() => window.location.href = `tel:${user?.phone1}`}
+            handleTouchStart={() => handleTouchStart('Call')}
             handleTouchEnd={handleTouchEnd}
         />
     </div>
@@ -742,10 +778,8 @@ const ActionButton: React.FC<{
         aria-label={label}
         onClick={onClick}
     >
-        <div className={`p-4 ${colorClass} rounded-full shadow-lg cursor-pointer transition-all duration-300 ease-in-out`}>
-            <Icon className={classNames('text-2xl', 'text-gray-700', 'transition-colors', 'duration-300', 'ease-in-out', {
-                [`group-hover:${hoverColor}`]: hoverColor,
-            })} />
+        <div className={`p-4 ${colorClass} rounded-full shadow-lg cursor-pointer transition-transform duration-300 ease-in-out transform group-hover:scale-110`}>
+            <Icon className={`text-2xl text-white transition-colors duration-300 ease-in-out group-hover:${hoverColor}`} />
         </div>
         {tooltip && (
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
@@ -755,15 +789,15 @@ const ActionButton: React.FC<{
     </div>
 );
 
-
 const FloatingSaveButton: React.FC<{ generateVCF: () => void }> = ({ generateVCF }) => (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-20">
+    <div className="transform translate-y-0">
         <button
             onClick={generateVCF}
-            className="flex items-center px-8 py-6 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 ease-in-out transform hover:scale-105"
+            className="relative flex items-center px-8 py-4 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 ease-in-out transform hover:scale-110"
         >
             <FaDownload className="mr-3 text-2xl" />
             <span className="text-lg font-semibold">ЗАПАЗИ КОНТАКТ</span>
+            <div className="absolute inset-0 bg-white opacity-0 hover:opacity-10 transition-opacity rounded-full"></div>
         </button>
     </div>
 );
@@ -775,16 +809,86 @@ const BackgroundSelector: React.FC<{
 }> = ({ cardBackgroundOptions, handleColorSelection, cardStyle }) => (
     <div className="mt-6 text-center">
         <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Customize Card Background</h3>
-        <div className="flex justify-center space-x-2 mt-2">
+        <div className="flex justify-center space-x-4 mt-4">
             {cardBackgroundOptions.map(({ name, bgClass }) => (
                 <button
                     key={name}
                     onClick={() => handleColorSelection(name)}
-                    className={`w-8 h-8 rounded-full border ${bgClass}`}
-                />
+                    aria-label={`Select ${name} background`}
+                    className={`w-10 h-10 rounded-full border-2 transition-transform transform hover:scale-110 ${bgClass} ${cardStyle.name === name ? 'ring-4 ring-offset-2 ring-blue-500' : ''}`}
+                >
+                    {cardStyle.name === name && (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            className="w-4 h-4 text-white mx-auto"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    )}
+                </button>
             ))}
         </div>
     </div>
 );
+
+
+const UserInfoSection: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
+    <div className={`p-6 ${cardStyle.bgClass} bg-opacity-40 rounded-lg shadow-lg mb-6`}>
+        <div className="grid grid-cols-2 gap-4 text-white sm:grid-cols-2">
+            {user.firstName && user.lastName && (
+                <div className="flex items-center">
+                    <FaUser className="w-6 h-6 mr-3 text-gray-300" />
+                    <span>{user.firstName} {user.lastName}</span>
+                </div>
+            )}
+            {user.phone1 && (
+                <div className="flex items-center">
+                    <FaPhone className="w-6 h-6 mr-3 text-gray-300" aria-hidden="true" />
+                    <a
+                        href={`tel:${user.phone1}`}
+                        className="text-blue-400 hover:text-blue-500 hover:underline focus:text-blue-500 focus:underline focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-colors duration-200"
+                        aria-label={`Call ${user.phone1}`}
+                    >
+                        {user.phone1}
+                    </a>
+                </div>
+            )}
+            {user.email && (
+                <div className="flex items-center">
+                    <FaEnvelope className="w-6 h-6 mr-3 text-gray-300" aria-hidden="true" />
+                    <a
+                        href={`mailto:${user.email}`}
+                        className="text-blue-400 hover:text-blue-500 hover:underline focus:text-blue-500 focus:underline focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-colors duration-200"
+                        aria-label={`Email ${user.email}`}
+                    >
+                        {user.email}
+                    </a>
+                </div>
+            )}
+
+        </div>
+
+        {/* About Section */}
+        {user.bio && (
+            // <div className="mt-6 p-4 bg-gray-800 bg-opacity-60 rounded-lg shadow-md text-center">
+            //     <h3 className={`text-2xl font-semibold ${cardStyle.highlightClass} text-white`}>
+            //         About {user.firstName}
+            //     </h3>
+            //     <p className="mt-4 text-gray-300 text-lg">
+            //         {user.bio}
+            //     </p>
+            // </div>
+            <div className="flex items-center">
+                <FaRegIdBadge className="w-6 h-6 mr-3 text-gray-300" />
+                <span>{user.bio}</span>
+            </div>
+        )}
+    </div>
+);
+
 
 export default ProfileDetails;
