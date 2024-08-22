@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
+import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
 interface Alert {
     message: string;
@@ -10,12 +12,26 @@ interface Alert {
     color: string;
 }
 
+type CustomCrop = {
+    unit: 'px' | '%';
+    width: number;
+    height: number;  // Changed to required
+    x: number;
+    y: number;
+};
+
 const Information: React.FC = () => {
     const { user, setUser } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<Alert | null>(null);
     const [imageError, setImageError] = useState<string | null>(null);
     const [cvError, setCvError] = useState<string | null>(null);
+
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+    const [crop, setCrop] = useState<CustomCrop>({ unit: '%', width: 30, height: 30, x: 0, y: 0 });
+    const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
+    const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
+    const imageRef = useRef<HTMLImageElement | null>(null);
 
     const [formData, setFormData] = useState({
         firstName: user?.firstName || '',
@@ -36,7 +52,6 @@ const Information: React.FC = () => {
         bio: user?.bio || '',
         image: null as File | null,
         cv: null as File | null,
-
     });
 
     const alertRef = useRef<HTMLDivElement>(null);
@@ -62,11 +77,11 @@ const Information: React.FC = () => {
         const { name } = e.target;
 
         if (file) {
-            if (name === 'image' && file.size > 700 * 1024) {
-                setImageError('Image size exceeds the 700 KB limit');
-                setFormData((prevData) => ({ ...prevData, image: null }));
-                return;
-            }
+            // if (name === 'image' && file.size > 700 * 1024) {
+            //     setImageError('Image size exceeds the 700 KB limit');
+            //     setFormData((prevData) => ({ ...prevData, image: null }));
+            //     return;
+            // }
             if (name === 'cv' && file.size > 2 * 1024 * 1024) {
                 setCvError('CV size exceeds the 2 MB limit');
                 setFormData((prevData) => ({ ...prevData, cv: null }));
@@ -74,8 +89,12 @@ const Information: React.FC = () => {
             }
 
             if (name === 'image') {
-                setImageError(null);
-                setFormData((prevData) => ({ ...prevData, image: file }));
+                const reader = new FileReader();
+                reader.onload = () => {
+                    setImageSrc(reader.result as string);
+                    setImageError(null);
+                };
+                reader.readAsDataURL(file);
             }
 
             if (name === 'cv') {
@@ -85,11 +104,49 @@ const Information: React.FC = () => {
         }
     }, []);
 
+    const onLoad = useCallback((event: React.SyntheticEvent<HTMLImageElement>) => {
+        const img = event.currentTarget;
+        imageRef.current = img;
+    }, []);
+
+    const getCroppedImg = useCallback(() => {
+        if (!completedCrop || !imageRef.current) return;
+
+        const canvas = document.createElement('canvas');
+        const scaleX = imageRef.current.naturalWidth / imageRef.current.width;
+        const scaleY = imageRef.current.naturalHeight / imageRef.current.height;
+        canvas.width = completedCrop.width * scaleX;
+        canvas.height = completedCrop.height * scaleY;
+        const ctx = canvas.getContext('2d');
+
+        if (ctx) {
+            ctx.drawImage(
+                imageRef.current,
+                completedCrop.x * scaleX,
+                completedCrop.y * scaleY,
+                completedCrop.width * scaleX,
+                completedCrop.height * scaleY,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    const file = new File([blob], 'cropped_image.jpg', { type: 'image/jpeg' });
+                    setFormData((prevData) => ({ ...prevData, image: file }));
+                    const previewUrl = URL.createObjectURL(blob);
+                    setCroppedImageUrl(previewUrl);  // Ensure this function is used correctly
+                }
+            }, 'image/jpeg');
+
+        }
+    }, [completedCrop]);
+
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
-
         window.scrollTo({ top: 0, behavior: 'smooth' });
-
 
         if (!user) {
             showAlert('User not authenticated', 'Error', 'red');
@@ -145,6 +202,12 @@ const Information: React.FC = () => {
             showAlert('Failed to update information', 'Error', 'red');
         }
     }, [formData, router, setUser, showAlert, user]);
+
+    useEffect(() => {
+        if (completedCrop) {
+            getCroppedImg();
+        }
+    }, [completedCrop, getCroppedImg]);
 
     return (
         <div className="w-full max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-b from-gray-800 via-gray-900 to-gray-800 rounded-xl shadow-2xl">
@@ -355,7 +418,38 @@ const Information: React.FC = () => {
                             name="image"
                             accept="image/*"
                             onChange={handleFileChange}
-                            className="w-full text-gray-500 font-medium text-lg bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-3 file:px-4 file:mr-4 file:bg-orange file:hover:bg-opacity-60 file:text-white rounded" />
+                            className="w-full text-gray-500 font-medium text-lg bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-3 file:px-4 file:mr-4 file:bg-orange file:hover:bg-opacity-60 file:text-white rounded"
+                        />
+                        {imageSrc && (
+                            <>
+                                <ReactCrop
+                                    crop={crop}
+                                    onChange={(newCrop: Crop) => setCrop({ ...newCrop, x: newCrop.x || 0, y: newCrop.y || 0, height: newCrop.height || 30 })}
+                                    onComplete={(c) => setCompletedCrop(c as PixelCrop)}
+                                    aspect={1}
+                                >
+                                    {imageSrc && (
+                                        <img
+                                            src={imageSrc}
+                                            ref={imageRef}
+                                            onLoad={onLoad}
+                                            alt="Crop me"
+                                            style={{ maxWidth: '100%' }}
+                                        />
+                                    )}
+                                </ReactCrop>
+                                {completedCrop && (
+                                    <div>
+                                        <h4 className="mt-4 text-gray-300">Cropped Image Preview:</h4>
+                                        <img
+                                            alt="Crop preview"
+                                            style={{ maxWidth: '100%', marginTop: '10px' }}
+                                            src={croppedImageUrl || ''}
+                                        />
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                     <div className="mb-6">
                         <label className="block text-sm font-medium mb-2 text-gray-300">
@@ -371,7 +465,8 @@ const Information: React.FC = () => {
                             name="cv"
                             accept=".pdf,.doc,.docx"
                             onChange={handleFileChange}
-                            className="w-full text-gray-500 font-medium text-lg bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-3 file:px-4 file:mr-4 file:bg-teal-400 file:hover:bg-teal-600 file:text-white rounded" />
+                            className="w-full text-gray-500 font-medium text-lg bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-3 file:px-4 file:mr-4 file:bg-teal-400 file:hover:bg-teal-600 file:text-white rounded"
+                        />
                     </div>
                 </div>
 
