@@ -1,6 +1,10 @@
 'use client';
 import React, { useState } from 'react';
-import { FaChevronDown, FaChevronUp, FaSearch, FaLightbulb } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+
+interface FrequentlyAskedQuestionsProps {
+  searchTerm: string;
+}
 
 const faqData = [
   {
@@ -49,12 +53,19 @@ const faqData = [
   },
 ];
 
-const FrequentlyAskedQuestions: React.FC = () => {
-  const [activeIndex, setActiveIndex] = useState<{ category: number; item: number } | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+const FrequentlyAskedQuestions: React.FC<FrequentlyAskedQuestionsProps> = ({
+  searchTerm,
+}) => {
+  const [activeIndex, setActiveIndex] = useState<{
+    category: number;
+    item: number;
+  } | null>(null);
 
   const toggleFAQ = (categoryIndex: number, itemIndex: number) => {
-    if (activeIndex?.category === categoryIndex && activeIndex.item === itemIndex) {
+    if (
+      activeIndex?.category === categoryIndex &&
+      activeIndex.item === itemIndex
+    ) {
       setActiveIndex(null);
     } else {
       setActiveIndex({ category: categoryIndex, item: itemIndex });
@@ -63,8 +74,14 @@ const FrequentlyAskedQuestions: React.FC = () => {
 
   const filteredFAQs = faqData.map((category) => ({
     ...category,
-    items: category.items.filter((faq) =>
-      faq.question.toLowerCase().includes(searchTerm.toLowerCase())
+    items: category.items.filter(
+      (faq) =>
+        (faq.question &&
+          faq.question
+            .toLowerCase()
+            .includes((searchTerm || '').toLowerCase())) ||
+        (faq.answer &&
+          faq.answer.toLowerCase().includes((searchTerm || '').toLowerCase()))
     ),
   }));
 
@@ -96,7 +113,9 @@ const FrequentlyAskedQuestions: React.FC = () => {
                         onClick={() => toggleFAQ(categoryIndex, itemIndex)}
                         className="flex justify-between items-center cursor-pointer"
                       >
-                        <h4 className="text-xl font-semibold">{faq.question}</h4>
+                        <h4 className="text-xl font-semibold">
+                          {faq.question}
+                        </h4>
                         <span className="text-orange">
                           {activeIndex?.category === categoryIndex &&
                           activeIndex?.item === itemIndex ? (
