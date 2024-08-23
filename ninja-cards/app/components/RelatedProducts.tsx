@@ -1,3 +1,4 @@
+// components/RelatedProducts.tsx
 import React from 'react';
 
 type RelatedProduct = {
@@ -15,12 +16,11 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
     return (
         <div className="mt-16">
             <h3 className="text-3xl font-semibold text-gray-900 mb-8">Related Products</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-10 gap-6 lg:gap-8">
                 {products.map((product) => (
                     <div
                         key={product.id}
-                        className="group relative bg-white border border-gray-200 rounded-lg m-10 shadow-sm hover:shadow-lg transition-shadow duration-300"
+                        className="group relative bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300"
                     >
                         <div className="w-full h-56 bg-gray-200 rounded-t-lg overflow-hidden">
                             <img
