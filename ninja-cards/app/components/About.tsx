@@ -91,7 +91,7 @@ const About: React.FC = () => {
           <img
             src="/profile-details-screenshot-iphone-mockup.png"
             alt="Profile Details Screenshot"
-            className="absolute top-0 left-0 w-full h-full object-cover rounded-[29px]"
+            className="absolute  w-[50%] h-[50%] object-cover rounded-[29px]"
           />
           <div className="absolute top-0 flex items-center justify-center w-[76px] h-[20px] bg-black rounded-b-[15px]">
             <div className="absolute left-[12px] top-[5px] w-[5px] h-[5px] bg-white bg-opacity-20 rounded-full flex items-center justify-center">
