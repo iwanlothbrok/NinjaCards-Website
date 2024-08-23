@@ -37,42 +37,41 @@ const FrequentlyAskedQuestions: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-darkBg to-darkBg2 pt-12 pb-24 flex flex-col justify-center px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-4xl sm:text-5xl font-extrabold text-orange tracking-wide text-center mb-12">
+    <section className="py-16 bg-darkBg2 text-white">
+      <div className="max-w-5xl mx-auto px-6">
+        <h2 className="text-5xl font-extrabold text-orange text-center mb-12">
           Frequently Asked Questions
         </h2>
-        <div className="space-y-6">
+        <div className="space-y-8">
           {faqData.map((faq, index) => (
             <div
               key={index}
-              className={`bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-lg p-6 transition-all duration-500 transform ${
-                activeIndex === index ? '' : 'hover:scale-105'
+              className={`bg-gray-800 rounded-lg shadow-lg p-6 transition-transform transform ${
+                activeIndex === index ? 'scale-105' : 'scale-100'
               }`}
             >
               <div
                 onClick={() => toggleFAQ(index)}
                 className="flex justify-between items-center cursor-pointer"
               >
-                <h3 className="text-lg sm:text-xl font-bold text-white">
-                  {faq.question}
-                </h3>
-                <span className="text-orange transform transition-transform duration-500">
+                <h3 className="text-xl font-semibold">{faq.question}</h3>
+                <span className="text-orange">
                   {activeIndex === index ? (
-                    <FaChevronUp size={20} />
+                    <FaChevronUp size={24} />
                   ) : (
-                    <FaChevronDown size={20} />
+                    <FaChevronDown size={24} />
                   )}
                 </span>
               </div>
-              {activeIndex === index && (
-                <div
-                  onClick={() => toggleFAQ(index)}
-                  className="mt-4 text-orange text-sm sm:text-base opacity-90 transition-opacity duration-500 cursor-pointer"
-                >
-                  {faq.answer}
-                </div>
-              )}
+              <div
+                className={`overflow-hidden transition-all duration-500 ${
+                  activeIndex === index
+                    ? 'max-h-[200px] opacity-100'
+                    : 'max-h-0 opacity-0'
+                }`}
+              >
+                <p className="mt-4 text-gray-300">{faq.answer}</p>
+              </div>
             </div>
           ))}
         </div>
