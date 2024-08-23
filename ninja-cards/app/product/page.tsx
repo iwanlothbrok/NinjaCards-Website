@@ -1,8 +1,7 @@
-// pages/product.tsx
 "use client";
 import React from 'react';
-import Product from '../components/Product';
 import RelatedProducts from '../components/RelatedProducts';
+import Product from '../components/Product';
 
 const ProductPage = () => {
     return (
