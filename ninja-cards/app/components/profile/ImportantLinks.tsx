@@ -68,6 +68,7 @@ const ImportantLinks: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
         setLoading(true);
         setAlert({ message: '', type: null });
