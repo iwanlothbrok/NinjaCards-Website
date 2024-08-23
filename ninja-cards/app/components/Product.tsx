@@ -1,6 +1,6 @@
-// components/Product.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import QRCode from 'qrcode';
+import CustomCardDesigner from './CustomCardDesigner';
 
 type Review = {
     name: string;
@@ -30,84 +30,9 @@ const Product: React.FC<ProductProps> = ({
     reviews,
 }) => {
     const [showReviews, setShowReviews] = useState(false);
-    const [designImage, setDesignImage] = useState<string | null>(null);
-    const [isFrontView, setIsFrontView] = useState(true);
-    const [qrCodeData, setQrCodeData] = useState<string>('');
-    const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
-
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const imageRef = useRef<HTMLImageElement>(null);
-
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => setDesignImage(e.target?.result as string);
-            reader.readAsDataURL(event.target.files[0]);
-        }
-    };
-
-    const handleQrCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setQrCodeData(event.target.value);
-    };
-
-    useEffect(() => {
-        if (qrCodeData) {
-            QRCode.toDataURL(qrCodeData, { width: 150, margin: 1 })
-                .then((url) => {
-                    setQrCodeUrl(url);
-                })
-                .catch((err) => {
-                    console.error(err);
-                });
-        }
-    }, [qrCodeData]);
-
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        const ctx = canvas?.getContext('2d');
-        const image = imageRef.current;
-
-        if (canvas && ctx) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            if (isFrontView && designImage && image) {
-                image.onload = () => {
-                    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-                };
-            } else if (!isFrontView && qrCodeUrl) {
-                const qrImage = new Image();
-                qrImage.src = qrCodeUrl;
-                qrImage.onload = () => {
-                    ctx.drawImage(qrImage, canvas.width / 2 - 75, canvas.height / 2 - 75, 150, 150);
-                    ctx.font = "16px Arial";
-                    ctx.fillStyle = "black";
-                    ctx.fillText("Scan for more info", canvas.width / 2 - 75, canvas.height / 2 + 90);
-                };
-            }
-        }
-    }, [designImage, isFrontView, qrCodeUrl]);
-
-    const handleCanvasMouseDown = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-        event.preventDefault();
-    };
-
-    const resetDesign = () => {
-        setDesignImage(null);
-        setQrCodeData('');
-        setQrCodeUrl('');
-        const canvas = canvasRef.current;
-        const ctx = canvas?.getContext('2d');
-        if (canvas && ctx) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-    };
-
-    const switchView = () => {
-        setIsFrontView(!isFrontView);
-    };
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-gray-600 mt-96">
             <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Product Details */}
                 <div>
@@ -134,55 +59,11 @@ const Product: React.FC<ProductProps> = ({
 
                 {/* Customization Section */}
                 <div>
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
-                        <h3 className="text-xl font-semibold text-gray-900">Design Your NFC Card</h3>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="mt-4 w-full"
-                        />
-                        <div className="mt-4 flex justify-between items-center">
-                            <button
-                                onClick={switchView}
-                                className="bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition-colors duration-300"
-                            >
-                                {isFrontView ? 'Switch to Back View' : 'Switch to Front View'}
-                            </button>
-                            <button
-                                onClick={resetDesign}
-                                className="bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition-colors duration-300"
-                            >
-                                Reset Design
-                            </button>
-                        </div>
+                    <div className="bg-gray-700 p-6 rounded-lg shadow-lg">
+                        <h3 className="text-xl font-semibold text-white">Design Your NFC Card</h3>
 
-                        {!isFrontView && (
-                            <div className="mt-4">
-                                <label className="block text-gray-700">
-                                    Enter URL/Text for QR Code:
-                                </label>
-                                <input
-                                    type="text"
-                                    value={qrCodeData}
-                                    onChange={handleQrCodeChange}
-                                    className="mt-2 w-full p-2 border border-gray-300 rounded-lg"
-                                />
-                            </div>
-                        )}
-
-                        <div className="mt-4 perspective-1000">
-                            <div className={`relative transition-transform duration-700 transform ${isFrontView ? 'rotate-y-0' : 'rotate-y-180'}`}>
-                                <canvas
-                                    ref={canvasRef}
-                                    width={300}
-                                    height={200}
-                                    className="w-full h-auto border border-gray-300 rounded-lg shadow-lg"
-                                    onMouseDown={handleCanvasMouseDown}
-                                ></canvas>
-                                {designImage && <img ref={imageRef} src={designImage} alt="Design Preview" className="hidden" />}
-                            </div>
-                        </div>
+                        {/* Insert the CustomCardDesigner component here */}
+                        <CustomCardDesigner />
                     </div>
 
                     {/* Additional Information */}
