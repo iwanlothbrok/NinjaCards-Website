@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import classNames from 'classnames';
+import { useAuth } from '../context/AuthContext';
 
 interface User {
     id: string;
@@ -164,7 +165,8 @@ const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateA
 };
 
 const ProfileDetails: React.FC = () => {
-    const [user, setUser] = useState<User | null>(null);
+    const { user } = useAuth();
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
@@ -186,18 +188,18 @@ const ProfileDetails: React.FC = () => {
 
     useEffect(() => {
         if (userId) {
-            fetchUser(userId, setUser, setLoading, showAlert);
+            fetchUser(userId, setCurrentUser, setLoading, showAlert);
         }
     }, [userId]);
 
     useEffect(() => {
-        if (user && user.selectedColor) {
-            const selectedCardStyle = cardBackgroundOptions.find(option => option.name === user.selectedColor);
+        if (currentUser && currentUser.selectedColor) {
+            const selectedCardStyle = cardBackgroundOptions.find(option => option.name === currentUser.selectedColor);
             if (selectedCardStyle) {
                 setCardStyle(selectedCardStyle);
             }
         }
-    }, [user]);
+    }, [currentUser]);
 
     useEffect(() => {
         const checkIfPhone = () => {
@@ -217,8 +219,8 @@ const ProfileDetails: React.FC = () => {
     }, []);
 
     const handleColorSelection = (colorName: string) => {
-        if (user && user.id) {
-            saveSelectedColor(user.id, colorName, showAlert);
+        if (currentUser && currentUser.id) {
+            saveSelectedColor(currentUser.id, colorName, showAlert);
             const selectedCardStyle = cardBackgroundOptions.find(option => option.name === colorName);
             if (selectedCardStyle) {
                 setCardStyle(selectedCardStyle);
@@ -232,37 +234,37 @@ const ProfileDetails: React.FC = () => {
     };
 
     const generateVCF = () => {
-        if (!user) return;
+        if (!currentUser) return;
 
         const vCard = ["BEGIN:VCARD", "VERSION:3.0"];
 
-        if (user.name) vCard.push(`FN:${user.name}`);
-        if (user.lastName && user.firstName) vCard.push(`N:${user.lastName};${user.firstName};;;`);
-        if (user.email) vCard.push(`EMAIL:${user.email}`);
-        if (user.email2) vCard.push(`EMAIL;TYPE=WORK:${user.email2}`);
-        if (user.phone1) vCard.push(`TEL;TYPE=CELL:${user.phone1}`);
-        if (user.phone2) vCard.push(`TEL;TYPE=CELL:${user.phone2}`);
-        if (user.company) vCard.push(`ORG:${user.company}`);
-        if (user.position) vCard.push(`TITLE:${user.position}`);
+        if (currentUser.name) vCard.push(`FN:${currentUser.name}`);
+        if (currentUser.lastName && currentUser.firstName) vCard.push(`N:${currentUser.lastName};${currentUser.firstName};;;`);
+        if (currentUser.email) vCard.push(`EMAIL:${currentUser.email}`);
+        if (currentUser.email2) vCard.push(`EMAIL;TYPE=WORK:${currentUser.email2}`);
+        if (currentUser.phone1) vCard.push(`TEL;TYPE=CELL:${currentUser.phone1}`);
+        if (currentUser.phone2) vCard.push(`TEL;TYPE=CELL:${currentUser.phone2}`);
+        if (currentUser.company) vCard.push(`ORG:${currentUser.company}`);
+        if (currentUser.position) vCard.push(`TITLE:${currentUser.position}`);
 
         const address = [
-            user.street1 || '',
-            user.city || '',
-            user.state || '',
-            user.zipCode || '',
-            user.country || ''
+            currentUser.street1 || '',
+            currentUser.city || '',
+            currentUser.state || '',
+            currentUser.zipCode || '',
+            currentUser.country || ''
         ].filter(Boolean).join(';');
         if (address) vCard.push(`ADR;TYPE=WORK:;;${address}`);
 
-        if (user.bio) vCard.push(`NOTE:${user.bio}`);
+        if (currentUser.bio) vCard.push(`NOTE:${currentUser.bio}`);
 
         ['facebook', 'twitter', 'instagram', 'linkedin', 'github', 'youtube', 'tiktok', 'googleReview', 'revolut', 'qrCode'].forEach((key) => {
-            const url = user[key as keyof User];
+            const url = currentUser[key as keyof User];
             if (url) vCard.push(`URL:${url}`);
         });
 
-        if (user.image) {
-            vCard.push(`PHOTO;ENCODING=b;TYPE=JPEG:${user.image}`);
+        if (currentUser.image) {
+            vCard.push(`PHOTO;ENCODING=b;TYPE=JPEG:${currentUser.image}`);
         }
 
         vCard.push("END:VCARD");
@@ -271,7 +273,7 @@ const ProfileDetails: React.FC = () => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${user.firstName}_${user.lastName}.vcf`;
+        link.download = `${currentUser.firstName}_${currentUser.lastName}.vcf`;
         link.click();
         URL.revokeObjectURL(url);
     };
@@ -279,8 +281,8 @@ const ProfileDetails: React.FC = () => {
     const shareContact = () => {
         if (navigator.share) {
             navigator.share({
-                title: user?.name ? `Контакт ${user.name}` : 'Контакт',
-                text: user?.name ? `Вижте контактните данни на ${user.name}` : 'Вижте контактните данни',
+                title: currentUser?.name ? `Контакт ${currentUser.name}` : 'Контакт',
+                text: currentUser?.name ? `Вижте контактните данни на ${currentUser.name}` : 'Вижте контактните данни',
                 url: window.location.href,
             });
         } else {
@@ -289,30 +291,30 @@ const ProfileDetails: React.FC = () => {
     };
 
     const downloadCv = () => {
-        if (!user) return;
+        if (!currentUser) return;
 
         const link = document.createElement('a');
-        link.href = `/api/profile/downloadCv?id=${user.id}`;
-        link.download = `${user.firstName}_${user.lastName}_CV.pdf`;
+        link.href = `/api/profile/downloadCv?id=${currentUser.id}`;
+        link.download = `${currentUser.firstName}_${currentUser.lastName}_CV.pdf`;
         link.click();
     };
 
     const copyContactDetails = () => {
-        if (!user) return;
+        if (!currentUser) return;
 
         const contactInfoParts = [
-            user.name && `Име: ${user.name}`,
-            user.email && `Имейл: ${user.email}`,
-            user.phone1 && `Телефон: ${user.phone1}`,
-            user.company && `Компания: ${user.company}`,
-            user.position && `Позиция: ${user.position}`,
-            (user.street1 || user.city || user.state || user.zipCode || user.country) &&
+            currentUser.name && `Име: ${currentUser.name}`,
+            currentUser.email && `Имейл: ${currentUser.email}`,
+            currentUser.phone1 && `Телефон: ${currentUser.phone1}`,
+            currentUser.company && `Компания: ${currentUser.company}`,
+            currentUser.position && `Позиция: ${currentUser.position}`,
+            (currentUser.street1 || currentUser.city || currentUser.state || currentUser.zipCode || currentUser.country) &&
             `Адрес: ${[
-                user.street1,
-                user.city,
-                user.state,
-                user.zipCode,
-                user.country
+                currentUser.street1,
+                currentUser.city,
+                currentUser.state,
+                currentUser.zipCode,
+                currentUser.country
             ].filter(Boolean).join(', ')}`
         ].filter(Boolean);
 
@@ -325,8 +327,8 @@ const ProfileDetails: React.FC = () => {
         });
     };
 
-    if (loading) return <div className="text-center text-2xl py-72 text-red-600 ">Зарежда...</div>;
-    if (!user) return <div className="text-center text-2xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
+    if (loading) return <div className="text-center text-3xl py-72 text-red-600 ">Зарежда...</div>;
+    if (!currentUser) return <div className="text-center text-3xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
     return (
         <div
             className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
@@ -350,14 +352,14 @@ const ProfileDetails: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
             >
-                <ProfileHeader user={user} cardStyle={cardStyle} />
+                <ProfileHeader user={currentUser} cardStyle={cardStyle} />
                 <motion.div
                     className="mt-6"
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                 >
-                    <SocialMediaLinks user={user} cardStyle={cardStyle} />
+                    <SocialMediaLinks user={currentUser} cardStyle={cardStyle} />
                 </motion.div>
                 {/* <motion.div
                     className="mt-6"
@@ -373,27 +375,31 @@ const ProfileDetails: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut', delay: 0.4 }}
                 >
-                    <LocationSection user={user} googleApiKey={googleApiKey || ''} cardStyle={cardStyle} />
+                    <LocationSection user={currentUser} googleApiKey={googleApiKey || ''} cardStyle={cardStyle} />
                 </motion.div>
-                <motion.div
-                    className="mt-8"
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.6 }}
-                >
-                    <BackgroundSelector
-                        cardBackgroundOptions={cardBackgroundOptions}
-                        handleColorSelection={handleColorSelection}
-                        cardStyle={cardStyle}
-                    />
-                </motion.div>
+
+                {user?.id === currentUser.id && (
+
+                    <motion.div
+                        className="mt-8"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.6, ease: 'easeOut', delay: 0.6 }}
+                    >
+                        <BackgroundSelector
+                            cardBackgroundOptions={cardBackgroundOptions}
+                            handleColorSelection={handleColorSelection}
+                            cardStyle={cardStyle}
+                        />
+                    </motion.div>)}
+
                 <motion.div
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
                 >
                     <ActionButtons
-                        user={user}
+                        user={currentUser}
                         showTooltip={showTooltip}
                         handleTouchStart={handleTouchStart}
                         handleTouchEnd={handleTouchEnd}
@@ -453,13 +459,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Facebook"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-500  p-2 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 filter grayscale group-hover:filter-none p-2 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/fb.png"
                             alt="Facebook"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -472,13 +478,16 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Instagram"
                     className="relative group"
                 >
-                    <Image
-                        src="/logos/ig.png"
-                        alt="Instagram"
-                        width={40}
-                        height={40}
-                        className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
-                    />
+                    <div className="bg-gradient-to-r from-yellow-500 to-red-700 filter grayscale group-hover:filter-none p-2 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                        <Image
+                            src="/logos/ig.png"
+                            alt="Instagram"
+                            width={40}
+                            height={40}
+                            className="object-contain transition-all duration-300"
+                        />
+                    </div>
+
                 </a>
             )}
             {user?.linkedin && (
@@ -489,13 +498,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="LinkedIn"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-700 to-blue-300 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-700 to-blue-900  filter grayscale group-hover:filter-none  p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/lk.png"
                             alt="LinkedIn"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -508,13 +517,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Twitter"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500  filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/x.png"
                             alt="Twitter"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -527,13 +536,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="GitHub"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-gray-800 to-gray-600 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-gray-900 to-gray-600 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/git.png"
                             alt="GitHub"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -546,13 +555,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="YouTube"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-red-600 to-red-400 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-red-600 to-red-400 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/youtube.png"
                             alt="YouTube"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -565,13 +574,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="TikTok"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-black to-gray-800 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-indigo-600 to-fuchsia-600 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/tiktok.png"
                             alt="TikTok"
-                            width={40}
-                            height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            width={44}
+                            height={44}
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -584,13 +593,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Behance"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-400 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/be.png"
                             alt="Behance"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -603,13 +612,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="PayPal"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-500 to-blue-300 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-500 to-blue-300 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/icons8-paypal-48.png"
                             alt="PayPal"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -622,13 +631,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="TrustPilot"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-green-500 to-teal-400 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-black to-gray-800 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/tp.png"
                             alt="TrustPilot"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -641,13 +650,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Viber"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-purple-600 to-purple-400 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-purple-500 to-purple-700 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/viber.png"
                             alt="Viber"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -660,13 +669,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="WhatsApp"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-green-500 to-green-300 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-green-600 to-green-700 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/wa.png"
                             alt="WhatsApp"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -679,13 +688,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Website"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-gray-500 to-gray-300 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-cyan-600  to-cyan-800 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/gr.png"
                             alt="Website"
                             width={40}
                             height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -698,13 +707,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Revolut"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-gray-500 to-gray-200 p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-800 to-blue-900 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/rev.png"
                             alt="Revolut"
-                            width={40}
-                            height={40}
-                            className="object-contain filter grayscale group-hover:filter-none transition-all duration-300"
+                            width={38}
+                            height={38}
+                            className="object-contain  transition-all duration-300"
                         />
                     </div>
                 </a>
