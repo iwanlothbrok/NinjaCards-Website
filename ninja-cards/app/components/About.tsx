@@ -88,6 +88,11 @@ const About: React.FC = () => {
         <div className="absolute left-[-1.5px] top-[148px] w-[1px] h-[28px] bg-white rounded opacity-80"></div>
         <div className="absolute right-[-2px] top-[121px] w-[2px] h-[45px] bg-white rounded opacity-80"></div>
         <div className="relative w-full h-full border-6 border-black rounded-[35px] flex items-center justify-center">
+          <img
+            src="/profile-details-screenshot-iphone-mockup.png"
+            alt="Profile Details Screenshot"
+            className="absolute top-0 left-0 w-full h-full object-cover rounded-[29px]"
+          />
           <div className="absolute top-0 flex items-center justify-center w-[76px] h-[20px] bg-black rounded-b-[15px]">
             <div className="absolute left-[12px] top-[5px] w-[5px] h-[5px] bg-white bg-opacity-20 rounded-full flex items-center justify-center">
               <div className="w-[4px] h-[4px] bg-white bg-opacity-30 rounded-full blur-[1px]"></div>
