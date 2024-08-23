@@ -39,6 +39,7 @@ model User {
   whatsapp      String?  // WhatsApp Phone Number
   github        String?  // GitHub URL
   behance       String?  // Behance URL
+  youtube       String?
   paypal        String?  // PayPal URL
   trustpilot    String?  // TrustPilot URL
   qrCode        String?  @db.Text
@@ -47,3 +48,4 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+ 

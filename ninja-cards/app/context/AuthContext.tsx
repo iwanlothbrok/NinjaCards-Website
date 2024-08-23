@@ -29,18 +29,18 @@ interface User {
     github: string;
     youtube: string;
     image: string;
-    tiktok: string;        // Field for TikTok URL
-    googleReview: string;  // Field for Google Review URL
-    revolut: string;       // Field for Revolut URL
-    qrCode: string;        // Field for QR Code URL
-    selectedColor: string; // Field for selected color
-    cv: string;            // Field to store the CV as a base64 string
-    behance: string;       // Field for Behance URL
-    paypal: string;        // Field for PayPal URL
-    trustpilot: string;    // Field for TrustPilot URL
-    viber: string;         // Field for Viber Phone Number
-    whatsapp: string;      // Field for WhatsApp Phone Number
-    website: string;       // Field for Website URL
+    tiktok: string;
+    googleReview: string;
+    revolut: string;
+    qrCode: string;
+    selectedColor: string;
+    cv: string;
+    behance: string;
+    paypal: string;
+    trustpilot: string;
+    viber: string;
+    whatsapp: string;
+    website: string;
 }
 
 interface AuthContextType {
