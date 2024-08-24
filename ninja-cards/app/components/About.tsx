@@ -29,7 +29,7 @@ const About: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative bg-black text-white flex flex-col md:flex-row items-center justify-evenly p-8 md:p-16">
+    <div className="relative bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white flex flex-col md:flex-row items-center justify-evenly p-8 md:p-16">
       <motion.div
         className="max-w-md about-section"
         initial={{ opacity: 0, y: 50 }}
@@ -91,19 +91,19 @@ const About: React.FC = () => {
 
       {/* iPhone Mockup */}
       <motion.section
-        className="relative flex items-center justify-center w-[212px] h-[438px] bg-cover bg-center rounded-[35px] border border-white"
+        className="relative flex items-center justify-center w-[212px] h-[438px] bg-cover bg-center rounded-[35px] transform transition-transform duration-500 hover:scale-105 border border-white"
         style={{
           backgroundImage:
             "url('https://webdevartur.com/wp-content/uploads/2022/08/ryan-klaus-8QjsdoXDsZs-unsplash-scaled.jpg')",
         }}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, ease: 'easeOut' }}
+      // initial={{ opacity: 0, scale: 0.9 }}
+      // animate={{ opacity: 1, scale: 1 }}
+      // transition={{ duration: 1, ease: 'easeOut' }}
       >
         <img
           src="/profile-details-screenshot-iphone-mockup.png"
           alt="Profile Details Screenshot"
-          className="absolute w-[75%] h-[75%] object-cover rounded-[29px] transform transition-transform duration-500 hover:scale-110"
+          className="absolute w-[95%] h-[95%] object-cover rounded-[29px] transform transition-transform duration-500 hover:scale-100"
         />
       </motion.section>
 

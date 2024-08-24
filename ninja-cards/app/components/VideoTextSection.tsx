@@ -25,10 +25,10 @@ const VideoTextSection: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative bg-gradient-to-r from-teal-700 via-teal-800 to-teal-900 text-white py-20 overflow-hidden">
+    <section className="relative bg-gradient-to-b from-gray-800  to-gray-900  text-white py-20 overflow-hidden">
       {/* Animated Gradient Background */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-teal-700 via-teal-800 to-teal-900 opacity-70"
+        className="absolute inset-0 bg-gradient-to-b from-gray-800 to-gray-900  opacity-70"
         animate={{ backgroundPosition: ['0% 50%', '100% 50%'] }}
         transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
       />
@@ -58,11 +58,13 @@ const VideoTextSection: React.FC = () => {
               controls
               aria-label="Product demonstration video"
             >
-              <source src="/test.mp4" type="video/mp4" />
+              <source src="/scan.mov" />
               Your browser does not support the video tag.
             </video>
           </div>
         </motion.div>
+
+        
 
         {/* Animated Divider Line */}
         <motion.div
