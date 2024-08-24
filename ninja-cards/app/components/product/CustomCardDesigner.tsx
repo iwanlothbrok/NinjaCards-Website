@@ -5,10 +5,12 @@ const CustomCardDesigner = () => {
     const [qrCodeData, setQrCodeData] = useState<string>('https://example.com');
     const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
     const [name, setName] = useState<string>('Your Name');
-    const [title, setTitle] = useState<string>('Title');
+    const [title, setTitle] = useState<string>('Your Title');
     const [frontLogoUrl, setFrontLogoUrl] = useState<string | null>(null);
     const [backLogoUrl, setBackLogoUrl] = useState<string | null>(null);
-    const [fontSize, setFontSize] = useState<number>(20); // Increased font size for better readability
+    const [fontSizeName, setFontSizeName] = useState<number>(26); // Default font size for the name
+    const [fontSizeTitle, setFontSizeTitle] = useState<number>(18); // Default font size for the title
+    const [logoSize, setLogoSize] = useState<number>(120); // Resizable logo size
     const frontCanvasRef = useRef<HTMLCanvasElement>(null);
     const backCanvasRef = useRef<HTMLCanvasElement>(null);
     const [frontImage, setFrontImage] = useState<HTMLImageElement | null>(null);
@@ -17,8 +19,8 @@ const CustomCardDesigner = () => {
     useEffect(() => {
         const img1 = new Image();
         const img2 = new Image();
-        img1.src = '/front01.png'; // Load the front background image from the public folder
-        img2.src = '/front01.png'; // Load the back background image from the public folder
+        img1.src = '/back.png'; // Load the front background image from the public folder
+        img2.src = '/back.png'; // Load the back background image from the public folder
         img1.onload = () => setFrontImage(img1);
         img2.onload = () => setBackImage(img2);
     }, []);
@@ -28,8 +30,8 @@ const CustomCardDesigner = () => {
             width: 100,
             margin: 0,
             color: {
-                dark: '#000000',
-                light: '#ffffff',
+                dark: '#ffffff',
+                light: '#00000000', // Transparent background
             },
         })
             .then(url => setQrCodeUrl(url))
@@ -40,7 +42,7 @@ const CustomCardDesigner = () => {
         if (frontImage && backImage) {
             drawCard();
         }
-    }, [frontImage, backImage, qrCodeUrl, name, title, frontLogoUrl, backLogoUrl, fontSize]);
+    }, [frontImage, backImage, qrCodeUrl, name, title, frontLogoUrl, backLogoUrl, fontSizeName, fontSizeTitle, logoSize]);
 
     const drawRoundedRect = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) => {
         ctx.beginPath();
@@ -60,13 +62,12 @@ const CustomCardDesigner = () => {
     const drawCard = () => {
         if (!frontImage || !backImage) return;
 
-        // Drawing Front of the Card
         const frontCanvas = frontCanvasRef.current;
         const frontCtx = frontCanvas?.getContext('2d');
 
         if (frontCanvas && frontCtx) {
             frontCtx.clearRect(0, 0, frontCanvas.width, frontCanvas.height);
-            drawRoundedRect(frontCtx, 0, 0, frontCanvas.width, frontCanvas.height, 20); // Rounded corners with a radius of 20
+            drawRoundedRect(frontCtx, 0, 0, frontCanvas.width, frontCanvas.height, 20); // Rounded corners
             frontCtx.drawImage(frontImage, 0, 0, frontCanvas.width, frontCanvas.height);
 
             // QR Code
@@ -74,7 +75,7 @@ const CustomCardDesigner = () => {
                 const qrImage = new Image();
                 qrImage.src = qrCodeUrl;
                 qrImage.onload = () => {
-                    frontCtx.drawImage(qrImage, 20, 20, 70, 70);
+                    frontCtx.drawImage(qrImage, 25, frontCanvas.height - 300, 90, 90); // Position QR code
                 };
             }
 
@@ -83,30 +84,29 @@ const CustomCardDesigner = () => {
                 const logoImage = new Image();
                 logoImage.src = frontLogoUrl;
                 logoImage.onload = () => {
-                    frontCtx.drawImage(logoImage, frontCanvas.width - 120, 20, 100, 100);
+                    frontCtx.drawImage(logoImage, frontCanvas.width - logoSize - 20, 20, logoSize, logoSize); // Adjusted positioning
                 };
             }
 
             // Name and Title
             frontCtx.fillStyle = '#ffffff';
-            frontCtx.font = `bold ${fontSize}px Arial`; // Bolder font
-            frontCtx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            frontCtx.font = `bold ${fontSizeName}px Arial`; // Bolder font for the name
+            frontCtx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             frontCtx.shadowOffsetX = 2;
             frontCtx.shadowOffsetY = 2;
-            frontCtx.shadowBlur = 5;
-            frontCtx.fillText(name, 20, frontCanvas.height - 60);
-            frontCtx.font = `italic ${fontSize * 0.8}px Arial`; // Italic title
-            frontCtx.fillText(title, 20, frontCanvas.height - 30);
+            frontCtx.shadowBlur = 10;
+            frontCtx.fillText(name, 20, frontCanvas.height - 120); // Adjusted name position
+            frontCtx.font = `italic ${fontSizeTitle}px Arial`; // Italic font for the title
+            frontCtx.fillText(title, 20, frontCanvas.height - 80); // Adjusted title position
             frontCtx.shadowColor = 'transparent'; // Reset shadow
         }
 
-        // Drawing Back of the Card
         const backCanvas = backCanvasRef.current;
         const backCtx = backCanvas?.getContext('2d');
 
         if (backCanvas && backCtx) {
             backCtx.clearRect(0, 0, backCanvas.width, backCanvas.height);
-            drawRoundedRect(backCtx, 0, 0, backCanvas.width, backCanvas.height, 20); // Rounded corners with a radius of 20
+            drawRoundedRect(backCtx, 0, 0, backCanvas.width, backCanvas.height, 20); // Rounded corners
             backCtx.drawImage(backImage, 0, 0, backCanvas.width, backCanvas.height);
 
             // Back Logo/Image
@@ -114,8 +114,16 @@ const CustomCardDesigner = () => {
                 const logoImage = new Image();
                 logoImage.src = backLogoUrl;
                 logoImage.onload = () => {
-                    backCtx.drawImage(logoImage, 20, 20, backCanvas.width - 40, backCanvas.height - 40);
+                    backCtx.drawImage(logoImage, (backCanvas.width - logoSize) / 2, (backCanvas.height - logoSize) / 2, logoSize, logoSize);
                 };
+            } else {
+                // Placeholder for the back logo
+                backCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                backCtx.fillRect((backCanvas.width - logoSize) / 2, (backCanvas.height - logoSize) / 2, logoSize, logoSize);
+                backCtx.fillStyle = '#ffffff';
+                backCtx.font = 'bold 12px Arial';
+                backCtx.textAlign = 'center';
+                backCtx.fillText('Upload Logo/Image', backCanvas.width / 2, backCanvas.height / 2);
             }
         }
     };
@@ -147,17 +155,18 @@ const CustomCardDesigner = () => {
     };
 
     return (
-        <div className="designer-container flex flex-col items-center">
-            <div className="card-preview  grid grid-cols-1 ">
-                <div>
+        <div className="designer-container text-black flex flex-col items-center">
+            <div className="card-preview flex flex-col gap-8">
+                <div className='row'>
                     <h3 className="text-center text-lg font-bold mb-2">Front of the Card</h3>
-                    <canvas ref={frontCanvasRef} width={340} height={217} className="border rounded-lg shadow-lg"></canvas>
+                    <canvas ref={frontCanvasRef} width={500} height={318} className="rounded-lg shadow-lg border border-gray-200"></canvas>
                 </div>
-                <div>
+                <div className='row'>
                     <h3 className="text-center text-lg font-bold mb-2">Back of the Card</h3>
-                    <canvas ref={backCanvasRef} width={340} height={217} className="border rounded-lg shadow-lg"></canvas>
+                    <canvas ref={backCanvasRef} width={500} height={318} className="rounded-lg shadow-lg border border-gray-200"></canvas>
                 </div>
             </div>
+
             <div className="controls mt-6 w-full max-w-xl">
                 <label className="block">
                     Name:
@@ -168,12 +177,20 @@ const CustomCardDesigner = () => {
                     <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="mt-2 w-full p-2 border border-gray-300 rounded-lg" />
                 </label>
                 <label className="block mt-4">
-                    Font Size:
-                    <input type="range" min="10" max="30" value={fontSize} onChange={(e) => setFontSize(Number(e.target.value))} className="mt-2 w-full" />
+                    Font Size for Name:
+                    <input type="range" min="10" max="40" value={fontSizeName} onChange={(e) => setFontSizeName(Number(e.target.value))} className="mt-2 w-full" />
+                </label>
+                <label className="block mt-4">
+                    Font Size for Title:
+                    <input type="range" min="10" max="30" value={fontSizeTitle} onChange={(e) => setFontSizeTitle(Number(e.target.value))} className="mt-2 w-full" />
                 </label>
                 <label className="block mt-4">
                     QR Code Data:
                     <input type="text" value={qrCodeData} onChange={(e) => setQrCodeData(e.target.value)} className="mt-2 w-full p-2 border border-gray-300 rounded-lg" />
+                </label>
+                <label className="block mt-4">
+                    Resize Logo:
+                    <input type="range" min="50" max="200" value={logoSize} onChange={(e) => setLogoSize(Number(e.target.value))} className="mt-2 w-full" />
                 </label>
                 <label className="block mt-4">
                     Upload Front Logo:
