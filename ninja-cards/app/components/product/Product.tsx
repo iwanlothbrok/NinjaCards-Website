@@ -32,14 +32,14 @@ const Product: React.FC<ProductProps> = ({
     const [showReviews, setShowReviews] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-600 mt-96">
+        <div className="min-h-screen mt-96">
             <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Product Details */}
                 <div>
                     <img src={imageUrl} alt={title} className="w-full h-auto rounded-lg shadow-lg" />
-                    <h2 className="text-4xl font-bold text-gray-900 mt-4">{title}</h2>
+                    <h2 className="text-4xl font-bold text-gray-100 mt-4">{title}</h2>
                     <p className="mt-2 text-2xl font-semibold text-blue-600">{price}</p>
-                    <p className="mt-4 text-gray-700">{description}</p>
+                    <p className="mt-4 text-gray-200">{description}</p>
 
                     <div className="mt-8 flex space-x-4">
                         <button
@@ -68,18 +68,18 @@ const Product: React.FC<ProductProps> = ({
 
                     {/* Additional Information */}
                     <div className="mt-8">
-                        <h3 className="text-xl font-semibold text-gray-900">Product Details</h3>
+                        <h3 className="text-xl font-semibold text-gray-200">Product Details</h3>
                         <div className="mt-4">
-                            <h4 className="text-lg font-medium text-gray-900">Features</h4>
-                            <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                            <h4 className="text-lg font-medium text-gray-200">Features</h4>
+                            <ul className="list-disc list-inside mt-2 space-y-1 text-gray-200">
                                 {features.map((feature, index) => (
                                     <li key={index}>{feature}</li>
                                 ))}
                             </ul>
                         </div>
                         <div className="mt-4">
-                            <h4 className="text-lg font-medium text-gray-900">Benefits</h4>
-                            <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
+                            <h4 className="text-lg font-medium text-gray-200">Benefits</h4>
+                            <ul className="list-disc list-inside mt-2 space-y-1 text-gray-200">
                                 {benefits.map((benefit, index) => (
                                     <li key={index}>{benefit}</li>
                                 ))}
@@ -88,9 +88,9 @@ const Product: React.FC<ProductProps> = ({
 
                         {/* Reviews Section */}
                         <div className="mt-4">
-                            <h4 className="text-lg font-medium text-gray-900">Customer Reviews</h4>
+                            <h4 className="text-lg font-medium text-gray-200">Customer Reviews</h4>
                             <button
-                                className="bg-blue-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-blue-700 transition-colors duration-300"
+                                className="bg-blue-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-blue-200 transition-colors duration-300"
                                 onClick={() => setShowReviews(!showReviews)}
                             >
                                 {showReviews ? 'Hide Reviews' : 'Show Reviews'}
@@ -99,12 +99,12 @@ const Product: React.FC<ProductProps> = ({
                                 <div className="mt-4 space-y-4">
                                     {reviews.map((review, index) => (
                                         <div key={index} className="bg-gray-50 p-4 rounded-lg shadow">
-                                            <p className="text-lg font-semibold text-gray-800">{review.name}</p>
+                                            <p className="text-lg font-semibold text-gray-200">{review.name}</p>
                                             <p className="mt-1 text-yellow-500">
                                                 {'★'.repeat(review.rating)}{' '}
-                                                <span className="text-gray-500">{review.rating}/5</span>
+                                                <span className="text-gray-200">{review.rating}/5</span>
                                             </p>
-                                            <p className="mt-2 text-gray-700">{review.comment}</p>
+                                            <p className="mt-2 text-gray-200">{review.comment}</p>
                                         </div>
                                     ))}
                                 </div>
