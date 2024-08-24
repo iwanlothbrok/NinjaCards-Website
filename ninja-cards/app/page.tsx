@@ -10,14 +10,13 @@ import VideoTextSection from './components/VideoTextSection';
 import FeaturesSection from './components/FeaturesSection';
 import Testimonies from './components/Testimonies';
 import { motion } from 'framer-motion';
-import ProductGallery from './components/ProductCard';
+import ProductGallery from './components/product/ProductCard';
 import FrequentlyAskedQuestions from './components/FrequentlyAskedQuestions';
 
 export default function Home() {
   return (
     <main className="">
       <HomePage />
-      <Features />
       <About />
       <VideoTextSection />
       {/* <Roadmap /> */}

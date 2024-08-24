@@ -1,14 +1,14 @@
 "use client";
 import React from 'react';
-import RelatedProducts from '../components/RelatedProducts';
-import Product from '../components/Product';
+import RelatedProducts from '../components/product/RelatedProducts';
+import Product from '../components/product/Product';
 
 const ProductPage = () => {
     return (
-        <>
+        <div className="bg-black text-white min-h-screen">
             <Product
-                title="Smart Vizitka"
-                description="An individual business card with customizable design."
+                title="Black & Silver Digital Business Card"
+                description="A sleek, NFC-enabled business card with a customizable design. Perfect for modern professionals."
                 price="$29.99"
                 imageUrl="/nfc-card.webp"
                 features={[
@@ -37,7 +37,6 @@ const ProductPage = () => {
                     },
                 ]}
             />
-
             <RelatedProducts
                 products={[
                     {
@@ -60,8 +59,7 @@ const ProductPage = () => {
                     }
                 ]}
             />
-        </>
+        </div>
     );
 };
-
 export default ProductPage;
