@@ -56,7 +56,6 @@ interface GradientStop {
     color: string;
 }
 
-const googleApiKey = process.env.GOOGLE_API_KEY;
 
 const cardBackgroundOptions = [
     {
@@ -375,7 +374,6 @@ const ProfileDetails: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut', delay: 0.4 }}
                 >
-                    <LocationSection user={currentUser} googleApiKey={googleApiKey || ''} cardStyle={cardStyle} />
                 </motion.div>
 
                 {user?.id === currentUser.id && (
@@ -735,7 +733,7 @@ const LocationSection: React.FC<{ user: User | null; googleApiKey: string; cardS
         <iframe
             className="w-full h-48 mt-1 rounded"
             title="User Location"
-            src={`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${encodeURIComponent(user?.street1 + ', ' + user?.city + ', ' + user?.state + ', ' + user?.zipCode + ', ' + user?.country)}`}
+            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyCrPyVxRucGPRQDdxjwzz-S-yKTK59zsU4&q=${encodeURIComponent(user?.street1 + ', ' + user?.city + ', ' + user?.state + ', ' + user?.zipCode + ', ' + user?.country)}`}
             allowFullScreen
         ></iframe>
     </div>
