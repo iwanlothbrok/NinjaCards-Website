@@ -2,14 +2,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import { parseArgs } from 'util';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { email, password } = req.body;
-        console.log(email, password);
 
         // Check if user exists
         const user = await prisma.user.findUnique({
@@ -17,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (!user) {
-            return res.status(402).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'Invalid email or password' });
         }
 
         // Check if password is correct
