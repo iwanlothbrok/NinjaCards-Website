@@ -25,8 +25,8 @@ export default function RootLayout({
               <Navbar />
             </header>
             <main className="flex-grow">{children}</main>
-            <footer className="bg-gray-900 text-center py-8">
-              <p className="text-gray-400">
+            <footer className="bg-gradient-to-t from-gray-900 via-gray-950 to-black text-center py-8">
+              <p className="text-gray-200">
                 © 2024 Ninja NFC Cards. All rights reserved.
               </p>
             </footer>
