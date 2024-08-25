@@ -11,7 +11,7 @@ import {
 import { motion } from 'framer-motion';
 import classNames from 'classnames';
 import { useAuth } from '../context/AuthContext';
-
+import ActionButtons2 from '../components/profileDetails/ActionButtons2'
 interface User {
     id: string;
     name: string;
@@ -326,11 +326,42 @@ const ProfileDetails: React.FC = () => {
         });
     };
 
+    // const ActionButtons2 = () => (
+    //     <div className="flex justify-around mt-6 mb-8">
+    //         <button
+    //             onClick={generateVCF}
+    //             className="bg-teal-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-teal-600 transition-transform transform hover:scale-105"
+    //         >
+    //             Save VCF
+    //         </button>
+    //         {user?.phone1 && (
+    //             <a href={`tel:${user.phone1}`} className="bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-600 transition-transform transform hover:scale-105">
+    //                 <FaPhoneAlt /> Call
+    //             </a>
+    //         )}
+    //         {user?.email && (
+    //             <a href={`mailto:${user.email}`} className="bg-orange text-white px-4 py-2 rounded-full shadow-lg hover:bg-orange-600 transition-transform transform hover:scale-105">
+    //                 <FaEnvelope /> Email
+    //             </a>
+    //         )}
+    //         <button
+    //             onClick={() => navigator.share && navigator.share({
+    //                 title: user?.name,
+    //                 text: `Contact ${user?.name}`,
+    //                 url: window.location.href
+    //             })}
+    //             className="bg-purple-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-purple-600 transition-transform transform hover:scale-105"
+    //         >
+    //             <FaShareAlt /> Share
+    //         </button>
+    //     </div>
+    // );
+
     if (loading) return <div className="text-center text-3xl py-72 text-red-600 ">Зарежда...</div>;
     if (!currentUser) return <div className="text-center text-3xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
     return (
         <div
-            className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
+            className={`min-h-screen flex items-center py-40 justify-center ${cardStyle.textClass}`}
             style={{
                 backgroundImage: `
                     linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
@@ -358,7 +389,23 @@ const ProfileDetails: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                 >
+                    <ActionButtons2 user={currentUser} />
+                </motion.div>
+                <motion.div
+                    className="mt-6"
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                >
                     <SocialMediaLinks user={currentUser} cardStyle={cardStyle} />
+                </motion.div>
+                <motion.div
+                    className="mt-6"
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                >
+                    <LocationSection user={currentUser} googleApiKey={''} />
                 </motion.div>
                 {/* <motion.div
                     className="mt-6"
@@ -728,7 +775,7 @@ const AboutSection: React.FC<{ user: User | null; cardStyle: any }> = ({ user, c
     </div>
 );
 
-const LocationSection: React.FC<{ user: User | null; googleApiKey: string; cardStyle: any }> = ({ user, googleApiKey, cardStyle }) => (
+const LocationSection: React.FC<{ user: User | null; googleApiKey: string; }> = ({ user, googleApiKey, }) => (
     <div className="mt-6 text-center">
         <iframe
             className="w-full h-48 mt-1 rounded"
