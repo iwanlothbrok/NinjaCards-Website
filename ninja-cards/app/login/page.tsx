@@ -48,7 +48,7 @@ const Login: React.FC = () => {
             setTimeout(() => {
                 window.location.href = '/';
             }, 1500);
-            
+
 
         } else {
             const errorData = await res.json();
@@ -105,6 +105,12 @@ const Login: React.FC = () => {
                         >
                             Login
                         </button>
+                        <div
+                            className="text-sm text-orange cursor-pointer"
+                            onClick={() => router.push('/changePassword')}
+                        >
+                            Forgot Password?
+                        </div>
                     </div>
                 </form>
             </section>
