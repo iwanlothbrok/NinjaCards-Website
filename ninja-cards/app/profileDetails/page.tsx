@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     FaUser, FaBuilding, FaPlus, FaPhone, FaEnvelope, FaFileDownload, FaUserCircle, FaInfo, FaRegIdBadge,
-    FaPhoneAlt, FaShareAlt, FaDownload, FaClipboard
+    FaPhoneAlt, FaExchangeAlt, FaDownload, FaClipboard
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import classNames from 'classnames';
@@ -232,20 +232,110 @@ const ProfileDetails: React.FC = () => {
         setTimeout(() => setAlert(null), 4000);
     };
 
+    // const vCardsJS = require('vcards-js');
+    // const vCardsJS = require('vcards-js');
+
+    // const generateVCF = () => {
+    //     if (!currentUser) return;
+
+    //     const vCard = vCardsJS();
+
+    //     // Set basic information
+    //     vCard.firstName = currentUser.firstName || '';
+    //     vCard.lastName = currentUser.lastName || '';
+    //     vCard.organization = currentUser.company || '';
+    //     vCard.title = currentUser.position || '';
+
+    //     // Add photo if available
+    //     if (currentUser.image) {
+    //         vCard.photo.attachFromUrl(currentUser.image, 'JPEG');
+    //     }
+
+    //     // Add phone numbers
+    //     if (currentUser.phone1) {
+    //         vCard.cellPhone = currentUser.phone1;
+    //     }
+    //     if (currentUser.phone2) {
+    //         vCard.workPhone = currentUser.phone2;
+    //     }
+
+    //     // Add email addresses
+    //     if (currentUser.email) {
+    //         vCard.email = currentUser.email;
+    //     }
+    //     if (currentUser.email2) {
+    //         vCard.workEmail = currentUser.email2;
+    //     }
+
+    //     // Add address
+    //     vCard.homeAddress.street = currentUser.street1 || '';
+    //     vCard.homeAddress.city = currentUser.city || '';
+    //     vCard.homeAddress.stateProvince = currentUser.state || '';
+    //     vCard.homeAddress.postalCode = currentUser.zipCode || '';
+    //     vCard.homeAddress.countryRegion = currentUser.country || '';
+
+    //     // Add social profiles
+    //     if (currentUser.facebook) vCard.socialUrls['Facebook'] = currentUser.facebook;
+    //     if (currentUser.twitter) vCard.socialUrls['Twitter'] = currentUser.twitter;
+    //     if (currentUser.instagram) vCard.socialUrls['Instagram'] = currentUser.instagram;
+    //     if (currentUser.linkedin) vCard.socialUrls['LinkedIn'] = currentUser.linkedin;
+    //     if (currentUser.github) vCard.socialUrls['GitHub'] = currentUser.github;
+    //     if (currentUser.youtube) vCard.socialUrls['YouTube'] = currentUser.youtube;
+    //     if (currentUser.tiktok) vCard.socialUrls['TikTok'] = currentUser.tiktok;
+    //     if (currentUser.googleReview) vCard.socialUrls['Google Review'] = currentUser.googleReview;
+    //     if (currentUser.revolut) vCard.socialUrls['Revolut'] = currentUser.revolut;
+
+    //     // Add a note
+    //     if (currentUser.bio) {
+    //         vCard.note = currentUser.bio;
+    //     }
+
+    //     // Save the VCF file
+    //     vCard.saveToFile(`${currentUser.firstName}_${currentUser.lastName}.vcf`);
+    // };
     const generateVCF = () => {
         if (!currentUser) return;
 
-        const vCard = ["BEGIN:VCARD", "VERSION:3.0"];
+        const vCard = [
+            "BEGIN:VCARD",
+            "VERSION:3.0",
+            "CLASS:PUBLIC", // Added CLASS
+            "PRODID:-//class_vcard //NONSGML Version 1//EN" // Added PRODID
+        ];
 
-        if (currentUser.name) vCard.push(`FN:${currentUser.name}`);
-        if (currentUser.lastName && currentUser.firstName) vCard.push(`N:${currentUser.lastName};${currentUser.firstName};;;`);
-        if (currentUser.email) vCard.push(`EMAIL:${currentUser.email}`);
-        if (currentUser.email2) vCard.push(`EMAIL;TYPE=WORK:${currentUser.email2}`);
-        if (currentUser.phone1) vCard.push(`TEL;TYPE=CELL:${currentUser.phone1}`);
-        if (currentUser.phone2) vCard.push(`TEL;TYPE=CELL:${currentUser.phone2}`);
-        if (currentUser.company) vCard.push(`ORG:${currentUser.company}`);
-        if (currentUser.position) vCard.push(`TITLE:${currentUser.position}`);
+        if (currentUser.lastName && currentUser.firstName) {
+            vCard.push(`N:${currentUser.lastName};${currentUser.firstName};;;`);
+        }
+        if (currentUser.name) {
+            vCard.push(`FN:${currentUser.name}`);
+        }
 
+        // PHOTO with flexible format support
+        if (currentUser.image) {
+            vCard.push(`PHOTO;ENCODING=b;TYPE=JPEG|PNG:${currentUser.image}`);
+        }
+
+        // // Include empty ORG and TITLE fields if not provided
+        // vCard.push("ORG:;");
+        // vCard.push("TITLE:;");
+
+        // Detailed phone number types
+        if (currentUser.phone1) {
+            vCard.push(`TEL;TYPE=Phone,type=VOICE;type=pref:${currentUser.phone1}`);
+        }
+        if (currentUser.phone2) {
+            vCard.push(`TEL;type=Phone;type=VOICE:${currentUser.phone2}`);
+        }
+
+        // Email with detailed type
+        if (currentUser.email) {
+            vCard.push(`EMAIL;type=INTERNET;type=Email;type=pref:${currentUser.email}`);
+        }
+        if (currentUser.email2) {
+            vCard.push(`EMAIL;type=INTERNET;type=Email 2:${currentUser.email2}`);
+        }
+
+        // Address, ensure it's always included
         const address = [
             currentUser.street1 || '',
             currentUser.city || '',
@@ -253,18 +343,36 @@ const ProfileDetails: React.FC = () => {
             currentUser.zipCode || '',
             currentUser.country || ''
         ].filter(Boolean).join(';');
-        if (address) vCard.push(`ADR;TYPE=WORK:;;${address}`);
+        vCard.push(`ADR;type=WORK;type=pref:;;${address}`);
 
-        if (currentUser.bio) vCard.push(`NOTE:${currentUser.bio}`);
-
-        ['facebook', 'twitter', 'instagram', 'linkedin', 'github', 'youtube', 'tiktok', 'googleReview', 'revolut', 'qrCode'].forEach((key) => {
+        // URLs with specific labels
+        if (currentUser.website) {
+            vCard.push(`URL;type=Website;type=pref:${currentUser.website}`);
+        }
+        const socialProfiles = {
+            'facebook': 'Facebook',
+            'twitter': 'Twitter',
+            'instagram': 'Instagram',
+            'linkedin': 'LinkedIn',
+            'github': 'GitHub',
+            'youtube': 'YouTube',
+            'tiktok': 'TikTok',
+            'googleReview': 'Google Review',
+            'revolut': 'Revolut',
+            'qrCode': 'QR Code'
+        };
+        Object.keys(socialProfiles).forEach((key) => {
             const url = currentUser[key as keyof User];
-            if (url) vCard.push(`URL:${url}`);
+            if (url) vCard.push(`URL;type=${socialProfiles[key]};:${url}`);
         });
 
-        if (currentUser.image) {
-            vCard.push(`PHOTO;ENCODING=b;TYPE=JPEG:${currentUser.image}`);
+        // Adding a NOTE field
+        if (currentUser.bio) {
+            vCard.push(`NOTE;CHARSET=UTF-8:${currentUser.bio}`);
         }
+
+        // Add a REV field for revision date
+        vCard.push(`REV:${new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15)}Z`);
 
         vCard.push("END:VCARD");
 
@@ -415,14 +523,10 @@ const ProfileDetails: React.FC = () => {
                 >
                     <UserInfoSection user={user} cardStyle={cardStyle} />
                 </motion.div> */}
-                <motion.div
-                    className="mt-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.4 }}
-                >
-                </motion.div>
-
+                <FloatingButtons generateVCF={generateVCF} handleExchangeContact={generateVCF} />
+                {/* {isModalOpen && (
+                    <ExchangeContactForm user={user} onClose={() => setIsModalOpen(false)} />
+                )} */}
                 {user?.id === currentUser.id && (
 
                     <motion.div
@@ -458,9 +562,11 @@ const ProfileDetails: React.FC = () => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="text-center relative -mt-16">
+    <div className="relative flex items-center p-4 bg-gradient-to-b from-yellow-950 to-black rounded-lg shadow-lg">
+        {/* Profile Image on the Left */}
         <motion.div
-            className={`relative w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-xl`}
+            className={`relative z-10 w-80 h-52 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-xl`}
+
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             whileHover={{ scale: 1.05 }}
@@ -476,22 +582,28 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
                 <FaUserCircle className="w-full h-full text-gray-300" />
             )}
         </motion.div>
-        <h1 className={`text-3xl font-bold mt-2 text-white shadow-md`}>
-            {user?.name}
-        </h1>
-        <p className={`text-sm mt-1 ${cardStyle.highlightClass}`}>
-            {user?.position}
-        </p>
-        <p className={`text-sm ${cardStyle.highlightClass}`}>
-            {user?.company}
-        </p>
-        {user?.bio && (
-            <p className="text-xs mt-4 text-gray-300 px-4">
-                {user.bio.length > 100 ? `${user.bio.substring(0, 97)}...` : user.bio}
+
+        {/* User Information on the Right */}
+        <div className="ml-4 z-10">
+            <h1 className="text-3xl font-bold text-white leading-tight">
+                {user?.name}
+            </h1>
+            <p className={`text-md mt-2 ${cardStyle.highlightClass}`}>
+                {user?.position}
             </p>
-        )}
+            <p className={`text-md mt-0 ${cardStyle.highlightClass}`}>
+                {user?.company}
+            </p>
+            {user?.bio && (
+                <p className="text-sm mt-3 text-gray-300 max-w-xs leading-relaxed">
+                    {user.bio.length > 120 ? `${user.bio.substring(0, 117)}...` : user.bio}
+                </p>
+            )}
+        </div>
     </div>
 );
+
+
 
 const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ user, cardStyle }) => (
     <div className="mt-10 text-center">
@@ -504,7 +616,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Facebook"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 filter grayscale group-hover:filter-none p-2 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/fb.png"
                             alt="Facebook"
@@ -523,7 +635,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Instagram"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-yellow-500 to-red-700 filter grayscale group-hover:filter-none p-2 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-yellow-500 to-red-700 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/ig.png"
                             alt="Instagram"
@@ -543,7 +655,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="LinkedIn"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-700 to-blue-900  filter grayscale group-hover:filter-none  p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-700 to-blue-900 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/lk.png"
                             alt="LinkedIn"
@@ -562,7 +674,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Twitter"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500  filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/x.png"
                             alt="Twitter"
@@ -587,7 +699,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                             alt="GitHub"
                             width={40}
                             height={40}
-                            className="object-contain  transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -606,7 +718,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                             alt="YouTube"
                             width={40}
                             height={40}
-                            className="object-contain  transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -623,9 +735,9 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/tiktok.png"
                             alt="TikTok"
-                            width={44}
-                            height={44}
-                            className="object-contain  transition-all duration-300"
+                            width={40}
+                            height={40}
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -644,7 +756,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                             alt="Behance"
                             width={40}
                             height={40}
-                            className="object-contain  transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -663,7 +775,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                             alt="PayPal"
                             width={40}
                             height={40}
-                            className="object-contain  transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -682,7 +794,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                             alt="TrustPilot"
                             width={40}
                             height={40}
-                            className="object-contain  transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -701,7 +813,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                             alt="Viber"
                             width={40}
                             height={40}
-                            className="object-contain  transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -720,7 +832,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                             alt="WhatsApp"
                             width={40}
                             height={40}
-                            className="object-contain  transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -733,13 +845,13 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                     aria-label="Website"
                     className="relative group"
                 >
-                    <div className="bg-gradient-to-r from-cyan-600  to-cyan-800 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-cyan-600 to-cyan-800 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
                             src="/logos/gr.png"
                             alt="Website"
                             width={40}
                             height={40}
-                            className="object-contain  transition-all duration-300"
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -756,9 +868,9 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/rev.png"
                             alt="Revolut"
-                            width={38}
-                            height={38}
-                            className="object-contain  transition-all duration-300"
+                            width={40}
+                            height={40}
+                            className="object-contain transition-all duration-300"
                         />
                     </div>
                 </a>
@@ -766,7 +878,6 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
         </div>
     </div>
 );
-
 
 const AboutSection: React.FC<{ user: User | null; cardStyle: any }> = ({ user, cardStyle }) => (
     <div className="mt-6 text-center">
@@ -794,7 +905,7 @@ const ActionButtons: React.FC<{
     shareContact: () => void;
 }> = ({ user, showTooltip, handleTouchStart, handleTouchEnd, generateVCF, shareContact }) => (
     <div className="fixed bottom-4 left-5 right-5 flex justify-center items-center space-x-8 z-20">
-        <ActionButton
+        {/* <ActionButton
             label="Share"
             icon={FaShareAlt}
             colorClass="bg-gradient-to-r from-blue-400 to-blue-600"
@@ -803,9 +914,9 @@ const ActionButtons: React.FC<{
             onClick={shareContact}
             handleTouchStart={() => handleTouchStart('Share Contact')}
             handleTouchEnd={handleTouchEnd}
-        />
-        <FloatingSaveButton generateVCF={generateVCF} />
-        <ActionButton
+        /> */}
+        {/* <FloatingSaveButton generateVCF={generateVCF} /> */}
+        {/* <ActionButton
             label={`Call ${user?.phone1}`}
             icon={FaPhoneAlt}
             colorClass="bg-gradient-to-r from-green-400 to-green-600"
@@ -814,7 +925,7 @@ const ActionButtons: React.FC<{
             onClick={() => window.location.href = `tel:${user?.phone1}`}
             handleTouchStart={() => handleTouchStart('Call')}
             handleTouchEnd={handleTouchEnd}
-        />
+        /> */}
     </div>
 );
 
@@ -848,18 +959,27 @@ const ActionButton: React.FC<{
     </div>
 );
 
-const FloatingSaveButton: React.FC<{ generateVCF: () => void }> = ({ generateVCF }) => (
-    <div className="transform translate-y-0">
+const FloatingButtons: React.FC<{ generateVCF: () => void; handleExchangeContact: () => void }> = ({ generateVCF, handleExchangeContact }) => (
+    <div className="fixed bottom-6 left-0 right-0 px-4 z-20 flex justify-center space-x-4 max-w-screen-md mx-auto">
+        {/* Save Contact Button */}
         <button
             onClick={generateVCF}
-            className="relative flex items-center px-8 py-4 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 ease-in-out transform hover:scale-110"
+            className="flex-grow flex items-center justify-center bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-red-900 transition-all duration-300 ease-in-out transform hover:scale-105"
         >
-            <FaDownload className="mr-3 text-2xl" />
-            <span className="text-lg font-semibold">ЗАПАЗИ КОНТАКТ</span>
-            <div className="absolute inset-0 bg-white opacity-0 hover:opacity-10 transition-opacity rounded-full"></div>
+            <FaDownload className="mr-2 text-3xl" />
+            <span className="text-lg font-semibold">Свали контакт</span>
+        </button>
+
+        {/* Exchange Contact Button */}
+        <button
+            onClick={handleExchangeContact}
+            className="w-16 flex items-center justify-center bg-gradient-to-r from-green-500 to-green-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-green-600 transition-all duration-300 ease-in-out transform hover:scale-105"
+        >
+            <FaExchangeAlt className="text-3xl" />
         </button>
     </div>
 );
+
 
 const BackgroundSelector: React.FC<{
     cardBackgroundOptions: typeof cardBackgroundOptions;
