@@ -60,7 +60,7 @@ const Profile: React.FC = () => {
     }, [router, userId]);
 
     return (
-        <div className="flex flex-col items-center pt-16 justify-center min-h-screen p-6 bg-gradient-to-b from-gray-800 via-gray-900 to-black text-gray-200">
+        <div className="flex flex-col items-center pt-16 justify-center min-h-screen p-6 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200">
             <div className="w-full max-w-4xl">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-20 mb-6">
                     <TabCard tab="settings" label="Settings" description="Adjust your preferences" image="/ninja-steps/ninja-step-1.png" activeTab={activeTab} onClick={() => handleTabClick('settings')} />

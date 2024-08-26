@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import {
-    FaPhoneAlt, FaShareAlt, FaEnvelope, FaUser, FaAt, FaPhone, FaFileAlt
+    FaPhoneAlt, FaShareAlt, FaEnvelope, FaUser, FaAt, FaPhone, FaFileAlt, FaImage
 } from 'react-icons/fa';
 
 interface User {
@@ -43,19 +43,21 @@ interface User {
     whatsapp: string;
     website: string;
 }
+
 const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
-        description: '',
         email: '',
         phone: '',
+        image: '',
+        note: '',
     });
     const [formErrors, setFormErrors] = useState({
         name: '',
-        description: '',
         email: '',
         phone: '',
+        note: '',
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -71,8 +73,8 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Invalid email address';
             case 'phone':
                 return /^[0-9]{10,15}$/.test(value) ? '' : 'Phone number must be between 10 to 15 digits';
-            case 'description':
-                return value.trim() === '' ? 'Description is required' : '';
+            case 'note':
+                return value.trim() === '' ? 'Note is required' : '';
             default:
                 return '';
         }
@@ -90,15 +92,63 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
         });
     };
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData({
+                    ...formData,
+                    image: reader.result as string,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const validateForm = () => {
         const errors = {
             name: validateField('name', formData.name),
-            description: validateField('description', formData.description),
             email: validateField('email', formData.email),
             phone: validateField('phone', formData.phone),
+            note: validateField('note', formData.note),
         };
         setFormErrors(errors);
         return !Object.values(errors).some(error => error);
+    };
+
+    const generateVCF = () => {
+        const vCard = [
+            "BEGIN:VCARD",
+            "VERSION:3.0",
+            "CLASS:PUBLIC", // Added CLASS
+            "PRODID:-//class_vcard //NONSGML Version 1//EN" // Added PRODID
+        ];
+
+        if (formData.name) {
+            vCard.push(`FN:${formData.name}`);
+        }
+
+        if (formData.image) {
+            vCard.push(`PHOTO;ENCODING=b;TYPE=${formData.image.split(';')[0].split(':')[1].toUpperCase()}:${formData.image.split(',')[1]}`);
+        }
+
+        if (formData.phone) {
+            vCard.push(`TEL;TYPE=Phone,type=VOICE;type=pref:${formData.phone}`);
+        }
+
+        if (formData.email) {
+            vCard.push(`EMAIL;type=INTERNET;type=Email;type=pref:${formData.email}`);
+        }
+
+        if (formData.note) {
+            vCard.push(`NOTE;CHARSET=UTF-8:${formData.note}`);
+        }
+
+        vCard.push(`REV:${new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15)}Z`);
+        vCard.push("END:VCARD");
+
+        return vCard.join("\r\n");
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -106,12 +156,12 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
 
         if (!validateForm()) return;
 
-        const vCard = `BEGIN:VCARD\nVERSION:3.0\nFN:${formData.name}\nEMAIL:${formData.email}\nTEL:${formData.phone}\nEND:VCARD`;
+        const vCard = generateVCF();
 
         setIsSubmitting(true);
 
         try {
-            await fetch('/api/send-vcf', {
+            await fetch('/api/profile/exchangeContact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -135,15 +185,16 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
         setIsModalOpen(false);
         setFormErrors({
             name: '',
-            description: '',
             email: '',
             phone: '',
+            note: '',
         });
         setFormData({
             name: '',
-            description: '',
             email: '',
             phone: '',
+            image: '',
+            note: '',
         });
     };
 
@@ -185,7 +236,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                         <form onSubmit={handleSubmit} noValidate>
                             <div className="mb-4">
                                 <label htmlFor="name" className="block text-gray-700 font-medium">
-                                    <FaUser className="inline" /> Your Name
+                                    <FaUser className="inline mr-2" /> Your Name
                                 </label>
                                 <input
                                     type="text"
@@ -193,7 +244,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
-                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.name ? 'border-red-500' : ''}`}
+                                    className={`w-full px-4 py-2 border text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.name ? 'border-red-500' : ''}`}
                                     required
                                     aria-label="Your Name"
                                 />
@@ -201,7 +252,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="email" className="block text-gray-700 font-medium">
-                                    <FaAt className="inline" /> Your Email
+                                    <FaAt className="inline mr-2" /> Your Email
                                 </label>
                                 <input
                                     type="email"
@@ -209,7 +260,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleInputChange}
-                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.email ? 'border-red-500' : ''}`}
+                                    className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.email ? 'border-red-500' : ''}`}
                                     required
                                     aria-label="Your Email"
                                 />
@@ -217,7 +268,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="phone" className="block text-gray-700 font-medium">
-                                    <FaPhone className="inline" /> Your Phone
+                                    <FaPhone className="inline mr-2" /> Your Phone
                                 </label>
                                 <input
                                     type="text"
@@ -225,27 +276,41 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleInputChange}
-                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.phone ? 'border-red-500' : ''}`}
+                                    className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.phone ? 'border-red-500' : ''}`}
                                     required
                                     aria-label="Your Phone"
                                 />
                                 {formErrors.phone && <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>}
                             </div>
                             <div className="mb-4">
-                                <label htmlFor="description" className="block text-gray-700 font-medium">
-                                    <FaFileAlt className="inline " /> Description
+                                <label htmlFor="image" className="block text-gray-700 font-medium">
+                                    <FaImage className="inline mr-2" /> Your Image (Upload)
+                                </label>
+                                <input
+                                    type="file"
+                                    id="image"
+                                    name="image"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                    className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    aria-label="Your Image"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="note" className="block text-gray-700 font-medium">
+                                    <FaFileAlt className="inline mr-2" /> Note
                                 </label>
                                 <input
                                     type="text"
-                                    id="description"
-                                    name="description"
-                                    value={formData.description}
+                                    id="note"
+                                    name="note"
+                                    value={formData.note}
                                     onChange={handleInputChange}
-                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.description ? 'border-red-500' : ''}`}
+                                    className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.note ? 'border-red-500' : ''}`}
                                     required
-                                    aria-label="Description"
+                                    aria-label="Note"
                                 />
-                                {formErrors.description && <p className="text-red-500 text-sm mt-1">{formErrors.description}</p>}
+                                {formErrors.note && <p className="text-red-500 text-sm mt-1">{formErrors.note}</p>}
                             </div>
                             <div className="flex justify-end space-x-4">
                                 <button
