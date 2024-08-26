@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import { sendEmail } from './mailgun';  // Adjust the import path based on your project structure
+import { sendEmail } from './mailgun'
 import { log } from 'node:console';
 
 const prisma = new PrismaClient();

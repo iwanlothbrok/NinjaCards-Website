@@ -59,12 +59,13 @@ interface GradientStop {
 
 const cardBackgroundOptions = [
     {
-        name: 'gray',
+        name: 'orange',
         bgClass: "bg-orange",
         textClass: "text-gray-200",
         borderClass: "border-orange",
         highlightClass: "text-orange",
-        buttonBgClass: "bg-gray-700"
+        buttonBgClass: "bg-gray-700",
+        cardCoverBgClass: "from-bgOrange"
     },
     {
         name: 'blue',
@@ -72,7 +73,8 @@ const cardBackgroundOptions = [
         textClass: "text-white",
         borderClass: "border-blue-500",
         highlightClass: "text-blue-500",
-        buttonBgClass: "bg-gray-700"
+        buttonBgClass: "bg-gray-700",
+        cardCoverBgClass: "from-bgBlue"
     },
     {
         name: 'purple',
@@ -80,7 +82,8 @@ const cardBackgroundOptions = [
         textClass: "text-white",
         borderClass: "border-purple-500",
         highlightClass: "text-purple-500",
-        buttonBgClass: "bg-gray-700"
+        buttonBgClass: "bg-gray-700",
+        cardCoverBgClass: "from-bgViolet"
     },
     {
         name: 'green',
@@ -88,7 +91,8 @@ const cardBackgroundOptions = [
         textClass: "text-white",
         borderClass: "border-green-500",
         highlightClass: "text-green-500",
-        buttonBgClass: "bg-gray-700"
+        buttonBgClass: "bg-gray-700",
+        cardCoverBgClass: "from-bgGreen "
     },
     {
         name: 'yellow',
@@ -96,40 +100,21 @@ const cardBackgroundOptions = [
         textClass: "text-white",
         borderClass: "border-yellow-400",
         highlightClass: "text-yellow-400",
-        buttonBgClass: "bg-gray-700"
+        buttonBgClass: "bg-gray-700",
+        cardCoverBgClass: "from-bgYellow"
+
     },
     {
-        name: 'teil',
+        name: 'teal',
         bgClass: "bg-teal-400",
         textClass: "text-white",
         borderClass: "border-teal-400",
         highlightClass: "text-teal-400",
-        buttonBgClass: "bg-gray-700"
+        buttonBgClass: "bg-gray-700",
+        cardCoverBgClass: "from-bgTeal"
     }
 ];
 
-const bgClassToGradientStops: Record<string, GradientStop[]> = {
-    'bg-gradient-to-r from-blue-500 via-teal-600 to-teal-800': [
-        { offset: '0%', color: '#3B82F6' },
-        { offset: '50%', color: '#0D9488' },
-        { offset: '100%', color: '#115E59' }
-    ],
-    'bg-gradient-to-r from-purple-500 via-indigo-600 to-indigo-700': [
-        { offset: '0%', color: '#A855F7' },
-        { offset: '50%', color: '#6366F1' },
-        { offset: '100%', color: '#4F46E5' }
-    ],
-    'bg-gradient-to-r from-green-500 via-blue-500 to-blue-700': [
-        { offset: '0%', color: '#10B981' },
-        { offset: '50%', color: '#3B82F6' },
-        { offset: '100%', color: '#1D4ED8' }
-    ],
-    'bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500': [
-        { offset: '0%', color: '#FCD34D' },
-        { offset: '50%', color: '#F97316' },
-        { offset: '100%', color: '#EF4444' }
-    ]
-};
 
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
     try {
@@ -434,45 +419,14 @@ const ProfileDetails: React.FC = () => {
         });
     };
 
-    // const ActionButtons2 = () => (
-    //     <div className="flex justify-around mt-6 mb-8">
-    //         <button
-    //             onClick={generateVCF}
-    //             className="bg-teal-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-teal-600 transition-transform transform hover:scale-105"
-    //         >
-    //             Save VCF
-    //         </button>
-    //         {user?.phone1 && (
-    //             <a href={`tel:${user.phone1}`} className="bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-600 transition-transform transform hover:scale-105">
-    //                 <FaPhoneAlt /> Call
-    //             </a>
-    //         )}
-    //         {user?.email && (
-    //             <a href={`mailto:${user.email}`} className="bg-orange text-white px-4 py-2 rounded-full shadow-lg hover:bg-orange-600 transition-transform transform hover:scale-105">
-    //                 <FaEnvelope /> Email
-    //             </a>
-    //         )}
-    //         <button
-    //             onClick={() => navigator.share && navigator.share({
-    //                 title: user?.name,
-    //                 text: `Contact ${user?.name}`,
-    //                 url: window.location.href
-    //             })}
-    //             className="bg-purple-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-purple-600 transition-transform transform hover:scale-105"
-    //         >
-    //             <FaShareAlt /> Share
-    //         </button>
-    //     </div>
-    // );
-
     if (loading) return <div className="text-center text-3xl py-72 text-red-600 ">Зарежда...</div>;
     if (!currentUser) return <div className="text-center text-3xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
     return (
         <div
-            className={`min-h-screen flex items-center py-40 justify-center ${cardStyle.textClass}`}
+            className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
             style={{
                 backgroundImage: `
-                    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
                     url('/profile01.png')
                 `,
                 backgroundSize: 'cover',
@@ -482,7 +436,7 @@ const ProfileDetails: React.FC = () => {
             }}
         >
             <motion.div
-                className={`relative z-10 w-full pt-50 pb-30 max-w-md p-8 rounded-lg ${cardStyle.bgClass} bg-opacity-5 shadow-2xl`}
+                className={`relative z-10 w-full pt-24 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
                 style={{
                     borderRadius: 'inherit',
                 }}
@@ -561,8 +515,9 @@ const ProfileDetails: React.FC = () => {
     );
 }
 
-const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="relative flex items-center p-4 bg-gradient-to-b from-yellow-950 to-black rounded-lg shadow-lg">
+const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) =>
+(
+    <div className={`relative flex items-center p-4 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black rounded-lg shadow-lg`}>
         {/* Profile Image on the Left */}
         <motion.div
             className={`relative z-10 w-80 h-52 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-xl`}
@@ -879,12 +834,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
     </div>
 );
 
-const AboutSection: React.FC<{ user: User | null; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="mt-6 text-center">
-        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>About {user?.firstName}</h3>
-        <p className="mt-2">{user?.bio}</p>
-    </div>
-);
+
 
 const LocationSection: React.FC<{ user: User | null; googleApiKey: string; }> = ({ user, googleApiKey, }) => (
     <div className="mt-6 text-center">
@@ -896,6 +846,7 @@ const LocationSection: React.FC<{ user: User | null; googleApiKey: string; }> = 
         ></iframe>
     </div>
 );
+
 const ActionButtons: React.FC<{
     user: User | null;
     showTooltip: string | null;
