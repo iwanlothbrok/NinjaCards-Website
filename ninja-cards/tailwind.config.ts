@@ -19,7 +19,13 @@ const config: Config = {
         teil: '#006D77',
         darkBg: '#1d2225',
         darkOrange: 'rgb(71 46 1)',
-        darkesBg: '#322001'
+        darkesBg: '#322001',
+        bgViolet: '#0D001A',
+        bgTeal: '#002023',
+        bgYellow: '#100F00',
+        bgGreen: '#001705',
+        bgBlue: '#00192D',
+        bgOrange: '#180800'
       },
     },
   },
