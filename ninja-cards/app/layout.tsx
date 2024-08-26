@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} text-gray-200 antialiased`}>
         <AuthProvider>
-          <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-800 via-gray-900 to-black">
+          <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 via-gray-950 to-black">
             <header className="sticky top-0 z-50 bg-gray-900 shadow-md transition-transform duration-300 ease-in-out">
               <Navbar />
             </header>
