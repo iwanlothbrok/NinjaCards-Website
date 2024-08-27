@@ -79,14 +79,10 @@ const About: React.FC = () => {
 
       {/* iPhone Mockup */}
       <motion.section
-        className="relative flex items-center justify-center w-[300px] h-[600px] bg-cover bg-center rounded-[35px] transform transition-transform duration-500 hover:scale-105 border border-white shadow-2xl"
-        style={{
-          backgroundImage:
-            "url('https://webdevartur.com/wp-content/uploads/2022/08/ryan-klaus-8QjsdoXDsZs-unsplash-scaled.jpg')",
-        }}
+        className="relative flex items-center justify-center w-[300px] h-[600px] bg-cover bg-center transform transition-transform duration-500 hover:scale-105"
       >
         <img
-          src="/mocked.png"
+          src="/realMockup.png"
           alt="Profile Details Screenshot"
           className="absolute w-[99%] h-[100%] object-cover rounded-[29px] transform transition-transform duration-500 hover:scale-100"
         />
@@ -94,7 +90,7 @@ const About: React.FC = () => {
 
       {/* Parallax Background */}
       {/* <div className="absolute inset-0 bg-[url('/path-to-your-svg.svg')] bg-fixed bg-center bg-no-repeat bg-opacity-50 pointer-events-none"></div> */}
-    </div>
+    </div >
   );
 };
 
