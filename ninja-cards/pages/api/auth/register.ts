@@ -13,10 +13,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         const { name, email, password } = req.body;
 
-        console.log(name);
-        console.log(email);
-        console.log(password);
-
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({
             where: { email },

@@ -47,41 +47,50 @@ export default function ChangePassword() {
     };
 
     return (
-        <main className="flex flex-col items-center justify-center min-h-screen ">
-            <section className="w-full max-w-md p-8  rounded shadow-md bg-blue-900">
-                {alert && (
-                    <div className={`my-2 w-full p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}>
-                        <strong>{alert.title}: </strong> {alert.message}
-                    </div>
-                )}
-                <h2 className="text-2xl font-bold mb-6 text-orange">Login</h2>
-                <form onSubmit={onForgotPasswordSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-orange text-sm font-bold mb-2" htmlFor="email">
-                            Enter your email
-                        </label>
-                        <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="email"
-                            name="email"
-                            type="email"
-                            placeholder="Your email"
-                            required
-                        />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <button
-                            className="bg-orange text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-orange"
-                            type="submit"
-                        >
+        <section className="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center mx-auto">
+                <a href="#" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 dark:text-white">
+                    <img className="w-24 h-24  filter grayscale" src="./navlogo.png" alt="logo" />
+                </a>
+                <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-lg dark:bg-gray-800 dark:border-gray-700">
+                    <div className="p-12 space-y-6 md:space-y-8 sm:p-14">
+                        <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-3xl dark:text-white">
                             Reset Password
-                        </button>
+                        </h1>
+                        {alert && (
+                            <div className={`my-2 w-full p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}>
+                                <strong>{alert.title}: </strong> {alert.message}
+                            </div>
+                        )}
+                        <form className="space-y-6 md:space-y-8" onSubmit={onForgotPasswordSubmit}>
+                            <div>
+                                <label htmlFor="email" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">
+                                    Enter your email
+                                </label>
+                                <input
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="Your email"
+                                    required
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <button
+                                    className="w-full text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-base px-6 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                    type="submit"
+                                >
+                                    Reset Password
+                                </button>
+                            </div>
+                            <div className="mt-4 text-base text-center text-teal-600 cursor-pointer hover:underline" onClick={() => router.push('/login')}>
+                                Back to Login
+                            </div>
+                        </form>
                     </div>
-                    <div className="mt-4 text-sm text-center text-orange cursor-pointer" onClick={() => router.push('/login')}>
-                        Back to Login
-                    </div>
-                </form>
-            </section>
-        </main>
+                </div>
+            </div>
+        </section>
     );
 }

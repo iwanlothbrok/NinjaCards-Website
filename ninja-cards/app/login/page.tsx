@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
-import path from 'path';
 
 const schema = yup.object().shape({
     email: yup.string().email('Invalid email format').required('Email is required'),
@@ -35,11 +34,7 @@ const Login: React.FC = () => {
         });
 
         if (res.ok) {
-
             const { token, user } = await res.json();
-            console.log(token + ' token');
-            console.log(user + ' user');
-
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
 
@@ -49,10 +44,8 @@ const Login: React.FC = () => {
                 window.location.href = '/';
             }, 1500);
 
-
         } else {
-            const errorData = await res.json();
-            showAlert('Неуспешно влизане в профила', 'Warning', 'red');
+            showAlert('Login failed', 'Warning', 'red');
         }
     };
 
@@ -62,59 +55,65 @@ const Login: React.FC = () => {
             setAlert(null);
         }, 4000);
     };
+
     return (
-        <main className="flex flex-col items-center justify-center min-h-screen ">
-            <section className="w-full max-w-md p-8  rounded shadow-md bg-blue-900">
-                {alert && (
-                    <div className={`my-2 w-full p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}>
-                        <strong>{alert.title}: </strong> {alert.message}
+        <section className="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center mx-auto">
+                <a href="#" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 dark:text-white">
+                    <img className="w-24 h-24 filter grayscale" src="./navlogo.png" alt="logo" />
+                </a>
+                <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-lg dark:bg-gray-800 dark:border-gray-700">
+                    <div className="p-12 space-y-6 md:space-y-8 sm:p-14">
+                        <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-3xl dark:text-white">
+                            Login to your account
+                        </h1>
+                        {alert && (
+                            <div className={`my-2 w-full p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}>
+                                <strong>{alert.title}: </strong> {alert.message}
+                            </div>
+                        )}
+                        <form className="space-y-6 md:space-y-8" onSubmit={handleSubmit(onSubmit)}>
+                            <div>
+                                <label htmlFor="email" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Your email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    className={`bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${errors.email ? 'border-red-500' : ''}`}
+                                    placeholder="name@company.com"
+                                    {...register('email')}
+                                    required
+                                />
+                                {errors.email && <p className="text-red-500 text-sm italic">{errors.email.message}</p>}
+                            </div>
+                            <div>
+                                <label htmlFor="password" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Password</label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    className={`bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${errors.password ? 'border-red-500' : ''}`}
+                                    placeholder="••••••••"
+                                    {...register('password')}
+                                    required
+                                />
+                                {errors.password && <p className="text-red-500 text-sm italic">{errors.password.message}</p>}
+                                <div className="mt-2 text-sm text-right">
+                                    <a href="/changePassword" className="text-red-600 hover:underline">Forgot password?</a>
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-base px-6 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                            >
+                                Login
+                            </button>
+                            <p className="text-base font-light text-gray-500 dark:text-gray-400">
+                                Don't have an account? <a href="/register" className="font-medium text-teal-600 hover:underline">Register here</a>
+                            </p>
+                        </form>
                     </div>
-                )}
-                <h2 className="text-2xl font-bold mb-6 text-orange">Login</h2>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="mb-4">
-                        <label className="block text-orange text-sm font-bold mb-2" htmlFor="email">
-                            Email
-                        </label>
-                        <input
-                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.email ? 'border-red-500' : ''}`}
-                            id="email"
-                            type="email"
-                            placeholder="Your email"
-                            {...register('email')}
-                        />
-                        {errors.email && <p className="text-red-500 text-xs italic">{errors.email.message}</p>}
-                    </div>
-                    <div className="mb-6">
-                        <label className="block text-orange text-sm font-bold mb-2" htmlFor="password">
-                            Password
-                        </label>
-                        <input
-                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.password ? 'border-red-500' : ''}`}
-                            id="password"
-                            type="password"
-                            placeholder="Your password"
-                            {...register('password')}
-                        />
-                        {errors.password && <p className="text-red-500 text-xs italic">{errors.password.message}</p>}
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <button
-                            className="bg-orange text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-orange-600"
-                            type="submit"
-                        >
-                            Login
-                        </button>
-                        <div
-                            className="text-sm text-orange cursor-pointer"
-                            onClick={() => router.push('/changePassword')}
-                        >
-                            Forgot Password?
-                        </div>
-                    </div>
-                </form>
-            </section>
-        </main>
+                </div>
+            </div>
+        </section>
     );
 };
 
