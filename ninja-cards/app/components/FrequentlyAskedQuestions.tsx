@@ -86,7 +86,7 @@ const FrequentlyAskedQuestions: React.FC<FrequentlyAskedQuestionsProps> = ({
   }));
 
   return (
-    <section className="py-16 bg-darkBg2 text-white">
+    <section className=" bg-darkBg2 text-white">
       <div className="max-w-5xl mx-auto px-6">
         <h2 className="text-5xl font-extrabold text-orange text-center mb-12">
           Frequently Asked Questions
