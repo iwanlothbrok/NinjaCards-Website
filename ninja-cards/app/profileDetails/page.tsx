@@ -562,7 +562,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
 
 const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ user, cardStyle }) => (
     <div className="mt-10 text-center">
-        <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-6">
             {user?.facebook && (
                 <a
                     href={user.facebook}
@@ -575,8 +575,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/fb.png"
                             alt="Facebook"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -594,8 +594,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/ig.png"
                             alt="Instagram"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -614,8 +614,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/lk.png"
                             alt="LinkedIn"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -633,8 +633,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/x.png"
                             alt="Twitter"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -652,8 +652,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/git.png"
                             alt="GitHub"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -671,8 +671,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/youtube.png"
                             alt="YouTube"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -690,8 +690,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/tiktok.png"
                             alt="TikTok"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -729,7 +729,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                             src="/logos/icons8-paypal-48.png"
                             alt="PayPal"
                             width={40}
-                            height={40}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -747,8 +747,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/tp.png"
                             alt="TrustPilot"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -766,8 +766,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/viber.png"
                             alt="Viber"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -785,8 +785,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/wa.png"
                             alt="WhatsApp"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -804,8 +804,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/gr.png"
                             alt="Website"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
@@ -823,8 +823,8 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                         <Image
                             src="/logos/rev.png"
                             alt="Revolut"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="object-contain transition-all duration-300"
                         />
                     </div>
