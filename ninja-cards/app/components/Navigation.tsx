@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="relative flex items-center justify-between py-4 lg:py-6">
           <div className="flex-shrink-0">
-            <Link href="/" className="block w-24">
+            <Link href="/" className="block w-24 filter grayscale">
               <img src="/navLogo.png" alt="logo" className="w-full" />
             </Link>
           </div>
