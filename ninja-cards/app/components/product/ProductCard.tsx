@@ -1,67 +1,161 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 
 interface ProductCardProps {
     id: string;
     imageUrl: string;
     name: string;
+    description: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, name }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, name, description }) => {
+    const controls = useAnimation();
+    const cardRef = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        controls.start('visible');
+                    } else {
+                        controls.start('hidden');
+                    }
+                });
+            },
+            { threshold: 0.1 }
+        );
+
+        if (cardRef.current) {
+            observer.observe(cardRef.current);
+        }
+
+        return () => {
+            if (cardRef.current) {
+                observer.unobserve(cardRef.current);
+            }
+        };
+    }, [controls]);
+
     return (
-        <div className="relative bg-orange rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group">
-            <div className="w-full h-96 bg-gray-200 rounded-t-lg overflow-hidden">
+        <motion.div
+            ref={cardRef}
+            initial="hidden"
+            animate={controls}
+            variants={{
+                visible: { opacity: 1, y: 0, scale: 1 },
+                hidden: { opacity: 0, y: 50, scale: 0.95 },
+            }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="relative w-full bg-gradient-to-r from-gray-900 to-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group"
+        >
+            <div className="w-full h-64 bg-gray-300 rounded-t-lg overflow-hidden">
                 <img
                     src={imageUrl}
                     alt={name}
                     className="w-full h-full object-center object-cover transition-transform duration-300 transform group-hover:scale-105"
                 />
             </div>
-            <div className="p-4">
-                <h2 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-blue-600">
+            <div className="p-4 flex flex-col items-center">
+                <h2 className="text-xl font-semibold text-white transition-colors duration-300 group-hover:text-orange">
                     {name}
                 </h2>
+                <p className="text-md font-semibold text-white transition-colors duration-300 group-hover:text-orange">
+                    {description}
+                </p>
+                <a
+                    href={`/product/${id}`}
+                    className="mt-4 px-5 py-2 bg-orange text-white rounded-lg shadow hover:bg-opacity-50 transition-transform transform hover:scale-125"
+                >
+                    Buy Now
+                </a>
             </div>
             <a
                 href={`/product/${id}`}
-                className="absolute inset-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="absolute inset-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange focus:ring-offset-2 "
                 style={{ cursor: 'pointer' }}
             >
                 <span className="sr-only">View {name}</span>
             </a>
-        </div>
+        </motion.div>
     );
 };
 
 export const ProductGallery: React.FC = () => {
+    const [products, setProducts] = useState<ProductCardProps[]>([]);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch('/api/admin/products?limit=3&sort=desc');
+                const data = await response.json();
+                setProducts(data.products.map((product: any) => ({
+                    id: product.id,
+                    imageUrl: product.imageUrl, // Assuming API returns the URL of the image
+                    name: product.title,
+                    description: product.description
+                })));
+            } catch (error) {
+                console.error('Failed to fetch products:', error);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
     return (
-        <div className="bg-gray-900 p-16">
-            <div className="transition duration-500 ease-in-out transform scale-100 translate-x-0 translate-y-0 opacity-100 mb-16 space-y-4 text-center">
-                <div className="inline-block px-3 py-1 text-sm font-semibold text-indigo-100 rounded-lg bg-[#202c47] bg-opacity-60 hover:cursor-pointer hover:bg-opacity-40">
-                    Our Products
-                </div>
-                <h1 className="text-3xl font-semibold text-white sm:text-4xl">
-                    Discover Our Range of NFC Products
-                </h1>
-                <p className="text-lg text-gray-100 sm:text-xl">
-                    We offer a variety of NFC business cards tailored to meet your specific needs. Explore our collection and find the perfect fit for your business.
-                </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
-                <ProductCard
-                    id='1'
-                    imageUrl="https://user-images.githubusercontent.com/2805249/64069899-8bdaa180-cc97-11e9-9b19-1a9e1a254c18.png"
-                    name="Metal NFC Business Cards"
-                />
-                <ProductCard
-                    id='2'
-                    imageUrl="https://user-images.githubusercontent.com/2805249/64069998-305de300-cc9a-11e9-8ae7-5a0fe00299f2.png"
-                    name="Wooden NFC Business Cards"
-                />
-                <ProductCard
-                    id='3'
-                    imageUrl="https://user-images.githubusercontent.com/2805249/64069899-8bdaa180-cc97-11e9-9b19-1a9e1a254c18.png"
-                    name="PVC Digital Business Cards"
-                />
+        <div className="bg-gradient-to-b from-black to-gray-950 py-16">
+            <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={{
+                    visible: { opacity: 1, y: 0 },
+                    hidden: { opacity: 0, y: -30 },
+                }}
+                transition={{ duration: 1 }}
+                className="text-center mb-16"
+            >
+                <motion.div
+                    variants={{
+                        visible: { opacity: 1, y: 0 },
+                        hidden: { opacity: 0, y: -40 },
+                    }}
+                    transition={{ duration: 1.5 }}
+                    className="inline-block  px-3 py-1  text-sm font-semibold text-indigo-100 rounded-full bg-[#202c47] bg-opacity-60 hover:bg-opacity-50"
+                >
+                    Продукти
+                </motion.div>
+                <motion.h1
+                    variants={{
+                        visible: { opacity: 1, y: 0 },
+                        hidden: { opacity: 0, y: -50 },
+                    }}
+                    transition={{ duration: 2 }}
+                    className="text-3xl font-bold text-white sm:text-4xl"
+                >
+                    Открийте нашата гама от NFC продукти
+                </motion.h1>
+                <motion.p
+                    variants={{
+                        visible: { opacity: 1, y: 0 },
+                        hidden: { opacity: 0, y: -20 },
+                    }}
+                    transition={{ duration: 0.8 }}
+                    className="text-lg text-gray-300 sm:text-xl max-w-2xl mx-auto"
+                >
+                    Предлагаме разнообразие от NFC продукти, съобразени с вашите специфични нужди. Разгледайте нашата колекция и намерете идеалното решение за вашия бизнес.
+                </motion.p>
+            </motion.div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4 md:px-16">
+                {products.map(product => (
+                    <ProductCard
+                        key={product.id}
+                        id={product.id}
+                        imageUrl={product.imageUrl}
+                        name={product.name}
+                        description={product.description}
+                    />
+                ))}
             </div>
         </div>
     );
