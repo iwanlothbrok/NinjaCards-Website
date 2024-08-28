@@ -461,14 +461,14 @@ const ProfileDetails: React.FC = () => {
                 >
                     <SocialMediaLinks user={currentUser} cardStyle={cardStyle} />
                 </motion.div>
-                <motion.div
+                {/* <motion.div
                     className="mt-6"
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                 >
                     <LocationSection user={currentUser} googleApiKey={''} />
-                </motion.div>
+                </motion.div> */}
                 {/* <motion.div
                     className="mt-6"
                     initial={{ opacity: 0, x: 50 }}
