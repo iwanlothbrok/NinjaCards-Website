@@ -57,3 +57,42 @@ model Contact {
   subject       String?
   sendedOn      DateTime @default(now())
 }
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  price       Float
+  imageUrl    String
+  nfcType     String
+
+  features    Feature[] // One-to-many relationship
+  benefits    Benefit[] // One-to-many relationship
+  reviews     Review[]  // One-to-many relationship
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Feature {
+  id        Int      @id @default(autoincrement())
+  name      String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+}
+
+model Benefit {
+  id        Int      @id @default(autoincrement())
+  name      String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  name      String
+  rating    Int
+  comment   String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+}
