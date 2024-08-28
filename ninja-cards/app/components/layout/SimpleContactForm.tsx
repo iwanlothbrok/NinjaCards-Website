@@ -53,13 +53,27 @@ const SimpleContactForm: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b  p-6">
-            <div className="w-full max-w-lg bg-gray-800 bg-opacity-90 rounded-lg shadow-lg p-8">
-                <h2 className="text-3xl font-semibold text-center text-teal-400 mb-8">Get In Touch</h2>
+        <div className="bg-gradient-to-b from-gray-950 to-black min-h-screen flex flex-col justify-center items-center p-6">
+            <div className="transition duration-500 ease-in-out transform scale-100 translate-x-0 translate-y-0 opacity-100">
+                <div className="space-y-4 text-center pt-10">
+                    <div className="inline-block px-4 py-2 text-sm font-semibold text-indigo-100 rounded-full bg-[#202c47] bg-opacity-70 hover:cursor-pointer hover:bg-opacity-50">
+                        Свържете се с нас
+                    </div>
+                    <h1 className="text-2xl font-semibold text-white sm:text-3xl">
+                        Връзка с нашия екип
+                    </h1>
+                    <p className="text-md text-gray-100 sm:text-lg">
+                        Имаме готовност да помогнем. Свържете се с нас за всякакви въпроси или предложения.
+                    </p>
+                </div>
+            </div>
+
+            <div className="w-full max-w-md bg-[#1e293b] bg-opacity-95 rounded-lg shadow-xl p-6 mt-8">
+                <h2 className="text-2xl font-semibold text-center text-orange mb-6">Свържете се с нас</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-6">
-                        <label className="block text-teal-300 font-medium mb-2" htmlFor="name">
-                            Name
+                    <div className="mb-4">
+                        <label className="block text-white font-medium mb-2" htmlFor="name">
+                            Имена
                         </label>
                         <input
                             type="text"
@@ -67,13 +81,14 @@ const SimpleContactForm: React.FC = () => {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-700 bg-gray-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            placeholder="Вашето име"
+                            className="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                             required
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-teal-300 font-medium mb-2" htmlFor="email">
-                            Email
+                    <div className="mb-4">
+                        <label className="block text-white font-medium mb-2" htmlFor="email">
+                            Имейл
                         </label>
                         <input
                             type="email"
@@ -81,13 +96,14 @@ const SimpleContactForm: React.FC = () => {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-700 bg-gray-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            placeholder="Вашият имейл"
+                            className="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                             required
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-teal-300 font-medium mb-2" htmlFor="phone">
-                            Phone
+                    <div className="mb-4">
+                        <label className="block text-white font-medium mb-2" htmlFor="phone">
+                            Телефонен номер
                         </label>
                         <input
                             type="text"
@@ -95,29 +111,31 @@ const SimpleContactForm: React.FC = () => {
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-700 bg-gray-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            placeholder="Вашият телефонен номер"
+                            className="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                             required
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-teal-300 font-medium mb-2" htmlFor="subject">
-                            Subject
+                    <div className="mb-4">
+                        <label className="block text-white font-medium mb-2" htmlFor="subject">
+                            Информация
                         </label>
                         <textarea
                             id="subject"
                             name="subject"
                             value={formData.subject}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-700 bg-gray-900 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 h-32 resize-none"
+                            placeholder="Вашето съобщение"
+                            className="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 h-24 resize-none"
                             required
                         />
                     </div>
                     <div className="flex justify-between">
                         <button
                             type="submit"
-                            className="px-6 py-3 bg-teal-600 text-white rounded-lg shadow hover:bg-teal-700 transition-transform transform hover:scale-105"
+                            className="px-5 py-2 bg-orange  text-white rounded-lg shadow hover:bg-orange-600 transition-transform transform hover:scale-105"
                         >
-                            Send Message
+                            ИЗПРАТИ
                         </button>
                         <button
                             type="reset"
@@ -129,13 +147,13 @@ const SimpleContactForm: React.FC = () => {
                                     subject: '',
                                 })
                             }
-                            className="px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition-transform transform hover:scale-105"
+                            className="px-5 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition-transform transform hover:scale-105"
                         >
                             Reset Form
                         </button>
                     </div>
-                    {error && <p className="mt-6 text-red-500 text-center">{error}</p>}
-                    {success && <p className="mt-6 text-green-500 text-center">{success}</p>}
+                    {error && <p className="mt-4 text-red-500 text-center">{error}</p>}
+                    {success && <p className="mt-4 text-green-500 text-center">{success}</p>}
                 </form>
             </div>
         </div>
