@@ -205,7 +205,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 className="flex items-center justify-center bg-gradient-to-r from-green-400 to-green-600 text-white px-8 py-4 rounded-full shadow-lg hover:from-green-500 hover:to-green-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaPhoneAlt className="mr-3 text-2xl" />
-                <span className="text-lg font-semibold">Call</span>
+                <span className="text-lg font-semibold">Обади се</span>
             </button>
             <button
                 onClick={() => navigator.share && navigator.share({
@@ -216,14 +216,14 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 className="flex items-center justify-center bg-gradient-to-r from-blue-400 to-blue-600 text-white px-8 py-4 rounded-full shadow-lg hover:from-blue-500 hover:to-blue-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaShareAlt className="mr-3 text-2xl" />
-                <span className="text-lg font-semibold">Share</span>
+                <span className="text-lg font-semibold">Сподели</span>
             </button>
             <button
                 onClick={handleExchangeContact}
                 className="flex items-center justify-center bg-gradient-to-r from-purple-400 to-purple-600 text-white px-8 py-4 rounded-full shadow-lg hover:from-purple-500 hover:to-purple-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaEnvelope className="mr-3 text-2xl" />
-                <span className="text-lg font-semibold">Exchange Contact</span>
+                <span className="text-lg font-semibold">Разменете Контакти</span>
             </button>
             {isModalOpen && (
                 <div
@@ -232,11 +232,11 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                     role="dialog"
                 >
                     <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4 sm:mx-auto">
-                        <h2 className="text-2xl mb-4 font-semibold text-gray-900 text-center">Exchange Contact Information</h2>
+                        <h2 className="text-2xl mb-4 font-semibold text-gray-900 text-center">Разменете Контакти</h2>
                         <form onSubmit={handleSubmit} noValidate>
                             <div className="mb-4">
                                 <label htmlFor="name" className="block text-gray-700 font-medium">
-                                    <FaUser className="inline mr-2" /> Your Name
+                                    <FaUser className="inline mr-2" /> Вашето Име
                                 </label>
                                 <input
                                     type="text"
@@ -246,13 +246,14 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                                     onChange={handleInputChange}
                                     className={`w-full px-4 py-2 border text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.name ? 'border-red-500' : ''}`}
                                     required
+                                    placeholder='Иван Иванов'
                                     aria-label="Your Name"
                                 />
                                 {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="email" className="block text-gray-700 font-medium">
-                                    <FaAt className="inline mr-2" /> Your Email
+                                    <FaAt className="inline mr-2" /> Вашия Имейл
                                 </label>
                                 <input
                                     type="email"
@@ -262,13 +263,14 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                                     onChange={handleInputChange}
                                     className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.email ? 'border-red-500' : ''}`}
                                     required
+                                    placeholder='example@example.com'
                                     aria-label="Your Email"
                                 />
                                 {formErrors.email && <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>}
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="phone" className="block text-gray-700 font-medium">
-                                    <FaPhone className="inline mr-2" /> Your Phone
+                                    <FaPhone className="inline mr-2" /> Вашия Телефонен Номер
                                 </label>
                                 <input
                                     type="text"
@@ -278,13 +280,14 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                                     onChange={handleInputChange}
                                     className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.phone ? 'border-red-500' : ''}`}
                                     required
+                                    placeholder='+359 88 888 8888'
                                     aria-label="Your Phone"
                                 />
                                 {formErrors.phone && <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>}
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="image" className="block text-gray-700 font-medium">
-                                    <FaImage className="inline mr-2" /> Your Image (Upload)
+                                    <FaImage className="inline mr-2" /> Ваша Снимка (Качи)
                                 </label>
                                 <input
                                     type="file"
@@ -298,7 +301,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="note" className="block text-gray-700 font-medium">
-                                    <FaFileAlt className="inline mr-2" /> Note
+                                    <FaFileAlt className="inline mr-2" /> Информация
                                 </label>
                                 <input
                                     type="text"
@@ -308,6 +311,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                                     onChange={handleInputChange}
                                     className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.note ? 'border-red-500' : ''}`}
                                     required
+                                    placeholder='Запознахме се на...'
                                     aria-label="Note"
                                 />
                                 {formErrors.note && <p className="text-red-500 text-sm mt-1">{formErrors.note}</p>}
@@ -318,14 +322,14 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                                     onClick={onClose}
                                     className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
                                 >
-                                    Cancel
+                                    Откажи
                                 </button>
                                 <button
                                     type="submit"
                                     className="px-4 py-2 text-white bg-purple-500 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-700 disabled:bg-purple-300"
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? 'Sending...' : 'Send'}
+                                    {isSubmitting ? 'Изпраща се...' : 'Изпрати'}
                                 </button>
                             </div>
                         </form>
