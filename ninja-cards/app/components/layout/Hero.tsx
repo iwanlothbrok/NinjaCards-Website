@@ -4,50 +4,56 @@ import { motion } from 'framer-motion';
 
 export const Hero: React.FC = () => {
     return (
-        <section className="relative w-full h-screen bg-cover bg-center" style={{ backgroundImage: 'url(/nfc-card.webp)' }}>
+        <section className="relative w-full h-screen bg-cover bg-center" style={{ backgroundImage: 'url(/Metal-Hybrid-Silver.png)' }}>
             {/* Overlay */}
-            <div className="absolute inset-0 bg-black bg-opacity-60" />
+            <div className="absolute inset-0 bg-black bg-opacity-90" />
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
                 {/* Animated Title */}
                 <motion.h1
-                    className="text-4xl md:text-6xl font-bold mb-4"
+                    className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight"
                     initial={{ opacity: 0, y: -50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1 }}
                 >
-                    Welcome to Smart NFC Cards
+                    ПРЕМИУМ <span className='text-orange'>ДИГИТАЛНА ВИЗИТКА</span>
                 </motion.h1>
 
                 {/* Subtitle */}
                 <motion.p
-                    className="text-lg md:text-2xl mb-8"
+                    className="text-xl md:text-2xl mb-8 max-w-2xl leading-relaxed"
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.5 }}
                 >
-                    Innovative solutions for modern needs
+                    Най-мощният инструмент за създаване на контакти.<span className='text-orange'> Подобрете бизнеса си</span> с нашите NFC продукти.
                 </motion.p>
 
-                {/* CTA Button */}
+                {/* CTA Buttons */}
                 <motion.div
+                    className="flex flex-col md:flex-row gap-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1, delay: 1 }}
                 >
                     <Link href="/contact">
-                        <button className="bg-orange text-white px-6 py-3 rounded-full text-lg hover:bg-orange transition-transform transform hover:scale-105">
-                            Get Yours Now
+                        <button className="bg-orange text-white  px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-gradient-to-r from-orange to-yellow-600 transition-transform transform hover:scale-105 focus:outline-none">
+                            ПОРЪЧАЙ СЕГА
+                        </button>
+                    </Link>
+                    <Link href="#features">
+                        <button className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-gradient-to-r from-white to-gray-200 hover:text-black transition-transform transform hover:scale-105 focus:outline-none">
+                            НАУЧИ ПОВЕЧЕ
                         </button>
                     </Link>
                 </motion.div>
             </div>
 
             {/* Background Elements */}
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none fill-orange">
-                <svg className="absolute bottom-0 left-0 w-full h-auto fill-orange" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-                    <path fill="#0099ff" className='fill-orange' d="M0,128L48,160C96,192,192,256,288,256C384,256,480,192,576,160C672,128,768,128,864,160C960,192,1056,256,1152,256C1248,256,1344,192,1392,160L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none fill-black">
+                <svg className="absolute bottom-0 left-0 w-full h-auto fill-black" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300">
+                    <path fill="#0099ff" className='fill-black' d="M0,128L48,160C96,192,192,256,288,256C384,256,480,192,576,160C672,128,768,128,864,160C960,192,1056,256,1152,256C1248,256,1344,192,1392,160L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
                         <animate
                             attributeName="d"
                             dur="10s"
@@ -60,10 +66,6 @@ export const Hero: React.FC = () => {
       " />
                     </path>
                 </svg>
-
-
-
-
             </div>
         </section >
     );
