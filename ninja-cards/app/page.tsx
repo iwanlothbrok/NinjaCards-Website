@@ -11,19 +11,23 @@ import ProductGallery from './components/product/ProductCard';
 import FrequentlyAskedQuestions from './components/FrequentlyAskedQuestions';
 import SimpleContactForm from './components/layout/SimpleContactForm';
 import Features from './components/layout/Features';
+import Hero from './components/layout/Hero';
 
 export default function Home() {
   return (
     <main className="">
-      <HomePage />
-      <About />
-      <ProductGallery />
-      <Testimonies />
-      <Roadmap3 />
-      <FrequentlyAskedQuestions searchTerm={''} />
-      {/* <VideoTextSection /> */}
-      {/* <FeaturesSection /> */}
-      <SimpleContactForm />
+
+        {/* <HomePage /> */}
+        <Hero />
+        <About />
+        <ProductGallery />
+        <Testimonies />
+        {/* <Roadmap3 /> */}
+        {/* <FrequentlyAskedQuestions searchTerm={''} /> */}
+        {/* <VideoTextSection /> */}
+        {/* <FeaturesSection /> */}
+        <SimpleContactForm />
+
     </main>
   );
 }
