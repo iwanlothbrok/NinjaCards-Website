@@ -2,11 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import {
-    FaFacebook, FaInstagram, FaLinkedin,
-    FaTwitter, FaTiktok, FaGoogle, FaCashRegister
-} from 'react-icons/fa';
-import { AiOutlineGlobal } from 'react-icons/ai';
+import Image from 'next/image';
 
 interface Alert {
     message: string;
@@ -14,16 +10,16 @@ interface Alert {
     color: string;
 }
 
-const socialMediaIcons = {
-    facebook: FaFacebook,
-    instagram: FaInstagram,
-    linkedin: FaLinkedin,
-    twitter: FaTwitter,
-    tiktok: FaTiktok,
-    googleReview: FaGoogle,
-    revolut: FaCashRegister,
-    website: AiOutlineGlobal,
-};
+const socialMediaLinks = [
+    { name: 'facebook', icon: '/logos/fb.png', alt: 'Facebook' },
+    { name: 'instagram', icon: '/logos/ig.png', alt: 'Instagram' },
+    { name: 'linkedin', icon: '/logos/lk.png', alt: 'LinkedIn' },
+    { name: 'twitter', icon: '/logos/x.png', alt: 'Twitter' },
+    { name: 'tiktok', icon: '/logos/tiktok.png', alt: 'TikTok' },
+    { name: 'googleReview', icon: '/logos/gr.png', alt: 'Google Review' },
+    { name: 'revolut', icon: '/logos/rev.png', alt: 'Revolut' },
+    { name: 'website', icon: '/logos/website.png', alt: 'Website' },
+];
 
 const Preview: React.FC = () => {
     const { user, setUser } = useAuth();
@@ -33,7 +29,7 @@ const Preview: React.FC = () => {
     const sectionClass = "border border-gray-700 rounded-lg p-4 mb-6 bg-gray-800";
     const titleClass = "text-2xl font-bold mb-4 text-teal-400";
     const textClass = "text-lg text-gray-300";
-    const linkClass = "flex items-center space-x-3 text-lg text-teal-400 hover:text-orange-500 transition-colors duration-300";
+
     const handleRemoveImage = async () => {
         if (!user || !user.id) return;
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -44,17 +40,16 @@ const Preview: React.FC = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to remove image');
+                throw new Error('Неуспешно премахване на изображение');
             }
 
             const updatedUser = await response.json();
-            setUser(updatedUser); // Assuming setUser updates the user's state
+            setUser(updatedUser);
 
-            showAlert('Image removed successfully', 'Success', 'green');
+            showAlert('Изображението е премахнато успешно', 'Успех', 'green');
 
         } catch (error) {
-            showAlert('An unexpected error occurred. Please try again.', 'Error', 'red');
-
+            showAlert('Възникна неочаквана грешка. Моля, опитайте отново.', 'Грешка', 'red');
         }
     };
 
@@ -68,17 +63,16 @@ const Preview: React.FC = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to CV image');
+                throw new Error('Неуспешно премахване на CV');
             }
 
             const updatedUser = await response.json();
-            setUser(updatedUser); // Assuming setUser updates the user's state
+            setUser(updatedUser);
 
-            showAlert('CV removed successfully', 'Success', 'green');
+            showAlert('CV е премахнато успешно', 'Успех', 'green');
 
         } catch (error) {
-            showAlert('An unexpected error occurred. Please try again.', 'Error', 'red');
-
+            showAlert('Възникна неочаквана грешка. Моля, опитайте отново.', 'Грешка', 'red');
         }
     };
 
@@ -97,9 +91,10 @@ const Preview: React.FC = () => {
             setAlert(null);
         }, 4000);
     };
+
     return (
-        <div className="w-full max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-b from-gray-800 via-gray-900 to-gray-800 rounded-xl shadow-2xl">
-            <h2 className="text-4xl font-extrabold mb-8 text-center text-white">Profile Preview</h2>
+        <div className="w-full max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-b from-black via-gray-950 to-gray-950 rounded-xl shadow-2xl">
+            <h2 className="text-4xl font-extrabold mb-8 text-center text-white">Преглед на профила</h2>
             {alert && (
                 <div ref={alertRef} className={`p-4 rounded-lg text-white animate-fadeIn transition-all duration-300 ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} mb-6`}>
                     <strong>{alert.title}: </strong> {alert.message}
@@ -116,42 +111,47 @@ const Preview: React.FC = () => {
                         onClick={handleRemoveImage}
                         className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
                     >
-                        Remove Image
+                        Премахване на изображение
                     </button>
                 </div>
             )}
 
-
             <div className={sectionClass}>
-                <h3 className={titleClass}>Card Information</h3>
-                <p className={textClass}><strong>Card Name:</strong> {user?.name}</p>
-                <p className={textClass}><strong>First Name:</strong> {user?.firstName}</p>
-                <p className={textClass}><strong>Last Name:</strong> {user?.lastName}</p>
+                <h3 className={titleClass}>Информация за картата</h3>
+                <p className={textClass}><strong>Име на картата:</strong> {user?.name}</p>
+                <p className={textClass}><strong>Име:</strong> {user?.firstName}</p>
+                <p className={textClass}><strong>Фамилия:</strong> {user?.lastName}</p>
             </div>
 
             <div className={sectionClass}>
-                <h3 className={titleClass}>Contacts</h3>
-                <p className={textClass}><strong>Phone 1:</strong> {user?.phone1}</p>
-                <p className={textClass}><strong>Phone 2:</strong> {user?.phone2}</p>
+                <h3 className={titleClass}>Контакти</h3>
+                <p className={textClass}><strong>Телефон 1:</strong> {user?.phone1}</p>
+                <p className={textClass}><strong>Телефон 2:</strong> {user?.phone2}</p>
                 <p className={textClass}><strong>Email 1:</strong> {user?.email}</p>
                 <p className={textClass}><strong>Email 2:</strong> {user?.email2}</p>
             </div>
+
             <div className={sectionClass}>
-                <h3 className={titleClass}>Social Media</h3>
-                <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-4 ml-4 sm:ml-10">
-                    {Object.keys(socialMediaIcons).map((key) => {
-                        const IconComponent = socialMediaIcons[key as keyof typeof socialMediaIcons];
-                        const url = user?.[key as keyof typeof user] as string;
+                <h3 className={titleClass}>Социални медии</h3>
+                <div className="grid grid-cols-4 sm:grid-cols-8 gap-4 justify-center">
+                    {socialMediaLinks.map(({ name, icon, alt }) => {
+                        const url = user?.[name as keyof typeof user] as string;
                         if (!url) return null;
                         return (
                             <a
-                                key={key}
+                                key={name}
                                 href={url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-2xl sm:text-3xl text-teal-400 hover:text-orange transition-transform transform hover:scale-110 sm:hover:scale-125"
+                                className="transition-transform transform hover:scale-110"
                             >
-                                <IconComponent />
+                                <Image
+                                    src={icon}
+                                    alt={alt}
+                                    width={52}
+                                    height={52}
+                                    className="rounded-full"
+                                />
                             </a>
                         );
                     })}
@@ -159,49 +159,24 @@ const Preview: React.FC = () => {
             </div>
 
             <div className={sectionClass}>
-                <h3 className={titleClass}>Address</h3>
-                <p className={textClass}><strong>Street 1:</strong> {user?.street1}</p>
-                <p className={textClass}><strong>Street 2:</strong> {user?.street2}</p>
-                <p className={textClass}><strong>Zip Code:</strong> {user?.zipCode}</p>
-                <p className={textClass}><strong>City:</strong> {user?.city}</p>
-                <p className={textClass}><strong>State:</strong> {user?.state}</p>
-                <p className={textClass}><strong>Country:</strong> {user?.country}</p>
+                <h3 className={titleClass}>Адрес</h3>
+                <p className={textClass}><strong>Улица 1:</strong> {user?.street1}</p>
+                <p className={textClass}><strong>Улица 2:</strong> {user?.street2}</p>
+                <p className={textClass}><strong>Пощенски код:</strong> {user?.zipCode}</p>
+                <p className={textClass}><strong>Град:</strong> {user?.city}</p>
+                <p className={textClass}><strong>Област:</strong> {user?.state}</p>
+                <p className={textClass}><strong>Държава:</strong> {user?.country}</p>
             </div>
 
             <div className={sectionClass}>
-                <h3 className={titleClass}>Bio</h3>
+                <h3 className={titleClass}>Биография</h3>
                 <p className={textClass}>{user?.bio}</p>
             </div>
 
             {user?.qrCode && (
                 <div className={sectionClass}>
-                    <h3 className={titleClass}>QR Code</h3>
-                    <img src={user.qrCode} alt="QR Code" className="w-40 h-40 mx-auto mt-2" />
-                </div>
-            )}
-            {user?.cv && (
-                <div className="flex flex-col items-center mb-6">
-                    <h3 className={titleClass}>Resume</h3>
-                    <iframe
-                        src={`data:application/pdf;base64,${user.cv}`}
-                        title="User CV"
-                        className="w-full h-96 mb-4 border-4 border-teal-400 shadow-lg"
-                        loading="lazy" // This enables lazy loading
-                    />
-                    <div className="flex space-x-4">
-                        <button
-                            onClick={downloadCv}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
-                        >
-                            Download CV
-                        </button>
-                        <button
-                            onClick={handleCvRemove}
-                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
-                        >
-                            Remove CV
-                        </button>
-                    </div>
+                    <h3 className={titleClass}>QR код</h3>
+                    <img src={user.qrCode} alt="QR код" className="w-40 h-40 mx-auto mt-2" />
                 </div>
             )}
 
