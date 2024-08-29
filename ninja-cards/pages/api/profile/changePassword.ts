@@ -31,23 +31,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             // Extract values from arrays
             const id = fields.id ? fields.id[0] : undefined;
-            const email = fields.email ? fields.email[0] : undefined;
             const password = fields.password ? fields.password[0] : undefined;
 
-            console.log(fields);
 
-            if (!id || (!email && !password)) {
-                res.status(400).json({ error: 'ID, and either email or password are required' });
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: Number(id), // Convert the id to a number if it's stored as an integer
+                },
+            });
+
+
+            if (!id || (!password)) {
+                res.status(400).json({ error: 'ID, and either password are required' });
                 return;
             }
 
             const updatedData: any = {};
 
-            if (email) {
-                updatedData.email = email;
-            }
             if (password) {
                 updatedData.password = await bcrypt.hash(password, 10);
+            }
+
+            if (user?.password === updatedData.password) {
+                res.status(400).json({ error: 'Do not use the same password' });
+                return;
             }
 
             const updatedUser = await prisma.user.update({
