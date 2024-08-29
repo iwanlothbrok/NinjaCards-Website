@@ -154,7 +154,6 @@ const ProfileDetails: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showTooltip, setShowTooltip] = useState<string | null>(null);
     const [isPhone, setIsPhone] = useState(false);
 
@@ -419,8 +418,8 @@ const ProfileDetails: React.FC = () => {
         });
     };
 
-    if (loading) return <div className="text-center text-3xl py-72 text-red-600 ">Зарежда...</div>;
     if (!currentUser) return <div className="text-center text-3xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
+    if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
         <div
             className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
