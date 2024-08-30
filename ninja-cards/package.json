@@ -51,6 +51,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/mailgun-js": "^0.22.18",
     "@types/qrcode": "^1.5.5",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-modal": "^3.16.3",
     "@types/uuid": "^10.0.0",
     "prisma": "^5.17.0"
