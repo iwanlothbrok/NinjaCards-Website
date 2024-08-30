@@ -10,7 +10,7 @@ const Header: React.FC<HeaderProps> = ({ pageInformation }) => {
     return (
         <div>
             {/* Background Image and Header Text */}
-            <div className="relative bg-cover mb-10 bg-center h-[320px]" style={{ backgroundImage: "url('/profileCover.png')" }}>
+            <div className="relative bg-cover mb-10 bg-center h-[320px]" style={{ backgroundImage: "url('/header.webp')" }}>
                 <div className="absolute inset-0 bg-black opacity-80"></div> {/* Overlay for darkening */}
                 <div className="relative z-10 flex items-center justify-center h-full">
                     <div className="text-center">
