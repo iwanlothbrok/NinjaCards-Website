@@ -82,26 +82,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, name, descripti
 };
 
 export const ProductGallery: React.FC = () => {
-    const [products, setProducts] = useState<ProductCardProps[]>([]);
+    // const [products, setProducts] = useState<ProductCardProps[]>([]);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await fetch('/api/admin/products?limit=3&sort=desc');
-                const data = await response.json();
-                setProducts(data.products.map((product: any) => ({
-                    id: product.id,
-                    imageUrl: product.imageUrl, // Assuming API returns the URL of the image
-                    name: product.title,
-                    description: product.description
-                })));
-            } catch (error) {
-                console.error('Failed to fetch products:', error);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchProducts = async () => {
+    //         try {
+    //             const response = await fetch('/api/admin/products?limit=3&sort=desc');
+    //             const data = await response.json();
+    //             setProducts(data.products.map((product: any) => ({
+    //                 id: product.id,
+    //                 imageUrl: product.imageUrl, // Assuming API returns the URL of the image
+    //                 name: product.title,
+    //                 description: product.description
+    //             })));
+    //         } catch (error) {
+    //             console.error('Failed to fetch products:', error);
+    //         }
+    //     };
 
-        fetchProducts();
-    }, []);
+    //     fetchProducts();
+    // }, []);
 
     return (
         <div className="bg-gradient-to-b from-black to-gray-950 py-16">
@@ -147,7 +147,7 @@ export const ProductGallery: React.FC = () => {
                 </motion.p>
             </motion.div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4 md:px-16">
-                {products.map(product => (
+                {/* {products.map(product => (
                     <ProductCard
                         key={product.id}
                         id={product.id}
@@ -155,7 +155,32 @@ export const ProductGallery: React.FC = () => {
                         name={product.name}
                         description={product.description}
                     />
-                ))}
+                ))} */}
+
+                <ProductCard
+                    key={1}
+                    id={'nfcCards'}
+                    imageUrl={'/Metal-Hybrid-Silver.png'}
+                    name={'NFC Cards'}
+                    description={'Megfa top vizitki beybe'}
+                />
+
+                <ProductCard
+                    key={2}
+                    id={'googleReveiws'}
+                    imageUrl={'/rev.webp'}
+                    name={'Google Reviews'}
+                    description={'Megfa top vizitki beybe'}
+                />
+
+                <ProductCard
+                    key={3}
+                    id={'nfcProducts'}
+                    imageUrl={'/sticker.jpg'}
+                    name={'Google Reviews'}
+                    description={'Megfa top vizitki beybe'}
+                />
+
             </div>
         </div>
     );

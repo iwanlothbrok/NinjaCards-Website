@@ -32,7 +32,7 @@ const Product: React.FC<ProductProps> = ({
     const [showReviews, setShowReviews] = useState(false);
 
     return (
-        <div className="min-h-screen mt-96">
+        <div className="min-h-screen pt-40">
             <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Product Details */}
                 <div>
@@ -55,18 +55,6 @@ const Product: React.FC<ProductProps> = ({
                             Buy Now
                         </button>
                     </div>
-                </div>
-
-                {/* Customization Section */}
-                <div>
-                    <div className="bg-gray-700 p-6 rounded-lg shadow-lg">
-                        <h3 className="text-xl font-semibold text-white">Design Your NFC Card</h3>
-
-                        {/* Insert the CustomCardDesigner component here */}
-                        <CustomCardDesigner />
-                    </div>
-
-                    {/* Additional Information */}
                     <div className="mt-8">
                         <h3 className="text-xl font-semibold text-gray-200">Product Details</h3>
                         <div className="mt-4">
@@ -112,8 +100,16 @@ const Product: React.FC<ProductProps> = ({
                         </div>
                     </div>
                 </div>
+
+                {/* Customization Section */}
+
+                {/* Insert the CustomCardDesigner component here */}
+                <CustomCardDesigner />
+
+                {/* Additional Information */}
+
             </div>
-        </div>
+        </div >
     );
 };
 

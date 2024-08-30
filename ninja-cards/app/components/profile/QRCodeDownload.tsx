@@ -63,7 +63,7 @@ const QRCodeDownload: React.FC = () => {
                     />
                 )}
                 <p className="text-lg font-semibold text-teal-400 mb-4">{user.name}</p>
-                <div className="bg-white p-4 rounded-lg shadow-lg mb-4">
+                <div className="bg-teal-500 p-4 rounded-lg shadow-lg mb-4">
                     <img src={user.qrCode} alt="QR код" className="w-40 h-40" />
                 </div>
                 <div className="flex space-x-4">
@@ -71,14 +71,14 @@ const QRCodeDownload: React.FC = () => {
                         onClick={downloadQRCode}
                         className="flex items-center bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
                     >
-                        <AiOutlineDownload className="mr-2" />
+                        <AiOutlineDownload className="mr-2 text-3xl" />
                         Изтегли QR код
                     </button>
                     <button
                         className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
                         onClick={handleShare}
                     >
-                        <FiSend className="mr-2" />
+                        <FiSend className="mr-2 text-3xl" />
                         Изпрати QR код
                     </button>
                 </div>

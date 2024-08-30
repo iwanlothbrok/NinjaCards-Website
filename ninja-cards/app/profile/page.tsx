@@ -14,7 +14,7 @@ import QRCodeDownload from '../components/profile/QRCodeDownload';
 
 const TabCard: React.FC<{ tab: string; label: string; description: string; backgroundImage: string; activeTab: string; onClick: () => void }> = ({ tab, label, description, backgroundImage, activeTab, onClick }) => (
     <div
-        className={`relative flex items-center justify-center p-6 rounded-lg shadow-md border border-gray-700 transition-all duration-300 cursor-pointer text-center bg-cover bg-center
+        className={`relative flex items-center justify-center p-2 rounded-lg shadow-md border border-gray-700 transition-all duration-300 cursor-pointer text-center bg-cover bg-center
                     ${activeTab === tab ? 'bg-blue-300 text-white' : 'bg-gray-800 text-gray-300'}
                     hover:bg-blue-500 hover:text-white`}
         onClick={onClick}
@@ -26,7 +26,6 @@ const TabCard: React.FC<{ tab: string; label: string; description: string; backg
         ></div>
         <div className="relative z-10">
             <h3 className="text-lg font-semibold mb-1">{label}</h3>
-            <p className="text-xs">{description}</p>
         </div>
     </div>
 );
