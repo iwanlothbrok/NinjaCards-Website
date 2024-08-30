@@ -2,14 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-
+import ExchangeContact from '../components/profileDetails/ExchangeContact'
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-    FaUser, FaBuilding, FaPlus, FaPhone, FaEnvelope, FaFileDownload, FaUserCircle, FaInfo, FaRegIdBadge,
-    FaPhoneAlt, FaExchangeAlt, FaDownload, FaClipboard
+    FaUserCircle, FaExchangeAlt, FaDownload, FaClipboard
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import classNames from 'classnames';
 import { useAuth } from '../context/AuthContext';
 import ActionButtons2 from '../components/profileDetails/ActionButtons2'
 interface User {
@@ -49,11 +47,6 @@ interface User {
     viber: string;
     whatsapp: string;
     website: string;
-}
-
-interface GradientStop {
-    offset: string;
-    color: string;
 }
 
 
@@ -156,11 +149,37 @@ const ProfileDetails: React.FC = () => {
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
     const [showTooltip, setShowTooltip] = useState<string | null>(null);
     const [isPhone, setIsPhone] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const router = useRouter();
     const searchParams = useSearchParams();
     const userId = searchParams?.get('id');
 
+    const handleExchangeContact = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleSubmitContact = async (vCard: string) => {
+        try {
+            await fetch('/api/profile/exchangeContact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    vCard,
+                }),
+            });
+            // alert('Contact information sent successfully');
+        } catch (error) {
+            console.error('Error sending contact information:', error);
+            // alert('Failed to send contact information. Please try again.');
+        }
+    };
     const handleTouchStart = (action: string) => {
         setTimeout(() => setShowTooltip(action), 500);
     };
@@ -216,67 +235,33 @@ const ProfileDetails: React.FC = () => {
         setTimeout(() => setAlert(null), 4000);
     };
 
-    // const vCardsJS = require('vcards-js');
-    // const vCardsJS = require('vcards-js');
+    const FloatingButtons: React.FC<{ generateVCF: () => void; }> = ({ generateVCF }) => (
+        <div className="fixed bottom-6 left-0 right-0 px-4 z-20 flex justify-center space-x-4 max-w-screen-md mx-auto">
+            {/* Save Contact Button */}
+            <button
+                onClick={generateVCF}
+                className="flex-grow flex items-center justify-center bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-red-900 transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+                <FaDownload className="mr-2 text-3xl" />
+                <span className="text-lg font-semibold">СВАЛИ КОНТАКТ</span>
+            </button>
 
-    // const generateVCF = () => {
-    //     if (!currentUser) return;
+            {/* Exchange Contact Button */}
+            <button
+                onClick={handleExchangeContact}
+                className="w-16 flex items-center justify-center bg-gradient-to-r from-green-500 to-green-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-green-600 transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+                <FaExchangeAlt className="text-3xl" />
+            </button>
 
-    //     const vCard = vCardsJS();
+            <ExchangeContact
+                isOpen={isModalOpen}
+                onClose={handleModalClose}
+                onSubmit={handleSubmitContact}
+            />
+        </div>
+    );
 
-    //     // Set basic information
-    //     vCard.firstName = currentUser.firstName || '';
-    //     vCard.lastName = currentUser.lastName || '';
-    //     vCard.organization = currentUser.company || '';
-    //     vCard.title = currentUser.position || '';
-
-    //     // Add photo if available
-    //     if (currentUser.image) {
-    //         vCard.photo.attachFromUrl(currentUser.image, 'JPEG');
-    //     }
-
-    //     // Add phone numbers
-    //     if (currentUser.phone1) {
-    //         vCard.cellPhone = currentUser.phone1;
-    //     }
-    //     if (currentUser.phone2) {
-    //         vCard.workPhone = currentUser.phone2;
-    //     }
-
-    //     // Add email addresses
-    //     if (currentUser.email) {
-    //         vCard.email = currentUser.email;
-    //     }
-    //     if (currentUser.email2) {
-    //         vCard.workEmail = currentUser.email2;
-    //     }
-
-    //     // Add address
-    //     vCard.homeAddress.street = currentUser.street1 || '';
-    //     vCard.homeAddress.city = currentUser.city || '';
-    //     vCard.homeAddress.stateProvince = currentUser.state || '';
-    //     vCard.homeAddress.postalCode = currentUser.zipCode || '';
-    //     vCard.homeAddress.countryRegion = currentUser.country || '';
-
-    //     // Add social profiles
-    //     if (currentUser.facebook) vCard.socialUrls['Facebook'] = currentUser.facebook;
-    //     if (currentUser.twitter) vCard.socialUrls['Twitter'] = currentUser.twitter;
-    //     if (currentUser.instagram) vCard.socialUrls['Instagram'] = currentUser.instagram;
-    //     if (currentUser.linkedin) vCard.socialUrls['LinkedIn'] = currentUser.linkedin;
-    //     if (currentUser.github) vCard.socialUrls['GitHub'] = currentUser.github;
-    //     if (currentUser.youtube) vCard.socialUrls['YouTube'] = currentUser.youtube;
-    //     if (currentUser.tiktok) vCard.socialUrls['TikTok'] = currentUser.tiktok;
-    //     if (currentUser.googleReview) vCard.socialUrls['Google Review'] = currentUser.googleReview;
-    //     if (currentUser.revolut) vCard.socialUrls['Revolut'] = currentUser.revolut;
-
-    //     // Add a note
-    //     if (currentUser.bio) {
-    //         vCard.note = currentUser.bio;
-    //     }
-
-    //     // Save the VCF file
-    //     vCard.saveToFile(`${currentUser.firstName}_${currentUser.lastName}.vcf`);
-    // };
     const generateVCF = () => {
         if (!currentUser) return;
 
@@ -381,43 +366,6 @@ const ProfileDetails: React.FC = () => {
         }
     };
 
-    const downloadCv = () => {
-        if (!currentUser) return;
-
-        const link = document.createElement('a');
-        link.href = `/api/profile/downloadCv?id=${currentUser.id}`;
-        link.download = `${currentUser.firstName}_${currentUser.lastName}_CV.pdf`;
-        link.click();
-    };
-
-    const copyContactDetails = () => {
-        if (!currentUser) return;
-
-        const contactInfoParts = [
-            currentUser.name && `Име: ${currentUser.name}`,
-            currentUser.email && `Имейл: ${currentUser.email}`,
-            currentUser.phone1 && `Телефон: ${currentUser.phone1}`,
-            currentUser.company && `Компания: ${currentUser.company}`,
-            currentUser.position && `Позиция: ${currentUser.position}`,
-            (currentUser.street1 || currentUser.city || currentUser.state || currentUser.zipCode || currentUser.country) &&
-            `Адрес: ${[
-                currentUser.street1,
-                currentUser.city,
-                currentUser.state,
-                currentUser.zipCode,
-                currentUser.country
-            ].filter(Boolean).join(', ')}`
-        ].filter(Boolean);
-
-        const contactInfo = contactInfoParts.join('\n');
-
-        navigator.clipboard.writeText(contactInfo).then(() => {
-            showAlert('Контактните данни са копирани в клипборда', 'Успех', 'green');
-        }, () => {
-            showAlert('Неуспешно копиране на контактните данни', 'Грешка', 'red');
-        });
-    };
-
     if (!currentUser) return <div className="text-center text-3xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
@@ -460,26 +408,9 @@ const ProfileDetails: React.FC = () => {
                 >
                     <SocialMediaLinks user={currentUser} cardStyle={cardStyle} />
                 </motion.div>
-                {/* <motion.div
-                    className="mt-6"
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
-                >
-                    <LocationSection user={currentUser} googleApiKey={''} />
-                </motion.div> */}
-                {/* <motion.div
-                    className="mt-6"
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
-                >
-                    <UserInfoSection user={user} cardStyle={cardStyle} />
-                </motion.div> */}
-                <FloatingButtons generateVCF={generateVCF} handleExchangeContact={generateVCF} />
-                {/* {isModalOpen && (
-                    <ExchangeContactForm user={user} onClose={() => setIsModalOpen(false)} />
-                )} */}
+
+                <FloatingButtons generateVCF={generateVCF} />
+
                 {user?.id === currentUser.id && (
 
                     <motion.div
@@ -556,8 +487,6 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
     </div>
 );
-
-
 
 const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ user, cardStyle }) => (
     <div className="mt-10 text-center">
@@ -833,19 +762,6 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
     </div>
 );
 
-
-
-const LocationSection: React.FC<{ user: User | null; googleApiKey: string; }> = ({ user, googleApiKey, }) => (
-    <div className="mt-6 text-center">
-        <iframe
-            className="w-full h-48 mt-1 rounded"
-            title="User Location"
-            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyCrPyVxRucGPRQDdxjwzz-S-yKTK59zsU4&q=${encodeURIComponent(user?.street1 + ', ' + user?.city + ', ' + user?.state + ', ' + user?.zipCode + ', ' + user?.country)}`}
-            allowFullScreen
-        ></iframe>
-    </div>
-);
-
 const ActionButtons: React.FC<{
     user: User | null;
     showTooltip: string | null;
@@ -876,57 +792,6 @@ const ActionButtons: React.FC<{
             handleTouchStart={() => handleTouchStart('Call')}
             handleTouchEnd={handleTouchEnd}
         /> */}
-    </div>
-);
-
-const ActionButton: React.FC<{
-    label: string;
-    icon: React.ElementType;
-    colorClass: string;
-    hoverColor: string;
-    tooltip: boolean;
-    onClick: () => void;
-    handleTouchStart: () => void;
-    handleTouchEnd: () => void;
-}> = ({ label, icon: Icon, colorClass, hoverColor, tooltip, onClick, handleTouchStart, handleTouchEnd }) => (
-    <div
-        className="relative group"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        tabIndex={0}
-        role="button"
-        aria-label={label}
-        onClick={onClick}
-    >
-        <div className={`p-4 ${colorClass} rounded-full shadow-lg cursor-pointer transition-transform duration-300 ease-in-out transform group-hover:scale-110`}>
-            <Icon className={`text-2xl text-white transition-colors duration-300 ease-in-out group-hover:${hoverColor}`} />
-        </div>
-        {tooltip && (
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded-md">
-                {label}
-            </div>
-        )}
-    </div>
-);
-
-const FloatingButtons: React.FC<{ generateVCF: () => void; handleExchangeContact: () => void }> = ({ generateVCF, handleExchangeContact }) => (
-    <div className="fixed bottom-6 left-0 right-0 px-4 z-20 flex justify-center space-x-4 max-w-screen-md mx-auto">
-        {/* Save Contact Button */}
-        <button
-            onClick={generateVCF}
-            className="flex-grow flex items-center justify-center bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-red-900 transition-all duration-300 ease-in-out transform hover:scale-105"
-        >
-            <FaDownload className="mr-2 text-3xl" />
-            <span className="text-lg font-semibold">Свали контакт</span>
-        </button>
-
-        {/* Exchange Contact Button */}
-        <button
-            onClick={handleExchangeContact}
-            className="w-16 flex items-center justify-center bg-gradient-to-r from-green-500 to-green-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-green-600 transition-all duration-300 ease-in-out transform hover:scale-105"
-        >
-            <FaExchangeAlt className="text-3xl" />
-        </button>
     </div>
 );
 
@@ -961,61 +826,6 @@ const BackgroundSelector: React.FC<{
                 </button>
             ))}
         </div>
-    </div>
-);
-
-
-const UserInfoSection: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className={`p-6 ${cardStyle.bgClass} bg-opacity-40 rounded-lg shadow-lg mb-6`}>
-        <div className="grid grid-cols-2 gap-4 text-white sm:grid-cols-2">
-            {user.firstName && user.lastName && (
-                <div className="flex items-center">
-                    <FaUser className="w-6 h-6 mr-3 text-gray-300" />
-                    <span>{user.firstName} {user.lastName}</span>
-                </div>
-            )}
-            {user.phone1 && (
-                <div className="flex items-center">
-                    <FaPhone className="w-6 h-6 mr-3 text-gray-300" aria-hidden="true" />
-                    <a
-                        href={`tel:${user.phone1}`}
-                        className="text-blue-400 hover:text-blue-500 hover:underline focus:text-blue-500 focus:underline focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-colors duration-200"
-                        aria-label={`Call ${user.phone1}`}
-                    >
-                        {user.phone1}
-                    </a>
-                </div>
-            )}
-            {user.email && (
-                <div className="flex items-center">
-                    <FaEnvelope className="w-6 h-6 mr-3 text-gray-300" aria-hidden="true" />
-                    <a
-                        href={`mailto:${user.email}`}
-                        className="text-blue-400 hover:text-blue-500 hover:underline focus:text-blue-500 focus:underline focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-colors duration-200"
-                        aria-label={`Email ${user.email}`}
-                    >
-                        {user.email}
-                    </a>
-                </div>
-            )}
-
-        </div>
-
-        {/* About Section */}
-        {user.bio && (
-            // <div className="mt-6 p-4 bg-gray-800 bg-opacity-60 rounded-lg shadow-md text-center">
-            //     <h3 className={`text-2xl font-semibold ${cardStyle.highlightClass} text-white`}>
-            //         About {user.firstName}
-            //     </h3>
-            //     <p className="mt-4 text-gray-300 text-lg">
-            //         {user.bio}
-            //     </p>
-            // </div>
-            <div className="flex items-center">
-                <FaRegIdBadge className="w-6 h-6 mr-3 text-gray-300" />
-                <span>{user.bio}</span>
-            </div>
-        )}
     </div>
 );
 
