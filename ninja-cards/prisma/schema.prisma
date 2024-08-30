@@ -44,7 +44,6 @@ model User {
   trustpilot    String?  // TrustPilot URL
   qrCode        String?  @db.Text
   selectedColor String?  // Selected color
-  cv            String?  @db.LongText
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
