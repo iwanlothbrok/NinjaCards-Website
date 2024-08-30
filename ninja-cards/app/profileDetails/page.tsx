@@ -10,6 +10,7 @@ import {
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import ActionButtons2 from '../components/profileDetails/ActionButtons2'
+
 interface User {
     id: string;
     name: string;

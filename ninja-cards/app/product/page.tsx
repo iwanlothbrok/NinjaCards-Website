@@ -1,41 +1,88 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import RelatedProducts from '../components/product/RelatedProducts';
 import Product from '../components/product/Product';
 
-const ProductPage = () => {
+type Review = {
+    id: number;
+    name: string;
+    rating: number;
+    comment: string;
+};
+
+type Feature = {
+    id: number;
+    name: string;
+};
+
+type Benefit = {
+    id: number;
+    name: string;
+};
+
+type ProductData = {
+    id: number;
+    title: string;
+    description: string;
+    price: number;
+    imageUrl: string;
+    nfcType: string;
+    features?: Feature[];
+    benefits?: Benefit[];
+    reviews?: Review[];
+};
+
+const ProductPage: React.FC = () => {
+    const searchParams = useSearchParams();
+    const id = searchParams?.get('id');
+
+    const [productData, setProductData] = useState<ProductData | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (id) {
+            const fetchProduct = async () => {
+                setLoading(true);
+                try {
+                    const response = await fetch(`/api/products/${id}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch product');
+                    }
+                    const data: ProductData = await response.json();
+
+                    // Ensure the related entities are always defined as arrays
+                    data.features = data.features || [];
+                    data.benefits = data.benefits || [];
+                    data.reviews = data.reviews || [];
+
+                    setProductData(data);
+                } catch (error) {
+                    console.error('Error fetching product:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            fetchProduct();
+        }
+    }, [id]);
+
+    if (loading || !productData) {
+        return <div className="text-center text-white pt-40">Loading...</div>;
+    }
+
     return (
         <div className="bg-black text-white min-h-screen">
             <Product
-                title="Black & Silver Digital Business Card"
-                description="A sleek, NFC-enabled business card with a customizable design. Perfect for modern professionals."
-                price="$29.99"
-                imageUrl="/nfc-card.webp"
-                features={[
-                    'Customizable design',
-                    'High-quality print',
-                    'Multiple design templates',
-                    'Fast delivery',
-                ]}
-                benefits={[
-                    'Professional and modern design',
-                    'Enhances personal branding',
-                    'Easy to share contact information',
-                    'Reusable and eco-friendly',
-                ]}
-                nfcType="NXP NTAG213"
-                reviews={[
-                    {
-                        name: 'John Doe',
-                        rating: 5,
-                        comment: 'This product exceeded my expectations! The print quality is superb.',
-                    },
-                    {
-                        name: 'Jane Smith',
-                        rating: 4,
-                        comment: 'Very useful and well-designed NFC card. Highly recommend.',
-                    },
-                ]}
+                title={productData.title}
+                description={productData.description}
+                price={`$${productData.price.toFixed(2)}`}
+                imageUrl={productData.imageUrl}
+                features={productData.features?.map(feature => feature.name)}
+                benefits={productData.benefits?.map(benefit => benefit.name)}
+                nfcType={productData.nfcType}
+                reviews={productData.reviews}
             />
             <RelatedProducts
                 products={[
@@ -62,4 +109,5 @@ const ProductPage = () => {
         </div>
     );
 };
+
 export default ProductPage;
