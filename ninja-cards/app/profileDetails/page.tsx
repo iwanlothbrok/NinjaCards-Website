@@ -331,10 +331,11 @@ const ProfileDetails: React.FC = () => {
             'revolut': 'Revolut',
             'qrCode': 'QR Code'
         };
-        Object.keys(socialProfiles).forEach((key) => {
-            const url = currentUser[key as keyof User];
-            if (url) vCard.push(`URL;type=${socialProfiles[key]};:${url}`);
-        });
+        // Object.keys(socialProfiles).forEach((key) => {
+        //     const url = currentUser[key as keyof typeof currentUser];
+        //     if (url) vCard.push(`URL;type=${socialProfiles[key]};:${url}`);
+        // });
+
 
         // Adding a NOTE field
         if (currentUser.bio) {

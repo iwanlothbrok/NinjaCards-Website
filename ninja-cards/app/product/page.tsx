@@ -74,7 +74,7 @@ const ProductPage: React.FC = () => {
 
     return (
         <div className="bg-black text-white min-h-screen">
-            <Product
+            {/* <Product
                 title={productData.title}
                 description={productData.description}
                 price={`$${productData.price.toFixed(2)}`}
@@ -105,7 +105,7 @@ const ProductPage: React.FC = () => {
                         price: '$9.99',
                     }
                 ]}
-            />
+            /> */}
         </div>
     );
 };

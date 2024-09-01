@@ -125,7 +125,7 @@ export default function AddProduct() {
                         <label className="block text-sm font-medium  capitalize">
                             {field.charAt(0).toUpperCase() + field.slice(1)}
                         </label>
-                        {product[field as keyof typeof product].map((item: any, index: number) => (
+                        {/* {product[field as keyof typeof product].map((item: any, index: number) => (
                             <input
                                 key={index}
                                 type="text"
@@ -134,7 +134,7 @@ export default function AddProduct() {
                                 onChange={(e) => handleArrayChange(e, field as 'features' | 'benefits', index)}
                                 placeholder={`${field.charAt(0).toUpperCase() + field.slice(1)} ${index + 1}`}
                             />
-                        ))}
+                        ))} */}
                         <button
                             type="button"
                             className="mt-2 text-indigo-500 hover:text-indigo-600"

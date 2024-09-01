@@ -4,7 +4,7 @@ const Features: React.FC = () => {
     return (
         <div className="py-16">
             {/* First Section */}
-            <div className="container mx-auto flex flex-col md:flex-row items-center mb-16 px-6">
+            {/* <div className="container mx-auto flex flex-col md:flex-row items-center mb-16 px-6">
                 <div className="md:w-1/2 md:pr-10">
                     <h2 className="text-3xl font-bold text-gray-800 mb-4">Share Your Contact</h2>
                     <p className="text-gray-600 mb-6">
@@ -17,10 +17,10 @@ const Features: React.FC = () => {
                 <div className="md:w-1/2">
                     <img src="/path-to-your-image1.jpg" alt="Share Your Contact" className="w-full rounded-lg shadow-md" />
                 </div>
-            </div>
+            </div> */}
 
             {/* Second Section */}
-            <div className="container mx-auto flex flex-col md:flex-row items-center px-6">
+            {/* <div className="container mx-auto flex flex-col md:flex-row items-center px-6">
                 <div className="md:w-1/2 md:order-2 md:pl-10">
                     <h2 className="text-3xl font-bold text-gray-800 mb-4">Update Your Details Anytime</h2>
                     <p className="text-gray-600 mb-6">
@@ -33,7 +33,7 @@ const Features: React.FC = () => {
                 <div className="md:w-1/2 md:order-1">
                     <img src="/path-to-your-image2.jpg" alt="Update Your Details" className="w-full rounded-lg shadow-md" />
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };
