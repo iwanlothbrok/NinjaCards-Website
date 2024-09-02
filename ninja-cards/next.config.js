@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     experimental: {
-        appDir: true,
+        appDir: true, // Optional: Use if needed and supported by your Next.js version
     },
     env: {
-        NEXTAUTH_SECRET: 'your-secret-key', // Ensure this matches the secret used in your login API route
+        NEXTAUTH_SECRET: 'your-secret-key',
     },
-    output: 'export',  // Add this line to enable static export
+    // Do not include 'output: export'
 };
 
 module.exports = nextConfig;
