@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
         });      
           
-        const qrCodeUrl = `http://localhost:3000/profileDetails?id=${user.id}`;
+        const qrCodeUrl = `https://ninjacardsnfc.com/profileDetails?id=${user.id}`;
         
         // Generate the QR code from the URL
         const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
