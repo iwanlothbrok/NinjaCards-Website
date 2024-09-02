@@ -1,4 +1,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/ninjacar/public_html/
-    - /bin/cp -R /ninja-cards/out/* $DEPLOYPATH
+    - /bin/cp -R /home/ninjacar/repositories/NinjaCards/ninja-cards/out/
