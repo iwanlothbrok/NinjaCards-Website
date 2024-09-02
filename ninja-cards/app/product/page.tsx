@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import RelatedProducts from '../components/product/RelatedProducts';
 import Product from '../components/product/Product';
 
@@ -33,7 +33,7 @@ type ProductData = {
     reviews?: Review[];
 };
 
-const ProductPage: React.FC = () => {
+function ProductPageContent() {
     const searchParams = useSearchParams();
     const id = searchParams?.get('id');
 
@@ -83,7 +83,7 @@ const ProductPage: React.FC = () => {
                 benefits={productData.benefits?.map(benefit => benefit.name)}
                 nfcType={productData.nfcType}
                 reviews={productData.reviews}
-            />
+            /> */}
             <RelatedProducts
                 products={[
                     {
@@ -105,9 +105,15 @@ const ProductPage: React.FC = () => {
                         price: '$9.99',
                     }
                 ]}
-            /> */}
+            />
         </div>
     );
-};
+}
 
-export default ProductPage;
+export default function ProductPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ProductPageContent />
+        </Suspense>
+    );
+}

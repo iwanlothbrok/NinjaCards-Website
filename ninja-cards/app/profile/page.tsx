@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Settings from '../components/profile/ChangePassword';
 import ChangeProfileInformation from '../components/profile/ChangeProfileInformation';
@@ -30,7 +30,7 @@ const TabCard: React.FC<{ tab: string; label: string; description: string; backg
     </div>
 );
 
-const Profile: React.FC = () => {
+function ProfileContent() {
     const router = useRouter();
     const { user } = useAuth();
     const searchParams = useSearchParams();
@@ -173,6 +173,12 @@ const Profile: React.FC = () => {
             </div>
         </div>
     );
-};
+}
 
-export default Profile;
+export default function Profile() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ProfileContent />
+        </Suspense>
+    );
+}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useAuth } from '../context/AuthContext';
@@ -25,7 +25,7 @@ const TabCard: React.FC<{
     </div>
 );
 
-export default function AdminFeatures() {
+function AdminFeaturesContent() {
     const router = useRouter();
     const { user } = useAuth();
     const searchParams = useSearchParams();
@@ -72,5 +72,13 @@ export default function AdminFeatures() {
                 <div className="transition-all">{renderContent}</div>
             </div>
         </div>
+    );
+}
+
+export default function AdminFeatures() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AdminFeaturesContent />
+        </Suspense>
     );
 }

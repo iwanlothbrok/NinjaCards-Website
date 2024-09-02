@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
-import ExchangeContact from '../components/profileDetails/ExchangeContact'
+import ExchangeContact from '../components/profileDetails/ExchangeContact';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-    FaUserCircle, FaExchangeAlt, FaDownload, FaClipboard
-} from 'react-icons/fa';
+import { FaUserCircle, FaExchangeAlt, FaDownload } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import ActionButtons2 from '../components/profileDetails/ActionButtons2'
+import ActionButtons2 from '../components/profileDetails/ActionButtons2';
 
 interface User {
     id: string;
@@ -49,7 +47,6 @@ interface User {
     whatsapp: string;
     website: string;
 }
-
 
 const cardBackgroundOptions = [
     {
@@ -109,7 +106,6 @@ const cardBackgroundOptions = [
     }
 ];
 
-
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
     try {
         const response = await fetch(`/api/profile/saveColor`, {
@@ -142,7 +138,7 @@ const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateA
     }
 };
 
-const ProfileDetails: React.FC = () => {
+const ProfileDetailsContent: React.FC = () => {
     const { user } = useAuth();
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
@@ -386,9 +382,7 @@ const ProfileDetails: React.FC = () => {
         >
             <motion.div
                 className={`relative z-10 w-full pt-24 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
-                style={{
-                    borderRadius: 'inherit',
-                }}
+                style={{ borderRadius: 'inherit' }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -414,7 +408,6 @@ const ProfileDetails: React.FC = () => {
                 <FloatingButtons generateVCF={generateVCF} />
 
                 {user?.id === currentUser.id && (
-
                     <motion.div
                         className="mt-8"
                         initial={{ scale: 0.8, opacity: 0 }}
@@ -426,7 +419,8 @@ const ProfileDetails: React.FC = () => {
                             handleColorSelection={handleColorSelection}
                             cardStyle={cardStyle}
                         />
-                    </motion.div>)}
+                    </motion.div>
+                )}
 
                 <motion.div
                     initial={{ y: 20, opacity: 0 }}
@@ -447,6 +441,13 @@ const ProfileDetails: React.FC = () => {
     );
 }
 
+export default function ProfileDetails() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ProfileDetailsContent />
+        </Suspense>
+    );
+}
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) =>
 (
     <div className={`relative flex items-center p-4 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black rounded-lg shadow-lg`}>
@@ -830,6 +831,3 @@ const BackgroundSelector: React.FC<{
         </div>
     </div>
 );
-
-
-export default ProfileDetails;
