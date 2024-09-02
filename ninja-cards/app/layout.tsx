@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://www.ninjacardsnfc.com/',
     languages: {
-      'bg-BG': 'https://www.ninjacardsnfc.com/bg/',
+      'bg-BG': 'https://www.ninjacardsnfc.com/',
     },
   },
 };
