@@ -15,6 +15,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Respond to preflight request
         return res.status(200).end();
     }
+    console.log('setted res');
+
 
     if (req.method === 'POST') {
         const { name, email, password } = req.body;
@@ -53,6 +55,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.status(201).json(updatedUser);
     } else {
+
+        console.log('mamati sheba');
+
         res.status(405).json({ error: 'Method not allowed' });
     }
 }
