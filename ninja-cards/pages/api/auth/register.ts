@@ -1,14 +1,20 @@
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcryptjs';
-import { log } from 'console';
 import { NextApiRequest, NextApiResponse } from 'next';
 import QRCode from 'qrcode';
-
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log('in');
+    // Add CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        // Respond to preflight request
+        return res.status(200).end();
+    }
 
     if (req.method === 'POST') {
         const { name, email, password } = req.body;
@@ -32,10 +38,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 email,
                 password: hashedPassword,
             },
-        });      
-          
+        });
+
         const qrCodeUrl = `https://ninjacardsnfc.com/profileDetails?id=${user.id}`;
-        
+
         // Generate the QR code from the URL
         const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
 
@@ -45,9 +51,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             data: { qrCode: qrCodeImage },
         });
 
-
         res.status(201).json(updatedUser);
     } else {
-        res?.status(405).json({ error: 'Method not allowed' });
+        res.status(405).json({ error: 'Method not allowed' });
     }
 }
