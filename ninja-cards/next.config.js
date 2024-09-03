@@ -6,7 +6,7 @@ const nextConfig = {
     env: {
         NEXTAUTH_SECRET: 'your-secret-key',
     },
-    // Do not include 'output: export'
+    output: 'export'
 };
 
 module.exports = nextConfig;

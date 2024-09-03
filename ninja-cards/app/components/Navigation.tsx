@@ -157,6 +157,7 @@ const Navbar: React.FC = () => {
                   '/team',
                   '/contact',
                   '/askedQuestions',
+                  `/profileDetails?id=1`
                 ].map((path, idx) => (
                   <li key={idx} className="relative group">
                     <Link

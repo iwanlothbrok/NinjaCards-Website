@@ -1,11 +1,12 @@
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:1234@localhost:3306/ninjadatabase"
+  url      = "mysql://ninjacar_ivan:GkPtPcmg123@localhost:3306/ninjacar_ninjacar_database"
 }
 
 generator client {
   provider = "prisma-client-js"
 }
+
 
 model User {
   id            Int      @id @default(autoincrement())
