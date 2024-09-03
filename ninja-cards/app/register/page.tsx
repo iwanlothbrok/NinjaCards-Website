@@ -13,7 +13,7 @@ interface Alert {
   color: string;
 }
 
-const REGISTER_URL = 'https://ninja-cards-website-lnp1.vercel.app/api/auth/register';
+const REGISTER_URL = '/api/auth/register';
 const SUCCESS_DELAY = 1000;
 
 const schema = yup.object().shape({
@@ -34,25 +34,14 @@ const Register: React.FC = () => {
   const router = useRouter();
   const { login } = useAuth();
 
-
   const onSubmit = async (data: any) => {
-
-    const newdata = {
-      name: 'testuser',
-      email: 'ronaldo@abv.bg',
-      password: 'password123',
-    };
-    console.log('api');
-    console.log(REGISTER_URL);
-
-
     try {
       const res = await fetch(REGISTER_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newdata),
+        body: JSON.stringify(data),
       });
 
       await handleResponse(res);

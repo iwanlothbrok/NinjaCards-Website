@@ -1,6 +1,6 @@
 datasource db {
   provider = "mysql"
-  url      = "mysql://ninjacar_ivan:GkPtPcmg123@localhost:3306/ninjacar_ninjacar_database"
+  url      = "mysql://root:1234@localhost:3306/ninjadatabase"
 }
 
 generator client {
