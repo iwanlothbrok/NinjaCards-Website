@@ -13,7 +13,7 @@ interface Alert {
   color: string;
 }
 
-const REGISTER_URL = '/api/auth/register';
+const REGISTER_URL = 'https://ninja-cards-website-lnp1.vercel.app/api/auth/register';
 const SUCCESS_DELAY = 1000;
 
 const schema = yup.object().shape({
