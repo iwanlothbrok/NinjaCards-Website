@@ -36,7 +36,7 @@ const Register: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const res = await fetch('https://ninja-cards-website-lnp1.vercel.app/api/auth/register', {
+      const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
