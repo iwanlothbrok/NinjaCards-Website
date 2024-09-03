@@ -13,7 +13,7 @@ interface Alert {
   color: string;
 }
 
-const REGISTER_URL = '/api/auth/register';
+const REGISTER_URL = 'https://ninja-cards-website-lnp1.vercel.app/api/auth/register';
 const SUCCESS_DELAY = 1000;
 
 const schema = yup.object().shape({
@@ -36,7 +36,7 @@ const Register: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const res = await fetch(REGISTER_URL, {
+      const res = await fetch('https://ninja-cards-website-lnp1.vercel.app/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,6 +49,7 @@ const Register: React.FC = () => {
       showAlert('An error occurred while processing your request', 'Error', 'red');
       console.error('Error during registration:', error);
     }
+
   };
 
   const handleResponse = async (res: Response) => {
