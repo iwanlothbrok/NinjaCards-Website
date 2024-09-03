@@ -15,6 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Respond to preflight request
         return res.status(200).end();
     }
+    
     console.log('setted res');
 
 

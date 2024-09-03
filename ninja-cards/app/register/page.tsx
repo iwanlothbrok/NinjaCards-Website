@@ -34,14 +34,25 @@ const Register: React.FC = () => {
   const router = useRouter();
   const { login } = useAuth();
 
+
   const onSubmit = async (data: any) => {
+
+    const newdata = {
+      name: 'testuser',
+      email: 'ronaldo@abv.bg',
+      password: 'password123',
+    };
+    console.log('api');
+    console.log(REGISTER_URL);
+
+
     try {
       const res = await fetch(REGISTER_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(newdata),
       });
 
       await handleResponse(res);
