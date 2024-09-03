@@ -6,7 +6,8 @@ const nextConfig = {
     env: {
         NEXTAUTH_SECRET: 'your-secret-key',
     },
-    output: 'export'
+    output: 'export',
+    basePath: '/',
 };
 
 module.exports = nextConfig;
