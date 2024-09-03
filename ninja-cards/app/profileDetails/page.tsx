@@ -108,7 +108,7 @@ const cardBackgroundOptions = [
 
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
     try {
-        const response = await fetch(`/api/profile/saveColor`, {
+        const response = await fetch(`https://www.ninjacardsnfc.com/api/profile/saveColor`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ const saveSelectedColor = async (userId: string, color: string, showAlert: (mess
 const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateAction<User | null>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, showAlert: (message: string, title: string, color: string) => void) => {
     setLoading(true);
     try {
-        const response = await fetch(`/api/profile/${userId}`);
+        const response = await fetch(`https://www.ninjacardsnfc.com/api/profile/${userId}`);
         if (!response.ok) throw new Error('Failed to fetch user data');
         const userData: User = await response.json();
         setUser(userData);
