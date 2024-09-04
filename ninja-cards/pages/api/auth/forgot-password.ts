@@ -6,13 +6,14 @@ import { hash } from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { sendEmail } from './mailgun'
 import { log } from 'node:console';
+import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    const corsHandled = cors(req, res);
+    if (corsHandled) return; // If it's a preflight request, stop further execution
+
 
     if (req.method === 'POST') {
         const { email } = req.body;

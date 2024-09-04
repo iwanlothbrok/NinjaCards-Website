@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import formidable, { IncomingForm, Fields } from 'formidable';
+import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
@@ -25,11 +26,8 @@ const parseForm = (req: NextApiRequest): Promise<{ fields: Fields }> => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+    const corsHandled = cors(req, res);
+    if (corsHandled) return; // If it's a preflight request, stop further execution
 
     if (req.method === 'PUT') {
         try {

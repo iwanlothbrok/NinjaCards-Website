@@ -1,14 +1,14 @@
 // pages/api/products.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    const corsHandled = cors(req, res);
+    if (corsHandled) return; // If it's a preflight request, stop further execution
 
     const { limit = 1, sort = 'desc' } = req.query;
 
