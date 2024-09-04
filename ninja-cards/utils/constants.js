@@ -1,1 +1,1 @@
-export const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_KEY;
+export const BASE_API_URL = 'https://ninja-cards-website-lnp1.vercel.app/';
