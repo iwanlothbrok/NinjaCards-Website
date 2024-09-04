@@ -12,21 +12,25 @@ import FrequentlyAskedQuestions from './components/FrequentlyAskedQuestions';
 import SimpleContactForm from './components/layout/SimpleContactForm';
 import Features from './components/layout/Features';
 import Hero from './components/layout/Hero';
+import { BASE_API_URL } from '@/utils/constants';
 
 export default function Home() {
+  if (!BASE_API_URL) {
+    return null;
+  }
   return (
     <main className="">
 
-        {/* <HomePage /> */}
-        <Hero />
-        <About />
-        <ProductGallery />
-        <Testimonies />
-        {/* <Roadmap3 /> */}
-        {/* <FrequentlyAskedQuestions searchTerm={''} /> */}
-        {/* <VideoTextSection /> */}
-        {/* <FeaturesSection /> */}
-        <SimpleContactForm />
+      {/* <HomePage /> */}
+      <Hero />
+      <About />
+      <ProductGallery />
+      <Testimonies />
+      {/* <Roadmap3 /> */}
+      {/* <FrequentlyAskedQuestions searchTerm={''} /> */}
+      {/* <VideoTextSection /> */}
+      {/* <FeaturesSection /> */}
+      <SimpleContactForm />
 
     </main>
   );
