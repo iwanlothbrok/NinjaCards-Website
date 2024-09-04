@@ -15,6 +15,12 @@ const validateEmail = (email: string): boolean => {
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+
     if (req.method === 'POST') {
         const { name, email, subject, phone }: ContactFormData = req.body;
 

@@ -7,13 +7,6 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        console.log('Inside API handler');  // Check if the handler is reached
-
-        // Add CORS headers
-        console.log('Request method:', req.method);
-        console.log('Request headers:', req.headers);
-        console.log('Request body:', req.body);
-
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

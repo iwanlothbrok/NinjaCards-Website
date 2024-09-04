@@ -6,6 +6,7 @@ const mg = mailgun({
 });
 
 export async function sendEmail(to: string, subject: string, text: string, vCard?: string) {
+
     const data: mailgun.messages.SendData = {
         from: 'ninjacardnfc@gmail.com',
         to: to,
