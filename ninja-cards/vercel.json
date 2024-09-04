@@ -1,8 +1,8 @@
 {
-    "functions": {
-        "api/**/*": {
-            "memory": 1024,
-            "maxDuration": 10
-        }
+    "build": {
+      "env": {
+        "DATABASE_URL": "mysql://root:IJTWhcpqtiqVDWwVqGIUUStIkLsYFXXC@autorack.proxy.rlwy.net:32314/railway"
+      }
     }
-}
+  }
+  
