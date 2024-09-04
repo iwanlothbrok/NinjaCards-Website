@@ -7,10 +7,10 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next export"
+    "build": "prisma generate && next build",
+    "export": "cross-env CPANEL_BUILD=true npm run build && next export" 
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
@@ -61,6 +61,7 @@
     "@types/react-modal": "^3.16.3",
     "@types/react-slick": "^0.23.13",
     "@types/uuid": "^10.0.0",
+    "cross-env": "^7.0.3",
     "prisma": "^5.17.0",
     "slick-carousel": "^1.8.1"
   }
