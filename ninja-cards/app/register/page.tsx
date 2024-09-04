@@ -34,6 +34,9 @@ const Register: React.FC = () => {
   const { login } = useAuth();
 
   const onSubmit = async (data: any) => {
+
+    console.log(`${BASE_API_URL}/api/auth/register`);
+
     try {
       const res = await fetch(`${BASE_API_URL}/api/auth/register`, {
         method: 'POST',
