@@ -127,6 +127,9 @@ const saveSelectedColor = async (userId: string, color: string, showAlert: (mess
 const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateAction<User | null>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, showAlert: (message: string, title: string, color: string) => void) => {
     setLoading(true);
     try {
+
+        console.log(`${BASE_API_URL}/api/profile/${userId}`);
+
         const response = await fetch(`${BASE_API_URL}/api/profile/${userId}`);
         if (!response.ok) throw new Error('Failed to fetch user data');
         const userData: User = await response.json();

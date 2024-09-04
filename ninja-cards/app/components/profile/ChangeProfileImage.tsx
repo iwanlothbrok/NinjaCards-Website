@@ -5,6 +5,7 @@ import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_API_URL } from '@/utils/constants';
 
 interface Alert {
     message: string;
@@ -109,7 +110,7 @@ const ProfileImageUploader: React.FC = () => {
             formData.append('id', user?.id);
             formData.append('image', croppedFile);
 
-            const response = await fetch('/api/profile/changeImage', {
+            const response = await fetch(`${BASE_API_URL}/api/profile/changeImage`, {
                 method: 'PUT',
                 body: formData,
             });
@@ -118,7 +119,7 @@ const ProfileImageUploader: React.FC = () => {
                 const errorText = await response.text();
                 throw new Error(errorText || 'Неуспешно качване на изображението');
             }
-            
+
             const updatedUser = await response.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);

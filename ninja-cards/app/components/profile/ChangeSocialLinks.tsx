@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import LinkInput from './LinkInput';
+import { BASE_API_URL } from '@/utils/constants';
 
 
 
@@ -57,7 +58,7 @@ const ImportantLinks: React.FC = () => {
         });
 
         try {
-            const response = await fetch('/api/profile/updateLinks', {
+            const response = await fetch(`${BASE_API_URL}/api/profile/updateLinks`, {
                 method: 'PUT',
                 body: formDataObj,
             });

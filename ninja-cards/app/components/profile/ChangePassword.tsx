@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { BASE_API_URL } from '@/utils/constants';
 
 // Validation schema using Yup
 const schema = yup.object().shape({
@@ -60,7 +61,7 @@ const ChangePassword: React.FC = () => {
         updateData.append('password', data.password);
 
         try {
-            const response = await fetch('/api/profile/changePassword', {
+            const response = await fetch(`${BASE_API_URL}/api/profile/changePassword`, {
                 method: 'PUT',
                 body: updateData,
             });

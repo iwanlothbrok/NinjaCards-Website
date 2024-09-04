@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { BASE_API_URL } from '@/utils/constants';
 
 // Validation schema using Yup
 const schema = yup.object().shape({
@@ -65,7 +66,7 @@ export default function ChangeEmail() {
         }
 
         try {
-            const response = await fetch('/api/profile/changeEmail', {
+            const response = await fetch(`${BASE_API_URL}/api/profile/changeEmail`, {
                 method: 'PUT',
                 body: updateData,
             });

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { FaPhoneAlt, FaShareAlt, FaEnvelope } from 'react-icons/fa';
 import ExchangeContactModal from './ExchangeContact';
+import { BASE_API_URL } from '@/utils/constants';
 
 interface User {
     id: string;
@@ -25,7 +26,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
 
     const handleSubmitContact = async (vCard: string) => {
         try {
-            await fetch('/api/profile/exchangeContact', {
+            await fetch(`${BASE_API_URL}/api/profile/exchangeContact`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

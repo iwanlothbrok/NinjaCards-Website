@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { BASE_API_URL } from '@/utils/constants';
 
 // Валидираща схема с помощта на Yup (без задължителни полета)
 const schema = yup.object().shape({
@@ -101,7 +102,7 @@ const ChangeProfileInformation: React.FC = () => {
         });
 
         try {
-            const response = await fetch('/api/profile/updateInformation', {
+            const response = await fetch(`${BASE_API_URL}/api/profile/updateInformation`, {
                 method: 'PUT',
                 body: updateData,
             });

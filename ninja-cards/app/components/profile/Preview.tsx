@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Image from 'next/image';
+import { BASE_API_URL } from '@/utils/constants';
 
 interface Alert {
     message: string;
@@ -35,7 +36,7 @@ const Preview: React.FC = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         try {
-            const response = await fetch(`/api/profile/removeUsersImage?id=${user.id}`, {
+            const response = await fetch(`${BASE_API_URL}/api/profile/removeUsersImage?id=${user.id}`, {
                 method: 'DELETE',
             });
 
@@ -58,7 +59,7 @@ const Preview: React.FC = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         try {
-            const response = await fetch(`/api/profile/removeCV?id=${user.id}`, {
+            const response = await fetch(`${BASE_API_URL}/api/profile/removeCV?id=${user.id}`, {
                 method: 'DELETE',
             });
 
@@ -80,7 +81,7 @@ const Preview: React.FC = () => {
         if (!user) return;
 
         const link = document.createElement('a');
-        link.href = `/api/profile/downloadCv?id=${user.id}`;
+        link.href = `${BASE_API_URL}/api/profile/downloadCv?id=${user.id}`;
         link.download = `${user.firstName}_${user.lastName}_CV.pdf`;
         link.click();
     };
