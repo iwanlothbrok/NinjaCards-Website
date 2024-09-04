@@ -2,20 +2,17 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import { parseArgs } from 'util';
+import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+    // Apply CORS middleware
+    const corsHandled = cors(req, res);
+    if (corsHandled) return; // If it's a preflight request, stop further execution
 
     if (req.method === 'POST') {
         const { email, password } = req.body;
-        console.log(email, password);
 
         // Check if user exists
         const user = await prisma.user.findUnique({
@@ -37,8 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             expiresIn: '1h',
         });
 
-
-        return res.status(200).json({ token, user: user });
+        return res.status(200).json({ token, user });
     } else {
         return res.status(405).json({ error: 'Method not allowed' });
     }
