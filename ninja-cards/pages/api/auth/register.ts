@@ -6,65 +6,72 @@ import QRCode from 'qrcode';
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    // Add CORS headers
-    console.log('Request method:', req.method);
-    console.log('Request headers:', req.headers);
-    console.log('Request body:', req.body);
-    
+    try {
+        console.log('Inside API handler');  // Check if the handler is reached
 
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        // Add CORS headers
+        console.log('Request method:', req.method);
+        console.log('Request headers:', req.headers);
+        console.log('Request body:', req.body);
 
-    if (req.method === 'OPTIONS') {
-        // Respond to preflight request
-        return res.status(200).end();
-    }
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    console.log('setted res');
-
-
-    if (req.method === 'POST') {
-        const { name, email, password } = req.body;
-
-        // Check if user already exists
-        const existingUser = await prisma.user.findUnique({
-            where: { email },
-        });
-console.log(existingUser);
-
-        if (existingUser) {
-            return res.status(400).json({ error: 'User already exists' });
+        if (req.method === 'OPTIONS') {
+            // Respond to preflight request
+            return res.status(200).end();
         }
 
-        // Hash the password
-        const hashedPassword = await hash(password, 10);
+        if (req.method === 'POST') {
+            const { name, email, password } = req.body;
 
-        // Create new user
-        const user = await prisma.user.create({
-            data: {
-                name,
-                email,
-                password: hashedPassword,
-            },
-        });
+            console.log('Request body:', req.body);
 
-        const qrCodeUrl = `https://ninjacardsnfc.com/profileDetails?id=${user.id}`;
+            // Check if user already exists
+            const existingUser = await prisma.user.findUnique({
+                where: { email },
+            });
 
-        // Generate the QR code from the URL
-        const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
+            if (existingUser) {
+                console.log('User already exists:', email);
+                return res.status(400).json({ error: 'User already exists' });
+            }
 
-        // Update user with the QR code image
-        const updatedUser = await prisma.user.update({
-            where: { id: user.id },
-            data: { qrCode: qrCodeImage },
-        });
+            // Hash the password
+            const hashedPassword = await hash(password, 10);
 
-        res.status(201).json(updatedUser);
-    } else {
+            // Create new user
+            const user = await prisma.user.create({
+                data: {
+                    name,
+                    email,
+                    password: hashedPassword,
+                },
+            });
 
-        console.log('mamati sheba');
+            console.log('User created:', user);
 
-        res.status(405).json({ error: 'Method not allowed' });
+            const qrCodeUrl = `https://ninjacardsnfc.com/profileDetails?id=${user.id}`;
+
+            // Generate the QR code from the URL
+            const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
+
+            console.log('QR Code generated:', qrCodeUrl);
+
+            // Update user with the QR code image
+            const updatedUser = await prisma.user.update({
+                where: { id: user.id },
+                data: { qrCode: qrCodeImage },
+            });
+
+            res.status(201).json(updatedUser);
+        } else {
+            console.log('Unsupported method:', req.method);
+            res.status(405).json({ error: 'Method not allowed' });
+        }
+    } catch (error) {
+        console.error('Error occurred in API handler:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 }

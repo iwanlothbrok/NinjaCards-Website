@@ -96,3 +96,7 @@ model Review {
   product   Product  @relation(fields: [productId], references: [id])
   productId Int
 }
+
+model Test {
+  id        Int      @id @default(autoincrement())
+}
