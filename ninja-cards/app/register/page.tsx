@@ -6,14 +6,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
-
+import { BASE_API_URL } from '../../utils/constants'
 interface Alert {
   message: string;
   title: string;
   color: string;
 }
 
-const REGISTER_URL = 'https://ninja-cards-website-lnp1.vercel.app/api/auth/register';
 const SUCCESS_DELAY = 1000;
 
 const schema = yup.object().shape({
@@ -36,7 +35,7 @@ const Register: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch(`${BASE_API_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
