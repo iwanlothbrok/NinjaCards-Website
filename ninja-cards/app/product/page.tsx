@@ -3,6 +3,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import RelatedProducts from '../components/product/RelatedProducts';
 import Product from '../components/product/Product';
+import { BASE_API_URL } from '@/utils/constants';
 
 type Review = {
     id: number;
@@ -45,7 +46,7 @@ function ProductPageContent() {
             const fetchProduct = async () => {
                 setLoading(true);
                 try {
-                    const response = await fetch(`/api/products/${id}`);
+                    const response = await fetch(`${BASE_API_URL}/api/products/${id}`);
                     if (!response.ok) {
                         throw new Error('Failed to fetch product');
                     }

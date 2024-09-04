@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { BASE_API_URL } from '@/utils/constants';
 
 interface Alert {
     message: string;
@@ -20,7 +21,7 @@ export default function ChangePassword() {
         console.log('inside of submit'); // This should log when the form is submitted
 
         try {
-            const res = await fetch('/api/auth/forgot-password', {
+            const res = await fetch(`${BASE_API_URL}/api/auth/forgot-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

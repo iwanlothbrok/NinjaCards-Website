@@ -121,7 +121,7 @@ const Navbar: React.FC = () => {
         <div className="relative flex items-center justify-between py-4 lg:py-6">
           <div className="flex-shrink-0">
             <Link href="/" className="block w-24 filter grayscale">
-              <img src="./navLogo.png" alt="logo" className="w-full" />
+              <img src="./../navLogo.png" alt="logo" className="w-full" />
             </Link>
           </div>
           <div className="flex items-center">
@@ -152,9 +152,7 @@ const Navbar: React.FC = () => {
               <ul className="flex flex-col items-center justify-center h-2/3 lg:flex-row lg:space-x-8">
                 {[
                   '/',
-                  '/about',
-                  '/pricing',
-                  '/team',
+                  '/features',
                   '/contact',
                   '/askedQuestions',
                   `/profileDetails?id=1`
@@ -193,17 +191,17 @@ const Navbar: React.FC = () => {
                           </div>
                         </div>
                         <ul className="py-2 text-sm text-gray-200">
-                          <NavItem href="/dashboard" onClick={() => setIsMenuOpen(false)}
+                          {/* <NavItem href="/dashboard" onClick={() => setIsMenuOpen(false)}
                           >
                             Dashboard
-                          </NavItem>
+                          </NavItem> */}
                           <NavItem href="/profile" onClick={() => setIsMenuOpen(false)}
                           >
-                            Profile
+                            Профил
                           </NavItem>
                           <NavItem href="/earnings" onClick={() => setIsMenuOpen(false)}
                           >
-                            Earnings
+                            Анализ
                           </NavItem>
                         </ul>
                         <div className="py-1">
@@ -211,7 +209,7 @@ const Navbar: React.FC = () => {
                             onClick={handleLogout}
                             className="block w-full px-4 py-2 text-left text-sm text-gray-200 hover:bg-darkOrange"
                           >
-                            Sign out
+                            Изход
                           </button>
                         </div>
                       </div>
@@ -224,14 +222,14 @@ const Navbar: React.FC = () => {
                       className="px-6 py-3 text-lg font-semibold text-white bg-orange rounded-full transition-all duration-300 hover:bg-darkOrange focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Register
+                      Регистрация
                     </Link>
                     <Link
                       href="/login"
                       className="px-6 py-3 text-lg font-semibold text-orange bg-transparent border border-orange rounded-full transition-all duration-300 hover:bg-orange hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Login
+                      Логин
                     </Link>
                   </div>
                 ) : (
@@ -241,14 +239,14 @@ const Navbar: React.FC = () => {
                       className="px-6 py-3 text-lg font-semibold text-white bg-orange rounded-full transition-all duration-300 hover:bg-darkOrange focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
                       onClick={() => setIsMenuOpen(true)}
                     >
-                      Register
+                      Регистрация
                     </Link>
                     <Link
                       href="/login"
                       className="px-6 py-3 text-lg font-semibold text-orange bg-transparent border border-orange rounded-full transition-all duration-300 hover:bg-orange hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
                       onClick={() => setIsMenuOpen(true)}
                     >
-                      Login
+                      Логин
                     </Link>
                   </div>
                 )}

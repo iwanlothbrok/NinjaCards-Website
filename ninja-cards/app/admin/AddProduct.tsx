@@ -3,6 +3,7 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import internal from 'stream';
+import { BASE_API_URL } from '@/utils/constants';
 
 export default function AddProduct() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -61,7 +62,7 @@ export default function AddProduct() {
             benefits: product.benefits.filter(Boolean),
         };
 
-        const response = await fetch('/api/admin/addProduct', {
+        const response = await fetch(`${BASE_API_URL}/api/admin/addProduct`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

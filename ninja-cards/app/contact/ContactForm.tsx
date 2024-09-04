@@ -1,3 +1,4 @@
+import { BASE_API_URL } from '@/utils/constants';
 import { useState, ChangeEvent, FormEvent } from 'react';
 
 interface FormData {
@@ -31,7 +32,7 @@ const ContactForm: React.FC = () => {
         setError('');
         setSuccess('');
 
-        const response = await fetch('/api/contact', {
+        const response = await fetch(`${BASE_API_URL}/api/contact'`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

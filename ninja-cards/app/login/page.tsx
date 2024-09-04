@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { BASE_API_URL } from '@/utils/constants';
 
 const schema = yup.object().shape({
     email: yup.string().email('Invalid email format').required('Email is required'),
@@ -26,7 +27,7 @@ const Login: React.FC = () => {
     const [alert, setAlert] = useState<Alert | null>(null);
 
     const onSubmit = async (data: any) => {
-        const res = await fetch('/api/auth/login', {
+        const res = await fetch(`${BASE_API_URL}/api/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -61,7 +62,7 @@ const Login: React.FC = () => {
         <section className="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center">
             <div className="flex flex-col items-center justify-center mx-auto">
                 <a href="#" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 dark:text-white">
-                    <Image className="w-24 h-24 filter grayscale" src="./navlogo.png" alt="logo" width={96} height={96} />
+                    <Image className="w-24 h-24 filter grayscale" src="/navlogo.png" alt="logo" width={96} height={96} />
                 </a>
                 <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-lg dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-12 space-y-6 md:space-y-8 sm:p-14">
