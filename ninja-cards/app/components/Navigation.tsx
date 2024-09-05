@@ -155,7 +155,7 @@ const Navbar: React.FC = () => {
                   '/features',
                   '/contact',
                   '/askedQuestions',
-                  `/profileDetails?id=1`
+                  `/profile`
                 ].map((path, idx) => (
                   <li key={idx} className="relative group">
                     <Link
@@ -164,10 +164,22 @@ const Navbar: React.FC = () => {
                         }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      {path
-                        .slice(1)
-                        .replace(/([A-Z])/g, ' $1')
-                        .replace(/^./, (str) => str.toUpperCase())}
+                      {(() => {
+                        switch (path) {
+                          case '/':
+                            return 'Начало';
+                          case '/features':
+                            return 'Функции';
+                          case '/contact':
+                            return 'Контакт';
+                          case '/askedQuestions':
+                            return 'Често задавани въпроси';
+                          case `/profile`:
+                            return 'Профил';
+                          default:
+                            return path;
+                        }
+                      })()}
                     </Link>
                   </li>
                 ))}
