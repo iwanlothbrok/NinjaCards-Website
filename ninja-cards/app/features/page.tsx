@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from '../components/layout/Header'
+
 interface FeatureProps {
     header: string;
     mainHeader: string;
@@ -56,56 +57,85 @@ const FeatureItemRightImage: React.FC<FeatureProps> = ({ header, mainHeader, des
 export default function Features() {
     return (
         <div className="">
-            <Header pageInformation='Features' />
+            <Header pageInformation='Характеристики' />
             <FeatureItemLeftImage
-                header="NFC & QR Code"
-                mainHeader="Share Your Contact"
-                description="Tapitag NFC digital business card, sharing your contact information is effortless. You can simply tap your TAPiTAG NFC card against another NFC-enabled device, and your Digital Profile will be instantly shared."
+                header="NFC & QR код"
+                mainHeader="Споделяне на контакти"
+                description="С NFC дигиталната визитка на NinjaCard, споделянето на вашите контакти става безпроблемно. Просто докоснете вашата NinjaCard NFC карта към друго устройство с NFC и вашият дигитален профил ще бъде споделен мигновено."
                 imagePath="/01.webp"
-                buttonText="Sample Profile"
+                buttonText="Примерен профил"
                 buttonLink="#"
             />
 
             <FeatureItemRightImage
-                header="Exchange Contact Button"
-                mainHeader="Lead Generation"
-                description="Every TAPiTAG NFC Digital Business Card comes with a powerful Lead Generation Tool that can capture new contacts details by using the 'Exchange Contact' button. This feature allows you to capture leads - The perfect tool to network."
+                header="Генериране на потенциални клиенти"
+                mainHeader="Уловете нови контакти"
+                description="Всяка NinjaCard NFC дигитална визитка разполага с мощен инструмент за генериране на нови контакти чрез бутона 'Обмен на контакти'. Тази функция ви позволява лесно да улавяте нови контакти, което я прави идеалния инструмент за разширяване на мрежата ви."
                 imagePath="/01.webp"
-                buttonText="Sample Profile"
+                buttonText="Научете повече"
                 buttonLink="#"
             />
 
             <FeatureItemLeftImage
-                header="Updating Profile"
-                mainHeader="Update Your Details Anytime"
-                description="
-Tapitag NFC digital business card profile allows you to update your contact information anytime, making it convenient to keep your network updated. With just a tap of your phone, your contacts can access your latest information instantly. Stay connected with ease and make a lasting impression with Tapitag's seamless and modern approach to business cards.
-                 "
+                header="Лесни актуализации"
+                mainHeader="Актуализирайте информацията си в реално време"
+                description="С NinjaCard можете да актуализирате вашата контактна информация по всяко време, като гарантирате, че вашата мрежа винаги разполага с най-новата информация. Просто докоснете вашия телефон, за да споделите актуализирания профил мигновено."
                 imagePath="/01.webp"
-                buttonText="Sample Profile"
+                buttonText="Актуализирайте сега"
                 buttonLink="#"
             />
 
             <FeatureItemRightImage
-                header="Sharing"
-                mainHeader="Download Your QR Code"
-                description="
-TAPiTAG offers the option to download a QR code for your NFC digital business card, which allows for easy sharing and accessibility of your information. This feature streamlines the process for clients and customers to access your information and provides a seamless user experience. Contact us today to learn more about this option.
-                 "
+                header="NFC срещу традиционни визитки"
+                mainHeader="Защо NFC картите са по-добри?"
+                description="NFC картите са екологични, многократно използваеми и позволяват мигновено споделяне на информация, за разлика от традиционните хартиени визитки, които лесно се губят или остаряват. Те са съвместими с повечето модерни устройства и осигуряват безпроблемно мрежово свързване."
                 imagePath="/01.webp"
-                buttonText="Sample Profile"
+                buttonText="Научете повече"
                 buttonLink="#"
             />
 
+            <FeatureItemLeftImage
+                header="Сигурност"
+                mainHeader="Защита на данните"
+                description="NFC картите не съхраняват данни сами по себе си, а само задействат прехвърляне на информация към защитен URL, осигурявайки високо ниво на сигурност за вашата лична информация."
+                imagePath="/01.webp"
+                buttonText="Научете повече"
+                buttonLink="#"
+            />
+
+            <FeatureItemRightImage
+                header="Персонализация"
+                mainHeader="Персонализирайте вашата карта"
+                description="NinjaCard предлага обширни опции за персонализация, включително брандиране, цветове и дизайни. Персонализирайте NFC визитката си, за да отразява личния или фирмения ви бранд, като я превърнете в запомнящ се и ефективен инструмент за мрежови връзки."
+                imagePath="/01.webp"
+                buttonText="Персонализирайте сега"
+                buttonLink="#"
+            />
 
             <FeatureItemLeftImage
-                header="Social Media"
-                mainHeader="Fields on your Profile"
-                description="
-TAPiTAG profiles, you can have over 60 fields to share all the necessary information about your business. This customizable feature allows you to provide all relevant contact information, social media links, and more in one convenient location. You can also creat custom icons and add your custom links.
-                 "
+                header="Екологичност"
+                mainHeader="Устойчивост"
+                description="Използването на NFC карти намалява необходимостта от хартия, подкрепяйки усилията за устойчивост. Тези карти са многократно използваеми, намалявайки въздействието върху околната среда в сравнение с традиционните визитки."
                 imagePath="/01.webp"
-                buttonText="Sample Profile"
+                buttonText="Изберете екологично"
+                buttonLink="#"
+            />
+
+            <FeatureItemRightImage
+                header="Най-добри практики"
+                mainHeader="Максимизирайте ефективността на NFC картата"
+                description="Редовно актуализирайте профила си с NFC карта, за да поддържате информацията актуална. По време на събития дръжте NFC картата на достъпни места за лесно споделяне и използвайте QR кодове за потребители без NFC."
+                imagePath="/01.webp"
+                buttonText="Научете най-добрите практики"
+                buttonLink="#"
+            />
+
+            <FeatureItemLeftImage
+                header="Глобална съвместимост"
+                mainHeader="Използвайте я навсякъде"
+                description="NFC технологията работи по целия свят, което ви позволява да споделяте своя профил или контактна информация с всеки, навсякъде. Перфектна за международни мрежови връзки и бизнес пътувания."
+                imagePath="/09.webp"
+                buttonText="Научете повече"
                 buttonLink="#"
             />
         </div>
