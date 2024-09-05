@@ -173,7 +173,7 @@ const Navbar: React.FC = () => {
                           case '/contact':
                             return 'Контакт';
                           case '/askedQuestions':
-                            return 'Често задавани въпроси';
+                            return 'Задавани Въпроси';
                           case `/profile`:
                             return 'Профил';
                           default:
