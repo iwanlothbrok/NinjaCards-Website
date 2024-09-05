@@ -20,32 +20,26 @@ const Header: React.FC<HeaderProps> = ({ pageInformation }) => {
                         <nav aria-label="breadcrumb">
                             <ol className="flex justify-center space-x-4 text-white">
                                 <li>
-                                    {/* <Link href="/" passHref>
-                                        <a className="text-white hover:text-gray-300">Начало</a>
-                                    </Link> */}
+                                    <a className="text-orange  hover:text-gray-300" href="/">Начало</a>
                                 </li>
                                 <li>
                                     <span>/</span>
                                 </li>
                                 <li>
-                                    {/* <Link href="/about" passHref>
-                                        <a className="text-white hover:text-gray-300">За Нас</a>
-                                    </Link> */}
+                                    <a className="text-orange  hover:text-gray-300" href="/profile">Профил</a>
                                 </li>
                                 <li>
                                     <span>/</span>
                                 </li>
                                 <li>
-                                    {/* <Link href="/contact" passHref>
-                                        <a className="text-white hover:text-gray-300">Контакти</a>
-                                    </Link> */}
+                                    <a className="text-orange  hover:text-gray-300" href="/askedQuestions">Въпроси</a>
                                 </li>
                             </ol>
                         </nav>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
