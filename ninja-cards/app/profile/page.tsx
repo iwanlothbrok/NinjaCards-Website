@@ -35,6 +35,13 @@ function ProfileContent() {
     const { user } = useAuth();
     const searchParams = useSearchParams();
 
+    // Redirect to login page if no user is logged in
+    useEffect(() => {
+        if (!user) {
+            router.push('/login');
+        }
+    }, [user, router]);
+
     const [activeTab, setActiveTab] = useState(() => searchParams?.get('tab') || 'settings');
     const [loading, setLoading] = useState(false);
     const userId = user?.id;
