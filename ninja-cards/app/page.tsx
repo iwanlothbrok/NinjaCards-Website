@@ -8,7 +8,7 @@ import VideoTextSection from './components/layout/VideoTextSection';
 import Testimonies from './components/layout/Testimonies';
 import { motion } from 'framer-motion';
 import ProductGallery from './components/product/ProductCard';
-import FrequentlyAskedQuestions from './components/FrequentlyAskedQuestions';
+import FrequentlyAskedQuestions from './askedQuestions/FAQQuestions';
 import SimpleContactForm from './components/layout/SimpleContactForm';
 import Features from './components/layout/Features';
 import Hero from './components/layout/Hero';
