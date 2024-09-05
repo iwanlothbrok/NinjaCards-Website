@@ -375,9 +375,7 @@ const ProfileDetailsContent: React.FC = () => {
             className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
             style={{
                 backgroundImage: `
-                    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                    url('/profile01.png')
-                `,
+                    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
@@ -385,7 +383,7 @@ const ProfileDetailsContent: React.FC = () => {
             }}
         >
             <motion.div
-                className={`relative z-10 w-full pt-36 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
+                className={`relative z-10 w-full pt-56 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
                 style={{ borderRadius: 'inherit' }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -508,7 +506,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                 >
                     <div className="bg-gradient-to-r from-blue-600 to-purple-600 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
-                            src="./logos/fb.png"
+                            src="/fb.png"
                             alt="Facebook"
                             width={48}
                             height={48}
@@ -527,7 +525,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                 >
                     <div className="bg-gradient-to-r from-yellow-500 to-red-700 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
-                            src="./logos/ig.png"
+                            src="./ig.png"
                             alt="Instagram"
                             width={48}
                             height={48}
@@ -623,7 +621,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                 >
                     <div className="bg-gradient-to-r from-indigo-600 to-fuchsia-600 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
-                            src="/logos/tiktok.png"
+                            src="tiktok.png"
                             alt="TikTok"
                             width={48}
                             height={48}
