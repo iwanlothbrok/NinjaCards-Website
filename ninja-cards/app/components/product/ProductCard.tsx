@@ -162,7 +162,7 @@ export const ProductGallery: React.FC = () => {
                     id={'nfcCards'}
                     imageUrl={'/Metal-Hybrid-Silver.png'}
                     name={'NFC Cards'}
-                    description={'Megfa top vizitki beybe'}
+                    description={''}
                 />
 
                 <ProductCard
@@ -170,7 +170,7 @@ export const ProductGallery: React.FC = () => {
                     id={'googleReveiws'}
                     imageUrl={'/rev.webp'}
                     name={'Google Reviews'}
-                    description={'Megfa top vizitki beybe'}
+                    description={''}
                 />
 
                 <ProductCard
@@ -178,7 +178,7 @@ export const ProductGallery: React.FC = () => {
                     id={'nfcProducts'}
                     imageUrl={'/sticker.jpg'}
                     name={'Google Reviews'}
-                    description={'Megfa top vizitki beybe'}
+                    description={''}
                 />
 
             </div>
