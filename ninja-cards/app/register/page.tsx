@@ -78,7 +78,7 @@ const Register: React.FC = () => {
     <section className="bg-gray-50 py-32 dark:bg-gray-900 min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center justify-center  mx-auto">
         <a href="#" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 dark:text-white">
-          <img className="w-24 h-24 filter grayscale" src="navlogo.png" alt="logo" />
+          <img className="w-24 h-24 filter grayscale" src="./navlogo.png" alt="logo" />
         </a>
         <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-lg dark:bg-gray-800 dark:border-gray-700">
           <div className="p-12 space-y-6 md:space-y-8 sm:p-14">

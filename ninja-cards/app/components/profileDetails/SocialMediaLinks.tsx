@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { User } from '../../../types/user' // Adjust the path based on your folder structure
 
 interface SocialMediaLinksProps {
@@ -39,12 +38,11 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user, cardStyle }) 
                             className="relative group"
                         >
                             <div className={`bg-gradient-to-r ${link.gradient} filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center`}>
-                                <Image
+                                <img
                                     src={link.logo}
                                     alt={link.label}
                                     width={48}
                                     height={48}
-                                    unoptimized
                                     className="object-contain transition-all duration-300"
                                 />
                             </div>
