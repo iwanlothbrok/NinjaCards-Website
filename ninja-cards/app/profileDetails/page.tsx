@@ -51,6 +51,15 @@ interface User {
 
 const cardBackgroundOptions = [
     {
+        name: 'white',
+        bgClass: "bg-gray-700",
+        textClass: "text-gray-200",
+        borderClass: "border-black",
+        highlightClass: "text-green-600",
+        buttonBgClass: "bg-green-600",
+        cardCoverBgClass: "from-gray-600"
+    },
+    {
         name: 'orange',
         bgClass: "bg-orange",
         textClass: "text-gray-200",
@@ -506,7 +515,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                 >
                     <div className="bg-gradient-to-r from-blue-600 to-purple-600 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
-                            src="/fb.png"
+                            src="/logos/fb.png"
                             alt="Facebook"
                             width={48}
                             height={48}
@@ -525,7 +534,7 @@ const SocialMediaLinks: React.FC<{ user: User | null, cardStyle: any }> = ({ use
                 >
                     <div className="bg-gradient-to-r from-yellow-500 to-red-700 filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center">
                         <Image
-                            src="./ig.png"
+                            src="/logos/ig.png"
                             alt="Instagram"
                             width={48}
                             height={48}
