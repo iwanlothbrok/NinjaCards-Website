@@ -6,11 +6,11 @@ interface SocialMediaLinksProps {
     cardStyle: any;
 }
 
-// Define URLs for the SVG icons
+// Use local paths for the icons
 const socialMediaIcons = {
-    facebook: 'https://www.svgrepo.com/show/521654/facebook.svg',
-    instagram: 'https://www.svgrepo.com/show/521711/instagram.svg',
-    tiktok: 'https://www.svgrepo.com/show/473806/tiktok.svg',
+    facebook: '/public/logos/fb.png',
+    instagram: '/public/logos/ig.png',
+    tiktok: '/public/logos/tiktok.png',
 };
 
 const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user, cardStyle }) => {
@@ -34,7 +34,7 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user, cardStyle }) 
                             className="relative group"
                         >
                             <div className={`bg-gradient-to-r ${link.gradient} filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center`}>
-                                {/* Use img tag with the hardcoded URL */}
+                                {/* Use img tag with the local path */}
                                 <img
                                     src={link.iconUrl}
                                     alt={link.label}
