@@ -2,22 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import { User } from '../../../types/user'; // Adjust the path based on your folder structure
 
-// Import all the images directly
-import fbLogo from '/public/logos/fb.png';
-import igLogo from '/public/logos/ig.png';
-import lkLogo from '/public/logos/lk.png';
-import twitterLogo from '/public/logos/x.png';
-import gitLogo from '/public/logos/git.png';
-// import youtubeLogo from '/public/logos/youtube.png';
-import tiktokLogo from '/public/logos/tiktok.png';
-import behanceLogo from '/public/logos/be.png';
-import paypalLogo from '/public/logos/icons8-paypal-48.png';
-import trustpilotLogo from '/public/logos/tp.png';
-import viberLogo from '/public/logos/viber.png';
-import whatsappLogo from '/public/logos/wa.png';
-import websiteLogo from '/public/logos/website.png';
-import revolutLogo from '/public/logos/rev.png';
-
 interface SocialMediaLinksProps {
     user: User | null;
     cardStyle: any;
@@ -25,20 +9,20 @@ interface SocialMediaLinksProps {
 
 const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user, cardStyle }) => {
     const socialMediaLinks = [
-        { key: 'facebook', url: user?.facebook, logo: fbLogo, label: 'Facebook', gradient: 'from-blue-600 to-purple-600' },
-        { key: 'instagram', url: user?.instagram, logo: igLogo, label: 'Instagram', gradient: 'from-yellow-500 to-red-700' },
-        { key: 'linkedin', url: user?.linkedin, logo: lkLogo, label: 'LinkedIn', gradient: 'from-blue-700 to-blue-900' },
-        { key: 'twitter', url: user?.twitter, logo: twitterLogo, label: 'Twitter', gradient: 'from-blue-500 to-cyan-500' },
-        { key: 'github', url: user?.github, logo: gitLogo, label: 'GitHub', gradient: 'from-gray-900 to-gray-600' },
-        // { key: 'youtube', url: user?.youtube, logo: youtubeLogo, label: 'YouTube', gradient: 'from-red-600 to-red-400' },
-        { key: 'tiktok', url: user?.tiktok, logo: tiktokLogo, label: 'TikTok', gradient: 'from-indigo-600 to-fuchsia-600' },
-        { key: 'behance', url: user?.behance, logo: behanceLogo, label: 'Behance', gradient: 'from-blue-600 to-blue-400' },
-        { key: 'paypal', url: user?.paypal, logo: paypalLogo, label: 'PayPal', gradient: 'from-blue-500 to-blue-300' },
-        { key: 'trustpilot', url: user?.trustpilot, logo: trustpilotLogo, label: 'TrustPilot', gradient: 'from-black to-gray-800' },
-        { key: 'viber', url: `viber://chat?number=${user?.viber}`, logo: viberLogo, label: 'Viber', gradient: 'from-purple-500 to-purple-700' },
-        { key: 'whatsapp', url: `https://wa.me/${user?.whatsapp}`, logo: whatsappLogo, label: 'WhatsApp', gradient: 'from-green-600 to-green-700' },
-        { key: 'website', url: user?.website, logo: websiteLogo, label: 'Website', gradient: 'from-cyan-600 to-cyan-800' },
-        { key: 'revolut', url: `https://revolut.me/${user?.revolut}`, logo: revolutLogo, label: 'Revolut', gradient: 'from-blue-800 to-blue-900' },
+        { key: 'facebook', url: user?.facebook, logo: '/logos/fb.png', label: 'Facebook', gradient: 'from-blue-600 to-purple-600' },
+        { key: 'instagram', url: user?.instagram, logo: '/logos/ig.png', label: 'Instagram', gradient: 'from-yellow-500 to-red-700' },
+        { key: 'linkedin', url: user?.linkedin, logo: '/logos/lk.png', label: 'LinkedIn', gradient: 'from-blue-700 to-blue-900' },
+        { key: 'twitter', url: user?.twitter, logo: '/logos/x.png', label: 'Twitter', gradient: 'from-blue-500 to-cyan-500' },
+        { key: 'github', url: user?.github, logo: '/logos/git.png', label: 'GitHub', gradient: 'from-gray-900 to-gray-600' },
+        // { key: 'youtube', url: user?.youtube, logo: '/logos/youtube.png', label: 'YouTube', gradient: 'from-red-600 to-red-400' },
+        { key: 'tiktok', url: user?.tiktok, logo: '/logos/tiktok.png', label: 'TikTok', gradient: 'from-indigo-600 to-fuchsia-600' },
+        { key: 'behance', url: user?.behance, logo: '/logos/be.png', label: 'Behance', gradient: 'from-blue-600 to-blue-400' },
+        { key: 'paypal', url: user?.paypal, logo: '/logos/icons8-paypal-48.png', label: 'PayPal', gradient: 'from-blue-500 to-blue-300' },
+        { key: 'trustpilot', url: user?.trustpilot, logo: '/logos/tp.png', label: 'TrustPilot', gradient: 'from-black to-gray-800' },
+        { key: 'viber', url: `viber://chat?number=${user?.viber}`, logo: '/logos/viber.png', label: 'Viber', gradient: 'from-purple-500 to-purple-700' },
+        { key: 'whatsapp', url: `https://wa.me/${user?.whatsapp}`, logo: '/logos/wa.png', label: 'WhatsApp', gradient: 'from-green-600 to-green-700' },
+        { key: 'website', url: user?.website, logo: '/logos/website.png', label: 'Website', gradient: 'from-cyan-600 to-cyan-800' },
+        { key: 'revolut', url: `https://revolut.me/${user?.revolut}`, logo: '/logos/rev.png', label: 'Revolut', gradient: 'from-blue-800 to-blue-900' },
     ];
 
     return (
