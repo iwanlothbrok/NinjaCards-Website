@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import Image from 'next/image';
+
 type LinkInputProps = {
     name: string;
     value: string;
@@ -12,6 +11,7 @@ type LinkInputProps = {
     iconSrc: string;
     focusRingColor: string;
 };
+
 const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange, placeholder, iconSrc, focusRingColor }) => {
     const [isFocused, setIsFocused] = useState(false);
 
@@ -20,14 +20,21 @@ const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange,
 
     return (
         <div className="flex items-center bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <Image src={iconSrc} alt={`${name} икона`} width={40} height={40} className={`mr-4 transition-colors duration-300 ${isFocused ? focusRingColor : 'text-gray-400'} !important`} />
+            <Image
+                src={iconSrc}
+                alt={`${name} икона`}
+                width={40}
+                height={40}
+                priority
+                className={`mr-4 transition-colors duration-300 ${isFocused ? focusRingColor : 'text-gray-400'} !important`}
+            />
             <input
                 type="text"
                 name={name}
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className={`flex-grow bg-transparent text-gray-200 border-none focus:ring-0 placeholder-gray-400 focus:outline-none`}
+                className="flex-grow bg-transparent text-gray-200 border-none focus:ring-0 placeholder-gray-400 focus:outline-none"
                 onFocus={handleFocus}
                 onBlur={handleBlur}
             />
@@ -35,7 +42,6 @@ const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange,
     );
 });
 
-// Adding displayName property to the LinkInput component
 LinkInput.displayName = 'LinkInput';
 
 export default LinkInput;
