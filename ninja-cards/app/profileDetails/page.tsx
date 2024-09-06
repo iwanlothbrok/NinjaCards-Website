@@ -393,7 +393,7 @@ const ProfileDetailsContent: React.FC = () => {
             }}
         >
             <motion.div
-                className={`relative z-10 w-full pt-56 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
+                className={`relative z-10 w-full pt-64 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
                 style={{ borderRadius: 'inherit' }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
