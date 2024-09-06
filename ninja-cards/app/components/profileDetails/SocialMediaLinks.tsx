@@ -44,8 +44,8 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user, cardStyle }) 
                                     alt={link.label}
                                     width={48}
                                     height={48}
+                                    unoptimized
                                     className="object-contain transition-all duration-300"
-                                    priority
                                 />
                             </div>
                         </a>
