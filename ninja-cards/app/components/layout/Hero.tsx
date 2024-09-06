@@ -1,12 +1,46 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export const Hero: React.FC = () => {
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const sectionRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setIsImageLoaded(true);
+                        observer.unobserve(entry.target); // Stop observing once the image is loaded
+                    }
+                });
+            },
+            { threshold: 0.1 } // Trigger when 10% of the component is visible
+        );
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+
+        return () => {
+            if (sectionRef.current) {
+                observer.unobserve(sectionRef.current);
+            }
+        };
+    }, []);
+
     return (
-        <section className="relative w-full h-screen bg-cover bg-center" style={{ backgroundImage: 'url(/Metal-Hybrid-Silver.png)' }}>
+        <section
+            ref={sectionRef}
+            className="relative w-full h-screen bg-cover bg-center"
+            style={{
+                backgroundImage: isImageLoaded ? 'url(/Metal-Hybrid-Silver.png)' : 'none',
+                transition: 'background-image 0.5s ease-in-out',
+            }}
+        >
             {/* Overlay */}
-            <div className="absolute inset-0 bg-black bg-opacity-90" />
+            <div className="absolute inset-0 bg-black bg-opacity-80" />
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
@@ -38,7 +72,7 @@ export const Hero: React.FC = () => {
                     transition={{ duration: 1, delay: 1 }}
                 >
                     <Link href="/contact">
-                        <button className="bg-orange text-white  px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-gradient-to-r from-orange to-yellow-600 transition-transform transform hover:scale-105 focus:outline-none">
+                        <button className="bg-orange text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-gradient-to-r from-orange to-yellow-600 transition-transform transform hover:scale-105 focus:outline-none">
                             ПОРЪЧАЙ СЕГА
                         </button>
                     </Link>
@@ -49,9 +83,7 @@ export const Hero: React.FC = () => {
                     </Link>
                 </motion.div>
             </div>
-         
-
-        </section >
+        </section>
     );
 };
 
