@@ -5,7 +5,6 @@ const nextConfig = {
     experimental: {
         appDir: true,
     },
-    trailingSlash: true,
     env: {
         NEXTAUTH_SECRET: 'your-secret-key',
     },
