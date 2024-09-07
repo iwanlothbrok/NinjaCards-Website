@@ -1,7 +1,7 @@
 // lib/cors.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const allowedOrigins = ['https://www.ninjacardsnfc.com']; // Add all allowed origins here
+const allowedOrigins = ['https://www.ninjacardsnfc.com', 'http://localhost:3000']; // Add all allowed origins here
 
 export default function cors(req: NextApiRequest, res: NextApiResponse) {
     const origin = req.headers.origin;
