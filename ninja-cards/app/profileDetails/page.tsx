@@ -378,7 +378,7 @@ const ProfileDetailsContent: React.FC = () => {
         }
     };
 
-    if (!currentUser) return <div className="text-center text-3xl py-72 text-red-600 ">Няма подобен профил наличен.</div>;
+    if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
         <div
