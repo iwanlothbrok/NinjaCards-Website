@@ -17,7 +17,7 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user, cardStyle }) 
         // { key: 'youtube', url: user?.youtube, logo: '/logos/youtube.png', label: 'YouTube', gradient: 'from-red-600 to-red-400' },
         { key: 'tiktok', url: user?.tiktok, logo: '/logos/tiktok.png', label: 'TikTok', gradient: 'from-indigo-600 to-fuchsia-600' },
         // { key: 'behance', url: user?.behance, logo: '/logos/be.png', label: 'Behance', gradient: 'from-blue-600 to-blue-400' },
-        // { key: 'paypal', url: user?.paypal, logo: '/logos/icons8-paypal-48.png', label: 'PayPal', gradient: 'from-blue-500 to-blue-300' },
+        // { key: 'paypal', url: user?.paypal, logo: '/logos/icons8-paypal48.png', label: 'PayPal', gradient: 'from-blue-500 to-blue-300' },
         // { key: 'trustpilot', url: user?.trustpilot, logo: '/logos/tp.png', label: 'TrustPilot', gradient: 'from-black to-gray-800' },
         // { key: 'viber', url: `viber://chat?number=${user?.viber}`, logo: '/logos/viber.png', label: 'Viber', gradient: 'from-purple-500 to-purple-700' },
         // { key: 'whatsapp', url: `https://wa.me/${user?.whatsapp}`, logo: '/logos/wa.png', label: 'WhatsApp', gradient: 'from-green-600 to-green-700' },

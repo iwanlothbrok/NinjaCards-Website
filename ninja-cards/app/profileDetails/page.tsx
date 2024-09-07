@@ -52,15 +52,6 @@ interface User {
 
 const cardBackgroundOptions = [
     {
-        name: 'white',
-        bgClass: "bg-gray-400",
-        textClass: "text-gray-200",
-        borderClass: "border-black",
-        highlightClass: "text-green-600",
-        buttonBgClass: "bg-green-600",
-        cardCoverBgClass: "from-gray-300"
-    },
-    {
         name: 'orange',
         bgClass: "bg-orange",
         textClass: "text-gray-200",
@@ -393,7 +384,7 @@ const ProfileDetailsContent: React.FC = () => {
             }}
         >
             <motion.div
-                className={`relative z-10 w-full pt-64 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
+                className={`relative z-10 w-full pt-40 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
                 style={{ borderRadius: 'inherit' }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
