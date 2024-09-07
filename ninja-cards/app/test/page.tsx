@@ -7,9 +7,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FaUserCircle, FaExchangeAlt, FaDownload } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import ActionButtons2 from '../components/profileDetails/ActionButtons2';
-import { BASE_API_URL } from '@/utils/constants';
+import ActionButtons2 from '../components/profileDetails/ActionButtons2'; // Ensure this is the correct path
 import SocialMediaLinks from '../components/profileDetails/SocialMediaLinks';
+// import ProfileHeader from '../components/profileDetails/ProfileHeader'; // Add this import
+import { BASE_API_URL } from '@/utils/constants';
 
 interface User {
     id: string;

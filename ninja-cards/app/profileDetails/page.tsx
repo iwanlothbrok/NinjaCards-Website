@@ -129,9 +129,9 @@ const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateA
     setLoading(true);
     try {
 
-        console.log(`${BASE_API_URL}/api/profile/${userId}`);
+        console.log(`${BASE_API_URL}/api/profile/1`);
 
-        const response = await fetch(`${BASE_API_URL}/api/profile/${userId}`);
+        const response = await fetch(`${BASE_API_URL}/api/profile/1`);
         if (!response.ok) throw new Error('Failed to fetch user data');
         const userData: User = await response.json();
         setUser(userData);
@@ -154,8 +154,8 @@ const ProfileDetailsContent: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const userId = searchParams?.get('id');
+    // const searchParams = useSearchParams();
+    // const userId = searchParams?.get('id');
 
     const handleExchangeContact = () => {
         setIsModalOpen(true);
@@ -191,10 +191,10 @@ const ProfileDetailsContent: React.FC = () => {
     };
 
     useEffect(() => {
-        if (userId) {
-            fetchUser(userId, setCurrentUser, setLoading, showAlert);
+        if (user) {
+            fetchUser(user.id, setCurrentUser, setLoading, showAlert);
         }
-    }, [userId]);
+    }, [user]);
 
     useEffect(() => {
         if (currentUser && currentUser.selectedColor) {
