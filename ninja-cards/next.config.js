@@ -5,9 +5,6 @@ const nextConfig = {
     experimental: {
         appDir: true,
     },
-    env: {
-        NEXTAUTH_SECRET: 'your-secret-key',
-    },
     images: {
         loader: 'default',
         domains: [], // No external domains needed

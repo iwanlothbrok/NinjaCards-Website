@@ -95,6 +95,8 @@ const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateA
         if (!response.ok) throw new Error('Failed to fetch user data');
         const userData: User = await response.json();
         setUser(userData);
+        console.log(userData);
+
     } catch (error) {
         console.error(error);
         showAlert('Failed to load profile', 'Error', 'red');
