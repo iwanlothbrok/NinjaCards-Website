@@ -142,7 +142,7 @@ const ExchangeContact: React.FC<ExchangeContactModalProps> = ({ isOpen, onClose,
                             name="name"
                             value={formData.name}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 border text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.name ? 'border-red-500' : ''}`}
+                            className={`w-full px-4 py-2 border text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange ${formErrors.name ? 'border-red-500' : ''}`}
                             required
                             placeholder='Иван Иванов'
                             aria-label="Your Name"
@@ -159,7 +159,7 @@ const ExchangeContact: React.FC<ExchangeContactModalProps> = ({ isOpen, onClose,
                             name="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.email ? 'border-red-500' : ''}`}
+                            className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange ${formErrors.email ? 'border-red-500' : ''}`}
                             required
                             placeholder='example@example.com'
                             aria-label="Your Email"
@@ -176,7 +176,7 @@ const ExchangeContact: React.FC<ExchangeContactModalProps> = ({ isOpen, onClose,
                             name="phone"
                             value={formData.phone}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.phone ? 'border-red-500' : ''}`}
+                            className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange ${formErrors.phone ? 'border-red-500' : ''}`}
                             required
                             placeholder='+359 88 888 8888'
                             aria-label="Your Phone"
@@ -193,7 +193,7 @@ const ExchangeContact: React.FC<ExchangeContactModalProps> = ({ isOpen, onClose,
                             name="image"
                             accept="image/*"
                             onChange={handleFileChange}
-                            className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange"
                             aria-label="Your Image"
                         />
                     </div>
@@ -207,7 +207,7 @@ const ExchangeContact: React.FC<ExchangeContactModalProps> = ({ isOpen, onClose,
                             name="note"
                             value={formData.note}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.note ? 'border-red-500' : ''}`}
+                            className={`w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange ${formErrors.note ? 'border-red-500' : ''}`}
                             required
                             placeholder='Запознахме се на...'
                             aria-label="Note"
@@ -224,7 +224,7 @@ const ExchangeContact: React.FC<ExchangeContactModalProps> = ({ isOpen, onClose,
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 text-white bg-purple-500 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-700 disabled:bg-purple-300"
+                            className="px-4 py-2 text-white bg-orange rounded-lg hover:bg-darkOrange focus:outline-none focus:ring-2 focus:ring-orange disabled:bg-yellow-300"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? 'Изпраща се...' : 'Изпрати'}

@@ -47,7 +47,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
         <div className="flex flex-col space-y-4 mt-8 mb-8">
             <button
                 onClick={() => window.location.href = `tel:${user?.phone1}`}
-                className="flex items-center justify-center bg-gradient-to-r from-green-400 to-green-600 text-white px-8 py-4 rounded-full shadow-lg hover:from-green-500 hover:to-green-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-50 w-full sm:w-auto"
+                className="flex items-center justify-center bg-gradient-to-b from-gray-900 to-black text-white px-8 py-4 rounded-full shadow-lg hover:gray-950 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaPhoneAlt className="mr-3 text-2xl" />
                 <span className="text-lg font-semibold">Обади се</span>
@@ -58,14 +58,14 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                     text: `Contact ${user?.name}`,
                     url: window.location.href
                 })}
-                className="flex items-center justify-center bg-gradient-to-r from-blue-400 to-blue-600 text-white px-8 py-4 rounded-full shadow-lg hover:from-blue-500 hover:to-blue-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full sm:w-auto"
+                className="flex items-center justify-center bg-gradient-to-r from-white to-gray-400 text-black px-8 py-4 rounded-full shadow-lg hover:gray-500  transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaShareAlt className="mr-3 text-2xl" />
                 <span className="text-lg font-semibold">Сподели</span>
             </button>
             <button
                 onClick={handleExchangeContact}
-                className="flex items-center justify-center bg-gradient-to-r from-purple-400 to-purple-600 text-white px-8 py-4 rounded-full shadow-lg hover:from-purple-500 hover:to-purple-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-opacity-50 w-full sm:w-auto"
+                className="flex items-center justify-center bg-gradient-to-r from-gray-900 to-black text-white px-8 py-4 rounded-full shadow-lg hover:gray-950 ttransition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaEnvelope className="mr-3 text-2xl" />
                 <span className="text-lg font-semibold">Разменете Контакти</span>
