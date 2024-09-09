@@ -79,7 +79,7 @@ function ProfileContent() {
     const handleTabClick = useCallback((tab: string) => {
         setLoading(true); // Start loading
         if (tab === 'profileDetails') {
-            router.push(`/profileDetails?id=${userId}`);
+            router.push(`/profileDetails/${userId}`);
         } else {
             setActiveTab(tab);
             router.push(`/profile?tab=${tab}`);
