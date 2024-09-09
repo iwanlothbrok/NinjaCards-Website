@@ -14,61 +14,52 @@ import { User } from '@/types/user';
 
 const cardBackgroundOptions = [
     {
+        name: 'black',
+        bgClass: "bg-black",
+        textClass: "text-white",
+        borderClass: "border-black",
+        highlightClass: "text-white",
+        buttonBgClass: "bg-white",
+        cardCoverBgClass: "from-black"
+    },
+    {
+        name: 'white',
+        bgClass: "bg-white",
+        textClass: "text-black",
+        borderClass: "border-white",
+        highlightClass: "text-black",
+        buttonBgClass: "bg-black",
+        cardCoverBgClass: "from-white"
+    },
+    {
+        name: 'gray',
+        bgClass: "bg-gray-500",
+        textClass: "text-black",
+        borderClass: "border-gray-500",
+        highlightClass: "text-black",
+        buttonBgClass: "bg-black",
+        cardCoverBgClass: "from-gray"
+    },
+    {
         name: 'orange',
-        bgClass: "bg-orange",
-        textClass: "text-gray-200",
-        borderClass: "border-orange",
-        highlightClass: "text-orange",
-        buttonBgClass: "bg-gray-700",
-        cardCoverBgClass: "from-bgOrange"
-    },
-    {
-        name: 'blue',
-        bgClass: "bg-blue-500",
-        textClass: "text-white",
-        borderClass: "border-blue-500",
-        highlightClass: "text-blue-500",
-        buttonBgClass: "bg-gray-700",
-        cardCoverBgClass: "from-bgBlue"
-    },
-    {
-        name: 'purple',
-        bgClass: "bg-purple-500",
-        textClass: "text-white",
-        borderClass: "border-purple-500",
-        highlightClass: "text-purple-500",
-        buttonBgClass: "bg-gray-700",
-        cardCoverBgClass: "from-bgViolet"
-    },
-    {
-        name: 'green',
-        bgClass: "bg-green-500",
-        textClass: "text-white",
-        borderClass: "border-green-500",
-        highlightClass: "text-green-500",
-        buttonBgClass: "bg-gray-700",
-        cardCoverBgClass: "from-bgGreen "
-    },
-    {
-        name: 'yellow',
-        bgClass: "bg-yellow-400",
-        textClass: "text-white",
-        borderClass: "border-yellow-400",
-        highlightClass: "text-yellow-400",
-        buttonBgClass: "bg-gray-700",
-        cardCoverBgClass: "from-bgYellow"
-
+        bgClass: "bg-black",
+        textClass: "text-orange-500",
+        borderClass: "border-black",
+        highlightClass: "text-orange-500",
+        buttonBgClass: "bg-orange-500",
+        cardCoverBgClass: "from-black"
     },
     {
         name: 'teal',
-        bgClass: "bg-teal-400",
-        textClass: "text-white",
-        borderClass: "border-teal-400",
+        bgClass: "bg-black",
+        textClass: "text-teal-400",
+        borderClass: "border-black",
         highlightClass: "text-teal-400",
-        buttonBgClass: "bg-gray-700",
-        cardCoverBgClass: "from-bgTeal"
+        buttonBgClass: "bg-teal-400",
+        cardCoverBgClass: "from-black"
     }
 ];
+
 
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
     try {
@@ -149,10 +140,10 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     };
 
     useEffect(() => {
-        if (user) {
-            fetchUser(user.id, setCurrentUser, setLoading, showAlert);
+        if (userId) {
+            fetchUser(userId, setCurrentUser, setLoading, showAlert);
         }
-    }, [user]);
+    }, [userId]);
 
     useEffect(() => {
         if (currentUser && currentUser.selectedColor) {

@@ -11,8 +11,6 @@ export async function generateStaticParams() {
     const res = await fetch(`${BASE_API_URL}/api/profile/allUsers`);  // Use the correct API to get all users
     const users = await res.json();
 
-
-
     if (!Array.isArray(users)) {
         throw new Error("Expected an array of users, but got something else.");
     }
