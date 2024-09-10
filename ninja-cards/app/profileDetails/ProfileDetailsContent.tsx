@@ -345,7 +345,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 >
                     {/* <ProfileHeader user={currentUser} cardStyle={cardStyle} /> */}
                     <motion.div
-                        className="mt-6"
+                        className="mt-0"
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}

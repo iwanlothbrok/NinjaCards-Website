@@ -44,7 +44,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
     };
 
     return (
-        <div className="flex flex-col space-y-4 mt-8 mb-8">
+        <div className="flex flex-col space-y-4  mb-8">
             <button
                 onClick={() => window.location.href = `tel:${user?.phone1}`}
                 className="flex items-center justify-center bg-gradient-to-b from-gray-900 to-black text-white px-8 py-4 rounded-full shadow-lg hover:gray-950 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-50 w-full sm:w-auto"
