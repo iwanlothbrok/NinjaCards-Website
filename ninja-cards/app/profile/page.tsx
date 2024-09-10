@@ -19,7 +19,13 @@ const TabCard: React.FC<{ tab: string; label: string; description: string; backg
                     hover:bg-blue-600 hover:text-white`}
         onClick={onClick}
         aria-pressed={activeTab === tab}
-        style={{ backgroundImage: `url(${backgroundImage})`, backgroundPosition: 'center', backgroundSize: 'cover' }}
+        style={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            width: '100%',   // Ensures the card takes up full width of the grid cell
+            height: '150px', // Set a fixed height for uniformity 
+        }}
     >
         <div className="absolute inset-0 bg-black opacity-70 rounded-lg"></div>
         <div className="relative z-10">
