@@ -13,56 +13,58 @@ import SocialMediaLinks from '../components/profileDetails/SocialMediaLinks';
 import { User } from '@/types/user';
 
 type SocialProfileKeys = 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'github' | 'youtube' | 'tiktok' | 'googleReview' | 'revolut';
-type ColorTheme = {
-    name: string;
-    background: string;
-    text: string;
-    border: string;
-    highlight: string;
-    button: string;
-};
 
-const colorThemes: ColorTheme[] = [
+const cardBackgroundOptions = [
     {
         name: 'black',
-        background: "bg-black",
-        text: "text-gray-200",
-        border: "border-gray-700",
-        highlight: "text-yellow-400",
-        button: "bg-gray-800",
+        bgClass: "bg-black",
+        textClass: "text-gray-200",      // Softer white for less harsh contrast
+        borderClass: "border-gray-700",  // Dark gray to soften the black borders
+        highlightClass: "text-yellow-400", // Yellow for a bright and visible highlight
+        buttonBgClass: "bg-gray-800",    // Dark gray for buttons to blend with the background
+        cardCoverBgClass: "from-black",
+        opposite: 'bg-white'
     },
     {
         name: 'white',
-        background: "bg-gray-100",
-        text: "text-gray-800",
-        border: "border-gray-300",
-        highlight: "text-blue-600",
-        button: "bg-blue-500",
+        bgClass: "bg-gray-100",          // Softer off-white to reduce strain on the eyes
+        textClass: "text-gray-800",      // Dark gray for better contrast than black
+        borderClass: "border-gray-300",  // Light gray to keep borders subtle
+        highlightClass: "text-blue-600", // Blue highlight for a clean contrast
+        buttonBgClass: "bg-blue-500",    // Blue buttons for a modern look
+        cardCoverBgClass: "from-white",
+        opposite: 'bg-black'
     },
     {
         name: 'gray',
-        background: "bg-gray-700",
-        text: "text-gray-100",
-        border: "border-gray-600",
-        highlight: "text-green-400",
-        button: "bg-green-500",
+        bgClass: "bg-gray-800",          // Darker gray for a sleek modern look
+        textClass: "text-gray-100",      // Light gray text to contrast well
+        borderClass: "border-gray-600",  // Slightly lighter border than background
+        highlightClass: "text-green-400", // Bright green for a pop of color
+        buttonBgClass: "bg-green-500",   // Green buttons to complement the highlight
+        cardCoverBgClass: "from-gray",
+        opposite: 'bg-black'
     },
     {
         name: 'orange',
-        background: "bg-gray-900",
-        text: "text-white",
-        border: "border-orange-500",
-        highlight: "text-orange-500",
-        button: "bg-yellow-700",
+        bgClass: "bg-gray-900",          // Darker gray for a sleek modern look
+        textClass: "text-white",         // White text for clear contrast
+        borderClass: "border-orange",// Slightly darker orange border
+        highlightClass: "text-orange", // Lighter yellow for soft, visible highlight
+        buttonBgClass: "bg-yellow-700",  // Yellow buttons to complement the highlight
+        cardCoverBgClass: "from-orange",
+        opposite: 'bg-white'
     },
     {
         name: 'teal',
-        background: "bg-teal-600",
-        text: "text-white",
-        border: "border-teal-700",
-        highlight: "text-pink-400",
-        button: "bg-pink-500",
-    },
+        bgClass: "bg-teal-600",          // Bold teal background
+        textClass: "text-white",         // White text for contrast
+        borderClass: "border-teal-700",  // Darker teal border
+        highlightClass: "text-pink-400", // Bright pink highlight for contrast
+        buttonBgClass: "bg-pink-500",    // Pink buttons for a lively touch
+        cardCoverBgClass: "from-teal",
+        opposite: 'bg-white'
+    }
 ];
 
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
@@ -103,7 +105,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
-    const [cardStyle, setCardStyle] = useState<ColorTheme>(colorThemes[0]);
+    const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
     const [showTooltip, setShowTooltip] = useState<string | null>(null);
     const [isPhone, setIsPhone] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -148,9 +150,11 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     }, [userId]);
 
     useEffect(() => {
-        if (currentUser?.selectedColor) {
-            const selectedTheme = colorThemes.find(theme => theme.name === currentUser.selectedColor);
-            if (selectedTheme) setCardStyle(selectedTheme);
+        if (currentUser && currentUser.selectedColor) {
+            const selectedCardStyle = cardBackgroundOptions.find(option => option.name === currentUser.selectedColor);
+            if (selectedCardStyle) {
+                setCardStyle(selectedCardStyle);
+            }
         }
     }, [currentUser]);
 
@@ -172,12 +176,14 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     }, []);
 
     const handleColorSelection = (colorName: string) => {
-        if (currentUser?.id) {
-            const selectedTheme = colorThemes.find(theme => theme.name === colorName);
-            if (selectedTheme) setCardStyle(selectedTheme);
+        if (currentUser && currentUser.id) {
+            saveSelectedColor(currentUser.id, colorName, showAlert);
+            const selectedCardStyle = cardBackgroundOptions.find(option => option.name === colorName);
+            if (selectedCardStyle) {
+                setCardStyle(selectedCardStyle);
+            }
         }
     };
-
 
     const showAlert = (message: string, title: string, color: string) => {
         setAlert({ message, title, color });
@@ -189,7 +195,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             {/* Save Contact Button */}
             <button
                 onClick={generateVCF}
-                className="flex-grow flex items-center justify-center bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-red-900 transition-all duration-300 ease-in-out transform hover:scale-105"
+                className="flex-grow flex items-center justify-center bg-gray-800 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-black transition-all duration-300 ease-in-out transform hover:scale-105"
             >
                 <FaDownload className="mr-2 text-3xl" />
                 <span className="text-lg font-semibold">СВАЛИ КОНТАКТ</span>
@@ -198,7 +204,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             {/* Exchange Contact Button */}
             <button
                 onClick={handleExchangeContact}
-                className="w-16 flex items-center justify-center bg-gradient-to-r from-green-500 to-green-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-green-600 transition-all duration-300 ease-in-out transform hover:scale-105"
+                className="w-16 flex items-center justify-center bg-gray-400 text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-700 transition-all duration-300 ease-in-out transform hover:scale-105"
             >
                 <FaExchangeAlt className="text-3xl" />
             </button>
@@ -305,81 +311,156 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         URL.revokeObjectURL(url);
     };
 
-    const shareContact = () => {
-        if (navigator.share) {
-            navigator.share({
-                title: currentUser?.name ? `Контакт ${currentUser.name}` : 'Контакт',
-                text: currentUser?.name ? `Вижте контактните данни на ${currentUser.name}` : 'Вижте контактните данни',
-                url: window.location.href,
-            });
-        } else {
-            generateVCF(); // Фалбек към изтегляне на VCF, ако споделянето не се поддържа
-        }
-    };
 
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
-        <div className={`relative ${cardStyle.background} pt-20`}>
+        <div className={`relative ${cardStyle.opposite} pt-20`}>
+            {/* Profile Header Section */}
             <ProfileHeader user={currentUser} cardStyle={cardStyle} />
-            <motion.div
-                className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.background} ${cardStyle.border}`}
+
+            {/* Content Section with Background */}
+            <div
+                className={`relative flex items-center justify-center ${cardStyle.textClass}`}
                 style={{
-                    background: `linear-gradient(180deg, ${cardStyle.background}, transparent)`,
-                    borderColor: `${cardStyle.border}`
+                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
                 }}
             >
-                <ActionButtons2 user={currentUser} />
-                <SocialMediaLinks user={currentUser} />
-                <FloatingButtons generateVCF={generateVCF} />
-                {user?.id === currentUser?.id && (
-                    <BackgroundSelector
-                        themes={colorThemes}
-                        onSelect={handleColorSelection}
-                        currentTheme={cardStyle.name}
-                    />
-                )}
-            </motion.div>
+                {/* Card Section with White Background */}
+                <motion.div
+                    className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-none`} // Removed shadow
+                // initial={{ opacity: 0, y: 20 }}
+                // animate={{ opacity: 1, y: 0 }}
+                // transition={{ duration: 0.8, ease: 'easeOut' }}
+                >
+                    {/* Action Buttons */}
+                    <motion.div
+                        className="mt-6"
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                    >
+                        <ActionButtons2 user={currentUser} />
+                    </motion.div>
+
+                    {/* Social Media Links */}
+                    <motion.div
+                        className="mt-6"
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                    >
+                        <SocialMediaLinks user={currentUser} />
+                    </motion.div>
+
+                    {/* Floating Buttons */}
+                    <FloatingButtons generateVCF={generateVCF} />
+
+                    {/* Background Selector (visible only for the current user) */}
+                    {user?.id === currentUser.id && (
+                        <motion.div
+                            className="mt-8"
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{
+                                duration: 0.6,
+                                ease: 'easeOut',
+                                delay: 0.6,
+                            }}
+                        >
+                            <BackgroundSelector
+                                cardBackgroundOptions={cardBackgroundOptions}
+                                handleColorSelection={handleColorSelection}
+                                cardStyle={cardStyle}
+                            />
+                        </motion.div>
+                    )}
+                </motion.div>
+            </div>
         </div>
     );
 
+
+
 }
 
-const ProfileHeader: React.FC<{ user: User; cardStyle: ColorTheme }> = ({ user, cardStyle }) => (
-    <div className={`relative flex flex-col items-center ${cardStyle.background}`}>
-        <div className={`absolute top-20 p-1 bg-${cardStyle.name}`}>
-            <motion.div className={`w-40 h-40 rounded-full ${cardStyle.border}`}>
+const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
+    <div className={`relative flex flex-col items-center ${cardStyle.opposite} pt-72 overflow-hidden`}>
+        {/* Circular profile image with white background */}
+        <div className={`absolute top-20 rounded-full p-1 bg-${cardStyle.name} shadow-lg z-20`}>
+            <motion.div
+                className={`w-40 h-40 rounded-full overflow-hidden border-1 ${cardStyle.borderClass}`}
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.5 }}
+            >
                 {user?.image ? (
-                    <img className="w-full h-full object-cover" src={user.image} alt="Profile" />
+                    <img
+                        className="w-full h-full object-cover"
+                        src={`data:image/jpeg;base64,${user.image}`}
+                        alt="Profile"
+                    />
                 ) : (
-                    <FaUserCircle className="w-full h-full" />
+                    <FaUserCircle className="w-full h-full text-gray-300" />
                 )}
             </motion.div>
         </div>
-        <div className={`relative w-full max-w-md ${cardStyle.background}`}>
+
+        {/* White Background Section aligned with the card */}
+        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-14 -mt-20 mx-auto rounded-none`}> {/* Removed borders and shadow */}
+            {/* Adjust the margin to overlap */}
             <div className="text-center">
-                <h1 className={`${cardStyle.highlight} text-2xl font-bold`}>{user?.name}</h1>
-                <p className={`${cardStyle.text} text-lg`}>{user?.position}</p>
-                <p className={`${cardStyle.text} text-lg`}>{user?.company}</p>
+                <h1 className={`text-2xl font-bold ${cardStyle.highlightClass}`}>
+                    {user?.name}
+                </h1>
+                <p className={`text-lg mt-1 ${cardStyle.textClass}`}>
+                    {user?.position}
+                </p>
+                <p className={`text-lg ${cardStyle.textClass}`}>
+                    {user?.company}
+                </p>
             </div>
         </div>
     </div>
 );
-const BackgroundSelector: React.FC<{ themes: ColorTheme[]; onSelect: (name: string) => void; currentTheme: string }> = ({ themes, onSelect, currentTheme }) => (
+
+const BackgroundSelector: React.FC<{
+    cardBackgroundOptions: typeof cardBackgroundOptions;
+    handleColorSelection: (colorName: string) => void;
+    cardStyle: any;
+}> = ({ cardBackgroundOptions, handleColorSelection, cardStyle }) => (
     <div className="mt-6 text-center">
-        <h3 className="text-xl font-semibold">Customize Card Background</h3>
+        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Customize Card Background</h3>
         <div className="flex justify-center space-x-4 mt-4">
-            {themes.map(({ name, background }) => (
+            {cardBackgroundOptions.map(({ name, bgClass }) => (
                 <button
                     key={name}
-                    onClick={() => onSelect(name)}
-                    className={`w-10 h-10 rounded-full border-2 ${background} ${currentTheme === name ? 'ring-4 ring-offset-2 ring-blue-500' : ''}`}
-                />
+                    onClick={() => handleColorSelection(name)}
+                    aria-label={`Select ${name} background`}
+                    className={`w-10 h-10 rounded-full border-2 transition-transform transform hover:scale-110 ${bgClass} ${cardStyle.name === name ? 'ring-4 ring-offset-2 ring-blue-500' : ''}`}
+                >
+                    {cardStyle.name === name && (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            className="w-4 h-4 text-white mx-auto"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    )}
+                </button>
             ))}
         </div>
     </div>
 );
-
 
 
 export default ProfileDetailsContent;
