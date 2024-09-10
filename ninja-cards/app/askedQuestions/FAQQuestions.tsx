@@ -7,7 +7,7 @@ interface FrequentlyAskedQuestionsProps {
 }
 const faqData = [
   {
-    category: 'General',
+    category: 'Обща информация',
     items: [
       {
         question: 'Какво е NFC Карта?',
@@ -20,7 +20,7 @@ const faqData = [
     ],
   },
   {
-    category: 'Customization',
+    category: 'Персонализиране',
     items: [
       {
         question: 'Мога ли да персонализирам моята Ninja NFC Карта?',
@@ -33,7 +33,7 @@ const faqData = [
     ],
   },
   {
-    category: 'Security',
+    category: 'Защита',
     items: [
       {
         question: 'Данните ми сигурни ли са с Ninja NFC картите?',
@@ -42,7 +42,7 @@ const faqData = [
     ],
   },
   {
-    category: 'Compatibility',
+    category: 'Съвместимост',
     items: [
       {
         question: 'Работят ли Ninja NFC картите на всички телефони?',
@@ -51,7 +51,7 @@ const faqData = [
     ],
   },
   {
-    category: 'NFC Products by Ninja Cards',
+    category: 'NFC продукти от Ninja Cards',
     items: [
       {
         question: 'Какви са предимствата на умните визитни картички?',
@@ -64,7 +64,7 @@ const faqData = [
     ],
   },
   {
-    category: 'Google Reviews Integration',
+    category: 'Интеграция на отзивите на Google',
     items: [
       {
         question: 'Как работи интеграцията с Google Reviews?',
@@ -73,7 +73,7 @@ const faqData = [
     ],
   },
   {
-    category: 'NFC Stickers',
+    category: 'Стикери NFC',
     items: [
       {
         question: 'Как мога да използвам NFC стикерите в бизнеса си?',
@@ -86,7 +86,7 @@ const faqData = [
     ],
   },
   {
-    category: 'Customization Options',
+    category: 'Опции за персонализиране',
     items: [
       {
         question: 'Какви възможности за персонализация предлагате?',
@@ -99,7 +99,7 @@ const faqData = [
     ],
   },
   {
-    category: 'Security Features',
+    category: 'Функции за сигурност',
     items: [
       {
         question: 'Колко сигурни са продуктите на Ninja Cards?',
@@ -112,7 +112,7 @@ const faqData = [
     ],
   },
   {
-    category: 'Tracking and Analytics',
+    category: 'Проследяване и анализ',
     items: [
       {
         question: 'Мога ли да проследявам взаимодействията с NFC продуктите си?',
@@ -125,7 +125,7 @@ const faqData = [
     ],
   },
   {
-    category: 'International Use',
+    category: 'Международна употреба',
     items: [
       {
         question: 'Работят ли NFC продуктите на Ninja Cards по света?',
@@ -138,7 +138,7 @@ const faqData = [
     ],
   },
   {
-    category: 'Durability',
+    category: 'Дълготрайност',
     items: [
       {
         question: 'Колко издръжливи са умните визитни картички?',
@@ -188,9 +188,7 @@ const FrequentlyAskedQuestions: React.FC<FrequentlyAskedQuestionsProps> = ({
   return (
     <section className=" bg-darkBg2 text-white">
       <div className="max-w-5xl mx-auto px-6">
-        <h2 className="text-5xl font-extrabold text-orange text-center mb-12">
-          Frequently Asked Questions
-        </h2>
+        
         <div className="space-y-12">
           {filteredFAQs.map((category, categoryIndex) =>
             category.items.length > 0 ? (

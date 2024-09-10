@@ -28,9 +28,10 @@ const FAQPage = () => {
 
 
   return (
-    <div className="min-h-screen   text-white">
+    <div className="min-h-screen  text-white">
 
-      <Header pageInformation='Задавани Въпроси' />
+      <Header pageInformation='Имате въпрос' textOne='Визитки' textTwo='Ревюта' textThree='Дизайн' />
+
       {/* Hero Section */}
       <FAQVideos />
       {/* FAQ Section */}
