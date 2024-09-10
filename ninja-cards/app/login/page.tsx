@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';  // Import the icons for showing/hiding password
 import { BASE_API_URL } from '@/utils/constants';
 
 const schema = yup.object().shape({
@@ -25,6 +26,7 @@ const Login: React.FC = () => {
     });
     const router = useRouter();
     const [alert, setAlert] = useState<Alert | null>(null);
+    const [showPassword, setShowPassword] = useState(false);  // State to toggle password visibility
 
     const onSubmit = async (data: any) => {
         const res = await fetch(`${BASE_API_URL}/api/auth/login`, {
@@ -59,7 +61,7 @@ const Login: React.FC = () => {
     };
 
     return (
-        <section className="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center">
+        <section className="bg-gray-50 dark:bg-gray-950 min-h-screen flex items-center justify-center">
             <div className="flex flex-col items-center justify-center mx-auto">
                 <a href="#" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 dark:text-white">
                     <Image className="w-24 h-24 filter grayscale" src="navlogo.png" alt="logo" width={96} height={96} />
@@ -67,7 +69,7 @@ const Login: React.FC = () => {
                 <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-lg dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-12 space-y-6 md:space-y-8 sm:p-14">
                         <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-3xl dark:text-white">
-                            Login to your account
+                            Влезте в профила си
                         </h1>
                         {alert && (
                             <div className={`my-2 w-full p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}>
@@ -76,7 +78,7 @@ const Login: React.FC = () => {
                         )}
                         <form className="space-y-6 md:space-y-8" onSubmit={handleSubmit(onSubmit)}>
                             <div>
-                                <label htmlFor="email" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Your email</label>
+                                <label htmlFor="email" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Имейл</label>
                                 <input
                                     type="email"
                                     id="email"
@@ -87,29 +89,36 @@ const Login: React.FC = () => {
                                 />
                                 {errors.email && <p className="text-red-500 text-sm italic">{errors.email.message}</p>}
                             </div>
-                            <div>
-                                <label htmlFor="password" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Password</label>
+                            <div className="relative">
+                                <label htmlFor="password" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Парола</label>
                                 <input
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}  // Conditionally change input type
                                     id="password"
                                     className={`bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${errors.password ? 'border-red-500' : ''}`}
                                     placeholder="••••••••"
                                     {...register('password')}
                                     required
                                 />
+                                {/* Show/Hide password icon */}
+                                <div
+                                    className="absolute inset-y-0 right-3 flex items-center text-gray-700 dark:text-gray-300 cursor-pointer"
+                                    onClick={() => setShowPassword(!showPassword)}  // Toggle show/hide password
+                                >
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}  {/* Icon toggling */}
+                                </div>
                                 {errors.password && <p className="text-red-500 text-sm italic">{errors.password.message}</p>}
                                 <div className="mt-2 text-sm text-right">
-                                    <a href="/changePassword" className="text-red-600 hover:underline">Forgot password?</a>
+                                    <a href="/changePassword" className="text-red-600 hover:underline">Забравена парола?</a>
                                 </div>
                             </div>
                             <button
                                 type="submit"
                                 className="w-full text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-base px-6 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                             >
-                                Login
+                                Влез
                             </button>
                             <p className="text-base font-light text-gray-500 dark:text-gray-400">
-                                Don&apos;t have an account? <a href="/register" className="font-medium text-teal-600 hover:underline">Register here</a>
+                                Нямате акаунт? <a href="/register" className="font-medium text-teal-600 hover:underline">Регистрирайте се тук</a>
                             </p>
                         </form>
                     </div>
