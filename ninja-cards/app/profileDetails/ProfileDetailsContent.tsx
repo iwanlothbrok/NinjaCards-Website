@@ -12,6 +12,8 @@ import { BASE_API_URL } from '@/utils/constants';
 import SocialMediaLinks from '../components/profileDetails/SocialMediaLinks';
 import { User } from '@/types/user';
 
+type SocialProfileKeys = 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'github' | 'youtube' | 'tiktok' | 'googleReview' | 'revolut';
+
 const cardBackgroundOptions = [
     {
         name: 'black',
@@ -86,8 +88,6 @@ const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateA
         if (!response.ok) throw new Error('Failed to fetch user data');
         const userData: User = await response.json();
         setUser(userData);
-        console.log(userData);
-
     } catch (error) {
         console.error(error);
         showAlert('Failed to load profile', 'Error', 'red');
@@ -269,22 +269,23 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         if (currentUser.website) {
             vCard.push(`URL;type=Website;type=pref:${currentUser.website}`);
         }
-        const socialProfiles = {
-            'facebook': 'Facebook',
-            'twitter': 'Twitter',
-            'instagram': 'Instagram',
-            'linkedin': 'LinkedIn',
-            'github': 'GitHub',
-            'youtube': 'YouTube',
-            'tiktok': 'TikTok',
-            'googleReview': 'Google Review',
-            'revolut': 'Revolut',
-            'qrCode': 'QR Code'
+        const socialProfiles: Record<SocialProfileKeys, string> = {
+            facebook: 'Facebook',
+            twitter: 'Twitter',
+            instagram: 'Instagram',
+            linkedin: 'LinkedIn',
+            github: 'GitHub',
+            youtube: 'YouTube',
+            tiktok: 'TikTok',
+            googleReview: 'Google Review',
+            revolut: 'Revolut',
         };
-        // Object.keys(socialProfiles).forEach((key) => {
-        //     const url = currentUser[key as keyof typeof currentUser];
-        //     if (url) vCard.push(`URL;type=${socialProfiles[key]};:${url}`);
-        // });
+
+        (Object.keys(socialProfiles) as SocialProfileKeys[]).forEach((key) => {
+            // Assuming `url` is derived or checked elsewhere based on `key`
+            const url = currentUser[key as keyof typeof currentUser];
+            if (url) vCard.push(`URL;type=${socialProfiles[key]};:${url}`);
+        });
 
 
         // Adding a NOTE field
@@ -381,9 +382,9 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
     <div className={`relative flex flex-col items-center p-4 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black rounded-lg shadow-lg`}>
         {/* Centered Profile Image with White Background */}
-        <div className="relative z-10 rounded-full p-2 bg-white shadow-xl">
+        <div className="relative z-10 rounded-full p-1 bg-white shadow-lg"> {/* Smaller padding for the white background */}
             <motion.div
-                className={`w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-4 ${cardStyle.borderClass}`} // Increased size
+                className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full overflow-hidden border-2 ${cardStyle.borderClass}`} // Circular shape, slightly smaller border
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 whileHover={{ scale: 1.05 }}
@@ -403,20 +404,20 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
 
         {/* User Information below the image */}
         <div className="mt-4 text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">  {/* Increased text size */}
+            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-xl font-bold text-white">  {/* Smaller text for larger screens */}
                 {user?.name}
             </h1>
-            <p className={`text-lg sm:text-xl md:text-2xl mt-2 ${cardStyle.highlightClass}`}> {/* Increased text size */}
+            <p className={`text-sm sm:text-md md:text-lg lg:text-md mt-1 ${cardStyle.highlightClass}`}> {/* Text decreases slightly on larger screens */}
                 {user?.position}
             </p>
-            <p className={`text-lg sm:text-xl md:text-2xl ${cardStyle.highlightClass}`}>  {/* Increased text size */}
+            <p className={`text-sm sm:text-md md:text-lg lg:text-md ${cardStyle.highlightClass}`}>  {/* Text decreases slightly on larger screens */}
                 {user?.company}
             </p>
-            {/* {user?.bio && (
-                <p className="text-md sm:text-lg mt-3 text-gray-300 max-w-xs leading-relaxed">
-                    {user.bio.length > 120 ? `${user.bio.substring(0, 117)}...` : user.bio}
+            {user?.bio && (
+                <p className="text-xs sm:text-sm mt-3 text-gray-300 max-w-xs leading-relaxed">
+                    {user.bio.length > 100 ? `${user.bio.substring(0, 97)}...` : user.bio}
                 </p>
-            )} */}
+            )}
         </div>
     </div>
 );
