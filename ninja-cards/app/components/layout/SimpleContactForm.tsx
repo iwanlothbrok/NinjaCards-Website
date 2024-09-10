@@ -40,7 +40,7 @@ const SimpleContactForm: React.FC = () => {
         });
 
         if (response.ok) {
-            setSuccess('Message sent successfully!');
+            setSuccess('Съобщението е изпратено успешно!');
             setFormData({
                 name: '',
                 email: '',
@@ -48,7 +48,7 @@ const SimpleContactForm: React.FC = () => {
                 subject: '',
             });
         } else {
-            setError('Failed to send message. Please try again.');
+            setError('Не успя да изпрати съобщение. Моля, опитайте отново.');
         }
     };
 
@@ -69,7 +69,7 @@ const SimpleContactForm: React.FC = () => {
             </div>
 
             <div className="w-full max-w-md bg-[#1e293b] bg-opacity-95 rounded-lg shadow-xl p-6 mt-8">
-                <h2 className="text-2xl font-semibold text-center text-orange mb-6">Свържете се с нас</h2>
+                <h2 className="text-2xl font-semibold text-center text-orange mb-6">Изпрати запитване</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block text-white font-medium mb-2" htmlFor="name">
@@ -118,7 +118,7 @@ const SimpleContactForm: React.FC = () => {
                     </div>
                     <div className="mb-4">
                         <label className="block text-white font-medium mb-2" htmlFor="subject">
-                            Информация
+                            Запитване
                         </label>
                         <textarea
                             id="subject"
@@ -135,7 +135,7 @@ const SimpleContactForm: React.FC = () => {
                             type="submit"
                             className="px-5 py-2 bg-orange  text-white rounded-lg shadow hover:bg-orange-600 transition-transform transform hover:scale-105"
                         >
-                            ИЗПРАТИ
+                            Изпрати
                         </button>
                         <button
                             type="reset"
@@ -149,8 +149,7 @@ const SimpleContactForm: React.FC = () => {
                             }
                             className="px-5 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition-transform transform hover:scale-105"
                         >
-                            Reset Form
-                        </button>
+                            Нулиране на формуляра                        </button>
                     </div>
                     {error && <p className="mt-4 text-red-500 text-center">{error}</p>}
                     {success && <p className="mt-4 text-green-500 text-center">{success}</p>}

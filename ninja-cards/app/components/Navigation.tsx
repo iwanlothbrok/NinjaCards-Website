@@ -168,14 +168,14 @@ const Navbar: React.FC = () => {
                         switch (path) {
                           case '/':
                             return 'Начало';
-                          case '/features':
-                            return 'Функции';
-                          case '/contact':
-                            return 'Контакт';
-                          case '/askedQuestions':
-                            return 'Задавани Въпроси';
                           case `/profile`:
                             return 'Профил';
+                          case '/features':
+                            return 'Функции';
+                          case '/askedQuestions':
+                            return 'Задавани Въпроси';
+                          case '/contact':
+                            return 'Контакт';
                           default:
                             return path;
                         }
@@ -203,10 +203,6 @@ const Navbar: React.FC = () => {
                           </div>
                         </div>
                         <ul className="py-2 text-sm text-gray-200">
-                          {/* <NavItem href="/dashboard" onClick={() => setIsMenuOpen(false)}
-                          >
-                            Dashboard
-                          </NavItem> */}
                           <NavItem href="/profile" onClick={() => setIsMenuOpen(false)}
                           >
                             Профил
