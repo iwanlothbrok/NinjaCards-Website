@@ -75,7 +75,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <section className="bg-gray-50 py-32 dark:bg-gray-900 min-h-screen flex items-center justify-center">
+    <section className="bg-gray-50 dark:bg-gray-950 min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center justify-center  mx-auto">
         <a href="#" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 dark:text-white">
           <img className="w-24 h-24 filter grayscale" src="./navlogo.png" alt="logo" />
@@ -83,7 +83,7 @@ const Register: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-lg dark:bg-gray-800 dark:border-gray-700">
           <div className="p-12 space-y-6 md:space-y-8 sm:p-14">
             <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-3xl dark:text-white">
-              Create an account
+              Създаване на акаунт
             </h1>
             {alert && (
               <div className={`my-2 w-full p-4 rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white animate-fadeIn`}>
@@ -92,7 +92,7 @@ const Register: React.FC = () => {
             )}
             <form className="space-y-6 md:space-y-8" onSubmit={handleSubmit(onSubmit)}>
               <div>
-                <label htmlFor="name" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Name</label>
+                <label htmlFor="name" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Име</label>
                 <input
                   type="text"
                   id="name"
@@ -104,7 +104,7 @@ const Register: React.FC = () => {
                 {errors.name && <p className="text-red-500 text-sm italic">{errors.name.message}</p>}
               </div>
               <div>
-                <label htmlFor="email" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Your email</label>
+                <label htmlFor="email" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Имейл</label>
                 <input
                   type="email"
                   id="email"
@@ -116,7 +116,7 @@ const Register: React.FC = () => {
                 {errors.email && <p className="text-red-500 text-sm italic">{errors.email.message}</p>}
               </div>
               <div>
-                <label htmlFor="password" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Password</label>
+                <label htmlFor="password" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Парола</label>
                 <input
                   type="password"
                   id="password"
@@ -128,7 +128,7 @@ const Register: React.FC = () => {
                 {errors.password && <p className="text-red-500 text-sm italic">{errors.password.message}</p>}
               </div>
               <div>
-                <label htmlFor="confirmPassword" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Confirm password</label>
+                <label htmlFor="confirmPassword" className="block mb-3 text-base font-medium text-gray-900 dark:text-white">Потвърждаване на паролата</label>
                 <input
                   type="password"
                   id="confirmPassword"
@@ -144,10 +144,10 @@ const Register: React.FC = () => {
                 type="submit"
                 className="w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-base px-6 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Create an account
+                Създай
               </button>
               <p className="text-base font-light text-gray-500 dark:text-gray-400">
-                Already have an account? <a href="/login" className="font-medium text-teal-600 hover:underline">Login here</a>
+                Вече имате акаунт? <a href="/login" className="font-medium text-teal-600 hover:underline">Влезте тук</a>
               </p>
             </form>
           </div>
