@@ -394,7 +394,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="relative flex flex-col items-center rounded-lg shadow-lg overflow-hidden">
+    <div className="relative flex bg-black pt-40 flex-col items-center rounded-lg shadow-lg overflow-hidden">
         {/* Background behind the image */}
         <div className="w-full h-40 pt-40  bg-black relative flex justify-center items-center">
             {/* Circular profile image with white background and shadow */}
@@ -420,7 +420,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* Text below the image */}
-        <div className={`mt-10 text-center bg-gradient-to-b ${cardStyle.cardCoverBgClass}`}>  {/* Adjust margin to align the text under the image */}
+        <div className={`mt-16 text-center bg-white`} >  {/* Adjust margin to align the text under the image */}
             <h1 className={`text-xl font-bold ${cardStyle.highlightClass}`}>
                 {user?.name}
             </h1>
