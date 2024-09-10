@@ -321,15 +321,15 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
-        <div>
+        <div className="relative">
             {/* Profile Header Section */}
             <ProfileHeader user={currentUser} cardStyle={cardStyle} />
 
             {/* Content Section with Background */}
             <div
-                className={`flex items-center  justify-center ${cardStyle.textClass}`}
+                className={`flex items-center justify-center ${cardStyle.textClass}`}
                 style={{
-                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`, // Use template literal for proper interpolation
+                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
@@ -394,11 +394,11 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="relative flex bg-black pt-40 flex-col items-center rounded-lg shadow-lg overflow-hidden">
+    <div className="relative flex flex-col items-center bg-black pt-40 rounded-lg shadow-lg overflow-hidden">
         {/* Background behind the image */}
-        <div className="w-full h-40 pt-40  bg-black relative flex justify-center items-center">
+        <div className="w-full h-40 bg-black relative flex justify-center items-center">
             {/* Circular profile image with white background and shadow */}
-            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg"> {/* Positioned image overlapping */}
+            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg">
                 <motion.div
                     className={`w-40 h-40 rounded-full overflow-hidden border-3 ${cardStyle.borderClass}`}
                     initial={{ scale: 0.9 }}
@@ -420,9 +420,8 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* Text below the image */}
-        <div className={`w-full bg-${cardStyle.name}`}> {/* Set relative positioning on the parent */}
-            {/* Text Section */}
-            <div className={`mt-16 text-center bg-transparent`}>  {/* Adjust margin to align the text under the image */}
+        <div className="w-full">
+            <div className="mt-16 text-center bg-transparent">
                 <h1 className={`text-xl font-bold ${cardStyle.highlightClass}`}>
                     {user?.name}
                 </h1>
@@ -433,21 +432,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
                     {user?.company}
                 </p>
             </div>
-
-            {/* Background Section (positioned behind the text) */}
-            <div
-                className={`absolute inset-0 flex items-center justify-center ${cardStyle.bgClass}`}
-                style={{
-                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`, // Template literal for interpolation
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
-                    zIndex: -1,  // Ensure the background is behind the content
-                }}
-            />
         </div>
-
     </div>
 );
 
