@@ -43,13 +43,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             });
 
-            console.log('User created:', user);
-            const qrCodeUrl = `https://www.ninjacardsnfc.com/profileDetails?id=${user.id}`;
+            const qrCodeUrl = `https://www.ninjacardsnfc.com/profileDetails/${user.id}`;
 
             // Generate the QR code from the URL
             const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
-
-            console.log('QR Code generated:', qrCodeUrl);
 
             // Update user with the QR code image
             const updatedUser = await prisma.user.update({
