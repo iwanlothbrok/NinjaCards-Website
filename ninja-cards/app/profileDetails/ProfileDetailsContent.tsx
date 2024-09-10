@@ -321,7 +321,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
-        <>
+        <div className='pt-40 '>
 
             <ProfileHeader user={currentUser} cardStyle={cardStyle} />
 
@@ -337,13 +337,13 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 }}
             >
                 <motion.div
-                    className={`relative z-10 w-full pt-40 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
+                    className={`relative z-10 w-full max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
                     style={{ borderRadius: 'inherit' }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                 >
-                    <ProfileHeader user={currentUser} cardStyle={cardStyle} />
+                    {/* <ProfileHeader user={currentUser} cardStyle={cardStyle} /> */}
                     <motion.div
                         className="mt-6"
                         initial={{ opacity: 0, x: -50 }}
@@ -379,7 +379,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     )}
                 </motion.div>
             </div>
-        </>
+        </div>
 
     );
 }
