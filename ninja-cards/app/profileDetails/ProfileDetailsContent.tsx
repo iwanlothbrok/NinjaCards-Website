@@ -401,7 +401,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         {/* Background behind the image */}
         <div className="w-full h-40 bg-black relative flex justify-center items-center">
             {/* Circular profile image with white background and shadow */}
-            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg z-30">
+            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg z-20">
                 <motion.div
                     className={`w-40 h-40 rounded-full overflow-hidden border-3 ${cardStyle.borderClass}`}
                     initial={{ scale: 0.9 }}
