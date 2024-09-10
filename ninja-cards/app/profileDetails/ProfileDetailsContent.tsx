@@ -321,12 +321,13 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
-        <div className='pt-40 '>
-
+        <div >
+            {/* Profile Header Section */}
             <ProfileHeader user={currentUser} cardStyle={cardStyle} />
 
+            {/* Content Section with Background */}
             <div
-                className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
+                className={` flex items-center justify-center ${cardStyle.textClass}`}
                 style={{
                     backgroundImage: `
                     linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
@@ -336,22 +337,24 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
                 }}
             >
+                {/* Card Section */}
                 <motion.div
-                    className={`relative z-10 w-full max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
-                    style={{ borderRadius: 'inherit' }}
+                    className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-2xl rounded-lg`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                 >
-                    {/* <ProfileHeader user={currentUser} cardStyle={cardStyle} /> */}
+                    {/* Action Buttons */}
                     <motion.div
-                        className="mt-0"
+                        className="mt-6"
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
                         <ActionButtons2 user={currentUser} />
                     </motion.div>
+
+                    {/* Social Media Links */}
                     <motion.div
                         className="mt-6"
                         initial={{ opacity: 0, x: -50 }}
@@ -361,14 +364,20 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                         <SocialMediaLinks user={currentUser} cardStyle={cardStyle} />
                     </motion.div>
 
+                    {/* Floating Buttons */}
                     <FloatingButtons generateVCF={generateVCF} />
 
+                    {/* Background Selector (visible only for the current user) */}
                     {user?.id === currentUser.id && (
                         <motion.div
                             className="mt-8"
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.6 }}
+                            transition={{
+                                duration: 0.6,
+                                ease: 'easeOut',
+                                delay: 0.6,
+                            }}
                         >
                             <BackgroundSelector
                                 cardBackgroundOptions={cardBackgroundOptions}
@@ -380,12 +389,12 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 </motion.div>
             </div>
         </div>
-
     );
+
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="relative flex flex-col items-center rounded-lg shadow-lg overflow-hidden">
+    <div className="relative pt-40 flex flex-col items-center rounded-lg shadow-lg overflow-hidden">
         {/* Background behind the image */}
         <div className="w-full h-40 bg-black relative flex justify-center items-center">
             {/* Circular profile image with white background and shadow */}
@@ -411,14 +420,14 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* Text below the image */}
-        <div className="mt-20 text-center">  {/* Adjust margin to align the text under the image */}
-            <h1 className="text-lg font-semibold text-black">
+        <div className="mt-10 text-center">  {/* Adjust margin to align the text under the image */}
+            <h1 className={`text-xl font-bold ${cardStyle.highlightClass}`}>
                 {user?.name}
             </h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className={`text-lg mt-1 ${cardStyle.textClass}`}>
                 {user?.position}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className={`text-lg ${cardStyle.textClass}`}>
                 {user?.company}
             </p>
         </div>
