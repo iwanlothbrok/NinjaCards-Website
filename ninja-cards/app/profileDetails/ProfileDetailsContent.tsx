@@ -378,45 +378,45 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     );
 }
 
-
-
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
     <div className={`relative flex flex-col items-center p-4 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black rounded-lg shadow-lg`}>
-        {/* Centered Profile Image */}
-        <motion.div
-            className={`relative z-10 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-xl`} // Circle shape with responsive sizes
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.5 }}
-        >
-            {user?.image ? (
-                <img
-                    className="w-full h-full object-cover"
-                    src={`data:image/jpeg;base64,${user.image}`}
-                    alt="Profile"
-                />
-            ) : (
-                <FaUserCircle className="w-full h-full text-gray-300" />
-            )}
-        </motion.div>
+        {/* Centered Profile Image with White Background */}
+        <div className="relative z-10 rounded-full p-2 bg-white shadow-xl">
+            <motion.div
+                className={`w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-4 ${cardStyle.borderClass}`} // Increased size
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.5 }}
+            >
+                {user?.image ? (
+                    <img
+                        className="w-full h-full object-cover"
+                        src={`data:image/jpeg;base64,${user.image}`}
+                        alt="Profile"
+                    />
+                ) : (
+                    <FaUserCircle className="w-full h-full text-gray-300" />
+                )}
+            </motion.div>
+        </div>
 
         {/* User Information below the image */}
         <div className="mt-4 text-center">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">  {/* Increased text size */}
                 {user?.name}
             </h1>
-            <p className={`text-sm sm:text-md md:text-lg mt-2 ${cardStyle.highlightClass}`}>
+            <p className={`text-lg sm:text-xl md:text-2xl mt-2 ${cardStyle.highlightClass}`}> {/* Increased text size */}
                 {user?.position}
             </p>
-            <p className={`text-sm sm:text-md md:text-lg ${cardStyle.highlightClass}`}>
+            <p className={`text-lg sm:text-xl md:text-2xl ${cardStyle.highlightClass}`}>  {/* Increased text size */}
                 {user?.company}
             </p>
-            {user?.bio && (
-                <p className="text-xs sm:text-sm mt-3 text-gray-300 max-w-xs leading-relaxed">
+            {/* {user?.bio && (
+                <p className="text-md sm:text-lg mt-3 text-gray-300 max-w-xs leading-relaxed">
                     {user.bio.length > 120 ? `${user.bio.substring(0, 117)}...` : user.bio}
                 </p>
-            )}
+            )} */}
         </div>
     </div>
 );
