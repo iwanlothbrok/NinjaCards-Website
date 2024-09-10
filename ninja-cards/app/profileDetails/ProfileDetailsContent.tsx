@@ -338,10 +338,10 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             >
                 {/* Adjust overlay and card section */}
                 <motion.div
-                    className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-2xl`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                    className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.cardCoverBgClass} via-slate-200 to-black `}
+                // initial={{ opacity: 0, y: 20 }}
+                // animate={{ opacity: 1, y: 0 }}
+                // transition={{ duration: 0.8, ease: 'easeOut' }}
                 >
                     {/* Action Buttons */}
                     <motion.div
@@ -394,7 +394,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="relative flex flex-col items-center bg-black pt-60 shadow-lg overflow-hidden">
+    <div className="relative flex flex-col items-center bg-black pt-64   shadow-lg overflow-hidden">
         {/* Circular profile image with white background */}
         <div className={`absolute top-20 rounded-full p-2 bg-${cardStyle.name} shadow-lg z-20`}> {/* Higher z-index for overlapping */}
             <motion.div
