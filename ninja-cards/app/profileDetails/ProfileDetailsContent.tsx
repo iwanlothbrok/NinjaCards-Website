@@ -327,7 +327,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 
             {/* Content Section with Background */}
             <div
-                className={` flex items-center justify-center ${cardStyle.textClass}`}
+                className={` flex items-center -top-20 justify-center ${cardStyle.textClass}`}
                 style={{
                     backgroundImage: `
                     linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
