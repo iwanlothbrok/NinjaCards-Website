@@ -338,7 +338,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             >
                 {/* Card Section with White Background */}
                 <motion.div
-                    className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-2xl`}
+                    className={`relative z-10 w-full max-w-md p-8 bg-white bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-none`} // Removed shadow
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -388,14 +388,14 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 </motion.div>
             </div>
         </div>
-
     );
+
 
 
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="relative flex flex-col items-center bg-black pt-64 shadow-lg overflow-hidden">
+    <div className="relative flex flex-col items-center bg-black pt-72 overflow-hidden">
         {/* Circular profile image with white background */}
         <div className={`absolute top-20 rounded-full p-2 bg-${cardStyle.name} shadow-lg z-20`}>
             <motion.div
@@ -418,7 +418,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* White Background Section aligned with the card */}
-        <div className="relative w-full max-w-md bg-white z-10 pt-28 -mt-16 mx-auto rounded-lg">
+        <div className="relative w-full max-w-md bg-white z-10 pt-28 -mt-16 mx-auto rounded-none"> {/* Removed borders and shadow */}
             {/* Adjust the margin to overlap */}
             <div className="text-center">
                 <h1 className={`text-xl font-bold ${cardStyle.highlightClass}`}>
