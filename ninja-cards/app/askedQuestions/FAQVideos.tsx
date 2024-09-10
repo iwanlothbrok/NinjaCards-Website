@@ -68,7 +68,7 @@ export default function FAQVideos() {
                     </div>
                 </div>
             </div>
-            <header className="mt-8 flex flex-col justify-center items-center text-center ">
+            <header className="mt-6 mb-10 flex flex-col justify-center items-center text-center ">
                 <p className="text-lg max-w-2xl">
                     Имате въпроси? Имаме отговори. Разгледайте нашите често задавани въпроси по-долу или използвайте лентата за търсене, за да намерите това, което търсите.
                 </p>
