@@ -8,8 +8,9 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Apply CORS middleware
-    const corsHandled = cors(req, res);
-    if (corsHandled) return; // If it's a preflight request, stop further execution
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'POST') {
         const { email, password } = req.body;
