@@ -337,7 +337,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 }}
             >
                 {/* Overlay to cover the line and remove rounded corners */}
-                <div className="absolute top-0 w-full h-6 bg-white -mt-20"></div> {/* Adjust the `top` and `h` as necessary */}
+                <div className="absolute top-0 p-72 w-full h-6 bg-white -mt-44"></div> {/* Adjust the `top` and `h` as necessary */}
 
                 {/* Card Section */}
                 <motion.div
