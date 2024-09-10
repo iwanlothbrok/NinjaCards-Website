@@ -379,13 +379,12 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 
-const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) =>
-(
-    <div className={`relative flex items-center p-4 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black rounded-lg shadow-lg`}>
-        {/* Profile Image on the Left */}
-        <motion.div
-            className={`relative z-10 w-80 h-52 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-xl`}
 
+const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
+    <div className={`relative flex flex-col items-center p-4 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black rounded-lg shadow-lg`}>
+        {/* Centered Profile Image */}
+        <motion.div
+            className={`relative z-10 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden border-4 ${cardStyle.borderClass} shadow-xl`} // Circle shape with responsive sizes
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             whileHover={{ scale: 1.05 }}
@@ -402,19 +401,19 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
             )}
         </motion.div>
 
-        {/* User Information on the Right */}
-        <div className="ml-4 z-10">
-            <h1 className="text-3xl font-bold text-white leading-tight">
+        {/* User Information below the image */}
+        <div className="mt-4 text-center">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                 {user?.name}
             </h1>
-            <p className={`text-md mt-2 ${cardStyle.highlightClass}`}>
+            <p className={`text-sm sm:text-md md:text-lg mt-2 ${cardStyle.highlightClass}`}>
                 {user?.position}
             </p>
-            <p className={`text-md mt-0 ${cardStyle.highlightClass}`}>
+            <p className={`text-sm sm:text-md md:text-lg ${cardStyle.highlightClass}`}>
                 {user?.company}
             </p>
             {user?.bio && (
-                <p className="text-sm mt-3 text-gray-300 max-w-xs leading-relaxed">
+                <p className="text-xs sm:text-sm mt-3 text-gray-300 max-w-xs leading-relaxed">
                     {user.bio.length > 120 ? `${user.bio.substring(0, 117)}...` : user.bio}
                 </p>
             )}
