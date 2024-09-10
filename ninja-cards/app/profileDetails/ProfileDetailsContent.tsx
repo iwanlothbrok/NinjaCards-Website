@@ -327,7 +327,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 
             {/* Content Section with Background */}
             <div
-                className={`flex items-center justify-center ${cardStyle.textClass}`}
+                className={`relative flex items-center justify-center ${cardStyle.textClass}`}
                 style={{
                     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
                     backgroundSize: 'cover',
@@ -336,9 +336,12 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
                 }}
             >
+                {/* Overlay to cover the line and remove rounded corners */}
+                <div className="absolute top-0 w-full h-6 bg-white -mt-5"></div> {/* Adjust the `top` and `h` as necessary */}
+
                 {/* Card Section */}
                 <motion.div
-                    className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-2xl rounded-lg`}
+                    className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-2xl`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
