@@ -336,10 +336,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
                 }}
             >
-                {/* Overlay to cover the line and remove rounded corners */}
-                <div className="absolute top-0 p-72 w-full h-6 bg-white -mt-44"></div> {/* Adjust the `top` and `h` as necessary */}
-
-                {/* Card Section */}
+                {/* Adjust overlay and card section */}
                 <motion.div
                     className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-2xl`}
                     initial={{ opacity: 0, y: 20 }}
@@ -397,34 +394,32 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="relative flex flex-col items-center bg-black pt-40 rounded-lg shadow-lg overflow-hidden">
-        {/* Background behind the image */}
-        <div className="w-full h-40 bg-black relative flex justify-center items-center">
-            {/* Circular profile image with white background and shadow */}
-            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg">
-                <motion.div
-                    className={`w-40 h-40 rounded-full overflow-hidden border-3 ${cardStyle.borderClass}`}
-                    initial={{ scale: 0.9 }}
-                    animate={{ scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    {user?.image ? (
-                        <img
-                            className="w-full h-full object-cover"
-                            src={`data:image/jpeg;base64,${user.image}`}
-                            alt="Profile"
-                        />
-                    ) : (
-                        <FaUserCircle className="w-full h-full text-gray-300" />
-                    )}
-                </motion.div>
-            </div>
+    <div className="relative flex flex-col items-center bg-black pt-40 shadow-lg overflow-hidden">
+        {/* Circular profile image with white background */}
+        <div className="absolute top-20 rounded-full p-2 bg-white shadow-lg z-20"> {/* Higher z-index for overlapping */}
+            <motion.div
+                className={`w-40 h-40 rounded-full overflow-hidden border-3 ${cardStyle.borderClass}`}
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.5 }}
+            >
+                {user?.image ? (
+                    <img
+                        className="w-full h-full object-cover"
+                        src={`data:image/jpeg;base64,${user.image}`}
+                        alt="Profile"
+                    />
+                ) : (
+                    <FaUserCircle className="w-full h-full text-gray-300" />
+                )}
+            </motion.div>
         </div>
 
-        {/* Text below the image */}
-        <div className="relative w-full z-20"> {/* Add z-index here to ensure it's above the background */}
-            <div className="mt-16 text-center bg-transparent">
+        {/* White Background Section (to overlap the image) */}
+        <div className="relative w-full bg-white z-10 pt-28 -mt-16">
+            {/* Adjust the margin to overlap */}
+            <div className="text-center">
                 <h1 className={`text-xl font-bold ${cardStyle.highlightClass}`}>
                     {user?.name}
                 </h1>
@@ -436,10 +431,8 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
                 </p>
             </div>
         </div>
-
     </div>
 );
-
 
 const BackgroundSelector: React.FC<{
     cardBackgroundOptions: typeof cardBackgroundOptions;
