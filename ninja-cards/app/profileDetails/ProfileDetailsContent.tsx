@@ -380,44 +380,41 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className={`relative flex flex-col items-center p-4 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black rounded-lg shadow-lg`}>
-        {/* Centered Profile Image with White Background */}
-        <div className="relative z-10 rounded-full p-1 bg-white shadow-lg"> {/* Smaller padding for the white background */}
-            <motion.div
-                className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full overflow-hidden border-2 ${cardStyle.borderClass}`} // Circular shape, slightly smaller border
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.5 }}
-            >
-                {user?.image ? (
-                    <img
-                        className="w-full h-full object-cover"
-                        src={`data:image/jpeg;base64,${user.image}`}
-                        alt="Profile"
-                    />
-                ) : (
-                    <FaUserCircle className="w-full h-full text-gray-300" />
-                )}
-            </motion.div>
+    <div className="relative w-full flex flex-col items-center rounded-lg shadow-lg overflow-hidden">
+        {/* Top section with black background */}
+        <div className="w-full h-32 bg-black flex justify-center items-center">
+            <div className="relative z-10 rounded-full p-1 bg-white shadow-lg"> {/* White background behind the image */}
+                <motion.div
+                    className="w-28 h-28 rounded-full overflow-hidden border-4 border-white" // Circular shape, smaller size
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    {user?.image ? (
+                        <img
+                            className="w-full h-full object-cover"
+                            src={`data:image/jpeg;base64,${user.image}`}
+                            alt="Profile"
+                        />
+                    ) : (
+                        <FaUserCircle className="w-full h-full text-gray-300" />
+                    )}
+                </motion.div>
+            </div>
         </div>
 
-        {/* User Information below the image */}
-        <div className="mt-4 text-center">
-            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-xl font-bold text-white">  {/* Smaller text for larger screens */}
+        {/* Bottom section with white background */}
+        <div className="w-full bg-white text-center py-6">
+            <h1 className="text-lg font-semibold text-black">  {/* Slightly larger, bold text for name */}
                 {user?.name}
             </h1>
-            <p className={`text-sm sm:text-md md:text-lg lg:text-md mt-1 ${cardStyle.highlightClass}`}> {/* Text decreases slightly on larger screens */}
+            <p className="text-sm text-gray-600 mt-1">  {/* Lighter text for position */}
                 {user?.position}
             </p>
-            <p className={`text-sm sm:text-md md:text-lg lg:text-md ${cardStyle.highlightClass}`}>  {/* Text decreases slightly on larger screens */}
+            <p className="text-sm text-gray-600">
                 {user?.company}
             </p>
-            {user?.bio && (
-                <p className="text-xs sm:text-sm mt-3 text-gray-300 max-w-xs leading-relaxed">
-                    {user.bio.length > 100 ? `${user.bio.substring(0, 97)}...` : user.bio}
-                </p>
-            )}
         </div>
     </div>
 );
