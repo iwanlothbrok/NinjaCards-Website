@@ -18,50 +18,49 @@ const cardBackgroundOptions = [
     {
         name: 'black',
         bgClass: "bg-black",
-        textClass: "text-white",
-        borderClass: "border-black",
-        highlightClass: "text-white",
-        buttonBgClass: "bg-white",
+        textClass: "text-gray-200",      // Softer white for less harsh contrast
+        borderClass: "border-gray-700",  // Dark gray to soften the black borders
+        highlightClass: "text-yellow-400", // Yellow for a bright and visible highlight
+        buttonBgClass: "bg-gray-800",    // Dark gray for buttons to blend with the background
         cardCoverBgClass: "from-black"
     },
     {
         name: 'white',
-        bgClass: "bg-white",
-        textClass: "text-black",
-        borderClass: "border-white",
-        highlightClass: "text-black",
-        buttonBgClass: "bg-black",
+        bgClass: "bg-gray-100",          // Softer off-white to reduce strain on the eyes
+        textClass: "text-gray-800",      // Dark gray for better contrast than black
+        borderClass: "border-gray-300",  // Light gray to keep borders subtle
+        highlightClass: "text-blue-600", // Blue highlight for a clean contrast
+        buttonBgClass: "bg-blue-500",    // Blue buttons for a modern look
         cardCoverBgClass: "from-white"
     },
     {
         name: 'gray',
-        bgClass: "bg-gray-500",
-        textClass: "text-black",
-        borderClass: "border-gray-500",
-        highlightClass: "text-black",
-        buttonBgClass: "bg-black",
+        bgClass: "bg-gray-700",          // Darker gray for a sleek modern look
+        textClass: "text-gray-100",      // Light gray text to contrast well
+        borderClass: "border-gray-600",  // Slightly lighter border than background
+        highlightClass: "text-green-400", // Bright green for a pop of color
+        buttonBgClass: "bg-green-500",   // Green buttons to complement the highlight
         cardCoverBgClass: "from-gray"
     },
     {
         name: 'orange',
-        bgClass: "bg-black",
-        textClass: "text-orange-500",
-        borderClass: "border-black",
-        highlightClass: "text-orange-500",
-        buttonBgClass: "bg-orange-500",
-        cardCoverBgClass: "from-black"
+        bgClass: "bg-gray-900",          // Darker gray for a sleek modern look
+        textClass: "text-white",         // White text for clear contrast
+        borderClass: "border-orange",// Slightly darker orange border
+        highlightClass: "text-orange", // Lighter yellow for soft, visible highlight
+        buttonBgClass: "bg-yellow-700",  // Yellow buttons to complement the highlight
+        cardCoverBgClass: "from-orange"
     },
     {
         name: 'teal',
-        bgClass: "bg-black",
-        textClass: "text-teal-400",
-        borderClass: "border-black",
-        highlightClass: "text-teal-400",
-        buttonBgClass: "bg-teal-400",
-        cardCoverBgClass: "from-black"
+        bgClass: "bg-teal-600",          // Bold teal background
+        textClass: "text-white",         // White text for contrast
+        borderClass: "border-teal-700",  // Darker teal border
+        highlightClass: "text-pink-400", // Bright pink highlight for contrast
+        buttonBgClass: "bg-pink-500",    // Pink buttons for a lively touch
+        cardCoverBgClass: "from-teal"
     }
 ];
-
 
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
     try {
@@ -380,12 +379,13 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="relative w-full flex flex-col items-center rounded-lg shadow-lg overflow-hidden">
-        {/* Top section with black background */}
-        <div className="w-full h-32 bg-black flex justify-center items-center">
-            <div className="relative z-10 rounded-full p-1 bg-white shadow-lg"> {/* White background behind the image */}
+    <div className="relative flex flex-col items-center rounded-lg shadow-lg overflow-hidden">
+        {/* Background behind the image */}
+        <div className="w-full h-40 bg-black relative flex justify-center items-center">
+            {/* Circular profile image with white background and shadow */}
+            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg"> {/* Positioned image overlapping */}
                 <motion.div
-                    className="w-28 h-28 rounded-full overflow-hidden border-4 border-white" // Circular shape, smaller size
+                    className="w-36 h-36 rounded-full overflow-hidden border-4 border-white"
                     initial={{ scale: 0.9 }}
                     animate={{ scale: 1 }}
                     whileHover={{ scale: 1.05 }}
@@ -404,12 +404,12 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
             </div>
         </div>
 
-        {/* Bottom section with white background */}
-        <div className="w-full bg-white text-center py-6">
-            <h1 className="text-lg font-semibold text-black">  {/* Slightly larger, bold text for name */}
+        {/* Text below the image */}
+        <div className="mt-20 text-center">  {/* Adjust margin to align the text under the image */}
+            <h1 className="text-lg font-semibold text-black">
                 {user?.name}
             </h1>
-            <p className="text-sm text-gray-600 mt-1">  {/* Lighter text for position */}
+            <p className="text-sm text-gray-600 mt-1">
                 {user?.position}
             </p>
             <p className="text-sm text-gray-600">
