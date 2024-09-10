@@ -337,7 +337,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 }}
             >
                 {/* Overlay to cover the line and remove rounded corners */}
-                <div className="absolute top-0 p-72 w-full h-6 bg-white -mt-44"></div> {/* Adjust the `top` and `h` as necessary */}
+                <div className={`"absolute top-0 p-72 w-full h-6 bg-${cardStyle.name} -mt-44`}></div> {/* Adjust the `top` and `h` as necessary */}
 
                 {/* Card Section */}
                 <motion.div
@@ -401,7 +401,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         {/* Background behind the image */}
         <div className="w-full h-40 bg-black relative flex justify-center items-center">
             {/* Circular profile image with white background and shadow */}
-            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg">
+            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg z-30">
                 <motion.div
                     className={`w-40 h-40 rounded-full overflow-hidden border-3 ${cardStyle.borderClass}`}
                     initial={{ scale: 0.9 }}
