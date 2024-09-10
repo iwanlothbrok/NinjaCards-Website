@@ -57,7 +57,7 @@ const FeatureItemRightImage: React.FC<FeatureProps> = ({ header, mainHeader, des
 export default function Features() {
     return (
         <div className="">
-            <Header pageInformation='Характеристики' />
+            <Header pageInformation='Функции Ninja Cards' textOne='Споделяне' textTwo='Свързване' textThree='Успех' />
             <FeatureItemLeftImage
                 header="NFC & QR код"
                 mainHeader="Споделяне на контакти"
