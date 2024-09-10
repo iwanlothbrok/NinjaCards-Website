@@ -19,19 +19,17 @@ const cardBackgroundOptions = [
         name: 'black',
         bgClass: "bg-black",
         textClass: "text-gray-200",      // Softer white for less harsh contrast
-        borderClass: "border-gray-700",  // Dark gray to soften the black borders
-        highlightClass: "text-yellow-400", // Yellow for a bright and visible highlight
-        buttonBgClass: "bg-gray-800",    // Dark gray for buttons to blend with the background
+        borderClass: "border-black",  // Dark gray to soften the black borders
+        highlightClass: "text-orange", // Yellow for a bright and visible highlight
         cardCoverBgClass: "from-black",
         opposite: 'bg-white'
     },
     {
         name: 'white',
-        bgClass: "bg-gray-100",          // Softer off-white to reduce strain on the eyes
+        bgClass: "bg-white",          // Softer off-white to reduce strain on the eyes
         textClass: "text-gray-800",      // Dark gray for better contrast than black
         borderClass: "border-gray-300",  // Light gray to keep borders subtle
         highlightClass: "text-blue-600", // Blue highlight for a clean contrast
-        buttonBgClass: "bg-blue-500",    // Blue buttons for a modern look
         cardCoverBgClass: "from-white",
         opposite: 'bg-black'
     },
@@ -42,7 +40,7 @@ const cardBackgroundOptions = [
         borderClass: "border-gray-600",  // Slightly lighter border than background
         highlightClass: "text-green-400", // Bright green for a pop of color
         buttonBgClass: "bg-green-500",   // Green buttons to complement the highlight
-        cardCoverBgClass: "from-gray",
+        cardCoverBgClass: "from-gray-800",
         opposite: 'bg-black'
     },
     {
@@ -52,17 +50,16 @@ const cardBackgroundOptions = [
         borderClass: "border-orange",// Slightly darker orange border
         highlightClass: "text-orange", // Lighter yellow for soft, visible highlight
         buttonBgClass: "bg-yellow-700",  // Yellow buttons to complement the highlight
-        cardCoverBgClass: "from-orange",
-        opposite: 'bg-white'
+        cardCoverBgClass: "from-gray-900",
+        opposite: 'bg-orange'
     },
     {
         name: 'teal',
-        bgClass: "bg-teal-600",          // Bold teal background
+        bgClass: "bg-teal-700",          // Bold teal background
         textClass: "text-white",         // White text for contrast
         borderClass: "border-teal-700",  // Darker teal border
-        highlightClass: "text-pink-400", // Bright pink highlight for contrast
-        buttonBgClass: "bg-pink-500",    // Pink buttons for a lively touch
-        cardCoverBgClass: "from-teal",
+        highlightClass: "text-orange", // Bright pink highlight for contrast
+        cardCoverBgClass: "from-teal-700",
         opposite: 'bg-white'
     }
 ];
@@ -396,7 +393,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
                 className={`w-40 h-40 rounded-full overflow-hidden border-1 ${cardStyle.borderClass}`}
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.5 }}
             >
                 {user?.image ? (
@@ -415,7 +412,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-14 -mt-20 mx-auto rounded-none`}> {/* Removed borders and shadow */}
             {/* Adjust the margin to overlap */}
             <div className="text-center">
-                <h1 className={`text-2xl font-bold ${cardStyle.highlightClass}`}>
+                <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
                     {user?.name}
                 </h1>
                 <p className={`text-lg mt-1 ${cardStyle.textClass}`}>
