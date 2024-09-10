@@ -321,7 +321,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
-        <div className="relative">
+        <div className="relative bg-black pt-20">
             {/* Profile Header Section */}
             <ProfileHeader user={currentUser} cardStyle={cardStyle} />
 
@@ -418,7 +418,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* White Background Section aligned with the card */}
-        <div className="relative w-full max-w-md bg-white z-10 pt-28 -mt-16 mx-auto rounded-none"> {/* Removed borders and shadow */}
+        <div className="relative w-full max-w-md bg-white z-10 pt-28 -mt-20 mx-auto rounded-none"> {/* Removed borders and shadow */}
             {/* Adjust the margin to overlap */}
             <div className="text-center">
                 <h1 className={`text-xl font-bold ${cardStyle.highlightClass}`}>
