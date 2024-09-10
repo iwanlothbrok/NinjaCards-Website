@@ -397,11 +397,11 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className="relative flex flex-col items-center bg-black pt-40 rounded-lg shadow-lg overflow-hidden">
+    <div className="relative flex flex-col items-center bg-black pt-40 rounded-lg shadow-lg overflow-hidden z-20">
         {/* Background behind the image */}
         <div className="w-full h-40 bg-black relative flex justify-center items-center">
             {/* Circular profile image with white background and shadow */}
-            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg z-20">
+            <div className="absolute top-10 rounded-full p-2 bg-white shadow-lg ">
                 <motion.div
                     className={`w-40 h-40 rounded-full overflow-hidden border-3 ${cardStyle.borderClass}`}
                     initial={{ scale: 0.9 }}
@@ -423,7 +423,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* Text below the image */}
-        <div className="relative w-full z-20"> {/* Add z-index here to ensure it's above the background */}
+        <div className="relative w-full "> {/* Add z-index here to ensure it's above the background */}
             <div className="mt-16 text-center bg-transparent">
                 <h1 className={`text-xl font-bold ${cardStyle.highlightClass}`}>
                     {user?.name}
