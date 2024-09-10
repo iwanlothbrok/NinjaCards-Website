@@ -321,60 +321,66 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
-        <div
-            className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
-            style={{
-                backgroundImage: `
+        <>
+
+            <ProfileHeader user={currentUser} cardStyle={cardStyle} />
+
+            <div
+                className={`min-h-screen flex items-center justify-center ${cardStyle.textClass}`}
+                style={{
+                    backgroundImage: `
                     linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
-            }}
-        >
-            <motion.div
-                className={`relative z-10 w-full pt-40 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
-                style={{ borderRadius: 'inherit' }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
+                }}
             >
-                <ProfileHeader user={currentUser} cardStyle={cardStyle} />
                 <motion.div
-                    className="mt-6"
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                    className={`relative z-10 w-full pt-40 max-w-md p-8 rounded-lg bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black   bg-opacity-5 shadow-2xl`}
+                    style={{ borderRadius: 'inherit' }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
                 >
-                    <ActionButtons2 user={currentUser} />
-                </motion.div>
-                <motion.div
-                    className="mt-6"
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
-                >
-                    <SocialMediaLinks user={currentUser} cardStyle={cardStyle} />
-                </motion.div>
-
-                <FloatingButtons generateVCF={generateVCF} />
-
-                {user?.id === currentUser.id && (
+                    <ProfileHeader user={currentUser} cardStyle={cardStyle} />
                     <motion.div
-                        className="mt-8"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.6, ease: 'easeOut', delay: 0.6 }}
+                        className="mt-6"
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
-                        <BackgroundSelector
-                            cardBackgroundOptions={cardBackgroundOptions}
-                            handleColorSelection={handleColorSelection}
-                            cardStyle={cardStyle}
-                        />
+                        <ActionButtons2 user={currentUser} />
                     </motion.div>
-                )}
-            </motion.div>
-        </div>
+                    <motion.div
+                        className="mt-6"
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                    >
+                        <SocialMediaLinks user={currentUser} cardStyle={cardStyle} />
+                    </motion.div>
+
+                    <FloatingButtons generateVCF={generateVCF} />
+
+                    {user?.id === currentUser.id && (
+                        <motion.div
+                            className="mt-8"
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.6 }}
+                        >
+                            <BackgroundSelector
+                                cardBackgroundOptions={cardBackgroundOptions}
+                                handleColorSelection={handleColorSelection}
+                                cardStyle={cardStyle}
+                            />
+                        </motion.div>
+                    )}
+                </motion.div>
+            </div>
+        </>
+
     );
 }
 
