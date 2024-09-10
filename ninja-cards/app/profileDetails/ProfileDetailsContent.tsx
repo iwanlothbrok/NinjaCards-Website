@@ -327,7 +327,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 
             {/* Content Section with Background */}
             <div
-                className={` flex items-center -top-20 justify-center ${cardStyle.textClass}`}
+                className={` flex items-center -top-40 justify-center ${cardStyle.textClass}`}
                 style={{
                     backgroundImage: `
                     linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
@@ -420,7 +420,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* Text below the image */}
-        <div className={`mt-16 text-center bg-white`} >  {/* Adjust margin to align the text under the image */}
+        <div className={`mt-16 text-center bg-transparent`} >  {/* Adjust margin to align the text under the image */}
             <h1 className={`text-xl font-bold ${cardStyle.highlightClass}`}>
                 {user?.name}
             </h1>
