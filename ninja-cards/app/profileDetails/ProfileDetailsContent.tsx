@@ -337,7 +337,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 }}
             >
                 {/* Overlay to cover the line and remove rounded corners */}
-                <div className="absolute top-0 w-full h-6 bg-white -mt-5"></div> {/* Adjust the `top` and `h` as necessary */}
+                <div className="absolute top-0 w-full h-6 bg-white -mt-20"></div> {/* Adjust the `top` and `h` as necessary */}
 
                 {/* Card Section */}
                 <motion.div
@@ -423,7 +423,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* Text below the image */}
-        <div className="w-full">
+        <div className="relative w-full z-20"> {/* Add z-index here to ensure it's above the background */}
             <div className="mt-16 text-center bg-transparent">
                 <h1 className={`text-xl font-bold ${cardStyle.highlightClass}`}>
                     {user?.name}
@@ -436,6 +436,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
                 </p>
             </div>
         </div>
+
     </div>
 );
 
