@@ -2,55 +2,61 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
+import cors from '@/utils/cors'; // Import the CORS utility
 
-// Initialize Prisma Client
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Apply CORS settings
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Allowed methods
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allowed headers
+    const corsHandled = cors(req, res);
+    if (corsHandled) return; // If it's a preflight request, stop further execution
 
-    // Handle preflight requests (CORS preflight)
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end(); // Respond with 200 OK for OPTIONS requests
-    }
+    try {
+        if (req.method === 'POST') {
+            const { email, password } = req.body;
 
-    if (req.method === 'POST') {
-        const { email, password } = req.body;
+            console.log('Email:', email);
 
-        try {
             // Check if user exists
             const user = await prisma.user.findUnique({
                 where: { email },
             });
 
             if (!user) {
+                console.log('User not found');
                 return res.status(401).json({ error: 'Invalid email or password' });
             }
 
-            // Compare provided password with hashed password
+            console.log('User found:', user);
+
+            // Check if password is correct
             const isPasswordValid = await compare(password, user.password);
             if (!isPasswordValid) {
+                console.log('Invalid password');
                 return res.status(401).json({ error: 'Invalid email or password' });
             }
 
-            // Generate JWT token
+            console.log('Password valid');
 
-            console.log('bef');
+            // Ensure NEXTAUTH_SECRET is set
+            if (!process.env.NEXTAUTH_SECRET) {
+                console.error('NEXTAUTH_SECRET is not set');
+                return res.status(500).json({ error: 'Internal server error: Missing secret' });
+            }
+
+            // Create JWT token
             const token = sign({ id: user.id, email: user.email }, process.env.NEXTAUTH_SECRET as string, {
                 expiresIn: '1h',
             });
-            console.log('after');
 
+            console.log('Token generated:', token);
 
-            // Send back the token and user info
             return res.status(200).json({ token, user });
-        } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+        } else {
+            return res.status(405).json({ error: 'Method not allowed' });
         }
-    } else {
-        return res.status(405).json({ error: 'Method not allowed' });
+    } catch (error) {
+        console.error('Internal server error:', error);
+        return res.status(501).json({ error: 'Internal server error' });
     }
 }
