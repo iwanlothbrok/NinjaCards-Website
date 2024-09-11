@@ -21,13 +21,13 @@ const cardBackgroundOptions = [
         textClass: "text-gray-200",      // Softer white for less harsh contrast
         borderClass: "border-black",  // Dark gray to soften the black borders
         highlightClass: "text-orange", // Yellow for a bright and visible highlight
-        cardCoverBgClass: "from-black",
+        cardCoverBgClass: "from-gray-900",
         opposite: 'bg-white'
     },
     {
         name: 'white',
         bgClass: "bg-white",          // Softer off-white to reduce strain on the eyes
-        textClass: "text-gray-800",      // Dark gray for better contrast than black
+        textClass: "text-gray-900",      // Dark gray for better contrast than black
         borderClass: "border-gray-300",  // Light gray to keep borders subtle
         highlightClass: "text-blue-600", // Blue highlight for a clean contrast
         cardCoverBgClass: "from-white",
@@ -48,7 +48,7 @@ const cardBackgroundOptions = [
         textClass: "text-white",         // White text for clear contrast
         borderClass: "border-orange",// Slightly darker orange border
         highlightClass: "text-orange", // Lighter yellow for soft, visible highlight
-        cardCoverBgClass: "from-gray-900",
+        cardCoverBgClass: "from-gray-800",
         opposite: 'bg-orange'
     },
     {
@@ -407,7 +407,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* White Background Section aligned with the card */}
-        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-14 -mt-32 mx-auto rounded-none`}> {/* Removed borders and shadow */}
+        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-14 -mt-28 mx-auto rounded-none`}> {/* Removed borders and shadow */}
             {/* Adjust the margin to overlap */}
             <div className="text-center">
                 <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
