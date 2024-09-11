@@ -58,14 +58,14 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                     text: `Contact ${user?.name}`,
                     url: window.location.href
                 })}
-                className="flex items-center justify-center bg-gradient-to-r from-white to-gray-400 text-black px-8 py-4 rounded-full shadow-lg hover:gray-500  transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full sm:w-auto"
+                className="flex items-center justify-center bg-white  text-black px-8 py-4 rounded-full shadow-lg hover:gray-500  transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaShareAlt className="mr-3 text-2xl" />
                 <span className="text-lg font-semibold">Сподели</span>
             </button>
             <button
                 onClick={handleExchangeContact}
-                className="flex items-center justify-center bg-gradient-to-r from-gray-900 to-black text-white px-8 py-4 rounded-full shadow-lg hover:gray-950 ttransition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-opacity-50 w-full sm:w-auto"
+                className="flex items-center justify-center  bg-gradient-to-t from-gray-900 to-black text-white px-8 py-4 rounded-full shadow-lg hover:gray-950 ttransition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaEnvelope className="mr-3 text-2xl" />
                 <span className="text-lg font-semibold">Разменете Контакти</span>
