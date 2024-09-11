@@ -327,7 +327,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             >
                 {/* Card Section with White Background */}
                 <motion.div
-                    className={`relative z-10 w-full max-w-md p-8 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-none`} // Removed shadow
+                    className={`relative z-10 w-full  p-8 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-none`} // Removed shadow
                 // initial={{ opacity: 0, y: 20 }}
                 // animate={{ opacity: 1, y: 0 }}
                 // transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -384,11 +384,11 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className={`relative max-w-md flex flex-col items-center ${cardStyle.opposite} pt-72 overflow-hidden`}>
+    <div className={`relative flex flex-col items-center ${cardStyle.opposite} pt-72 overflow-hidden`}>
         {/* Circular profile image with white background */}
         <div className={`absolute top-20 rounded-full p-1 bg-${cardStyle.name} shadow-lg z-20`}>
             <motion.div
-                className={`w-40 h-40 rounded-full overflow-hidden border-1 ${cardStyle.borderClass}`}
+                className={`w-40 h-40 rounded-full overflow-hidden border-2 ${cardStyle.borderClass}`}
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 whileHover={{ scale: 1.1 }}
@@ -407,7 +407,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* White Background Section aligned with the card */}
-        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-14 -mt-26 mx-auto rounded-none`}> {/* Removed borders and shadow */}
+        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-14 -mt-10 mx-auto rounded-none`}> {/* Removed borders and shadow */}
             {/* Adjust the margin to overlap */}
             <div className="text-center">
                 <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
