@@ -5,7 +5,6 @@ import Navbar from './components/Navigation';
 import { AuthProvider } from './context/AuthContext';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useRouter } from 'next/router'; // Import useRouter
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -54,10 +53,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter(); // Access the router
-
-  // Define a condition to hide the Navbar on the profileDetails/id page
-  const shouldShowNavbar = !router.pathname.startsWith('/profileDetails');
 
   return (
     <html lang="bg">
@@ -65,11 +60,9 @@ export default function RootLayout({
         <AuthProvider>
           <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 via-gray-950 to-black">
             {/* Conditionally render the Navbar */}
-            {shouldShowNavbar && (
-              <header className="sticky top-0 z-50 bg-gray-900 shadow-md transition-transform duration-300 ease-in-out">
-                <Navbar />
-              </header>
-            )}
+            <header className="sticky top-0 z-50 bg-gray-900 shadow-md transition-transform duration-300 ease-in-out">
+              <Navbar />
+            </header>
             <main className="flex-grow">{children}</main>
             <footer className="bg-gradient-to-t from-gray-900 via-gray-950 to-black text-center py-8">
               <p className="text-gray-200">
