@@ -21,7 +21,7 @@ const cardBackgroundOptions = [
         textClass: "text-gray-200",      // Softer white for less harsh contrast
         borderClass: "border-black",  // Dark gray to soften the black borders
         highlightClass: "text-orange", // Yellow for a bright and visible highlight
-        cardCoverBgClass: "from-gray-900",
+        cardCoverBgClass: "from-black",
         opposite: 'bg-white'
     },
     {
@@ -48,7 +48,7 @@ const cardBackgroundOptions = [
         textClass: "text-white",         // White text for clear contrast
         borderClass: "border-orange",// Slightly darker orange border
         highlightClass: "text-orange", // Lighter yellow for soft, visible highlight
-        cardCoverBgClass: "from-gray-800",
+        cardCoverBgClass: "from-gray-900",
         opposite: 'bg-orange'
     },
     {
@@ -388,7 +388,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         {/* Circular profile image with white background */}
         <div className={`absolute top-20 rounded-full p-1 bg-${cardStyle.name} shadow-lg z-20`}>
             <motion.div
-                className={`w-40 h-40 rounded-full overflow-hidden border-2 ${cardStyle.borderClass}`}
+                className={`w-44 h-44 rounded-full overflow-hidden border-2 ${cardStyle.borderClass}`}
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 whileHover={{ scale: 1.1 }}
@@ -407,7 +407,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* White Background Section aligned with the card */}
-        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-14 -mt-28 mx-auto rounded-none`}> {/* Removed borders and shadow */}
+        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-20 -mt-28 mx-auto rounded-none`}> {/* Removed borders and shadow */}
             {/* Adjust the margin to overlap */}
             <div className="text-center">
                 <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
