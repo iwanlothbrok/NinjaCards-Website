@@ -384,7 +384,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className={`relative flex flex-col items-center ${cardStyle.opposite} pt-72 overflow-hidden`}>
+    <div className={`relative flex flex-col items-center bg-cover bg-center bg-no-repeat ${cardStyle.opposite} pt-72 overflow-hidden`}
+        style={{ backgroundImage: `url(/navlogo.png)` }}> {/* Use logo.png from public folder */}
         {/* Circular profile image with white background */}
         <div className={`absolute top-20 rounded-full p-1 bg-${cardStyle.name} shadow-lg z-20`}>
             <motion.div
