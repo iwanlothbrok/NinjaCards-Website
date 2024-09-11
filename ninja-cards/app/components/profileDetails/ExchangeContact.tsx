@@ -128,8 +128,8 @@ const ExchangeContact: React.FC<ExchangeContactModalProps> = ({ isOpen, onClose,
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
-            <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4 sm:mx-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 transition-opacity duration-300">
+            <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4 sm:mx-auto z-40">
                 <h2 className="text-2xl mb-4 font-semibold text-gray-900 text-center">Разменете Контакти</h2>
                 <form onSubmit={handleSubmit} noValidate>
                     <div className="mb-4">
