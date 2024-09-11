@@ -37,9 +37,8 @@ const cardBackgroundOptions = [
         name: 'gray',
         bgClass: "bg-gray-800",          // Darker gray for a sleek modern look
         textClass: "text-gray-100",      // Light gray text to contrast well
-        borderClass: "border-gray-600",  // Slightly lighter border than background
+        borderClass: "border-green-600",  // Slightly lighter border than background
         highlightClass: "text-green-400", // Bright green for a pop of color
-        buttonBgClass: "bg-green-500",   // Green buttons to complement the highlight
         cardCoverBgClass: "from-gray-800",
         opposite: 'bg-black'
     },
@@ -49,7 +48,6 @@ const cardBackgroundOptions = [
         textClass: "text-white",         // White text for clear contrast
         borderClass: "border-orange",// Slightly darker orange border
         highlightClass: "text-orange", // Lighter yellow for soft, visible highlight
-        buttonBgClass: "bg-yellow-700",  // Yellow buttons to complement the highlight
         cardCoverBgClass: "from-gray-900",
         opposite: 'bg-orange'
     },
@@ -57,7 +55,7 @@ const cardBackgroundOptions = [
         name: 'teal',
         bgClass: "bg-teal-700",          // Bold teal background
         textClass: "text-white",         // White text for contrast
-        borderClass: "border-teal-700",  // Darker teal border
+        borderClass: "border-teal-500",  // Darker teal border
         highlightClass: "text-orange", // Bright pink highlight for contrast
         cardCoverBgClass: "from-teal-700",
         opposite: 'bg-white'
@@ -192,7 +190,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             {/* Save Contact Button */}
             <button
                 onClick={generateVCF}
-                className="flex-grow flex items-center justify-center bg-gray-800 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-black transition-all duration-300 ease-in-out transform hover:scale-105"
+                className="flex-grow flex items-center justify-center bg-white text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105"
             >
                 <FaDownload className="mr-2 text-3xl" />
                 <span className="text-lg font-semibold">СВАЛИ КОНТАКТ</span>
@@ -201,7 +199,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             {/* Exchange Contact Button */}
             <button
                 onClick={handleExchangeContact}
-                className="w-16 flex items-center justify-center bg-gray-400 text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-700 transition-all duration-300 ease-in-out transform hover:scale-105"
+                className="w-16 flex items-center justify-center bg-gray-800 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-950 transition-all duration-300 ease-in-out transform hover:scale-105"
             >
                 <FaExchangeAlt className="text-3xl" />
             </button>
@@ -329,7 +327,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             >
                 {/* Card Section with White Background */}
                 <motion.div
-                    className={`relative z-10 w-full max-w-md p-8 bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-none`} // Removed shadow
+                    className={`relative z-10 w-full max-w-md p-8 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-none`} // Removed shadow
                 // initial={{ opacity: 0, y: 20 }}
                 // animate={{ opacity: 1, y: 0 }}
                 // transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -386,7 +384,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-    <div className={`relative flex flex-col items-center ${cardStyle.opposite} pt-72 overflow-hidden`}>
+    <div className={`relative max-w-md flex flex-col items-center ${cardStyle.opposite} pt-72 overflow-hidden`}>
         {/* Circular profile image with white background */}
         <div className={`absolute top-20 rounded-full p-1 bg-${cardStyle.name} shadow-lg z-20`}>
             <motion.div
@@ -409,7 +407,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* White Background Section aligned with the card */}
-        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-14 -mt-20 mx-auto rounded-none`}> {/* Removed borders and shadow */}
+        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-14 -mt-26 mx-auto rounded-none`}> {/* Removed borders and shadow */}
             {/* Adjust the margin to overlap */}
             <div className="text-center">
                 <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
