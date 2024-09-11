@@ -44,40 +44,45 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
     };
 
     return (
-        <div className="flex flex-col space-y-4  mb-8">
+        <div className="flex flex-col space-y-4 mb-8">
+            {/* Call Button */}
             <button
                 onClick={() => window.location.href = `tel:${user?.phone1}`}
-                className="flex items-center justify-center bg-gradient-to-b from-gray-900 to-black text-white px-8 py-4 rounded-full shadow-lg hover:gray-950 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-50 w-full sm:w-auto"
+                className="flex items-center justify-center bg-gradient-to-b from-gray-900 to-black text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl hover:bg-gray-950 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaPhoneAlt className="mr-3 text-2xl" />
                 <span className="text-lg font-semibold">Обади се</span>
             </button>
+
+            {/* Share Button */}
             <button
                 onClick={() => navigator.share && navigator.share({
                     title: user?.name,
                     text: `Contact ${user?.name}`,
                     url: window.location.href
                 })}
-                className="flex items-center justify-center bg-white  text-black px-8 py-4 rounded-full shadow-lg hover:gray-500  transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full sm:w-auto"
+                className="flex items-center justify-center bg-white text-black px-8 py-4 rounded-full shadow-xl hover:shadow-2xl hover:bg-gray-200 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaShareAlt className="mr-3 text-2xl" />
                 <span className="text-lg font-semibold">Сподели</span>
             </button>
+
+            {/* Exchange Contact Button */}
             <button
                 onClick={handleExchangeContact}
-                className="flex items-center justify-center  bg-gradient-to-t from-gray-900 to-black text-white px-8 py-4 rounded-full shadow-lg hover:gray-950 ttransition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-opacity-50 w-full sm:w-auto"
+                className="flex items-center justify-center bg-gradient-to-t from-gray-900 to-black text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl hover:bg-gray-950 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-opacity-50 w-full sm:w-auto"
             >
                 <FaEnvelope className="mr-3 text-2xl" />
                 <span className="text-lg font-semibold">Разменете Контакти</span>
             </button>
 
+            {/* Exchange Contact Modal */}
             <ExchangeContactModal
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
                 onSubmit={handleSubmitContact}
             />
-        </div>
-    );
+        </div>)
 };
 
 export default ActionButtons2;
