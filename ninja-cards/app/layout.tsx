@@ -5,12 +5,12 @@ import Navbar from './components/Navigation';
 import { AuthProvider } from './context/AuthContext';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useRouter } from 'next/router'; // Import useRouter
+import { usePathname } from 'next/navigation'; // Import usePathname from next/navigation
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'Ninja Cards NFC | Умни визитни картички, NFC ревюта и NFC стикери',
+  title: 'Ninja Cards NFC | Умни визитни картички, Google рецензии и стикери',
   description: 'Ninja Cards предлага висококачествени NFC продукти, включително умни визитни картички, тагове за Google рецензии и NFC стикери. Повишете вашия бранд с иновативни технологии.',
   openGraph: {
     type: 'website',
@@ -55,10 +55,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter(); // Access the router
+  const pathname = usePathname(); // Use usePathname from next/navigation to get the current path
 
-  // Define a condition to hide the Navbar on the profileDetails/id page
-  const shouldShowNavbar = !router.pathname.startsWith('/profileDetails');
+  // Use includes to check if the current path contains '/profileDetails'
+  const shouldShowNavbar = !pathname?.includes('/profileDetails');
+  console.log(shouldShowNavbar);
+  console.log(pathname);
 
   return (
     <html lang="bg">
