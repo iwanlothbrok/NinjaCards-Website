@@ -35,6 +35,7 @@ const Navbar: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isPhone, setIsPhone] = useState(false);
+  const [isOnDetailsPage, setIsOnDetailsPage] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -113,9 +114,13 @@ const Navbar: React.FC = () => {
     handleDropdownItemClick(); // Close dropdown and menu after logout
   }, [logout, handleDropdownItemClick]);
 
-  if (pathname?.includes('profileDetails')) {
-    return null;
-  }
+  useEffect(() => {
+    if (pathname?.includes('profileDetails')) {
+      setIsOnDetailsPage(true);
+    } else {
+      setIsOnDetailsPage(false);
+    }
+  }, [pathname]);
 
   return (
     <header
@@ -123,12 +128,13 @@ const Navbar: React.FC = () => {
         }`}
     >
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="relative flex items-center justify-between py-4 lg:py-6">
-          <div className="flex-shrink-0">
-            <Link href="/" className="block w-32">
-              <img src="/navlogo.png" alt="logo" className="w-full" />
-            </Link>
-          </div>
+        <div className="relative flex items-center justify-between py-3 lg:py-5">
+          {!isOnDetailsPage ? (
+            <div className="flex-shrink-0">
+              <Link href="/" className="block w-28">
+                <img src="/navlogo.png" alt="logo" className="w-full" />
+              </Link>
+            </div>) : (<></>)}
           <div className="flex items-center">
             <button
               onClick={toggleMenu}
