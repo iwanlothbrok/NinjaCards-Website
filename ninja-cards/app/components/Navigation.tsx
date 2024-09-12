@@ -129,12 +129,16 @@ const Navbar: React.FC = () => {
     >
       <div className="container mx-auto px-4 lg:px-8">
         <div className="relative flex items-center justify-between py-3 lg:py-5">
-          {!isOnDetailsPage ? (
-            <div className="flex-shrink-0">
-              <Link href="/" className="block w-28">
+          {/* Placeholder for image */}
+          <div className="flex-shrink-0 w-28">
+            {!isOnDetailsPage ? (
+              <Link href="/" className="block">
                 <img src="/navlogo.png" alt="logo" className="w-full" />
               </Link>
-            </div>) : (<></>)}
+            ) : (
+              <div className="w-28 mb-5"></div> /* This placeholder ensures consistent spacing */
+            )}
+          </div>
           <div className="flex items-center">
             <button
               onClick={toggleMenu}
@@ -267,6 +271,7 @@ const Navbar: React.FC = () => {
       </div>
     </header>
   );
+
 };
 
 export default Navbar;
