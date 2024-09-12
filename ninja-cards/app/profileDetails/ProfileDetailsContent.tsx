@@ -385,11 +385,11 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
     <div
-        className={`relative flex flex-col items-center bg-cover bg-center bg-no-repeat sm:bg-none ${cardStyle.opposite} pt-96 overflow-hidden`}
+        className={`relative flex flex-col items-center bg-cover bg-center bg-no-repeat sm:bg-none ${cardStyle.opposite} pt-72 overflow-hidden`}
         style={{ backgroundImage: `url(/cover.png)` }} // Background only for mobile
     >
         {/* Circular profile image with white background */}
-        <div className={`absolute top-20 rounded-full p-1 bg-${cardStyle.name} shadow-lg z-20`}>
+        <div className={`absolute top-20 rounded-full p-1 mt-32 bg-${cardStyle.name} shadow-lg z-20`}>
             <motion.div
                 className={`w-44 h-44 rounded-full overflow-hidden border-2 ${cardStyle.borderClass}`}
                 initial={{ scale: 0.9 }}
@@ -410,7 +410,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* White Background Section aligned with the card */}
-        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-24 -mt-12 mx-auto rounded-none`}> {/* Removed borders and shadow */}
+        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-24 -mt-17 mx-auto rounded-none`}> {/* Removed borders and shadow */}
             {/* Adjust the margin to overlap */}
             <div className="text-center">
                 <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
