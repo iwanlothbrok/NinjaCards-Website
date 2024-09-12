@@ -1,6 +1,7 @@
 import { BASE_API_URL } from '@/utils/constants';
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { FaPhone, FaEnvelope, FaClock } from 'react-icons/fa';
+import ActionButtons2 from '../components/profileDetails/ActionButtons2';
 
 interface FormData {
     name: string;
@@ -57,7 +58,7 @@ const ContactForm: React.FC = () => {
     return (
         <div className="max-w-screen-lg mx-auto p-5">
             <div className="grid grid-cols-1 md:grid-cols-12">
-                <div className="bg-gray-900 md:col-span-4 p-10 text-white">
+                <div className="bg-gray-800 md:col-span-4 p-10 text-white">
                     <p className="mt-4 text-sm leading-7 font-regular uppercase">
                         Контакт
                     </p>
@@ -93,14 +94,14 @@ const ContactForm: React.FC = () => {
                 </div>
 
                 {/* Form Section */}
-                <form onSubmit={handleSubmit} className="md:col-span-8 p-10">
+                <form onSubmit={handleSubmit} className="md:col-span-8 p-10 bg-gray-900">
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="name">
+                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" htmlFor="name">
                                 Име
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                                className="appearance-none block w-full bg-gray-200 text-gray-400 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                                 id="name"
                                 name="name"
                                 type="text"
@@ -110,11 +111,11 @@ const ContactForm: React.FC = () => {
                             />
                         </div>
                         <div className="w-full md:w-1/2 px-3">
-                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="phone">
+                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" htmlFor="phone">
                                 Телефонен номер
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                                className="appearance-none block w-full bg-gray-200 text-gray-400 border border-gray-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                                 id="phone"
                                 name="phone"
                                 type="text"
@@ -127,11 +128,11 @@ const ContactForm: React.FC = () => {
 
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full px-3">
-                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="email">
+                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" htmlFor="email">
                                 Имейл адрес
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                                className="appearance-none block w-full bg-gray-200 text-gray-400 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                                 id="email"
                                 name="email"
                                 type="email"
@@ -144,11 +145,11 @@ const ContactForm: React.FC = () => {
 
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full px-3">
-                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="subject">
+                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" htmlFor="subject">
                                 Вашето съобщение
                             </label>
                             <textarea
-                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                                className="appearance-none block w-full bg-gray-200 text-gray-400 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                                 id="subject"
                                 name="subject"
                                 rows={10}
