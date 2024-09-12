@@ -42,10 +42,6 @@ const Navbar: React.FC = () => {
   const isAuthenticated = !!user;
 
   // Check if the current path contains 'profileDetails' and hide the Navbar if true
-  if (pathname?.includes('profileDetails')) {
-    return null;
-  }
-
   useEffect(() => {
     const checkScreenSize = () => {
       setIsPhone(window.innerWidth <= 768);
@@ -116,6 +112,10 @@ const Navbar: React.FC = () => {
     logout();
     handleDropdownItemClick(); // Close dropdown and menu after logout
   }, [logout, handleDropdownItemClick]);
+
+  if (pathname?.includes('profileDetails')) {
+    return null;
+  }
 
   return (
     <header
