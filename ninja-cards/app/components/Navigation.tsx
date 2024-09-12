@@ -38,8 +38,13 @@ const Navbar: React.FC = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+  const pathname = usePathname(); // Get the current pathname
   const isAuthenticated = !!user;
+
+  // Check if the current path contains 'profileDetails' and hide the Navbar if true
+  if (pathname?.includes('profileDetails')) {
+    return null;
+  }
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -150,18 +155,11 @@ const Navbar: React.FC = () => {
                 </button>
               </div>
               <ul className="flex flex-col items-center justify-center h-2/3 lg:flex-row lg:space-x-8">
-                {[
-                  '/',
-                  '/features',
-                  '/contact',
-                  '/askedQuestions',
-                  `/profile`
-                ].map((path, idx) => (
+                {['/', '/features', '/contact', '/askedQuestions', `/profile`].map((path, idx) => (
                   <li key={idx} className="relative group">
                     <Link
                       href={path}
-                      className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === path ? 'text-orange' : ''
-                        }`}
+                      className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === path ? 'text-orange' : ''}`}
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {(() => {
@@ -203,12 +201,10 @@ const Navbar: React.FC = () => {
                           </div>
                         </div>
                         <ul className="py-2 text-sm text-gray-200">
-                          <NavItem href="/profile" onClick={() => setIsMenuOpen(false)}
-                          >
+                          <NavItem href="/profile" onClick={() => setIsMenuOpen(false)}>
                             Профил
                           </NavItem>
-                          <NavItem href="/earnings" onClick={() => setIsMenuOpen(false)}
-                          >
+                          <NavItem href="/earnings" onClick={() => setIsMenuOpen(false)}>
                             Анализ
                           </NavItem>
                         </ul>
