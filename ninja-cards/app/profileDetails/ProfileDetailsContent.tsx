@@ -410,7 +410,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* White Background Section aligned with the card */}
-        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-24 -mt-20 mx-auto rounded-none`}> {/* Removed borders and shadow */}
+        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-24 -mt-12 mx-auto rounded-none`}> {/* Removed borders and shadow */}
             {/* Adjust the margin to overlap */}
             <div className="text-center">
                 <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
