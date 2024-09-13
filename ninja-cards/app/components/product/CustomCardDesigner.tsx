@@ -5,7 +5,7 @@ const CustomCardDesigner = () => {
     const [qrCodeData, setQrCodeData] = useState<string>('https://example.com');
     const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
     const [name, setName] = useState<string>('Вашето име');
-    const [title, setTitle] = useState<string>('Вашата титла');
+    const [title, setTitle] = useState<string>('Вашата позиция');
     const [frontLogoUrl, setFrontLogoUrl] = useState<string | null>(null);
     const [backLogoUrl, setBackLogoUrl] = useState<string | null>(null);
     const [fontSizeName, setFontSizeName] = useState<number>(26);
@@ -202,13 +202,17 @@ const CustomCardDesigner = () => {
             <div className="card-preview flex flex-col lg:flex-row gap-8">
                 <div className='row'>
                     <h3 className="text-center text-lg font-bold mb-2">Предна част на картата</h3>
-                    <canvas ref={frontCanvasRef} width={502} height={318} className="rounded-lg shadow-lg border border-gray-400 w-full max-w-xs lg:max-w-none"></canvas>
+                    <canvas ref={frontCanvasRef} width={502} height={318} className="rounded-lg shadow-lg w-full max-w-xs lg:max-w-none"></canvas>
                 </div>
             </div>
             <div className="controls mt-6 w-full max-w-lg">
                 <label className="block text-sm font-medium mt-4 mb-1">
                     Име:
                     <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </label>
+                <label className="block text-sm font-medium mt-4 mb-1">
+                    Фирма:
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </label>
                 <div className="flex items-center justify-between mt-2">
                     <label className="text-sm font-medium">Размер на шрифт за име:</label>
@@ -219,7 +223,7 @@ const CustomCardDesigner = () => {
                     </div>
                 </div>
                 <div className="flex items-center justify-between mt-2">
-                    <label className="text-sm font-medium">Размер на шрифт за титла:</label>
+                    <label className="text-sm font-medium">Размер на шрифт за позиция Ви:</label>
                     <div className="flex space-x-2">
                         <button onClick={decreaseFontSizeTitle} className="px-2 py-1 bg-gray-600 text-white rounded">-</button>
                         <span>{fontSizeTitle}</span>
@@ -243,7 +247,7 @@ const CustomCardDesigner = () => {
             <div className="card-preview flex flex-col lg:flex-row gap-8">
                 <div className='row'>
                     <h3 className="text-center text-lg font-bold mb-2">Задна част на картата</h3>
-                    <canvas ref={backCanvasRef} width={510} height={318} className="rounded-lg shadow-lg border border-gray-400 w-full max-w-xs lg:max-w-none"></canvas>
+                    <canvas ref={backCanvasRef} width={510} height={318} className="rounded-lg shadow-lg  w-full max-w-xs lg:max-w-none"></canvas>
                 </div>
             </div>
             <div className="controls mt-6 w-full max-w-lg">
