@@ -160,7 +160,7 @@ export const ProductGallery: React.FC = () => {
                 <ProductCard
                     key={1}
                     id={'nfcCards'}
-                    imageUrl={'/Metal-Hybrid-Silver.png'}
+                    imageUrl={'/cards/gr-1.png'}
                     name={'NFC Cards'}
                     description={''}
                 />
@@ -168,7 +168,7 @@ export const ProductGallery: React.FC = () => {
                 <ProductCard
                     key={2}
                     id={'googleReveiws'}
-                    imageUrl={'/rev.webp'}
+                    imageUrl={'/cards/wa-1.png'}
                     name={'Google Reviews'}
                     description={''}
                 />
@@ -176,7 +176,7 @@ export const ProductGallery: React.FC = () => {
                 <ProductCard
                     key={3}
                     id={'nfcProducts'}
-                    imageUrl={'/sticker.jpg'}
+                    imageUrl={'/cards/mh-1.png'}
                     name={'Google Reviews'}
                     description={''}
                 />
