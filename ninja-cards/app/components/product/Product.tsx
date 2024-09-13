@@ -27,7 +27,7 @@ const Product: React.FC<ProductProps> = ({
     };
 
     return (
-        <div className="min-h-screen pt-20 bg-gray-900 text-gray-100">
+        <div className="min-h-screen pt-20  text-gray-100">
             <div className="max-w-7xl mx-auto py-12 px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Product Details */}
                 <div className="space-y-8">
@@ -35,9 +35,9 @@ const Product: React.FC<ProductProps> = ({
                     <Slider {...settings}>
                         {imageUrls.map((url, index) => (
                             <div key={index} className="relative">
-                        <div className="absolute top-4 left-4 bg-yellow-400 text-gray-900 font-bold py-1 px-3 rounded-lg">
-                            New
-                        </div>
+                                <div className="absolute top-4 left-4 bg-yellow-400 text-gray-900 font-bold py-1 px-3 rounded-lg">
+                                    Ново
+                                </div>
                                 <img src={url} alt={`Product Image ${index + 1}`} className="w-full h-auto rounded-lg shadow-lg object-cover" />
                             </div>
                         ))}
