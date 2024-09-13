@@ -384,6 +384,9 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
+
+    // const coverImg = cardStyle.bg === 'black' || cardStyle.bg === 'gray' ? 'black.png' : 'white.png';
+
     <div
         className={`relative flex flex-col items-center bg-cover bg-center bg-no-repeat sm:bg-none ${cardStyle.opposite} pt-72 overflow-hidden`}
         style={{ backgroundImage: `url(/cover.png)` }} // Background only for mobile
