@@ -1,24 +1,37 @@
-// pages/api/auth/forgot-password.ts
+// path: pages/api/auth/forgot-password.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import { sendEmail } from './mailgun'
-import { log } from 'node:console';
+import emailjs from 'emailjs-com';
 import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const corsHandled = cors(req, res);
-    if (corsHandled) return; // If it's a preflight request, stop further execution
+const sendEmail = async (recipientEmail: string, subject: string, message: string) => {
+    try {
+        await emailjs.send(
+            process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+            process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+            {
+                email: recipientEmail,
+                subject: subject,
+                message: message,
+            },
+            process.env.NEXT_PUBLIC_EMAILJS_USER_ID!
+        );
+    } catch (error) {
+        throw new Error(`Error sending email: ${error}`);
+    }
+};
 
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const corsHandled = await cors(req, res);
+    if (corsHandled) return; // Stop further execution for preflight request
 
     if (req.method === 'POST') {
         const { email } = req.body;
-        console.log('inside forgot');
-        console.log(email);
 
         // Check if user exists
         const user = await prisma.user.findUnique({
@@ -40,10 +53,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         // Send email with the new password
-        await sendEmail(user.email, 'Промяна на паролата - Ninja Cards', `Вашата нова парола е: ${newPassword}`);
-
-        return res.status(200).json({ message: 'New password has been sent to your email' });
+        try {
+            await sendEmail(
+                user.email,
+                'Password Reset - Ninja Cards',
+                `Your new password is: ${newPassword}`
+            );
+            return res.status(200).json({ message: 'New password has been sent to your email' });
+        } catch (error) {
+            return res.status(500).json({ error: 'Failed to send email' });
+        }
     } else {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 }
+    

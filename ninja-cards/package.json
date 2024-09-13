@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "build": "prisma generate && next build",
-    "export": "cross-env CPANEL_BUILD=true npm run build && next export" 
+    "export": "cross-env CPANEL_BUILD=true npm run build && next export"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
@@ -26,6 +26,7 @@
     "browser-image-compression": "^2.0.2",
     "classnames": "^2.5.1",
     "dotenv": "^16.4.5",
+    "emailjs-com": "^3.2.0",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
     "formidable": "^3.5.1",
