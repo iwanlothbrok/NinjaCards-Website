@@ -36,55 +36,52 @@ type ProductData = {
 
 function ProductPageContent() {
     const searchParams = useSearchParams();
-    const id = searchParams?.get('id');
+    // const id = searchParams?.get('id');
 
-    const [productData, setProductData] = useState<ProductData | null>(null);
+    // const [productData, setProductData] = useState<ProductData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (id) {
-            const fetchProduct = async () => {
-                setLoading(true);
-                try {
-                    const response = await fetch(`${BASE_API_URL}/api/products/${id}`);
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch product');
-                    }
-                    const data: ProductData = await response.json();
+    // useEffect(() => {
+    //     if (id) {
+    //         const fetchProduct = async () => {
+    //             setLoading(true);
+    //             try {
+    //                 const response = await fetch(`${BASE_API_URL}/api/products/${id}`);
+    //                 if (!response.ok) {
+    //                     throw new Error('Failed to fetch product');
+    //                 }
+    //                 const data: ProductData = await response.json();
 
-                    // Ensure the related entities are always defined as arrays
-                    data.features = data.features || [];
-                    data.benefits = data.benefits || [];
-                    data.reviews = data.reviews || [];
+    //                 // Ensure the related entities are always defined as arrays
+    //                 data.features = data.features || [];
+    //                 data.benefits = data.benefits || [];
+    //                 data.reviews = data.reviews || [];
 
-                    setProductData(data);
-                } catch (error) {
-                    console.error('Error fetching product:', error);
-                } finally {
-                    setLoading(false);
-                }
-            };
+    //                 setProductData(data);
+    //             } catch (error) {
+    //                 console.error('Error fetching product:', error);
+    //             } finally {
+    //                 setLoading(false);
+    //             }
+    //         };
 
-            fetchProduct();
-        }
-    }, [id]);
+    //         fetchProduct();
+    //     }
+    // }, [id]);
 
-    if (loading || !productData) {
-        return <div className="text-center text-white pt-40">Loading...</div>;
-    }
+    // if (loading || !productData) {
+    //     return <div className="text-center text-white pt-40">Loading...</div>;
+    // }
 
     return (
         <div className="bg-black text-white min-h-screen">
-            {/* <Product
-                title={productData.title}
-                description={productData.description}
-                price={`$${productData.price.toFixed(2)}`}
-                imageUrl={productData.imageUrl}
-                features={productData.features?.map(feature => feature.name)}
-                benefits={productData.benefits?.map(benefit => benefit.name)}
-                nfcType={productData.nfcType}
-                reviews={productData.reviews}
-            /> */}
+            <Product
+                title={'NFC REVIEW'}
+                description={'LOREM IMPSUM'}
+                price={'$123'}
+                imageUrls={['/cards/wa-front-back.png', '/cards/mh-front-back.png', '/cards/gr-1.png']}
+
+            />
             <RelatedProducts
                 products={[
                     {
