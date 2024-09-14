@@ -133,7 +133,7 @@ const SimpleContactForm: React.FC = () => {
                     <div className="flex justify-between">
                         <button
                             type="submit"
-                            className="px-5 py-2 bg-orange  text-white rounded-lg shadow hover:bg-orange-600 transition-transform transform hover:scale-105"
+                            className="px-8 py-2 bg-orange  text-white rounded-lg shadow hover:bg-orange-600 transition-transform transform hover:scale-105"
                         >
                             Изпрати
                         </button>
@@ -147,7 +147,7 @@ const SimpleContactForm: React.FC = () => {
                                     subject: '',
                                 })
                             }
-                            className="px-5 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition-transform transform hover:scale-105"
+                            className="px-8 ml-5 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition-transform transform hover:scale-105"
                         >
                             Нулиране на формуляра                        </button>
                     </div>
