@@ -5,6 +5,7 @@ import Navbar from './components/Navigation';
 import { AuthProvider } from './context/AuthContext';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Head from 'next/head';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -56,6 +57,9 @@ export default function RootLayout({
 
   return (
     <html lang="bg">
+      <Head>
+        <meta name="google-site-verification" content="F0YLcxlz9-DNDYvBtQctoP9fkALenaCpKx-iiVhzx3c" />
+      </Head>
       <body className={`${inter.className} text-gray-200 antialiased`}>
         <AuthProvider>
           <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 via-gray-950 to-black">
