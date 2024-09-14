@@ -83,8 +83,7 @@ const ChangeProfileInformation: React.FC = () => {
     const onSubmit = async (data: FormData) => {
         setLoading(true);
 
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
+
 
         if (!user) {
             showAlert('Потребителят не е удостоверен', 'Грешка', 'red');
@@ -112,6 +111,9 @@ const ChangeProfileInformation: React.FC = () => {
                 showAlert(errorText.error || 'Неуспешна актуализация на информацията', 'Грешка', 'red');
                 return;
             }
+
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
 
             const updatedUser = await response.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));

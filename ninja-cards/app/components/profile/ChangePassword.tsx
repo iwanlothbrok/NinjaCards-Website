@@ -47,9 +47,6 @@ const ChangePassword: React.FC = () => {
     const onSubmit = async (data: FormData) => {
         setLoading(true);
 
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-
         if (!user) {
             showAlert('Потребителят не е удостоверен', 'Предупреждение', 'red');
             setLoading(false);
@@ -72,6 +69,9 @@ const ChangePassword: React.FC = () => {
                 showAlert('Неуспешно актуализиране на профила', 'Грешка', 'red');
                 return;
             }
+
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
 
             const updatedUser = await response.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));

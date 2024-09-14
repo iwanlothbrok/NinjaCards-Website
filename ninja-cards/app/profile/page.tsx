@@ -102,7 +102,7 @@ function ProfileContent() {
                         tab="settings"
                         label="Смяна на паролата"
                         description="Настройки на акаунта"
-                        backgroundImage="/settingsBg/profile.png"
+                        backgroundImage="/settingsBg/security.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('settings')}
                     />
@@ -110,7 +110,7 @@ function ProfileContent() {
                         tab="changeEmail"
                         label="Смяна на имейла"
                         description="Промяна на имейл адреса"
-                        backgroundImage="/settingsBg/files.png"
+                        backgroundImage="/settingsBg/email.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('changeEmail')}
                     />
@@ -118,7 +118,7 @@ function ProfileContent() {
                         tab="changeAddress"
                         label="Смяна на адреса"
                         description="Промяна на адреса"
-                        backgroundImage="/settingsBg/files.png"
+                        backgroundImage="/settingsBg/address.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('changeAddress')}
                     />
@@ -126,7 +126,7 @@ function ProfileContent() {
                         tab="changeImage"
                         label="Смяна на профилната снимка"
                         description="Промяна на профилната снимка"
-                        backgroundImage="/settingsBg/settingcash.png"
+                        backgroundImage="/settingsBg/img.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('changeImage')}
                     />
@@ -150,15 +150,15 @@ function ProfileContent() {
                         tab="preview"
                         label="Преглед на профила"
                         description="Преглед на профила"
-                        backgroundImage="/settingsBg/settingcash.png"
+                        backgroundImage="/settingsBg/profile.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('preview')}
                     />
                     <TabCard
                         tab="profileDetails"
-                        label="Редактиране на профила"
+                        label="Визитка"
                         description="Промяна на детайлите"
-                        backgroundImage="/settingsBg/files.png"
+                        backgroundImage="/settingsBg/profile-details.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('profileDetails')}
                     />

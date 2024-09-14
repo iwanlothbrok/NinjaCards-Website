@@ -69,14 +69,14 @@ const ImportantLinks: React.FC = () => {
                 return;
             }
 
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+
             const updatedUser = await response.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);
 
             setAlert({ message: 'Връзките са успешно актуализирани', type: 'success' });
-            setTimeout(() => {
-                router.push('/');
-            }, 1500);
         } catch (error) {
             console.error('Грешка при актуализация на връзките:', error);
             setAlert({ message: 'Възникна неочаквана грешка. Моля, опитайте отново.', type: 'error' });

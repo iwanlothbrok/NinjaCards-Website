@@ -57,9 +57,6 @@ const ChangeAddress: React.FC = () => {
     const onSubmit = async (data: FormData) => {
         setLoading(true);
 
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-
         if (!user) {
             showAlert('Потребителят не е удостоверен', 'Предупреждение', 'red');
             setLoading(false);
@@ -88,11 +85,13 @@ const ChangeAddress: React.FC = () => {
                 return;
             }
 
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+
             const updatedUser = await response.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);
             showAlert('Адресът е успешно актуализиран', 'Успех', 'green');
-
         } catch (error) {
             console.error('Грешка:', error);
             showAlert('Неуспешно актуализиране на профила', 'Грешка', 'red');
