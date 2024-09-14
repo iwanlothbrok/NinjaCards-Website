@@ -74,7 +74,7 @@ function ProductPageContent() {
     // }
 
     return (
-        <div className="bg-black text-white min-h-screen">
+        <div className=" text-white min-h-screen">
             <Product
                 title={'NFC REVIEW'}
                 description={'LOREM IMPSUM'}

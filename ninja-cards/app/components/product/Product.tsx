@@ -54,50 +54,43 @@ const Product: React.FC<ProductProps> = ({
                     <div className="space-y-8">
                         <div>
                             <h3 className="text-xl font-semibold">Product Benefits</h3>
-                            <ul className="mt-4 space-y-4">
+                            <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <li className="flex items-center space-x-3 text-lg">
-                                    <FaCheckCircle className="text-green-500" />
-                                    <span>In stock, ready to ship</span>
+                                    <FaCheckCircle className="text-green-500 text-3xl" />
+                                    <span>На склад, готов за изпращане</span>
                                 </li>
                                 <li className="flex items-center space-x-3 text-lg">
-                                    <FaBarcode className="text-green-500" />
-                                    <span>Powered by NFC & QR code</span>
+                                    <FaBarcode className="text-green-500 text-3xl" />
+                                    <span>Използва се NFC и QR код</span>
                                 </li>
                                 <li className="flex items-center space-x-3 text-lg">
-                                    <FaWrench className="text-green-500" />
-                                    <span>Setup on delivery</span>
+                                    <FaWrench className="text-green-500 text-3xl" />
+                                    <span>Настройка преди доставката</span>
                                 </li>
                                 <li className="flex items-center space-x-3 text-lg">
-                                    <FaCreditCard className="text-green-500" />
-                                    <span>Card Size: 85.6 mm x 53.98 mm</span>
+                                    <FaCreditCard className="text-green-500 text-3xl" />
+                                    <span>Размер на картата: 85,6 мм x 53,98 мм</span>
                                 </li>
                                 <li className="flex items-center space-x-3 text-lg">
-                                    <FaMobileAlt className="text-green-500" />
-                                    <span>iOS & Android compatible</span>
+                                    <FaMobileAlt className="text-green-500 text-3xl" />
+                                    <span>Съвместима с iOS и Android</span>
                                 </li>
                                 <li className="flex items-center space-x-3 text-lg">
-                                    <FaCheckCircle className="text-green-500" />
-                                    <span>Made of high-grade PVC</span>
+                                    <FaCheckCircle className="text-green-500 text-3xl" />
+                                    <span>Изработена от висококачествено PVC</span>
                                 </li>
                                 <li className="flex items-center space-x-3 text-lg">
-                                    <FaShippingFast className="text-green-500" />
-                                    <span>Free Tracked Shipping</span>
+                                    <FaShippingFast className="text-green-500 text-3xl" />
+                                    <span>Безплатна доставка</span>
                                 </li>
                                 <li className="flex items-center space-x-3 text-lg">
-                                    <FaLeaf className="text-green-500" />
-                                    <span>Tree planted for every card sold</span>
+                                    <FaLeaf className="text-green-500 text-3xl" />
+                                    <span>Засадено дърво за всяка продадена карта</span>
                                 </li>
                             </ul>
+
                         </div>
                     </div>
-
-                    {/* Single Button: Send Design */}
-                    <button
-                        className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg"
-                        onClick={() => alert('Design Sent!')}
-                    >
-                        SEND DESIGN
-                    </button>
                 </div>
 
                 {/* Customization Section */}

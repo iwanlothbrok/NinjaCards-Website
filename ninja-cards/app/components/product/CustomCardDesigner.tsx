@@ -100,7 +100,7 @@ const CustomCardDesigner = () => {
                 const qrImage = new Image();
                 qrImage.src = qrCodeUrl;
                 qrImage.onload = () => {
-                    const qrSize = 150; // Size of the QR code
+                    const qrSize = 140; // Size of the QR code
                     const centerX = (frontCanvas.width - qrSize) / 2;
                     const centerY = (frontCanvas.height - qrSize) / 2 - 20;
                     frontCtx.drawImage(qrImage, centerX, centerY, qrSize, qrSize);
@@ -181,7 +181,7 @@ const CustomCardDesigner = () => {
     const decreaseBackLogoSize = () => setBackLogoSize((prev) => Math.max(prev - 10, 50));
 
     return (
-        <div className="designer-container text-white flex flex-col items-center bg-gray-800 p-8 rounded-lg shadow-lg">
+        <div className="designer-container text-white flex flex-col items-center p-8 rounded-lg shadow-lg">
             <h1 className="text-3xl font-bold mb-6">Дизайн на NFC Карта</h1>
             <div className="card-preview flex flex-col lg:flex-row gap-8">
                 <div className='row'>
@@ -198,6 +198,22 @@ const CustomCardDesigner = () => {
                     Позиция:
                     <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </label>
+                <div className="flex items-center justify-between mt-4">
+                    <label className="text-sm font-lg">Размер на шрифт за име:</label>
+                    <div className="flex space-x-2">
+                        <button onClick={decreaseFontSizeName} className="px-2 py-1 bg-gray-600 text-white rounded">-</button>
+                        <span>{fontSizeName}</span>
+                        <button onClick={increaseFontSizeName} className="px-2 py-1 bg-gray-600 text-white rounded">+</button>
+                    </div>
+                </div>
+                <div className="flex items-center justify-between mt-4">
+                    <label className="text-sm font-lg">Размер на шрифт за позиция Ви:</label>
+                    <div className="flex space-x-2">
+                        <button onClick={decreaseFontSizeTitle} className="px-2 py-1 bg-gray-600 text-white rounded">-</button>
+                        <span>{fontSizeTitle}</span>
+                        <button onClick={increaseFontSizeTitle} className="px-2 py-1 bg-gray-600 text-white rounded">+</button>
+                    </div>
+                </div>
                 <label className="block text-sm font-medium mt-4 mb-1">
                     Данни за QR код:
                     <input type="text" value={qrCodeData} onChange={(e) => setQrCodeData(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />

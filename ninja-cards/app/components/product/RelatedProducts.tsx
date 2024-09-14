@@ -14,7 +14,7 @@ type RelatedProductsProps = {
 const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
     return (
         <div className="mt-16">
-            <h3 className="text-3xl font-semibold text-gray-900 mb-8 text-center">Related Products</h3>
+            <h3 className="text-3xl font-semibold text-white mb-8 text-center">Свързани продукти</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-6 gap-8">
                 {products.map((product) => (
                     <div
@@ -32,16 +32,16 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                             <div className="absolute inset-0 bg-black bg-opacity-25 opacity-0 group-hover:opacity-100 flex justify-center items-center transition-opacity duration-300">
                                 <a
                                     href={`/product/${product.id}`}
-                                    className="text-white bg-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300"
+                                    className="text-white bg-orange px-4 py-2 rounded-lg font-semibold transition-colors duration-300"
                                 >
-                                    View Product
+                                    Виж
                                 </a>
                             </div>
                         </div>
 
                         {/* Product Info Section */}
                         <div className="p-5">
-                            <h4 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-blue-600">
+                            <h4 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-orange">
                                 {product.title}
                             </h4>
                             <p className="mt-2 text-xl font-bold text-gray-900">{product.price}</p>
@@ -54,4 +54,3 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
 };
 
 export default RelatedProducts;
-    
