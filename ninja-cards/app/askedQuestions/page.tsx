@@ -1,3 +1,4 @@
+// page.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -26,16 +27,16 @@ const FAQPage = () => {
     setVideoUrl('');
   };
 
-
   return (
-    <div className="min-h-screen  text-white">
-
+    <div className="min-h-screen text-white">
       <Header pageInformation='Имате въпрос' textOne='Визитки' textTwo='Ревюта' textThree='Дизайн' />
 
       {/* Hero Section */}
-      <FAQVideos />
+      <FAQVideos openModal={openModal} />
+
       {/* FAQ Section */}
       <FrequentlyAskedQuestions searchTerm={searchTerm} />
+
       {/* Modal */}
       <Modal
         isOpen={modalIsOpen}

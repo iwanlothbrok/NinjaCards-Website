@@ -1,23 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { FaPlay } from 'react-icons/fa'
+// FAQVideos.tsx
+import React, { useState } from 'react';
+import { FaPlay } from 'react-icons/fa';
 
-export default function FAQVideos() {
+interface FAQVideosProps {
+    openModal: (url: string) => void;
+}
+
+export default function FAQVideos({ openModal }: FAQVideosProps) {
     const [searchTerm, setSearchTerm] = useState('');
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [videoUrl, setVideoUrl] = useState('');
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
-    };
-
-    const openModal = (url: string) => {
-        setVideoUrl(url);
-        setModalIsOpen(true);
-    };
-
-    const closeModal = () => {
-        setModalIsOpen(false);
-        setVideoUrl('');
     };
 
     return (
@@ -83,5 +76,5 @@ export default function FAQVideos() {
                 </div>
             </header>
         </div>
-    )
+    );
 }
