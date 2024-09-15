@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log('Received request for all users');
 
         // Handle CORS preflight requests
-        const corsHandled = cors(req, res);
+        const corsHandled = await cors(req, res);
         if (corsHandled) return; // If it's a preflight request, stop further execution
 
         // Allow only GET method
@@ -20,27 +20,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(405).json({ message: 'Method not allowed' });
         }
 
-        // Log before fetching users
-        console.log('Fetching users from the database');
+        // Log before fetching user ids
+        console.log('Fetching user ids from the database');
 
-        // Fetch all users
-        const users = await prisma.user.findMany();
+        // Fetch only the ids of all users
+        const userIds = await prisma.user.findMany({
+            select: { id: true },  // Only select the 'id' field
+        });
 
         // Check if users exist
-        if (!users || users.length === 0) {
-            console.log('No users found');
+        if (!userIds || userIds.length === 0) {
+            console.log('No user ids found');
             return res.status(404).json({ message: 'No users found' });
         }
 
-        // Log fetched users
-        console.log('Fetched users:', users);
+        // Log fetched user ids
+        console.log('Fetched user ids:', userIds);
 
-        // Return users in JSON format
-        return res.status(200).json(users);
+        // Return user ids in JSON format
+        return res.status(200).json(userIds);
 
     } catch (error) {
         // Log any error that occurs
-        console.error('Error fetching users:', error);
+        console.error('Error fetching user ids:', error);
         return res.status(500).json({ message: 'Internal server error', error });
+    } finally {
+        // Ensure PrismaClient is disconnected to avoid connection issues in long-running processes
+        await prisma.$disconnect();
     }
 }

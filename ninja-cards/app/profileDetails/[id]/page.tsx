@@ -7,19 +7,32 @@ import { BASE_API_URL } from '@/utils/constants';
 // Lazy load ProfileDetailsContent
 const ProfileDetailsContent = dynamic(() => import('../ProfileDetailsContent'), { suspense: true });
 
-export async function generateStaticParams() {
-    const res = await fetch(`${BASE_API_URL}/api/profile/allUsers`);  // Use the correct API to get all users
-    const users = await res.json();
+type User = {
+    id: string;
+};
 
-    if (!Array.isArray(users)) {
-        throw new Error("Expected an array of users, but got something else.");
+export async function generateStaticParams(): Promise<{ id: string }[]> {
+    try {
+        const res = await fetch(`${BASE_API_URL}/api/profile/allUsers`);
+
+        if (!res.ok) {
+            throw new Error(`Failed to fetch users: ${res.statusText}`);
+        }
+
+        const users: User[] = await res.json();
+
+        if (!Array.isArray(users)) {
+            throw new Error("Expected an array of users, but got something else.");
+        }
+
+        // Ensure we handle an empty users array and properly convert ids to strings
+        return users.map((user) => ({
+            id: user.id.toString(),
+        }));
+    } catch (error) {
+        console.error("Error in generateStaticParams:", error);
+        return [];  // Return an empty array to handle errors gracefully
     }
-
-    // Return the paths to pre-render based on the user ids
-
-    return users.map((user: { id: string }) => ({
-        id: user.id.toString(),  // Ensure id is a string
-    }));
 }
 
 const ProfileDetailsPage = ({ params }: { params: { id: string } }) => {
