@@ -44,7 +44,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
     };
 
     return (
-        <div className="flex flex-col space-y-4 mb-4 z-10001">
+        <>
             {/* Call Button */}
             <button
                 onClick={() => window.location.href = `tel:${user?.phone1}`}
@@ -76,7 +76,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 onClose={handleModalClose}
                 onSubmit={handleSubmitContact}
             />
-        </div>
+        </>
     )
 };
 

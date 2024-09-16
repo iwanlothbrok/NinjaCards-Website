@@ -334,14 +334,17 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
-                        <ActionButtons2 user={currentUser} />
-                        <button
-                            onClick={handleExchangeContact}
-                            className="flex items-center justify-center bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
-                        >
-                            <FaEnvelope className="mr-3 text-2xl" />
-                            <span className="text-lg font-semibold">Разменете Контакти</span>
-                        </button>
+                        <div className="flex flex-col space-y-4 mb-4 z-10001">
+
+                            <ActionButtons2 user={currentUser} />
+                            <button
+                                onClick={handleExchangeContact}
+                                className="flex items-center justify-center bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
+                            >
+                                <FaEnvelope className="mr-3 text-2xl" />
+                                <span className="text-lg font-semibold">Разменете Контакти</span>
+                            </button>
+                        </div>
                     </motion.div>
 
                     {/* Social Media Links */}
@@ -386,9 +389,10 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 }
 
 const ProfileHeader: React.FC<{ user: User; cardStyle: any; isModalOpen: boolean }> = ({ user, cardStyle, isModalOpen }) => (
+
     <div
         className={`relative flex flex-col items-center bg-cover bg-center bg-no-repeat sm:bg-none ${cardStyle.opposite} pt-72 overflow-hidden`}
-        style={{ backgroundImage: `url(/cover.png)` }} // Background only for mobile
+        style={{ backgroundImage: `url(${cardStyle.opposite === 'bg-black' ? '/cover02.png' : '/cover.png'})` }} // Background only for mobile
     >
         {/* Circular profile image with white background */}
         <div
