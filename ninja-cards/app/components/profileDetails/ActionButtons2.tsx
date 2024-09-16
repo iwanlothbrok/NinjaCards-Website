@@ -44,7 +44,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
     };
 
     return (
-        <div className="flex flex-col space-y-4 mb-8 z-10001">
+        <div className="flex flex-col space-y-4 mb-4 z-10001">
             {/* Call Button */}
             <button
                 onClick={() => window.location.href = `tel:${user?.phone1}`}
@@ -68,13 +68,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
             </button>
 
             {/* Exchange Contact Button */}
-            <button
-                onClick={handleExchangeContact}
-                className="flex items-center justify-center bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
-            >
-                <FaEnvelope className="mr-3 text-2xl" />
-                <span className="text-lg font-semibold">Разменете Контакти</span>
-            </button>
+
 
             {/* Exchange Contact Modal */}
             <ExchangeContactModal
