@@ -7,8 +7,6 @@ import Image from 'next/image';
 import LinkInput from './LinkInput';
 import { BASE_API_URL } from '@/utils/constants';
 
-
-
 const ImportantLinks: React.FC = () => {
     const { user, setUser } = useAuth();
     const [formData, setFormData] = useState({
@@ -34,7 +32,21 @@ const ImportantLinks: React.FC = () => {
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+
+        let updatedValue = value;
+
+        // Ensure Viber and WhatsApp phone numbers start with +359 and remove any spaces
+        if (name === 'viber' || name === 'whatsapp') {
+            // Remove all spaces from the input
+            updatedValue = value.replace(/\s+/g, '');
+
+            // Ensure the number starts with +359
+            if (!updatedValue.startsWith('+359')) {
+                updatedValue = `+359${updatedValue.replace(/^\+?359/, '')}`; // Ensure no double prefix
+            }
+        }
+
+        setFormData({ ...formData, [name]: updatedValue });
     }, [formData]);
 
     const handleSubmit = async (e: React.FormEvent) => {
