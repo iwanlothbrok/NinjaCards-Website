@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import ExchangeContact from '../components/profileDetails/ExchangeContact';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaUserCircle, FaExchangeAlt, FaDownload } from 'react-icons/fa';
+import { FaUserCircle, FaExchangeAlt, FaDownload, FaEnvelope } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import ActionButtons2 from '../components/profileDetails/ActionButtons2';
@@ -101,7 +101,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
-    const [showTooltip, setShowTooltip] = useState<string | null>(null);
     const [isPhone, setIsPhone] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -129,13 +128,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             console.error('Error sending contact information:', error);
             // alert('Failed to send contact information. Please try again.');
         }
-    };
-    const handleTouchStart = (action: string) => {
-        setTimeout(() => setShowTooltip(action), 500);
-    };
-
-    const handleTouchEnd = () => {
-        setShowTooltip(null);
     };
 
     useEffect(() => {
@@ -203,13 +195,16 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             >
                 <FaExchangeAlt className="text-3xl" />
             </button>
+            <div className="z-50"  >
 
-            <ExchangeContact
-                isOpen={isModalOpen}
-                onClose={handleModalClose}
-                onSubmit={handleSubmitContact}
-            />
-        </div>
+                <ExchangeContact
+                    isOpen={isModalOpen}
+                    onClose={handleModalClose}
+                    onSubmit={handleSubmitContact}
+                />
+            </div>
+
+        </div >
     );
 
     const generateVCF = () => {
@@ -235,8 +230,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         }
 
         // // Include empty ORG and TITLE fields if not provided
-        // vCard.push("ORG:;");
-        // vCard.push("TITLE:;");
+        vCard.push("ORG:;");
+        vCard.push("TITLE:;");
 
         // Detailed phone number types
         if (currentUser.phone1) {
@@ -312,7 +307,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     return (
         <div className={`relative ${cardStyle.opposite} pt-20`}>
             {/* Profile Header Section */}
-            <ProfileHeader user={currentUser} cardStyle={cardStyle} />
+            <ProfileHeader user={currentUser} cardStyle={cardStyle} isModalOpen={isModalOpen} />
 
             {/* Content Section with Background */}
             <div
@@ -334,12 +329,19 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 >
                     {/* Action Buttons */}
                     <motion.div
-                        className="mt-6"
+                        className={`mt-6 z-50`}
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
                         <ActionButtons2 user={currentUser} />
+                        <button
+                            onClick={handleExchangeContact}
+                            className="flex items-center justify-center bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
+                        >
+                            <FaEnvelope className="mr-3 text-2xl" />
+                            <span className="text-lg font-semibold">Разменете Контакти</span>
+                        </button>
                     </motion.div>
 
                     {/* Social Media Links */}
@@ -383,16 +385,16 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 
 }
 
-const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardStyle }) => (
-
-    // const coverImg = cardStyle.bg === 'black' || cardStyle.bg === 'gray' ? 'black.png' : 'white.png';
-
+const ProfileHeader: React.FC<{ user: User; cardStyle: any; isModalOpen: boolean }> = ({ user, cardStyle, isModalOpen }) => (
     <div
         className={`relative flex flex-col items-center bg-cover bg-center bg-no-repeat sm:bg-none ${cardStyle.opposite} pt-72 overflow-hidden`}
         style={{ backgroundImage: `url(/cover.png)` }} // Background only for mobile
     >
         {/* Circular profile image with white background */}
-        <div className={`absolute top-20 rounded-full p-1 mt-32 bg-${cardStyle.name} shadow-lg z-20`}>
+        <div
+            className={`absolute top-20 rounded-full p-1 mt-32 bg-${cardStyle.name} shadow-lg`}
+            style={{ zIndex: isModalOpen ? 0 : 20 }} // Lower z-index if modal is open
+        >
             <motion.div
                 className={`w-44 h-44 rounded-full overflow-hidden border-2 ${cardStyle.borderClass}`}
                 initial={{ scale: 0.9 }}
@@ -413,8 +415,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any }> = ({ user, cardSty
         </div>
 
         {/* White Background Section aligned with the card */}
-        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-24 -mt-17 mx-auto rounded-none`}> {/* Removed borders and shadow */}
-            {/* Adjust the margin to overlap */}
+        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-24 -mt-17 mx-auto rounded-none`}>
             <div className="text-center mt-8">
                 <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
                     {user?.name}
@@ -436,7 +437,7 @@ const BackgroundSelector: React.FC<{
     cardStyle: any;
 }> = ({ cardBackgroundOptions, handleColorSelection, cardStyle }) => (
     <div className="mt-6 text-center">
-        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Customize Card Background</h3>
+        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Промени цветовете</h3>
         <div className="flex justify-center space-x-4 mt-4">
             {cardBackgroundOptions.map(({ name, bgClass }) => (
                 <button
