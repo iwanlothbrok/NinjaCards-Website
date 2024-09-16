@@ -23,16 +23,20 @@ const TabCard: React.FC<{ tab: string; label: string; description: string; backg
             backgroundImage: `url(${backgroundImage})`,
             backgroundPosition: 'center',
             backgroundSize: 'cover',
-            width: '100%',   // Ensures the card takes up full width of the grid cell
-            height: '150px', // Set a fixed height for uniformity 
+            width: '100%',
+            height: '150px',
+            filter: activeTab === tab ? 'none' : 'grayscale(100%)', // Apply grayscale if not active
         }}
     >
+        {/* Overlay to darken the background */}
         <div className="absolute inset-0 bg-black opacity-70 rounded-lg"></div>
+        {/* Content */}
         <div className="relative z-10">
             <h3 className="text-lg font-semibold mb-1">{label}</h3>
         </div>
     </div>
 );
+
 
 function ProfileContent() {
     const router = useRouter();
