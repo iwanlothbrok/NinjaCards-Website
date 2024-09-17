@@ -99,7 +99,7 @@ export const Testimonies: React.FC = () => {
                     <div className="flex items-center space-x-4">
                       <img
                         src={testimonial.image}
-                        className="w-10 h-10 bg-center bg-cover border rounded-full"
+                        className="w-16 h-16 bg-center bg-cover border rounded-full"
                         alt={testimonial.name}
                       />
                       <div>
@@ -127,18 +127,18 @@ export const Testimonies: React.FC = () => {
 
 const testimonials = [
   {
-    name: 'Kanye West',
-    title: 'Rapper & Entrepreneur',
-    quote: 'It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+    name: 'ImpeRiums',
+    title: 'Предприемач',
+    quote: 'Ninja Cards напълно промени начина, по който се запознавам с хора. Винаги се срещам с нови клиенти и да имам интелигентна визитна картичка, която може незабавно да прехвърли данните ми на техния телефон, е изключително удобно.Възможностите за персонализиране също ми позволиха да създам визитка, която наистина отразява моята марка.Силно препоръчвам!',
     image:
       'https://pbs.twimg.com/profile_images/1276461929934942210/cqNhNk6v_400x400.jpg',
     link: 'https://twitter.com/kanyewest',
   },
   {
-    name: 'Satya Nadella',
-    title: 'CEO of Microsoft',
+    name: 'Whiz Academy',
+    title: 'Менторство по програмиране',
     quote:
-      'Tortor dignissim convallis aenean et tortor at. At ultrices mi tempus imperdiet nulla malesuada.',
+      'Преминаването към смарт визитките на Ninja Cards беше едно от най-добрите решения за моя бизнес! Сега мога лесно да споделям данните си за контакт и портфолиото си с едно докосване. Няма повече да печатам стотици традиционни визитки. Това е огромно подобрение, а клиентите ми харесват елегантния дизайн и лекотата на използване!',
     image:
       'https://pbs.twimg.com/profile_images/1221837516816306177/_Ld4un5A_400x400.jpg',
     link: 'https://twitter.com/satyanadella',
