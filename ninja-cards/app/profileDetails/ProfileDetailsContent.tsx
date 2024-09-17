@@ -229,9 +229,12 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             vCard.push(`PHOTO;ENCODING=b;TYPE=JPEG|PNG:${currentUser.image}`);
         }
 
-        // // Include empty ORG and TITLE fields if not provided
-        vCard.push("ORG:;");
-        vCard.push("TITLE:;");
+        if (currentUser.position) {
+            vCard.push(`TITLE:${currentUser.position}`);
+            vCard.push(`ORG:${currentUser.company}`);
+        } else {
+            vCard.push("TITLE:;");
+        }
 
         // Detailed phone number types
         if (currentUser.phone1) {
@@ -323,9 +326,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 {/* Card Section with White Background */}
                 <motion.div
                     className={`relative z-10 w-full  p-8 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-none`} // Removed shadow
-                // initial={{ opacity: 0, y: 20 }}
-                // animate={{ opacity: 1, y: 0 }}
-                // transition={{ duration: 0.8, ease: 'easeOut' }}
                 >
                     {/* Action Buttons */}
                     <motion.div
