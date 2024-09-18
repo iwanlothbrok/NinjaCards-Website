@@ -26,10 +26,6 @@ export default function Home() {
       <About />
       <ProductGallery />
       <Testimonies />
-      {/* <Roadmap3 /> */}
-      {/* <FrequentlyAskedQuestions searchTerm={''} /> */}
-      {/* <VideoTextSection /> */}
-      {/* <FeaturesSection /> */}
       <SimpleContactForm />
 
     </main>

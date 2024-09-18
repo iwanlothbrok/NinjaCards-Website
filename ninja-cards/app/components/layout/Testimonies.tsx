@@ -41,7 +41,7 @@ export const Testimonies: React.FC = () => {
       }}
       transition={{ duration: 0.5 }}
       id="testimonies"
-      className="py-12 px-4 bg-gray-950"
+      className="py-12 px-4 bg-gray-950 p-1"
     >
       <div className="max-w-6xl mx-auto">
         <div className="transition duration-500 ease-in-out transform scale-100 translate-x-0 translate-y-0 opacity-100">

@@ -79,7 +79,7 @@ function ProductPageContent() {
                 title={'NFC REVIEW'}
                 description={'LOREM IMPSUM'}
                 price={'$123'}
-                imageUrls={['/cards/wa-front-back.png', '/cards/mh-front-back.png', '/cards/gr-1.png']}
+                imageUrls={['/cards/wa-front-back.png', '/cards/mh-front-back.png', '/cards/bp-front-back.png']}
 
             />
             <RelatedProducts

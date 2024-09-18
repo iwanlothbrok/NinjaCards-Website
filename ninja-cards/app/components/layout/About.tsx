@@ -72,7 +72,7 @@ const About: React.FC = () => {
   }, [sectionControls, headerControls, featuresControls, buttonControls, imageControls]);
 
   return (
-    <div className='bg-gradient-to-b from-black via-gray-950 to-black'>
+    <div className='bg-gradient-to-b from-black via-gray-950 to-black p-1'>
       {/* Section Header */}
       <motion.div
         ref={headerRef}
