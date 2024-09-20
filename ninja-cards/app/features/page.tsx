@@ -1,5 +1,6 @@
-import React from 'react';
-import Header from '../components/layout/Header'
+"use client"
+import React, { useState, useEffect } from 'react';
+import Header from '../components/layout/Header';
 
 interface FeatureProps {
     header: string;
@@ -89,64 +90,130 @@ const FeatureItemRightImage: React.FC<FeatureProps> = ({ header, mainHeader, des
     );
 };
 
-
 export default function Features() {
+    const [isMobile, setIsMobile] = useState<boolean>(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768); // Check if the screen width is less than 768px (typical breakpoint for phones)
+        };
+
+        handleResize(); // Initial check
+
+        window.addEventListener('resize', handleResize); // Listen for screen resize events
+
+        return () => window.removeEventListener('resize', handleResize); // Cleanup event listener on unmount
+    }, []);
+
     return (
         <div className="">
             <Header pageInformation='Функции Ninja Cards' textOne='Споделяне' textTwo='Свързване' textThree='Успех' />
-            <FeatureItemLeftImage
-                header="NFC & QR код"
-                mainHeader="Споделяне на контакти"
-                description="С NFC дигиталната визитка на NinjaCard, споделянето на вашите контакти става безпроблемно. Просто докоснете вашата NinjaCard NFC карта към друго устройство с NFC и вашият дигитален профил ще бъде споделен мигновено."
-                imagePath="/features/01.png"
-                buttonText="Примерен профил"
-                buttonLink="https://www.ninjacardsnfc.com/profileDetails/1"
-            />
 
-            <FeatureItemRightImage
-                header="Генериране на потенциални клиенти"
-                mainHeader="Уловете нови контакти"
-                description="Всяка NinjaCard NFC дигитална визитка разполага с мощен инструмент за генериране на нови контакти чрез бутона 'Разменете Контакти'. Тази функция ви позволява лесно да улавяте нови контакти, което я прави идеалния инструмент за разширяване на мрежата ви."
-                imagePath="/features/02.png"
-                buttonText=""
-                buttonLink=""
-            />
+            {/* Conditionally render based on screen size */}
+            {isMobile ? (
+                <>
+                    <FeatureItemRightImage
+                        header="NFC & QR код"
+                        mainHeader="Споделяне на контакти"
+                        description="С NFC дигиталната визитка на NinjaCard, споделянето на вашите контакти става безпроблемно. Просто докоснете вашата NinjaCard NFC карта към друго устройство с NFC и вашият дигитален профил ще бъде споделен мигновено."
+                        imagePath="/features/01.png"
+                        buttonText="Примерен профил"
+                        buttonLink="https://www.ninjacardsnfc.com/profileDetails/1"
+                    />
 
-            <FeatureItemLeftImage
-                header="Лесни актуализации"
-                mainHeader="Актуализирайте информацията си в реално време"
-                description="С NinjaCard можете да актуализирате вашата контактна информация по всяко време, като гарантирате, че вашата мрежа винаги разполага с най-новата информация. Просто докоснете вашия телефон, за да споделите актуализирания профил мигновено."
-                imagePath="/features/03.png"
-                buttonText="Актуализирайте сега"
-                buttonLink="https://www.ninjacardsnfc.com/profile"
-            />
+                    <FeatureItemRightImage
+                        header="Генериране на потенциални клиенти"
+                        mainHeader="Уловете нови контакти"
+                        description="Всяка NinjaCard NFC дигитална визитка разполага с мощен инструмент за генериране на нови контакти чрез бутона 'Разменете Контакти'. Тази функция ви позволява лесно да улавяте нови контакти, което я прави идеалния инструмент за разширяване на мрежата ви."
+                        imagePath="/features/02.png"
+                        buttonText=""
+                        buttonLink=""
+                    />
 
-            <FeatureItemRightImage
-                header="QR код"
-                mainHeader="Запазване и разпространяване на QR"
-                description="Ninja картата предлага възможност за изтегляне на QR код за вашата смарт визитка, което позволява лесно споделяне и достъпност на вашата информация. Тази функция рационализира процеса на достъп на клиенти и потребители до вашата информация и осигурява безпроблемно потребителско изживяване. Свържете се с нас днес, за да научите повече за тази опция."
-                imagePath="/features/04.png"
-                buttonText="Виж Тук"
-                buttonLink="https://www.ninjacardsnfc.com/profile?tab=profileQr"
-            />
+                    <FeatureItemRightImage
+                        header="Лесни актуализации"
+                        mainHeader="Актуализирайте информацията си в реално време"
+                        description="С NinjaCard можете да актуализирате вашата контактна информация по всяко време, като гарантирате, че вашата мрежа винаги разполага с най-новата информация. Просто докоснете вашия телефон, за да споделите актуализирания профил мигновено."
+                        imagePath="/features/03.png"
+                        buttonText="Актуализирайте сега"
+                        buttonLink="https://www.ninjacardsnfc.com/profile"
+                    />
 
-            <FeatureItemLeftImage
-                header="Цветове на визитка"
-                mainHeader="Персонализиране на профила"
-                description="Профилът на вашата смарт визитка предлага опции за персонализиране, които ви позволяват да променяте цветовете. Тази гъвкавост гарантира, че вашата визитна картичка отразява идентичността на марката ви и се отличава от останалите. С Ninja Cards можете да създадете уникален и професионален профил за вашата визитка, който да привлича вниманието на вашите потенциални клиенти или партньори."
-                imagePath="/features/05.png"
-                buttonText=""
-                buttonLink=""
-            />
+                    <FeatureItemRightImage
+                        header="QR код"
+                        mainHeader="Запазване и разпространяване на QR"
+                        description="Ninja картата предлага възможност за изтегляне на QR код за вашата смарт визитка, което позволява лесно споделяне и достъпност на вашата информация. Тази функция рационализира процеса на достъп на клиенти и потребители до вашата информация и осигурява безпроблемно потребителско изживяване."
+                        imagePath="/features/04.png"
+                        buttonText="Виж Тук"
+                        buttonLink="https://www.ninjacardsnfc.com/profile?tab=profileQr"
+                    />
 
-            <FeatureItemRightImage
-                header="Връзки"
-                mainHeader="Полета в профила ви"
-                description="В профилите на Ninja Card можете да използвате над 40 полета, за да споделяте цялата необходима информация за вашия бизнес. Тази персонализирана функция Ви позволява да предоставите цялата необходима информация за контакт, връзки към социалните медии и др. на едно удобно място."
-                imagePath="/features/06.png"
-                buttonText="Персонализирайте сега"
-                buttonLink="https://www.ninjacardsnfc.com/profile?tab=links"
-            />
+                    <FeatureItemRightImage
+                        header="Цветове на визитка"
+                        mainHeader="Персонализиране на профила"
+                        description="Профилът на вашата смарт визитка предлага опции за персонализиране, които ви позволяват да променяте цветовете. Тази гъвкавост гарантира, че вашата визитна картичка отразява идентичността на марката ви и се отличава от останалите. С Ninja Cards можете да създадете уникален и професионален профил за вашата визитка."
+                        imagePath="/features/05.png"
+                        buttonText=""
+                        buttonLink=""
+                    />
+                </>
+            ) : (
+                <>
+                    <FeatureItemLeftImage
+                        header="NFC & QR код"
+                        mainHeader="Споделяне на контакти"
+                        description="С NFC дигиталната визитка на NinjaCard, споделянето на вашите контакти става безпроблемно. Просто докоснете вашата NinjaCard NFC карта към друго устройство с NFC и вашият дигитален профил ще бъде споделен мигновено."
+                        imagePath="/features/01.png"
+                        buttonText="Примерен профил"
+                        buttonLink="https://www.ninjacardsnfc.com/profileDetails/1"
+                    />
+
+                    <FeatureItemRightImage
+                        header="Генериране на потенциални клиенти"
+                        mainHeader="Уловете нови контакти"
+                        description="Всяка NinjaCard NFC дигитална визитка разполага с мощен инструмент за генериране на нови контакти чрез бутона 'Разменете Контакти'. Тази функция ви позволява лесно да улавяте нови контакти, което я прави идеалния инструмент за разширяване на мрежата ви."
+                        imagePath="/features/02.png"
+                        buttonText=""
+                        buttonLink=""
+                    />
+
+                    <FeatureItemLeftImage
+                        header="Лесни актуализации"
+                        mainHeader="Актуализирайте информацията си в реално време"
+                        description="С NinjaCard можете да актуализирате вашата контактна информация по всяко време, като гарантирате, че вашата мрежа винаги разполага с най-новата информация. Просто докоснете вашия телефон, за да споделите актуализирания профил мигновено."
+                        imagePath="/features/03.png"
+                        buttonText="Актуализирайте сега"
+                        buttonLink="https://www.ninjacardsnfc.com/profile"
+                    />
+
+                    <FeatureItemRightImage
+                        header="QR код"
+                        mainHeader="Запазване и разпространяване на QR"
+                        description="Ninja картата предлага възможност за изтегляне на QR код за вашата смарт визитка, което позволява лесно споделяне и достъпност на вашата информация. Тази функция рационализира процеса на достъп на клиенти и потребители до вашата информация и осигурява безпроблемно потребителско изживяване."
+                        imagePath="/features/04.png"
+                        buttonText="Виж Тук"
+                        buttonLink="https://www.ninjacardsnfc.com/profile?tab=profileQr"
+                    />
+
+                    <FeatureItemLeftImage
+                        header="Цветове на визитка"
+                        mainHeader="Персонализиране на профила"
+                        description="Профилът на вашата смарт визитка предлага опции за персонализиране, които ви позволяват да променяте цветовете. Тази гъвкавост гарантира, че вашата визитна картичка отразява идентичността на марката ви и се отличава от останалите. С Ninja Cards можете да създадете уникален и професионален профил за вашата визитка."
+                        imagePath="/features/05.png"
+                        buttonText=""
+                        buttonLink=""
+                    />
+
+                    <FeatureItemRightImage
+                        header="Връзки"
+                        mainHeader="Полета в профила ви"
+                        description="В профилите на Ninja Card можете да използвате над 40 полета, за да споделяте цялата необходима информация за вашия бизнес."
+                        imagePath="/features/06.png"
+                        buttonText="Персонализирайте сега"
+                        buttonLink="https://www.ninjacardsnfc.com/profile?tab=links"
+                    />
+                </>
+            )}
         </div>
     );
 }
