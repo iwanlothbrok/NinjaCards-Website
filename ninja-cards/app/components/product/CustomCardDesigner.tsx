@@ -7,9 +7,9 @@ const CustomCardDesigner = () => {
     const [name, setName] = useState<string>('Вашето име');
     const [title, setTitle] = useState<string>('Вашата позиция');
     const [backLogoUrl, setBackLogoUrl] = useState<string | null>(null);
-    const [fontSizeName, setFontSizeName] = useState<number>(26);
-    const [fontSizeTitle, setFontSizeTitle] = useState<number>(18);
-    const [backLogoSize, setBackLogoSize] = useState<number>(220);
+    const [fontSizeName, setFontSizeName] = useState<number>(32);
+    const [fontSizeTitle, setFontSizeTitle] = useState<number>(24);
+    const [backLogoSize, setBackLogoSize] = useState<number>(240);
     const frontCanvasRef = useRef<HTMLCanvasElement>(null);
     const backCanvasRef = useRef<HTMLCanvasElement>(null);
     const [frontImage, setFrontImage] = useState<HTMLImageElement | null>(null);
@@ -20,8 +20,8 @@ const CustomCardDesigner = () => {
     useEffect(() => {
         const img1 = new Image();
         const img2 = new Image();
-        img1.src = '/back2.png';
-        img2.src = '/back.png';
+        img1.src = '/back2.png'; // You can replace this with your front card image URL
+        img2.src = '/back.png'; // You can replace this with your back card image URL
         img1.onload = () => setFrontImage(img1);
         img2.onload = () => setBackImage(img2);
     }, []);
@@ -95,12 +95,11 @@ const CustomCardDesigner = () => {
             drawRoundedRect(frontCtx, 0, 0, frontCanvas.width, frontCanvas.height, 20);
             frontCtx.drawImage(frontImage, 0, 0, frontCanvas.width, frontCanvas.height);
 
-            // Draw QR code in the center of the front card
             if (qrCodeUrl) {
                 const qrImage = new Image();
                 qrImage.src = qrCodeUrl;
                 qrImage.onload = () => {
-                    const qrSize = 140; // Size of the QR code
+                    const qrSize = 180; // Increased size for better visibility
                     const centerX = (frontCanvas.width - qrSize) / 2;
                     const centerY = (frontCanvas.height - qrSize) / 2 - 20;
                     frontCtx.drawImage(qrImage, centerX, centerY, qrSize, qrSize);
@@ -113,9 +112,9 @@ const CustomCardDesigner = () => {
             frontCtx.shadowOffsetX = 2;
             frontCtx.shadowOffsetY = 2;
             frontCtx.shadowBlur = 10;
-            frontCtx.fillText(name, 20, frontCanvas.height - 55);
+            frontCtx.fillText(name, 40, frontCanvas.height - 85);
             frontCtx.font = `italic ${fontSizeTitle}px Arial`;
-            frontCtx.fillText(title, 20, frontCanvas.height - 30);
+            frontCtx.fillText(title, 40, frontCanvas.height - 50);
             frontCtx.shadowColor = 'transparent';
         }
 
@@ -127,7 +126,6 @@ const CustomCardDesigner = () => {
             drawRoundedRect(backCtx, 0, 0, backCanvas.width, backCanvas.height, 20);
             backCtx.drawImage(backImage, 0, 0, backCanvas.width, backCanvas.height);
 
-            // Back logo logic remains
             if (backLogoUrl) {
                 const logoImage = new Image();
                 logoImage.src = backLogoUrl;
@@ -139,7 +137,7 @@ const CustomCardDesigner = () => {
                 backCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
                 backCtx.fillRect((backCanvas.width - backLogoSize) / 2, (backCanvas.height - backLogoSize) / 2, backLogoSize, backLogoSize);
                 backCtx.fillStyle = '#ffffff';
-                backCtx.font = 'bold 12px Arial';
+                backCtx.font = 'bold 16px Arial';
                 backCtx.textAlign = 'center';
                 backCtx.fillText('Качете лого/изображение', backCanvas.width / 2, backCanvas.height / 2);
             }
@@ -172,62 +170,57 @@ const CustomCardDesigner = () => {
     };
 
     const increaseFontSizeName = () => setFontSizeName((prev) => Math.min(prev + 2, 40));
-    const decreaseFontSizeName = () => setFontSizeName((prev) => Math.max(prev - 2, 10));
+    const decreaseFontSizeName = () => setFontSizeName((prev) => Math.max(prev - 2, 20));
 
-    const increaseFontSizeTitle = () => setFontSizeTitle((prev) => Math.min(prev + 2, 30));
-    const decreaseFontSizeTitle = () => setFontSizeTitle((prev) => Math.max(prev - 2, 10));
+    const increaseFontSizeTitle = () => setFontSizeTitle((prev) => Math.min(prev + 2, 32));
+    const decreaseFontSizeTitle = () => setFontSizeTitle((prev) => Math.max(prev - 2, 16));
 
-    const increaseBackLogoSize = () => setBackLogoSize((prev) => Math.min(prev + 10, 250));
+    const increaseBackLogoSize = () => setBackLogoSize((prev) => Math.min(prev + 10, 280));
     const decreaseBackLogoSize = () => setBackLogoSize((prev) => Math.max(prev - 10, 50));
 
     return (
-        <div className="designer-container text-white flex flex-col items-center p-8 rounded-lg shadow-lg">
-            <h1 className="text-3xl font-bold mb-6">Дизайн на NFC Карта</h1>
-            <div className="card-preview flex flex-col lg:flex-row gap-8">
-                <div className='row'>
+        <div className="designer-container text-white flex flex-col items-center p-10 rounded-lg  bg-gray-800">
+            <h1 className="text-4xl font-bold mb-8">Дизайн на NFC Карта</h1>
+            <div className="card-preview grid gap-8">
+                <div className="row">
                     <h3 className="text-center text-lg font-bold mb-2">Предна част на картата</h3>
-                    <canvas ref={frontCanvasRef} width={502} height={318} className="rounded-lg shadow-lg w-full max-w-xs lg:max-w-none"></canvas>
+                    <canvas ref={frontCanvasRef} width={602} height={368} className="rounded-lg shadow-lg w-full"></canvas>
+                </div>
+                <div className="row">
+                    <h3 className="text-center text-lg font-bold mb-2">Задна част на картата</h3>
+                    <canvas ref={backCanvasRef} width={610} height={368} className="rounded-lg shadow-lg w-full"></canvas>
                 </div>
             </div>
-            <div className="controls mt-6 w-full max-w-lg">
-                <label className="block text-sm font-medium mt-4 mb-1">
+            <div className="controls mt-8 w-full max-w-lg space-y-6">
+                <label className="block text-sm font-medium">
                     Име:
                     <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </label>
-                <label className="block text-sm font-medium mt-4 mb-1">
+                <label className="block text-sm font-medium">
                     Позиция:
                     <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </label>
-                <div className="flex items-center justify-between mt-4">
-                    <label className="text-sm font-lg">Размер на шрифт за име:</label>
+                <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Размер на шрифт за име:</label>
                     <div className="flex space-x-2">
                         <button onClick={decreaseFontSizeName} className="px-2 py-1 bg-gray-600 text-white rounded">-</button>
                         <span>{fontSizeName}</span>
                         <button onClick={increaseFontSizeName} className="px-2 py-1 bg-gray-600 text-white rounded">+</button>
                     </div>
                 </div>
-                <div className="flex items-center justify-between mt-4">
-                    <label className="text-sm font-lg">Размер на шрифт за позиция Ви:</label>
+                <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Размер на шрифт за позиция Ви:</label>
                     <div className="flex space-x-2">
                         <button onClick={decreaseFontSizeTitle} className="px-2 py-1 bg-gray-600 text-white rounded">-</button>
                         <span>{fontSizeTitle}</span>
                         <button onClick={increaseFontSizeTitle} className="px-2 py-1 bg-gray-600 text-white rounded">+</button>
                     </div>
                 </div>
-                <label className="block text-sm font-medium mt-4 mb-1">
+                <label className="block text-sm font-medium">
                     Данни за QR код:
                     <input type="text" value={qrCodeData} onChange={(e) => setQrCodeData(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </label>
-            </div>
-
-            <div className="card-preview flex flex-col lg:flex-row gap-8">
-                <div className='row'>
-                    <h3 className="text-center text-lg font-bold mb-2">Задна част на картата</h3>
-                    <canvas ref={backCanvasRef} width={510} height={318} className="rounded-lg shadow-lg w-full max-w-xs lg:max-w-none"></canvas>
-                </div>
-            </div>
-            <div className="controls mt-6 w-full max-w-lg">
-                <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center justify-between">
                     <label className="text-sm font-medium">Промяна на размер на лого отзад:</label>
                     <div className="flex space-x-2">
                         <button onClick={decreaseBackLogoSize} className="px-2 py-1 bg-gray-600 text-white rounded">-</button>
@@ -235,12 +228,11 @@ const CustomCardDesigner = () => {
                         <button onClick={increaseBackLogoSize} className="px-2 py-1 bg-gray-600 text-white rounded">+</button>
                     </div>
                 </div>
-                <label className="block text-sm font-medium mt-4 mb-1">
+                <label className="block text-sm font-medium">
                     Качете лого/изображение отзад:
                     <input type="file" onChange={(e) => handleLogoUpload(e, setBackLogoUrl)} className="mt-2 w-full p-2 border border-gray-400 rounded-lg bg-gray-700 text-white cursor-pointer" />
                 </label>
             </div>
-
             <button onClick={handleSaveDesign} className="mt-6 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 w-full max-w-xs">
                 Запазване на дизайна
             </button>
