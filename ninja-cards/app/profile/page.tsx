@@ -98,7 +98,7 @@ function ProfileContent() {
     }, [activeTab]);
 
     return (
-        <div className="flex flex-col items-center pt-24 sm:pt-32 justify-center min-h-screen p-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200">
+        <div className="flex flex-col items-center pt-28 sm:pt-36 justify-center min-h-screen p-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200">
             <div className="w-full max-w-4xl">
                 <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 text-center">Управление на профила</h2>
                 <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
