@@ -1,8 +1,6 @@
 "use client";
-// pages/add-product.tsx
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import internal from 'stream';
 import { BASE_API_URL } from '@/utils/constants';
 
 export default function AddProduct() {
@@ -12,11 +10,11 @@ export default function AddProduct() {
         title: '',
         description: '',
         price: '',
-        imageUrl: '',
-        nfcType: '',
-        features: [''],
-        benefits: [''],
+        type: 'smart cards',  // Default to the first option
     });
+    const [image, setImage] = useState<File | null>(null);
+    const [frontImage, setFrontImage] = useState<File | null>(null);
+    const [backImage, setBackImage] = useState<File | null>(null);
 
     const router = useRouter();
     const adminPassword = "yourSecretPassword"; // Replace with your secret password
@@ -30,48 +28,53 @@ export default function AddProduct() {
         }
     };
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
+    const handleChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+        field: string
+    ) => {
         setProduct({
             ...product,
             [field]: e.target.value,
         });
     };
 
-    const handleArrayChange = (e: ChangeEvent<HTMLInputElement>, field: 'features' | 'benefits', index: number) => {
-        const newArray = [...product[field]];
-        newArray[index] = e.target.value;
-        setProduct({
-            ...product,
-            [field]: newArray,
-        });
-    };
 
-    const addArrayItem = (field: 'features' | 'benefits') => {
-        setProduct({
-            ...product,
-            [field]: [...product[field], ''],
-        });
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>, setFile: React.Dispatch<React.SetStateAction<File | null>>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setFile(e.target.files[0]);
+        }
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const productData = {
-            ...product,
-            price: parseFloat(product.price),
-            features: product.features.filter(Boolean),
-            benefits: product.benefits.filter(Boolean),
-        };
+
+        const formData = new FormData();
+        formData.append('title', product.title);
+        formData.append('description', product.description);
+        formData.append('price', product.price);
+        formData.append('type', product.type);
+
+        if (image) {
+            formData.append('image', image);
+        }
+        if (frontImage) {
+            formData.append('frontImage', frontImage);
+        }
+        if (backImage) {
+            formData.append('backImage', backImage);
+        }
+        console.log(formData);
+        console.log(image);
+
 
         const response = await fetch(`${BASE_API_URL}/api/admin/addProduct`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(productData),
+            body: formData,  // Send the FormData with the files
         });
+        console.log(response.statusText);
 
         if (response.ok) {
-            router.push('/'); // Redirect to homepage or product list after submission
+            router.push('/');  // Redirect to homepage or product list after submission
         } else {
             console.error('Failed to add product');
         }
@@ -106,45 +109,69 @@ export default function AddProduct() {
     return (
         <div className="max-w-2xl mx-auto p-6 shadow-lg rounded-md bg-gray-700 text-white">
             <h1 className="text-3xl font-bold mb-6 text-center">Add New Product</h1>
-            <form onSubmit={handleSubmit}>
-                {['title', 'description', 'price', 'imageUrl', 'nfcType'].map((field) => (
+            <form onSubmit={handleSubmit} encType="multipart/form-data">
+                {['title', 'description', 'price'].map((field) => (
                     <div key={field} className="mb-6">
                         <label className="block text-sm font-medium capitalize">
-                            {field === 'imageUrl' ? 'Image URL' : field.charAt(0).toUpperCase() + field.slice(1)}
+                            {field.charAt(0).toUpperCase() + field.slice(1)}
                         </label>
                         <input
                             type={field === 'price' ? 'number' : 'text'}
-                            className="mt-1 block w-full p-1 rounded-md border-gray-300  text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            className="mt-1 block w-full p-1 rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             value={product[field as keyof typeof product]}
                             onChange={(e) => handleChange(e, field)}
                             required
                         />
                     </div>
                 ))}
-                {['features', 'benefits'].map((field) => (
-                    <div key={field} className="mb-6">
-                        <label className="block text-sm font-medium  capitalize">
-                            {field.charAt(0).toUpperCase() + field.slice(1)}
-                        </label>
-                        {/* {product[field as keyof typeof product].map((item: any, index: number) => (
-                            <input
-                                key={index}
-                                type="text"
-                                className="mt-1 block text-black w-full p-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                value={item}
-                                onChange={(e) => handleArrayChange(e, field as 'features' | 'benefits', index)}
-                                placeholder={`${field.charAt(0).toUpperCase() + field.slice(1)} ${index + 1}`}
-                            />
-                        ))} */}
-                        <button
-                            type="button"
-                            className="mt-2 text-indigo-500 hover:text-indigo-600"
-                            onClick={() => addArrayItem(field as 'features' | 'benefits')}
-                        >
-                            + Add another {field.slice(0, -1)}
-                        </button>
-                    </div>
-                ))}
+
+                {/* File inputs for images */}
+                <div className="mb-6">
+                    <label className="block text-sm font-medium">Main Image</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="mt-1 block w-full p-1 rounded-md border-gray-300 text-black shadow-sm"
+                        onChange={(e) => handleFileChange(e, setImage)}
+                        required
+                    />
+                </div>
+
+                <div className="mb-6">
+                    <label className="block text-sm font-medium">Front Image</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="mt-1 block w-full p-1 rounded-md border-gray-300 text-black shadow-sm"
+                        onChange={(e) => handleFileChange(e, setFrontImage)}
+                    />
+                </div>
+
+                <div className="mb-6">
+                    <label className="block text-sm font-medium">Back Image</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="mt-1 block w-full p-1 rounded-md border-gray-300 text-black shadow-sm"
+                        onChange={(e) => handleFileChange(e, setBackImage)}
+                    />
+                </div>
+
+                {/* Type selection */}
+                <div className="mb-6">
+                    <label className="block text-sm font-medium">Type</label>
+                    <select
+                        value={product.type}
+                        onChange={(e) => handleChange(e as ChangeEvent<HTMLSelectElement>, 'type')}
+                        className="mt-1 block w-full p-1 rounded-md border-gray-300 text-black shadow-sm"
+                        required
+                    >
+                        <option value="smart cards">Smart Cards</option>
+                        <option value="reviews">Reviews</option>
+                        <option value="stickers">Stickers</option>
+                    </select>
+                </div>
+
                 <button
                     type="submit"
                     className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
