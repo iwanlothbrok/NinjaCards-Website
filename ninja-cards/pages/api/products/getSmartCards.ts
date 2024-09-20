@@ -10,11 +10,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'GET') {
         try {
-            const products = await prisma.product.findMany();
-            res.status(200).json(products);
+            const smartCards = await prisma.product.findMany({
+                where: {
+                    type: 'smart cards',
+                },
+            });
+            res.status(200).json(smartCards);
         } catch (error) {
-            console.error('Error fetching products:', error);
-            res.status(500).json({ error: 'Error fetching products' });
+            console.error('Error fetching smart cards:', error);
+            res.status(500).json({ error: 'Error fetching smart cards' });
         }
     } else {
         res.status(405).json({ message: 'Method not allowed' });

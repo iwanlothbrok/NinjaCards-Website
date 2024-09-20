@@ -1,69 +1,95 @@
-// pages/api/products.js
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import fs from 'fs';
+import formidable, { IncomingForm, Fields, Files } from 'formidable';
 import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
+export const config = {
+    api: {
+        bodyParser: false,  // We will handle form data manually
+    },
+};
+const parseForm = (req: NextApiRequest): Promise<{ fields: Fields; files: Files }> => {
+    const form = new IncomingForm({
+        multiples: false,    // No need for multiple file uploads in this case
+        keepExtensions: true,
+    });
+
+    return new Promise((resolve, reject) => {
+        form.parse(req, (err, fields, files) => {
+            if (err) reject(err);
+            resolve({ fields, files });
+        });
+    });
+};
+
+// Helper function to parse the incoming form data
+const parseField = (field: string | string[] | undefined): string | undefined => {
+    if (Array.isArray(field)) {
+        return field[0]; // Extract the first element if it's an array
+    }
+    return field; // Return the value if it's a single string
+};
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const corsHandled = cors(req, res);
-    if (corsHandled) return; // If it's a preflight request, stop further execution
+    if (corsHandled) return; // Stop if this is a CORS preflight request
 
     if (req.method === 'POST') {
-        const { title, description, price, imageUrl, nfcType, features, benefits } = req.body;
-        if (
-            !title || !description || !price || !imageUrl ||
-            !features || !benefits) {
-            return res.status(400).json({ error: 'All fields are required' });
-        }
         try {
+            const { fields, files } = await parseForm(req);
+
+            // Safely extract fields and ensure they are strings
+            const title = parseField(fields.title);
+            const description = parseField(fields.description);
+            const price = parseField(fields.price);
+            const type = parseField(fields.type);
+
+            // Check if all required fields are present
+            if (!title || !description || !price || !type) {
+                return res.status(400).json({ error: 'Title, description, price, and type are required' });
+            }
+
+            // Restrict 'type' field to allowed values
+            const allowedTypes = ['smart cards', 'reviews', 'stickers'];
+            if (!allowedTypes.includes(type)) {
+                return res.status(400).json({ error: `Type must be one of: ${allowedTypes.join(', ')}` });
+            }
+
+            // Handle images as in the previous example
+            const processImage = (imageFile: formidable.File | undefined) => {
+                if (!imageFile) return null;
+                // if (imageFile.size > 700 * 1024) {
+                //     throw new Error('Image size exceeds the 700 KB limit');
+                // }
+                const imageData = fs.readFileSync(imageFile.filepath);
+                return imageData.toString('base64');
+            };
+
+            const image = processImage(Array.isArray(files.image) ? files.image[0] : files.image);
+            const frontImage = processImage(Array.isArray(files.frontImage) ? files.frontImage[0] : files.frontImage);
+            const backImage = processImage(Array.isArray(files.backImage) ? files.backImage[0] : files.backImage);
+
+            // Create the product in the database
             const product = await prisma.product.create({
                 data: {
                     title,
                     description,
-                    price,
-                    imageUrl,
-                    nfcType,
-                    features: {
-                        create: features.map((name: string) => ({ name })),
-                    },
-                    benefits: {
-                        create: benefits.map((name: string) => ({ name })),
-                    },
+                    price: parseFloat(price),
+                    type,
+                    image,
+                    frontImage,
+                    backImage,
                 },
             });
 
             res.status(201).json(product);
-        } catch (error) {
-            res.status(500).json({ error: 'Error creating product' });
+        } catch (error: any) {
+            console.error('Error creating product:', error);
+            res.status(500).json({ error: 'Failed to create product', details: error.message });
         }
     } else {
-        res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).json({ error: 'Method not allowed' });
     }
 }
-
-
-//         if (!name || !email || !subject || !phone) {
-//             return res.status(400).json({ error: 'All fields are required' });
-//         }
-
-//         if (!validateEmail(email)) {
-//             return res.status(400).json({ error: 'Invalid email address' });
-//         }
-
-//         // You can add more validation logic here
-//         const contact = await prisma.contact.create({
-//             data: {
-//                 name,
-//                 email,
-//                 phone,
-//                 subject
-//             },
-//         });
-//         // Simulate email sending (you would normally send an email here)
-//         return res.status(200).json(contact);
-//     } else {
-//         res.setHeader('Allow', ['POST']);
-//         return res.status(405).end(`Method ${req.method} Not Allowed`);
-//     }
-// }
