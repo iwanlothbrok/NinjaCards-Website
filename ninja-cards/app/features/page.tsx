@@ -12,47 +12,83 @@ interface FeatureProps {
 
 const FeatureItemLeftImage: React.FC<FeatureProps> = ({ header, mainHeader, description, imagePath, buttonText, buttonLink }) => {
     return (
-        <div className="container mx-auto flex flex-col-reverse md:flex-row items-center px-4 md:px-16 mb-12 md:mb-16">
-            <div className="w-full md:w-2/5 md:order-1 mb-6 md:mb-0 md:mr-10">
-                <img src={imagePath} alt={mainHeader} className="w-full rounded-lg shadow-md" />
+        <div className="container mx-auto flex flex-col-reverse md:flex-row items-center px-6 md:px-20 mb-14 md:mb-20">
+            {/* Image Section */}
+            <div className="w-full md:w-2/5 mb-8 md:mb-0 md:mr-5">
+                <img
+                    src={imagePath}
+                    alt={mainHeader}
+                    className="w-full h-auto rounded-lg shadow-lg object-cover transition-transform duration-300 hover:scale-105"
+                />
             </div>
-            <div className="w-full md:w-2/4 order-2 md:px-16">
-                <h4 className='text-sm md:text-lg text-gray-500 uppercase mb-1 md:mb-2'>{header}</h4>
-                <h2 className="text-xl md:text-3xl font-bold text-gray-200 mb-2 md:mb-4">{mainHeader}</h2>
-                <p className="text-sm md:text-base text-gray-300 mb-4 md:mb-6">
+
+            {/* Content Section */}
+            <div className="w-full md:w-3/5 md:px-20 text-center md:text-left">
+                <h4 className="text-sm md:text-lg text-gray-400 uppercase mb-2 tracking-wider">
+                    {header}
+                </h4>
+                <h2 className="text-2xl md:text-4xl font-extrabold text-gray-100 mb-4">
+                    {mainHeader}
+                </h2>
+                <p className="text-sm md:text-lg text-gray-300 leading-relaxed mb-6">
                     {description}
                 </p>
+
+                {/* Button Section */}
                 {buttonText && buttonLink && (
-                    <a href={buttonLink} className="inline-block bg-black text-white py-2 px-4 mb-5 rounded text-sm md:text-base">
+                    <a
+                        href={buttonLink}
+                        className="inline-block bg-orange text-white py-2 px-6 rounded-lg shadow-lg transition-all duration-300 focus:ring-4 focus:ring-orange"
+                        aria-label={`Learn more about ${mainHeader}`}
+                    >
                         {buttonText}
                     </a>
                 )}
             </div>
         </div>
     );
-}
+};
+
 
 const FeatureItemRightImage: React.FC<FeatureProps> = ({ header, mainHeader, description, imagePath, buttonText, buttonLink }) => {
     return (
-        <div className="container mx-auto flex flex-col-reverse md:flex-row items-center px-4 md:px-16 mb-12 md:mb-16">
-            <div className="w-full md:w-2/5 md:order-2 mb-6 md:mb-0 md:ml-16">
-                <img src={imagePath} alt={mainHeader} className="w-full rounded-lg h-full shadow-md" />
-            </div>
-            <div className="w-full md:w-2/4 md:px-10">
-                <h4 className='text-sm md:text-lg text-gray-500 uppercase mb-1 md:mb-2'>{header}</h4>
-                <h2 className="text-xl md:text-3xl font-bold text-gray-200 mb-2 md:mb-4">{mainHeader}</h2>
-                <p className="text-sm md:text-base text-gray-300 mb-4 md:mb-6">
+        <div className="container mx-auto flex flex-col-reverse md:flex-row items-center px-6 md:px-20 mb-14 md:mb-20">
+            {/* Content Section */}
+            <div className="w-full md:w-3/5 md:px-20 text-center md:text-left">
+                <h4 className="text-sm md:text-lg text-gray-400 uppercase mb-2 tracking-wider">
+                    {header}
+                </h4>
+                <h2 className="text-2xl md:text-4xl font-extrabold text-gray-100 mb-4">
+                    {mainHeader}
+                </h2>
+                <p className="text-sm md:text-lg text-gray-300 leading-relaxed mb-6">
                     {description}
                 </p>
+
+                {/* Button Section */}
                 {buttonText && buttonLink && (
-                    <a href={buttonLink} className="inline-block bg-black text-white py-2 px-4 mb-5 rounded text-sm md:text-base">
+                    <a
+                        href={buttonLink}
+                        className="inline-block bg-orange text-white py-2 px-6 rounded-lg shadow-lg transition-all duration-300  focus:ring-4 focus:ring-orange"
+                        aria-label={`Learn more about ${mainHeader}`}
+                    >
                         {buttonText}
                     </a>
                 )}
             </div>
+
+            {/* Image Section */}
+            <div className="w-full md:w-2/5 mb-8 md:mb-0 md:ml-12">
+                <img
+                    src={imagePath}
+                    alt={mainHeader}
+                    className="w-full h-auto rounded-lg shadow-lg object-cover transition-transform duration-300 hover:scale-105"
+                />
+            </div>
         </div>
     );
-}
+};
+
 
 export default function Features() {
     return (
@@ -62,81 +98,54 @@ export default function Features() {
                 header="NFC & QR код"
                 mainHeader="Споделяне на контакти"
                 description="С NFC дигиталната визитка на NinjaCard, споделянето на вашите контакти става безпроблемно. Просто докоснете вашата NinjaCard NFC карта към друго устройство с NFC и вашият дигитален профил ще бъде споделен мигновено."
-                imagePath="/01.webp"
+                imagePath="/features/01.png"
                 buttonText="Примерен профил"
-                buttonLink="#"
+                buttonLink="https://www.ninjacardsnfc.com/profileDetails/1"
             />
 
             <FeatureItemRightImage
                 header="Генериране на потенциални клиенти"
                 mainHeader="Уловете нови контакти"
-                description="Всяка NinjaCard NFC дигитална визитка разполага с мощен инструмент за генериране на нови контакти чрез бутона 'Обмен на контакти'. Тази функция ви позволява лесно да улавяте нови контакти, което я прави идеалния инструмент за разширяване на мрежата ви."
-                imagePath="/01.webp"
-                buttonText="Научете повече"
-                buttonLink="#"
+                description="Всяка NinjaCard NFC дигитална визитка разполага с мощен инструмент за генериране на нови контакти чрез бутона 'Разменете Контакти'. Тази функция ви позволява лесно да улавяте нови контакти, което я прави идеалния инструмент за разширяване на мрежата ви."
+                imagePath="/features/02.png"
+                buttonText=""
+                buttonLink=""
             />
 
             <FeatureItemLeftImage
                 header="Лесни актуализации"
                 mainHeader="Актуализирайте информацията си в реално време"
                 description="С NinjaCard можете да актуализирате вашата контактна информация по всяко време, като гарантирате, че вашата мрежа винаги разполага с най-новата информация. Просто докоснете вашия телефон, за да споделите актуализирания профил мигновено."
-                imagePath="/01.webp"
+                imagePath="/features/03.png"
                 buttonText="Актуализирайте сега"
-                buttonLink="#"
+                buttonLink="https://www.ninjacardsnfc.com/profile"
             />
 
             <FeatureItemRightImage
-                header="NFC срещу традиционни визитки"
-                mainHeader="Защо NFC картите са по-добри?"
-                description="NFC картите са екологични, многократно използваеми и позволяват мигновено споделяне на информация, за разлика от традиционните хартиени визитки, които лесно се губят или остаряват. Те са съвместими с повечето модерни устройства и осигуряват безпроблемно мрежово свързване."
-                imagePath="/01.webp"
-                buttonText="Научете повече"
-                buttonLink="#"
+                header="QR код"
+                mainHeader="Запазване и разпространяване на QR"
+                description="Ninja картата предлага възможност за изтегляне на QR код за вашата смарт визитка, което позволява лесно споделяне и достъпност на вашата информация. Тази функция рационализира процеса на достъп на клиенти и потребители до вашата информация и осигурява безпроблемно потребителско изживяване. Свържете се с нас днес, за да научите повече за тази опция."
+                imagePath="/features/04.png"
+                buttonText="Виж Тук"
+                buttonLink="https://www.ninjacardsnfc.com/profile?tab=profileQr"
             />
 
             <FeatureItemLeftImage
-                header="Сигурност"
-                mainHeader="Защита на данните"
-                description="NFC картите не съхраняват данни сами по себе си, а само задействат прехвърляне на информация към защитен URL, осигурявайки високо ниво на сигурност за вашата лична информация."
-                imagePath="/01.webp"
-                buttonText="Научете повече"
-                buttonLink="#"
+                header="Цветове на визитка"
+                mainHeader="Персонализиране на профила"
+                description="Профилът на вашата смарт визитка предлага опции за персонализиране, които ви позволяват да променяте цветовете. Тази гъвкавост гарантира, че вашата визитна картичка отразява идентичността на марката ви и се отличава от останалите. С Ninja Cards можете да създадете уникален и професионален профил за вашата визитка, който да привлича вниманието на вашите потенциални клиенти или партньори."
+                imagePath="/features/05.png"
+                buttonText=""
+                buttonLink=""
             />
 
             <FeatureItemRightImage
-                header="Персонализация"
-                mainHeader="Персонализирайте вашата карта"
-                description="NinjaCard предлага обширни опции за персонализация, включително брандиране, цветове и дизайни. Персонализирайте NFC визитката си, за да отразява личния или фирмения ви бранд, като я превърнете в запомнящ се и ефективен инструмент за мрежови връзки."
-                imagePath="/01.webp"
+                header="Връзки"
+                mainHeader="Полета в профила ви"
+                description="В профилите на Ninja Card можете да използвате над 40 полета, за да споделяте цялата необходима информация за вашия бизнес. Тази персонализирана функция Ви позволява да предоставите цялата необходима информация за контакт, връзки към социалните медии и др. на едно удобно място."
+                imagePath="/features/06.png"
                 buttonText="Персонализирайте сега"
-                buttonLink="#"
-            />
-
-            <FeatureItemLeftImage
-                header="Екологичност"
-                mainHeader="Устойчивост"
-                description="Използването на NFC карти намалява необходимостта от хартия, подкрепяйки усилията за устойчивост. Тези карти са многократно използваеми, намалявайки въздействието върху околната среда в сравнение с традиционните визитки."
-                imagePath="/01.webp"
-                buttonText="Изберете екологично"
-                buttonLink="#"
-            />
-
-            <FeatureItemRightImage
-                header="Най-добри практики"
-                mainHeader="Максимизирайте ефективността на NFC картата"
-                description="Редовно актуализирайте профила си с NFC карта, за да поддържате информацията актуална. По време на събития дръжте NFC картата на достъпни места за лесно споделяне и използвайте QR кодове за потребители без NFC."
-                imagePath="/01.webp"
-                buttonText="Научете най-добрите практики"
-                buttonLink="#"
-            />
-
-            <FeatureItemLeftImage
-                header="Глобална съвместимост"
-                mainHeader="Използвайте я навсякъде"
-                description="NFC технологията работи по целия свят, което ви позволява да споделяте своя профил или контактна информация с всеки, навсякъде. Перфектна за международни мрежови връзки и бизнес пътувания."
-                imagePath="/09.webp"
-                buttonText="Научете повече"
-                buttonLink="#"
+                buttonLink="https://www.ninjacardsnfc.com/profile?tab=links"
             />
         </div>
     );
