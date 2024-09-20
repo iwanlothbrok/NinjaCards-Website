@@ -19,7 +19,7 @@ const cardBackgroundOptions = [
         name: 'black',
         bgClass: "bg-black",
         textClass: "text-gray-200",      // Softer white for less harsh contrast
-        borderClass: "border-black",  // Dark gray to soften the black borders
+        borderClass: "border-orange",  // Dark gray to soften the black borders
         highlightClass: "text-orange", // Yellow for a bright and visible highlight
         cardCoverBgClass: "from-black",
         opposite: 'bg-white'
@@ -28,13 +28,13 @@ const cardBackgroundOptions = [
         name: 'white',
         bgClass: "bg-white",          // Softer off-white to reduce strain on the eyes
         textClass: "text-gray-900",      // Dark gray for better contrast than black
-        borderClass: "border-gray-300",  // Light gray to keep borders subtle
+        borderClass: "border-blue-600",  // Light gray to keep borders subtle
         highlightClass: "text-blue-600", // Blue highlight for a clean contrast
         cardCoverBgClass: "from-white",
         opposite: 'bg-black'
     },
     {
-        name: 'gray',
+        name: 'gray-600',
         bgClass: "bg-gray-800",          // Darker gray for a sleek modern look
         textClass: "text-gray-100",      // Light gray text to contrast well
         borderClass: "border-green-600",  // Slightly lighter border than background
@@ -52,7 +52,7 @@ const cardBackgroundOptions = [
         opposite: 'bg-orange'
     },
     {
-        name: 'teal',
+        name: 'teal-700',
         bgClass: "bg-teal-700",          // Bold teal background
         textClass: "text-white",         // White text for contrast
         borderClass: "border-teal-500",  // Darker teal border
@@ -396,7 +396,7 @@ const ProfileHeader: React.FC<{ user: User; cardStyle: any; isModalOpen: boolean
     >
         {/* Circular profile image with white background */}
         <div
-            className={`absolute top-20 rounded-full p-1 mt-32 bg-${cardStyle.name} shadow-lg`}
+            className={`absolute top-20 rounded-full  mt-32 bg-${cardStyle.name} shadow-lg`}
             style={{ zIndex: isModalOpen ? 0 : 20 }} // Lower z-index if modal is open
         >
             <motion.div
@@ -448,7 +448,7 @@ const BackgroundSelector: React.FC<{
                     key={name}
                     onClick={() => handleColorSelection(name)}
                     aria-label={`Select ${name} background`}
-                    className={`w-10 h-10 rounded-full border-2 transition-transform transform hover:scale-110 ${bgClass} ${cardStyle.name === name ? 'ring-4 ring-offset-2 ring-blue-500' : ''}`}
+                    className={`w-10 h-10 rounded-full border-2 transition-transform transform hover:scale-110 bg-${name} ${cardStyle.name === name ? 'ring-4 ring-offset-2 ring-blue-500' : ''}`}
                 >
                     {cardStyle.name === name && (
                         <svg
