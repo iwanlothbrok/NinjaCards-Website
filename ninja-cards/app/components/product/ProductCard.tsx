@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
 interface ProductCardProps {
@@ -60,14 +60,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, name, descripti
                 <h2 className="text-xl font-semibold text-white transition-colors duration-300 group-hover:text-orange">
                     {name}
                 </h2>
-                <p className="text-md font-semibold text-white transition-colors duration-300 group-hover:text-orange">
-                    {description}
-                </p>
+                {description && (
+                    <p className="text-md font-semibold text-white transition-colors duration-300 group-hover:text-orange">
+                        {description}
+                    </p>
+                )}
                 <a
                     href={`/product/${id}`}
                     className="mt-4 px-5 py-2 bg-orange text-white rounded-lg shadow hover:bg-opacity-50 transition-transform transform hover:scale-125"
                 >
-                    Buy Now
+                    НАУЧИ ПОВЕЧЕ
                 </a>
             </div>
             <a
@@ -75,36 +77,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, name, descripti
                 className="absolute inset-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange focus:ring-offset-2 "
                 style={{ cursor: 'pointer' }}
             >
-                <span className="sr-only">View {name}</span>
+                <span className="sr-only">ВИЖ {name}</span>
             </a>
         </motion.div>
     );
 };
 
 export const ProductGallery: React.FC = () => {
-    // const [products, setProducts] = useState<ProductCardProps[]>([]);
-
-    // useEffect(() => {
-    //     const fetchProducts = async () => {
-    //         try {
-    //             const response = await fetch('/api/admin/products?limit=3&sort=desc');
-    //             const data = await response.json();
-    //             setProducts(data.products.map((product: any) => ({
-    //                 id: product.id,
-    //                 imageUrl: product.imageUrl, // Assuming API returns the URL of the image
-    //                 name: product.title,
-    //                 description: product.description
-    //             })));
-    //         } catch (error) {
-    //             console.error('Failed to fetch products:', error);
-    //         }
-    //     };
-
-    //     fetchProducts();
-    // }, []);
-
     return (
-        <div className="bg-gradient-to-b from-black to-gray-950 py-16">
+        <div className="bg-gradient-to-b from-black to-gray-950 py-16 p-1">
             <motion.div
                 initial="hidden"
                 animate="visible"
@@ -121,7 +102,7 @@ export const ProductGallery: React.FC = () => {
                         hidden: { opacity: 0, y: -40 },
                     }}
                     transition={{ duration: 1.5 }}
-                    className="inline-block  px-3 py-1  text-sm font-semibold text-indigo-100 rounded-full bg-[#202c47] bg-opacity-60 hover:bg-opacity-50"
+                    className="inline-block px-3 py-1 text-sm font-semibold text-indigo-100 rounded-full bg-[#202c47] bg-opacity-60 hover:bg-opacity-50"
                 >
                     Продукти
                 </motion.div>
@@ -147,40 +128,30 @@ export const ProductGallery: React.FC = () => {
                 </motion.p>
             </motion.div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4 md:px-16">
-                {/* {products.map(product => (
-                    <ProductCard
-                        key={product.id}
-                        id={product.id}
-                        imageUrl={product.imageUrl}
-                        name={product.name}
-                        description={product.description}
-                    />
-                ))} */}
-
                 <ProductCard
                     key={1}
-                    id={'nfcCards'}
-                    imageUrl={'/cards/gr-1.png'}
-                    name={'NFC Cards'}
-                    description={''}
+                    id="nfcCards"
+                    imageUrl="/cards/wa-1.png"
+                    name="Смарт Визитки"
+                    description="Персонализирани NFC визитки за модерен контакт."
                 />
 
                 <ProductCard
                     key={2}
-                    id={'googleReveiws'}
-                    imageUrl={'/cards/wa-1.png'}
-                    name={'Google Reviews'}
-                    description={''}
+                    id="googleReviews"
+                    imageUrl="/cards/gr-1.png"
+                    name="Ревюта"
+                    description="Удобен начин за събиране на Google, Tripadvisor и други отзиви."
                 />
+
 
                 <ProductCard
                     key={3}
-                    id={'nfcProducts'}
-                    imageUrl={'/cards/mh-1.png'}
-                    name={'Google Reviews'}
-                    description={''}
+                    id="stickers"
+                    imageUrl="/cards/stickers.png"
+                    name="Стикери"
+                    description="Удобен начин за събиране на Google отзиви."
                 />
-
             </div>
         </div>
     );

@@ -97,11 +97,11 @@ const ContactForm: React.FC = () => {
                 <form onSubmit={handleSubmit} className="md:col-span-8 p-10 bg-gray-900">
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" htmlFor="name">
+                            <label className="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2" htmlFor="name">
                                 Име
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-400 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                                 id="name"
                                 name="name"
                                 type="text"
@@ -111,11 +111,11 @@ const ContactForm: React.FC = () => {
                             />
                         </div>
                         <div className="w-full md:w-1/2 px-3">
-                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" htmlFor="phone">
+                            <label className="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2" htmlFor="phone">
                                 Телефонен номер
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-400 border border-gray-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                                 id="phone"
                                 name="phone"
                                 type="text"
@@ -128,11 +128,11 @@ const ContactForm: React.FC = () => {
 
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full px-3">
-                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" htmlFor="email">
+                            <label className="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2" htmlFor="email">
                                 Имейл адрес
                             </label>
                             <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-400 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                                 id="email"
                                 name="email"
                                 type="email"
@@ -145,11 +145,11 @@ const ContactForm: React.FC = () => {
 
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full px-3">
-                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" htmlFor="subject">
+                            <label className="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2" htmlFor="subject">
                                 Вашето съобщение
                             </label>
                             <textarea
-                                className="appearance-none block w-full bg-gray-200 text-gray-400 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                                 id="subject"
                                 name="subject"
                                 rows={10}
