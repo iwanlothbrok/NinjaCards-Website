@@ -6,9 +6,10 @@ interface ProductCardProps {
     imageUrl: string;
     name: string;
     description: string;
+    type: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, name, description }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, name, description, type }) => {
     const controls = useAnimation();
     const cardRef = useRef(null);
 
@@ -66,14 +67,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, name, descripti
                     </p>
                 )}
                 <a
-                    href={`/product/${id}`}
+                    href={`/products/${type}`}
                     className="mt-4 px-5 py-2 bg-orange text-white rounded-lg shadow hover:bg-opacity-50 transition-transform transform hover:scale-125"
                 >
                     НАУЧИ ПОВЕЧЕ
                 </a>
             </div>
             <a
-                href={`/product/${id}`}
+                href={`/products/${type}`}
                 className="absolute inset-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange focus:ring-offset-2 "
                 style={{ cursor: 'pointer' }}
             >
@@ -134,6 +135,7 @@ export const ProductGallery: React.FC = () => {
                     imageUrl="/cards/wa-1.png"
                     name="Смарт Визитки"
                     description="Персонализирани NFC визитки за модерен контакт."
+                    type='cards'
                 />
 
                 <ProductCard
@@ -142,6 +144,7 @@ export const ProductGallery: React.FC = () => {
                     imageUrl="/cards/gr-1.png"
                     name="Ревюта"
                     description="Удобен начин за събиране на Google, Tripadvisor и други отзиви."
+                    type='reviews'
                 />
 
 
@@ -151,6 +154,7 @@ export const ProductGallery: React.FC = () => {
                     imageUrl="/cards/stickers.png"
                     name="Стикери"
                     description="Удобен начин за събиране на Google отзиви."
+                    type='all'
                 />
             </div>
         </div>
