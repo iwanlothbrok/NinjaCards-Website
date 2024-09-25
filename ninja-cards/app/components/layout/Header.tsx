@@ -22,22 +22,22 @@ const Header: React.FC<HeaderProps> = ({ pageInformation, textOne, textTwo, text
                         <h1 className="text-5xl mb-5 font-bold text-white animate-slide-in-down">
                             {pageInformation}
                         </h1>
-                        <nav aria-label="breadcrumb">
-                            <ol className="flex justify-center space-x-4 text-white">
+                        <nav aria-label="breadcrumb text-">
+                            <ol className="flex justify-center space-x-4 text-orange">
                                 <li>
-                                    <p className='text-xl text-white'>{textOne}</p>
+                                    <p className='text-xl '>{textOne}</p>
                                 </li>
                                 <li>
-                                    <span> | </span>
+                                    <span className='text-white'> | </span>
                                 </li>
                                 <li>
-                                    <p className='text-xl text-white'>{textTwo}</p>
+                                    <p className='text-xl '>{textTwo}</p>
                                 </li>
                                 <li>
-                                    <span> | </span>
+                                    <span className='text-white'> | </span>
                                 </li>
                                 <li>
-                                    <p className='text-xl text-white'>{textThree}</p>
+                                    <p className='text-xl '>{textThree}</p>
                                 </li>
                             </ol>
                         </nav>
