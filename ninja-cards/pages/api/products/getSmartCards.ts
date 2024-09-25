@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const smartCards = await prisma.product.findMany({
                 where: {
-                    type: 'smart cards',
+                    type: 'cards',
                 },
             });
             res.status(200).json(smartCards);
