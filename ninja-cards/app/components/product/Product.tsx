@@ -48,13 +48,22 @@ const Product: React.FC<ProductProps> = ({
                         ))}
                     </Slider>
 
-                    {/* Product Info */}
-                    <div>
-                        <h2 className="text-5xl font-bold text-orange-400">{title}</h2>
-                        <p className="mt-2 text-4xl font-semibold text-orange-500">{price}</p>
-                        <p className="mt-4 text-gray-300 leading-relaxed">{description}</p>
-                    </div>
+                    <div className="space-y-4">
+                        <h2 className="text-3xl font-bold text-orange-400">{title}</h2>
 
+                        <div className="flex items-center space-x-4">
+                            {/* Old price with strikethrough */}
+                            <p className="text-4xl  text-red-500 line-through">117 лв.</p>
+
+                            {/* Current price */}
+                            <p className="text-3xl font-semibold text-green-600">{price} лв.</p>
+
+
+                        </div>
+
+                        {/* Description - Uncomment if you need this */}
+                        {/* <p className="mt-4 text-gray-300 leading-relaxed">{description}</p> */}
+                    </div>
                     {/* Benefits Section */}
                     <div className="mt-8">
                         <ul className="space-y-4">
