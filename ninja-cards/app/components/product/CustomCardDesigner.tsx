@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import QRCode from 'qrcode';
+import { BASE_API_URL } from '@/utils/constants';
 
 const CustomCardDesigner = () => {
     const [qrCodeData, setQrCodeData] = useState<string>('https://example.com');
@@ -14,8 +15,10 @@ const CustomCardDesigner = () => {
     const backCanvasRef = useRef<HTMLCanvasElement>(null);
     const [frontImage, setFrontImage] = useState<HTMLImageElement | null>(null);
     const [backImage, setBackImage] = useState<HTMLImageElement | null>(null);
-    const [qrColor, setQrColor] = useState<string>('#ffffff');
-    const [textColor, setTextColor] = useState<string>('#ffffff');
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [userName, setUserName] = useState<string>('');
+    const [userEmail, setUserEmail] = useState<string>('');
+    const [userPhone, setUserPhone] = useState<string>('');
 
     useEffect(() => {
         const img1 = new Image();
@@ -31,19 +34,19 @@ const CustomCardDesigner = () => {
             width: 100,
             margin: 2,
             color: {
-                dark: qrColor,
+                dark: '#ffffff',
                 light: '#00000000',
             },
         })
             .then(url => setQrCodeUrl(url))
             .catch(err => console.error(err));
-    }, [qrCodeData, qrColor]);
+    }, [qrCodeData, '#ffffff']);
 
     useEffect(() => {
         if (frontImage && backImage) {
             drawCard();
         }
-    }, [frontImage, backImage, qrCodeUrl, name, title, backLogoUrl, fontSizeName, fontSizeTitle, backLogoSize, textColor]);
+    }, [frontImage, backImage, qrCodeUrl, name, title, backLogoUrl, fontSizeName, fontSizeTitle, backLogoSize, '#ffffff']);
 
     const drawRoundedRect = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) => {
         ctx.beginPath();
@@ -106,7 +109,7 @@ const CustomCardDesigner = () => {
                 };
             }
 
-            frontCtx.fillStyle = textColor;
+            frontCtx.fillStyle = '#ffffff';
             frontCtx.font = `bold ${fontSizeName}px Arial`;
             frontCtx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             frontCtx.shadowOffsetX = 2;
@@ -157,16 +160,54 @@ const CustomCardDesigner = () => {
     };
 
     const handleSaveDesign = () => {
+        setShowModal(true); // Show the modal when the user clicks save
+    };
+
+    const handleSubmitForm = async (e: React.FormEvent) => {
+        e.preventDefault();
+
         const frontCanvas = frontCanvasRef.current;
         const backCanvas = backCanvasRef.current;
 
+        let frontDataUrl = '';
+        let backDataUrl = '';
         if (frontCanvas && backCanvas) {
-            const frontDataUrl = frontCanvas.toDataURL('image/png');
-            const backDataUrl = backCanvas.toDataURL('image/png');
-
-            console.log('Запазено преден дизайн:', frontDataUrl);
-            console.log('Запазено заден дизайн:', backDataUrl);
+            frontDataUrl = frontCanvas.toDataURL('image/png');
+            backDataUrl = backCanvas.toDataURL('image/png');
         }
+
+        let data = {
+            cardName: name,
+            cardTitle: title,
+            userName,
+            userPhone,
+            userEmail,
+            frontDataUrl,
+            backDataUrl
+        };
+
+        // Make API call to save the data
+        try {
+            const response = await fetch(`${BASE_API_URL}/api/saveCardDesign`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Card design saved:', result);
+                // Optionally, show a success message to the user
+            } else {
+                console.error('Failed to save card design');
+            }
+        } catch (error) {
+            console.error('Error saving card design:', error);
+        }
+
+        setShowModal(false); // Hide modal after submission
     };
 
     const increaseFontSizeName = () => setFontSizeName((prev) => Math.min(prev + 2, 40));
@@ -236,6 +277,32 @@ const CustomCardDesigner = () => {
             <button onClick={handleSaveDesign} className="mt-6 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 w-full max-w-xs">
                 Запазване на дизайна
             </button>
+
+            {showModal && (
+                <div className="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-black p-6 rounded-lg shadow-lg">
+                        <h2 className="text-2xl font-bold mb-4">Изпрати Дизайн</h2>
+                        <form onSubmit={handleSubmitForm} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium">Име:</label>
+                                <input type="text" value={userName} onChange={(e) => setUserName(e.target.value)} required className="mt-2 p-2 w-full border text-black rounded" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium">Имейл:</label>
+                                <input type="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} required className="mt-2 p-2 w-full border text-black rounded" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium">Телефон:</label>
+                                <input type="tel" value={userPhone} onChange={(e) => setUserPhone(e.target.value)} required className="mt-2 p-2 w-full border text-black rounded" />
+                            </div>
+                            <div className="flex justify-end space-x-4">
+                                <button type="button" onClick={() => setShowModal(false)} className="bg-gray-500 text-white py-2 px-4 rounded">Отказ</button>
+                                <button onClick={handleSaveDesign} type="submit" className="bg-orange text-white py-2 px-4 rounded">Запазване</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
