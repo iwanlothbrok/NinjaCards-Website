@@ -107,7 +107,7 @@ export default function Features() {
 
     return (
         <div className="">
-            <Header pageInformation='Функции Ninja Cards' textOne='Споделяне' textTwo='Свързване' textThree='Успех' />
+            <Header pageInformation='Функции' textOne='Споделяне' textTwo='Свързване' textThree='Успех' />
 
             {/* Conditionally render based on screen size */}
             {isMobile ? (
