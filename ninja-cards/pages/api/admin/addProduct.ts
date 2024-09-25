@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             // Restrict 'type' field to allowed values
-            const allowedTypes = ['smart cards', 'reviews', 'stickers'];
+            const allowedTypes = ['cards', 'reviews', 'stickers'];
             if (!allowedTypes.includes(type)) {
                 return res.status(400).json({ error: `Type must be one of: ${allowedTypes.join(', ')}` });
             }
@@ -78,7 +78,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     description,
                     price: parseFloat(price),
                     type,
-                    image,
+                    image: image ?? "",                // Fallback for image
                     frontImage,
                     backImage,
                 },
