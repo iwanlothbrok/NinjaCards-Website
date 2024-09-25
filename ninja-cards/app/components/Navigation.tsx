@@ -36,11 +36,17 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isPhone, setIsPhone] = useState(false);
   const [isOnDetailsPage, setIsOnDetailsPage] = useState(false);
+  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false); // State for product dropdown
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname(); // Get the current pathname
   const isAuthenticated = !!user;
+
+
+  const toggleProductDropdown = useCallback(() => {
+    setIsProductDropdownOpen((prev) => !prev);
+  }, []);
 
   // Check if the current path contains 'profileDetails' and hide the Navbar if true
   useEffect(() => {
@@ -191,6 +197,24 @@ const Navbar: React.FC = () => {
                     </Link>
                   </li>
                 ))}
+                <li className="relative group">
+                  <button
+                    onClick={toggleProductDropdown}
+                    className="text-white py-2 text-lg font-medium hover:text-orange"
+                  >
+                    Продукти
+                  </button>
+                  {isProductDropdownOpen && (
+                    <ul
+                      className="absolute bg-gray-800 rounded-md shadow-md mt-2 py-2 text-white"
+                      onMouseLeave={() => setIsProductDropdownOpen(false)}
+                    >
+                      <NavItem href="/products/cards">Визитки</NavItem>
+                      <NavItem href="/products/reviews">Ревюта</NavItem>
+                      <NavItem href="/products/all">Всички</NavItem>
+                    </ul>
+                  )}
+                </li>
                 {isAuthenticated ? (
                   <li className="relative flex items-center group mt-5 lg:mt-0">
                     <img
