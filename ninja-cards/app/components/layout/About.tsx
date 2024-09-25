@@ -1,6 +1,8 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
+import Link from 'next/link';
+
 const About: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -218,9 +220,12 @@ const About: React.FC = () => {
             transition={{ duration: 1.4 }}
             className="mt-10 mb-8 flex justify-center md:justify-start"
           >
-            <button className="bg-gradient-to-r from-orange to-teal-600 text-white px-9 py-4 rounded-full transition-transform transform hover:scale-105 focus:outline-none shadow-xl">
-              ВЗЕМИ ТВОЯТА ВИЗИТКА
-            </button>
+
+            <Link href="/products/cards">
+              <button className="bg-gradient-to-r from-orange to-teal-600 text-white px-9 py-4 rounded-full transition-transform transform hover:scale-105 focus:outline-none shadow-xl">
+                ВЗЕМИ ТВОЯТА ВИЗИТКА
+              </button>
+            </Link>
           </motion.div>
         </motion.div>
 
