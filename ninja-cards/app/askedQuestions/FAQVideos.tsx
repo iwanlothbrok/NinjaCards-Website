@@ -16,7 +16,7 @@ export default function FAQVideos({ openModal }: FAQVideosProps) {
     return (
         <div>
             {/* Секция с карти */}
-            <div className="flex justify-center items-center ">
+            {/* <div className="flex justify-center items-center ">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-5 gap-8">
                     <div className="max-w-md">
                         <div className="bg-white shadow-xl rounded-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl">
@@ -60,21 +60,8 @@ export default function FAQVideos({ openModal }: FAQVideosProps) {
                         </div>
                     </div>
                 </div>
-            </div>
-            <header className="mt-0 mb-6 p-6 flex flex-col justify-center items-center text-center ">
-                <p className="text-lg max-w-2xl">
-                    Имате въпроси? Имаме отговори. Разгледайте нашите често задавани въпроси по-долу или използвайте лентата за търсене, за да намерите това, което търсите.
-                </p>
-                <div className="mt-8 w-full max-w-lg">
-                    <input
-                        type="text"
-                        placeholder="Търсене на отговор на..."
-                        className="w-full px-6 py-2 text-lg text-gray-800 rounded-md shadow-sm"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                    />
-                </div>
-            </header>
+            </div> */}
+           
         </div>
     );
 }
