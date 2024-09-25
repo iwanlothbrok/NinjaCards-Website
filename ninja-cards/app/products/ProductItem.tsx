@@ -27,7 +27,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ id, imageUrl, name, price, ty
             <div className="w-full h-64 bg-gray-400 rounded-t-lg overflow-hidden">
                 <Link href={`/products/${type}/${id}`}>
                     <img
-                        src={imageUrl}
+                        src={`data:image/jpeg;base64,${imageUrl}`}
                         alt={name}
                         className="w-full h-full object-center object-cover transition-transform duration-500 transform group-hover:scale-105"
                     />
@@ -39,7 +39,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ id, imageUrl, name, price, ty
                 <h2 className="text-2xl font-bold text-white transition-colors duration-300 group-hover:text-orange-400">
                     {name}
                 </h2>
-                <p className="text-lg font-semibold text-gray-300 mt-2">${price.toFixed(2)}</p>
+                <p className="text-lg font-semibold text-gray-300 mt-2">{price.toFixed(2)} лв.</p>
 
                 {/* Call to Action */}
                 <Link href={`/products/${type}/${id}`}>
