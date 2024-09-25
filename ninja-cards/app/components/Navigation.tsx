@@ -171,32 +171,16 @@ const Navbar: React.FC = () => {
                 </button>
               </div>
               <ul className="flex flex-col items-center justify-center h-2/3 lg:flex-row lg:space-x-8">
-                {['/', '/features', '/contact', '/askedQuestions', `/profile`].map((path, idx) => (
-                  <li key={idx} className="relative group">
-                    <Link
-                      href={path}
-                      className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === path ? 'text-orange' : ''}`}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {(() => {
-                        switch (path) {
-                          case '/':
-                            return 'Начало';
-                          case `/profile`:
-                            return 'Профил';
-                          case '/features':
-                            return 'Функции';
-                          case '/askedQuestions':
-                            return 'Задавани Въпроси';
-                          case '/contact':
-                            return 'Контакт';
-                          default:
-                            return path;
-                        }
-                      })()}
-                    </Link>
-                  </li>
-                ))}
+                <li className="relative group">
+                  <Link
+                    href="/"
+                    className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === '/' ? 'text-orange' : ''}`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Начало
+                  </Link>
+                </li>
+
                 <li className="relative group">
                   <button
                     onClick={toggleProductDropdown}
@@ -215,6 +199,49 @@ const Navbar: React.FC = () => {
                     </ul>
                   )}
                 </li>
+
+                <li className="relative group">
+                  <Link
+                    href="/features"
+                    className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === '/features' ? 'text-orange' : ''}`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Функции
+                  </Link>
+                </li>
+
+                <li className="relative group">
+                  <Link
+                    href="/askedQuestions"
+                    className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === '/askedQuestions' ? 'text-orange' : ''}`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Задавани Въпроси
+                  </Link>
+                </li>
+
+                <li className="relative group">
+                  <Link
+                    href="/contact"
+                    className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === '/contact' ? 'text-orange' : ''}`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Контакт
+                  </Link>
+                </li>
+
+
+
+                <li className="relative group">
+                  <Link
+                    href="/profile"
+                    className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === '/profile' ? 'text-orange' : ''}`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Профил
+                  </Link>
+                </li>
+
                 {isAuthenticated ? (
                   <li className="relative flex items-center group mt-5 lg:mt-0">
                     <img
