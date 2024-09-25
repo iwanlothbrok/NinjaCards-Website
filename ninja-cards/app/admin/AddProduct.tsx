@@ -10,14 +10,14 @@ export default function AddProduct() {
         title: '',
         description: '',
         price: '',
-        type: 'smart cards',  // Default to the first option
+        type: 'cards',  // Default to the first option
     });
     const [image, setImage] = useState<File | null>(null);
     const [frontImage, setFrontImage] = useState<File | null>(null);
     const [backImage, setBackImage] = useState<File | null>(null);
 
     const router = useRouter();
-    const adminPassword = "yourSecretPassword"; // Replace with your secret password
+    const adminPassword = "azsymivan"; // Replace with your secret password
 
     const handlePasswordSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -82,7 +82,7 @@ export default function AddProduct() {
 
     if (!isAuthenticated) {
         return (
-            <div className="max-w-md mx-auto p-6 shadow-lg rounded-md bg-white">
+            <div className="max-w-md mx-auto p-6 shadow-lg rounded-md bg-gray-500">
                 <h1 className="text-2xl font-bold mb-4 text-center">Admin Access</h1>
                 <form onSubmit={handlePasswordSubmit}>
                     <div className="mb-6">
@@ -107,7 +107,7 @@ export default function AddProduct() {
     }
 
     return (
-        <div className="max-w-2xl mx-auto p-6 shadow-lg rounded-md bg-gray-700 text-white">
+        <div className="max-w-2xl mx-auto p-6 shadow-lg rounded-md bg-gray-700 text-gray-300">
             <h1 className="text-3xl font-bold mb-6 text-center">Add New Product</h1>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 {['title', 'description', 'price'].map((field) => (
@@ -166,7 +166,7 @@ export default function AddProduct() {
                         className="mt-1 block w-full p-1 rounded-md border-gray-300 text-black shadow-sm"
                         required
                     >
-                        <option value="smart cards">Smart Cards</option>
+                        <option value="cards">Smart Cards</option>
                         <option value="reviews">Reviews</option>
                         <option value="stickers">Stickers</option>
                     </select>
