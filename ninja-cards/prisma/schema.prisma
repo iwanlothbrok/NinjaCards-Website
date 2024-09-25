@@ -72,3 +72,15 @@ model Product {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
+
+model CardDesign {
+  id          Int      @id @default(autoincrement())
+  cardName    String
+  cardTitle   String
+  userName    String
+  userPhone   String
+  userEmail   String
+  frontDataUrl String  @db.LongText // Store base64-encoded image or URLs if needed
+  backDataUrl  String  @db.LongText // Store base64-encoded image or URLs if needed
+  createdAt   DateTime @default(now())
+}
