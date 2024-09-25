@@ -94,28 +94,26 @@ export const Testimonies: React.FC = () => {
             >
               <div className="relative group">
                 <div className="absolute transition rounded-lg opacity-25 -inset-1 bg-gradient-to-r from-orange to-pink-600 blur duration-400 group-hover:opacity-100 group-hover:duration-200"></div>
-                <a href={testimonial.link} className="cursor-pointer">
-                  <div className="relative p-4 space-y-4 leading-none rounded-lg bg-slate-800 ring-1 ring-gray-900/5">
-                    <div className="flex items-center space-x-4">
-                      <img
-                        src={testimonial.image}
-                        className="w-16 h-16 bg-center bg-cover border rounded-full"
-                        alt={testimonial.name}
-                      />
-                      <div>
-                        <h3 className="text-base font-semibold text-white">
-                          {testimonial.name}
-                        </h3>
-                        <p className="text-gray-400 text-sm">
-                          {testimonial.title}
-                        </p>
-                      </div>
+                <div className="relative p-4 space-y-4 leading-none rounded-lg bg-slate-800 ring-1 ring-gray-900/5">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src={testimonial.image}
+                      className="w-16 h-16 bg-center bg-cover border rounded-full"
+                      alt={testimonial.name}
+                    />
+                    <div>
+                      <h3 className="text-base font-semibold text-white">
+                        {testimonial.name}
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        {testimonial.title}
+                      </p>
                     </div>
-                    <p className="leading-normal text-gray-300 text-sm">
-                      {testimonial.quote}
-                    </p>
                   </div>
-                </a>
+                  <p className="leading-normal text-gray-300 text-sm">
+                    {testimonial.quote}
+                  </p>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -129,10 +127,9 @@ const testimonials = [
   {
     name: 'ImpeRiums',
     title: 'Предприемач',
-    quote: 'Ninja Cards напълно промени начина, по който се запознавам с хора. Винаги се срещам с нови клиенти и да имам интелигентна визитна картичка, която може незабавно да прехвърли данните ми на техния телефон, е изключително удобно.Възможностите за персонализиране също ми позволиха да създам визитка, която наистина отразява моята марка.Силно препоръчвам!',
+    quote: 'Ninja Cards напълно промени начина, по който се запознавам с хора. Винаги се срещам с нови клиенти и да имам интелигентна визитна картичка, която може незабавно да прехвърли данните ми на техния телефон, е изключително удобно. Възможностите за персонализиране също ми позволиха да създам визитка, която наистина отразява моята марка. Силно препоръчвам!',
     image:
-      'https://pbs.twimg.com/profile_images/1276461929934942210/cqNhNk6v_400x400.jpg',
-    link: 'https://twitter.com/kanyewest',
+      '/logos/impr.png',
   },
   {
     name: 'Whiz Academy',
@@ -140,41 +137,16 @@ const testimonials = [
     quote:
       'Преминаването към смарт визитките на Ninja Cards беше едно от най-добрите решения за моя бизнес! Сега мога лесно да споделям данните си за контакт и портфолиото си с едно докосване. Няма повече да печатам стотици традиционни визитки. Това е огромно подобрение, а клиентите ми харесват елегантния дизайн и лекотата на използване!',
     image:
-      'https://pbs.twimg.com/profile_images/1221837516816306177/_Ld4un5A_400x400.jpg',
-    link: 'https://twitter.com/satyanadella',
+      '/logos/whiz.png',
   },
   {
-    name: 'Dan Schulman',
-    title: 'CEO of PayPal',
-    quote: 'Quam pellentesque nec nam aliquam sem et tortor consequat id.',
+    name: 'Рай 25',
+    title: 'Архитектурни и инженерни дейности',
+    quote:
+      'В Рай 25 сме развълнувани от невероятния отклик на Google Ревюта! Само за една седмица получихме повече от 40 положителни отзива и беше много вълнуващо да видим колко много хората реагират в сравнение с преди.Лесно споделяне на информация и препращане към ревю.Препоръчвам на всеки физически бизнес!',
     image:
-      'https://pbs.twimg.com/profile_images/516916920482672641/3jCeLgFb_400x400.jpeg',
-    link: 'https://twitter.com/dan_schulman',
-  },
-  {
-    name: 'Parag Agrawal',
-    title: 'CEO of Twitter',
-    quote: 'It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.',
-    image:
-      'https://pbs.twimg.com/profile_images/1375285353146327052/y6jeByyD_400x400.jpg',
-    link: 'https://twitter.com/paraga',
-  },
-  {
-    name: 'Elon Musk',
-    title: 'CEO of Tesla',
-    quote: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image:
-      'https://pbs.twimg.com/profile_images/1590968738358079488/IY9Gx6Ok_400x400.jpg',
-    link: 'https://twitter.com/elonmusk',
-  },
-  {
-    name: 'Tim Cook',
-    title: 'CEO of Apple',
-    quote: 'Lorem Ipsum has been the industry standard dummy text ever since the 1500s.',
-    image:
-      'https://pbs.twimg.com/profile_images/1535420431766671360/Pwq-1eJc_400x400.jpg',
-    link: 'https://twitter.com/tim_cook',
+      '/logos/gr.png',
   },
 ];
-
+// В Рай 25 сме развълнувани от невероятния отклик на Google Ревюта! Само за една седмица получихме повече от 40 положителни отзива и беше много вълнуващо да видим колко много хората реагират в сравнение с преди. Лесно споделяне на информация и препращане към ревю. Препоръчвам на всеки физически бизнес!
 export default Testimonies;

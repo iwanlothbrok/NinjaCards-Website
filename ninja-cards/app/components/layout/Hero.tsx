@@ -76,7 +76,7 @@ export const Hero: React.FC = () => {
                             ПОРЪЧАЙ СЕГА
                         </button>
                     </Link>
-                    <Link href="#features">
+                    <Link href="/features">
                         <button className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-gradient-to-r from-white to-gray-200 hover:text-black transition-transform transform hover:scale-105 focus:outline-none">
                             НАУЧИ ПОВЕЧЕ
                         </button>
