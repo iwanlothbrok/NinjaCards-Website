@@ -15,20 +15,18 @@ interface Product {
 }
 
 export default function ProductPageContent() {
-    const params = useParams();  // Get the dynamic params from the URL
-    const id = params?.id as string | undefined;  // Safely get 'id' from params
+    const params = useParams();
+    const id = params?.id as string | undefined;
 
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [relatedProducts, setRelatedProducts] = useState<Product[]>([]); // State to store related products
 
+    // Fetch the main product based on the id from the URL
     useEffect(() => {
         const fetchProduct = async () => {
-            if (!id) return;  // If 'id' is undefined, do not proceed
-
-            console.log('sending data');
-            console.log(id);
-
+            if (!id) return;
 
             try {
                 setLoading(true);
@@ -45,8 +43,26 @@ export default function ProductPageContent() {
             }
         };
 
-        fetchProduct();  // Fetch product data when ID is available
+        fetchProduct();
     }, [id]);
+
+    // Fetch the last three products to display as related products
+    useEffect(() => {
+        const fetchRelatedProducts = async () => {
+            try {
+                const res = await fetch(`${BASE_API_URL}/api/products/getLastThree`); // Assume you created a `/related` API endpoint
+                if (!res.ok) {
+                    throw new Error('Failed to fetch related products');
+                }
+                const data = await res.json();
+                setRelatedProducts(data);  // Store the fetched related products
+            } catch (err) {
+                setError((err as Error).message);
+            }
+        };
+
+        fetchRelatedProducts();
+    }, []);
 
     if (loading) {
         return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
@@ -62,32 +78,11 @@ export default function ProductPageContent() {
         <div className="text-white min-h-screen">
             <Product
                 title={product.title}
-                description={''} // Assuming the API doesn't provide description, otherwise pass it here
+                description={''} // Assuming the API doesn't provide description
                 price={product.price}
                 imageUrls={[product.image, ...images]}
             />
-            <RelatedProducts
-                products={[
-                    {
-                        id: 1,
-                        title: 'NFC Business Card',
-                        imageUrl: '/nfc-card.webp',
-                        price: '$19.99',
-                    },
-                    {
-                        id: 2,
-                        title: 'Custom NFC Tag',
-                        imageUrl: '/nfc-card.webp',
-                        price: '$14.99',
-                    },
-                    {
-                        id: 3,
-                        title: 'Smart Keychain NFC',
-                        imageUrl: '/nfc-card.webp',
-                        price: '$9.99',
-                    }
-                ]}
-            />
+            <RelatedProducts products={relatedProducts} />
         </div>
     );
 }
