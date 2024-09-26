@@ -44,7 +44,7 @@ const AllProductsPage: React.FC = () => {
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div className="flex justify-center items-center py-72 text-3xl">Няма добавени такива продукти!</div>;
     }
 
     return (
