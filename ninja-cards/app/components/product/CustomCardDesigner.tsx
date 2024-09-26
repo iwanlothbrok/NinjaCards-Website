@@ -8,8 +8,8 @@ const CustomCardDesigner = () => {
     const [name, setName] = useState<string>('Вашето име');
     const [title, setTitle] = useState<string>('Вашата позиция');
     const [backLogoUrl, setBackLogoUrl] = useState<string | null>(null);
-    const [fontSizeName, setFontSizeName] = useState<number>(32);
-    const [fontSizeTitle, setFontSizeTitle] = useState<number>(24);
+    const [fontSizeName, setFontSizeName] = useState<number>(28);
+    const [fontSizeTitle, setFontSizeTitle] = useState<number>(22);
     const [backLogoSize, setBackLogoSize] = useState<number>(240);
     const frontCanvasRef = useRef<HTMLCanvasElement>(null);
     const backCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -102,9 +102,9 @@ const CustomCardDesigner = () => {
                 const qrImage = new Image();
                 qrImage.src = qrCodeUrl;
                 qrImage.onload = () => {
-                    const qrSize = 180; // Increased size for better visibility
+                    const qrSize = 170; // Increased size for better visibility
                     const centerX = (frontCanvas.width - qrSize) / 2;
-                    const centerY = (frontCanvas.height - qrSize) / 2 - 20;
+                    const centerY = (frontCanvas.height - qrSize) / 2 - 30;
                     frontCtx.drawImage(qrImage, centerX, centerY, qrSize, qrSize);
                 };
             }
