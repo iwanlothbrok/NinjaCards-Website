@@ -21,7 +21,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ id, imageUrl, name, price, ty
                 hidden: { opacity: 0, y: 50, scale: 0.95 },
             }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="relative w-full bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group"
+            className="relative w-full bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group"
         >
             {/* Image Section */}
             <div className="w-full h-64 bg-gray-400 rounded-t-lg overflow-hidden">
@@ -36,10 +36,12 @@ const ProductItem: React.FC<ProductItemProps> = ({ id, imageUrl, name, price, ty
 
             {/* Product Info */}
             <div className="p-5 flex flex-col items-center text-center">
-                <h2 className="text-2xl font-bold text-white transition-colors duration-300 group-hover:text-orange-400">
+                <h2 className="text-2xl font-bold text-black transition-colors duration-300 group-hover:text-orange-400">
                     {name}
                 </h2>
-                <p className="text-lg font-semibold text-gray-300 mt-2">{price.toFixed(2)} лв.</p>
+                <p className="text-2xl  text-red-500 line-through">117 лв.</p>
+
+                <p className="text-xl font-semibold text-green-500 mt-2">{price.toFixed(2)} лв.</p>
 
                 {/* Call to Action */}
                 <Link href={`/products/${type}/${id}`}>

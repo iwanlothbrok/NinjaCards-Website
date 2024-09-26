@@ -45,7 +45,7 @@ export default function NfcCardsList() {
     }
 
     if (error) {
-        return <div className="flex justify-center items-center py-72 text-3xl">Няма добавени такива продукти!</div>;
+        return <div className="flex justify-center items-center py-72 px-10 text-3xl">Няма добавени такива продукти!</div>;
     }
     //  pageInformation, textOne, textTwo, textThree
     return (
