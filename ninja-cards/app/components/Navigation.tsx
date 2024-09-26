@@ -179,7 +179,6 @@ const Navbar: React.FC = () => {
                     Начало
                   </Link>
                 </li>
-
                 <li className="relative group">
                   <button
                     onClick={toggleProductDropdown}
@@ -188,14 +187,22 @@ const Navbar: React.FC = () => {
                     Продукти
                   </button>
                   {isProductDropdownOpen && (
-                    <ul
-                      className="relative bg-gray-800 rounded-md shadow-md mt-2 py-2 text-white z-50 flex flex-col space-y-2 lg:relative lg:top-auto lg:mt-0 lg:flex lg:space-x-4"
-                      onMouseLeave={() => setIsProductDropdownOpen(false)}
+                    <div
+                      ref={dropdownRef}
+                      className="absolute left-0 mt-2 w-44 bg-gray-800 rounded-lg shadow-lg z-50"
                     >
-                      <NavItem href="/products/cards">Визитки</NavItem>
-                      <NavItem href="/products/reviews">Ревюта</NavItem>
-                      <NavItem href="/products/all">Всички</NavItem>
-                    </ul>
+                      <ul className="py-2 text-sm text-gray-200">
+                        <NavItem href="/products/cards" onClick={() => setIsMenuOpen(false)}>
+                          Визитки
+                        </NavItem>
+                        <NavItem href="/products/reviews" onClick={() => setIsMenuOpen(false)}>
+                          Ревюта
+                        </NavItem>
+                        <NavItem href="/products/all" onClick={() => setIsMenuOpen(false)}>
+                          Всички
+                        </NavItem>
+                      </ul>
+                    </div>
                   )}
                 </li>
 
