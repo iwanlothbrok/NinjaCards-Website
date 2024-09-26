@@ -43,7 +43,6 @@ const Navbar: React.FC = () => {
   const pathname = usePathname(); // Get the current pathname
   const isAuthenticated = !!user;
 
-
   const toggleProductDropdown = useCallback(() => {
     setIsProductDropdownOpen((prev) => !prev);
   }, []);
@@ -190,7 +189,7 @@ const Navbar: React.FC = () => {
                   </button>
                   {isProductDropdownOpen && (
                     <ul
-                      className="absolute bg-gray-800 rounded-md shadow-md mt-2 py-2 text-white"
+                      className="relative bg-gray-800 rounded-md shadow-md mt-2 py-2 text-white z-50 flex flex-col space-y-2 lg:relative lg:top-auto lg:mt-0 lg:flex lg:space-x-4"
                       onMouseLeave={() => setIsProductDropdownOpen(false)}
                     >
                       <NavItem href="/products/cards">Визитки</NavItem>
@@ -199,6 +198,7 @@ const Navbar: React.FC = () => {
                     </ul>
                   )}
                 </li>
+
 
                 <li className="relative group">
                   <Link
@@ -229,8 +229,6 @@ const Navbar: React.FC = () => {
                     Контакт
                   </Link>
                 </li>
-
-
 
                 <li className="relative group">
                   <Link
@@ -322,7 +320,6 @@ const Navbar: React.FC = () => {
       </div>
     </header>
   );
-
 };
 
 export default Navbar;
