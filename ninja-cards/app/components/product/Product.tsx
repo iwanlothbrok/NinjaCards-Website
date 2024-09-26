@@ -60,58 +60,9 @@ const Product: React.FC<ProductProps> = ({
 
 
                         </div>
-
-                        {/* Description - Uncomment if you need this */}
-                        {/* <p className="mt-4 text-gray-300 leading-relaxed">{description}</p> */}
                     </div>
                     {/* Benefits Section */}
-                    <div className="mt-8">
-                        <ul className="space-y-4">
-                            <li className="flex items-center space-x-3 text-lg">
-                                <span className="text-green-500">
-                                    <FaCheckCircle />
-                                </span>
-                                <span>От 1-3 дни за изработка</span>
-                            </li>
-                            <li className="flex items-center space-x-3 text-lg">
-                                <span className="text-green-500">
-                                    <FaBarcode />
-                                </span>
-                                <span>Използва се NFC и QR код</span>
-                            </li>
-                            <li className="flex items-center space-x-3 text-lg">
-                                <span className="text-green-500">
-                                    <FaShieldAlt />
-                                </span>
-                                <span>Няма абонамент - само едно плащане на картата</span>
-                            </li>
-                            <li className="flex items-center space-x-3 text-lg">
-                                <span className="text-green-500">
-                                    <FaWrench />
-                                </span>
-                                <span>Настройка на профила преди доставката</span>
-                            </li>
-                            <li className="flex items-center space-x-3 text-lg">
-                                <span className="text-green-500">
-                                    <FaCreditCard />
-                                </span>
-                                <span>Размер на картата: 85,6 мм x 53,98 мм</span>
-                            </li>
-                            <li className="flex items-center space-x-3 text-lg">
-                                <span className="text-green-500">
-                                    <FaMobileAlt />
-                                </span>
-                                <span>Съвместима с iOS и Android</span>
-                            </li>
-
-                            <li className="flex items-center space-x-3 text-lg">
-                                <span className="text-green-500">
-                                    <FaGlobe />
-                                </span>
-                                <span>Безплатна доставка</span>
-                            </li>
-                        </ul>
-                    </div>
+                    {Benefits()}
 
                     {/* Dropdown Information Sections */}
                     <div className="mt-8 space-y-4">
@@ -201,3 +152,53 @@ const Product: React.FC<ProductProps> = ({
 };
 
 export default Product
+
+function Benefits() {
+    return <div className="mt-8">
+        <ul className="space-y-4">
+            <li className="flex items-center space-x-3 text-lg">
+                <span className="text-green-500">
+                    <FaCheckCircle />
+                </span>
+                <span>От 1-3 дни за изработка</span>
+            </li>
+            <li className="flex items-center space-x-3 text-lg">
+                <span className="text-green-500">
+                    <FaBarcode />
+                </span>
+                <span>Използва се NFC и QR код</span>
+            </li>
+            <li className="flex items-center space-x-3 text-lg">
+                <span className="text-green-500">
+                    <FaShieldAlt />
+                </span>
+                <span>Няма абонамент - само едно плащане на картата</span>
+            </li>
+            <li className="flex items-center space-x-3 text-lg">
+                <span className="text-green-500">
+                    <FaWrench />
+                </span>
+                <span>Настройка на профила преди доставката</span>
+            </li>
+            <li className="flex items-center space-x-3 text-lg">
+                <span className="text-green-500">
+                    <FaCreditCard />
+                </span>
+                <span>Размер на картата: 85,6 мм x 53,98 мм</span>
+            </li>
+            <li className="flex items-center space-x-3 text-lg">
+                <span className="text-green-500">
+                    <FaMobileAlt />
+                </span>
+                <span>Съвместима с iOS и Android</span>
+            </li>
+
+            <li className="flex items-center space-x-3 text-lg">
+                <span className="text-green-500">
+                    <FaGlobe />
+                </span>
+                <span>Безплатна доставка</span>
+            </li>
+        </ul>
+    </div>;
+}
