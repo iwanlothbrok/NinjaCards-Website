@@ -3,13 +3,14 @@ import React from 'react';
 type RelatedProduct = {
     id: number;
     title: string;
-    imageUrl: string;
+    image: string;
     price: string;
 };
 
-type RelatedProductsProps = {
+// Update the type of props to expect an object with a `products` key containing an array of `RelatedProduct`.
+interface RelatedProductsProps {
     products: RelatedProduct[];
-};
+}
 
 const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
     return (
@@ -24,7 +25,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                         {/* Image Section */}
                         <div className="w-full h-56 bg-gray-100 rounded-t-lg overflow-hidden relative">
                             <img
-                                src={product.imageUrl}
+                                src={`data:image/jpeg;base64,${product.image}`}
                                 alt={product.title}
                                 className="w-full h-full object-center object-cover transition-transform duration-500 transform group-hover:scale-110"
                             />
@@ -44,7 +45,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                             <h4 className="text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-orange">
                                 {product.title}
                             </h4>
-                            <p className="mt-2 text-xl font-bold text-gray-900">{product.price}</p>
+                            {/* <p className="mt-2 text-xl font-bold text-gray-900">{product.price}</p> */}
                         </div>
                     </div>
                 ))}
