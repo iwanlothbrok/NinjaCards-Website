@@ -72,7 +72,7 @@ export default function ProductPageContent() {
         return <div className="flex justify-center items-center py-72">Няма такъв продукт!</div>;
     }
 
-    const images = ['/cards/wa-front-back.png', '/cards/mh-front-back.png', '/cards/bp-front-back.png'];
+    const images = ['/cards/wa-front-back.png', '/cards/mh-front-back.png', '/cards/bp-front-back.png' , '/cards/impr-front-back.png'];
 
     return (
         <div className="text-white min-h-screen">
