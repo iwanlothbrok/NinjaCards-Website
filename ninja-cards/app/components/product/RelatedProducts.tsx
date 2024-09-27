@@ -5,6 +5,7 @@ type RelatedProduct = {
     title: string;
     image: string;
     price: string;
+    type: string;
 };
 
 // Update the type of props to expect an object with a `products` key containing an array of `RelatedProduct`.
@@ -32,7 +33,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                             {/* Add a "View More" button overlay */}
                             <div className="absolute inset-0 bg-black bg-opacity-25 opacity-0 group-hover:opacity-100 flex justify-center items-center transition-opacity duration-300">
                                 <a
-                                    href={`/product/${product.id}`}
+                                    href={`/products/${product.type}/${product.id}`}
                                     className="text-white bg-orange px-4 py-2 rounded-lg font-semibold transition-colors duration-300"
                                 >
                                     Виж
