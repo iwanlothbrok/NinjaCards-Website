@@ -82,5 +82,8 @@ model CardDesign {
   userEmail   String
   frontDataUrl String  @db.LongText // Store base64-encoded image or URLs if needed
   backDataUrl  String  @db.LongText // Store base64-encoded image or URLs if needed
+  backLogoUrl  String?  @db.LongText // Store base64-encoded image or URLs if needed
+  courierAddress	String?
+  courierIsSpeedy	Int
   createdAt   DateTime @default(now())
 }
