@@ -38,6 +38,12 @@ interface User {
     behance: string;
     paypal: string;
     trustpilot: string;
+    
+    telegram: string;
+    calendly: string;
+    discord: string;
+    tripadvisor: string;
+
     viber: string;
     whatsapp: string;
     website: string;

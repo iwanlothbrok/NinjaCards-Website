@@ -43,6 +43,12 @@ model User {
   youtube       String?
   paypal        String?  // PayPal URL
   trustpilot    String?  // TrustPilot URL
+  
+  telegram      String?  // TrustPilot URL
+  calendly      String?  // TrustPilot URL
+  discord       String?  // TrustPilot URL
+  tripadvisor   String?
+
   qrCode        String?  @db.Text
   selectedColor String?  // Selected color
   createdAt     DateTime @default(now())

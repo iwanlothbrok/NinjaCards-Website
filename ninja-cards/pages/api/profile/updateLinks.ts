@@ -63,6 +63,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 'googleReview',
                 'revolut',
                 'website',
+                'telegram',
+                'calendly',
+                'discord',
+                'tripadvisor',
             ];
 
             fieldsToCheck.forEach((field) => {

@@ -24,6 +24,12 @@ const ImportantLinks: React.FC = () => {
         behance: user?.behance || '',
         paypal: user?.paypal || '',
         trustpilot: user?.trustpilot || '',
+
+        telegram: user?.telegram || '',
+        calendly: user?.calendly || '',
+        discord: user?.discord || '',
+        tripadvisor: user?.tripadvisor || '',
+
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
@@ -212,6 +218,43 @@ const ImportantLinks: React.FC = () => {
                     iconSrc="/logos/tp.png"
                     focusRingColor="text-green-500"
                 />
+
+                <LinkInput
+                    name="telegram"
+                    value={formData.telegram}
+                    onChange={handleChange}
+                    placeholder="Telegram URL"
+                    iconSrc="/logos/telegram.png"
+                    focusRingColor="text-blue-500"
+                />
+
+                <LinkInput
+                    name="calendly"
+                    value={formData.calendly}
+                    onChange={handleChange}
+                    placeholder="Calendly URL"
+                    iconSrc="/logos/calendly.png"
+                    focusRingColor="text-red-500"
+                />
+
+                <LinkInput
+                    name="discord"
+                    value={formData.discord}
+                    onChange={handleChange}
+                    placeholder="Discord URL"
+                    iconSrc="/logos/discord.png"
+                    focusRingColor="text-purple-500"
+                />
+
+                <LinkInput
+                    name="tripadvisor"
+                    value={formData.tripadvisor}
+                    onChange={handleChange}
+                    placeholder="Tripadvisor URL"
+                    iconSrc="/logos/tripadvisor.png"
+                    focusRingColor="text-yellow-500"
+                />
+
                 <LinkInput
                     name="website"
                     value={formData.website}
@@ -220,6 +263,7 @@ const ImportantLinks: React.FC = () => {
                     iconSrc="/logos/website.png"
                     focusRingColor="text-green-500"
                 />
+
 
                 <button
                     type="submit"
