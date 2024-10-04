@@ -10,7 +10,6 @@ import { motion } from 'framer-motion';
 import ProductGallery from './components/product/ProductCard';
 import FrequentlyAskedQuestions from './askedQuestions/FAQQuestions';
 import SimpleContactForm from './components/layout/SimpleContactForm';
-import Features from './components/layout/Features';
 import Hero from './components/layout/Hero';
 import { BASE_API_URL } from '@/utils/constants';
 
