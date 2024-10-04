@@ -1,48 +1,48 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import cors from '@/utils/cors';
 
-const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-};
 const prisma = new PrismaClient();
 
+// Increase the body size limit by configuring the API route
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '10mb', // Set desired limit (e.g., 10MB)
+        },
+    },
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-
-    const corsHandled = cors(req, res);
-    if (corsHandled) return; // If it's a preflight request, stop further execution
-
-    const { cardName, cardTitle, userName, userPhone, userEmail, frontDataUrl, backDataUrl } = req.body;
-
-
     if (req.method === 'POST') {
+        const { cardName, cardTitle, userName, userPhone, userEmail, frontDataUrl, backDataUrl, backLogoUrl, courierIsSpeedy, courierAddress } = req.body;
 
         if (!cardName || !cardTitle || !userName || !userPhone || !userEmail || !frontDataUrl || !backDataUrl) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
-        if (!validateEmail(userEmail)) {
-            return res.status(400).json({ error: 'Invalid email address' });
+        try {
+            const newCard = await prisma.cardDesign.create({
+                data: {
+                    cardName,
+                    cardTitle,
+                    userName,
+                    userPhone,
+                    userEmail,
+                    frontDataUrl,
+                    backDataUrl,
+                    backLogoUrl,
+                    courierIsSpeedy,
+                    courierAddress,
+                },
+            });
+
+            return res.status(200).json(newCard);
+        } catch (error) {
+            console.error('Error saving card design:', error);
+            return res.status(500).json({ error: 'Internal server error' });
         }
-
-        // You can add more validation logic here
-        const newCard = await prisma.cardDesign.create({
-            data: {
-                cardName,
-                cardTitle,
-                userName,
-                userPhone,
-                userEmail,
-                frontDataUrl,
-                backDataUrl
-            }
-        });
-
-        // Simulate email sending (you would normally send an email here)
-        return res.status(200).json(newCard);
     } else {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${req.method} Not Allowed`);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }
