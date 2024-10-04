@@ -31,6 +31,7 @@
     "eslint-config-next": "14.2.5",
     "formidable": "^3.5.1",
     "framer-motion": "^11.3.28",
+    "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "mailgun-js": "^0.22.0",
     "mysql2": "^3.11.0",
@@ -57,6 +58,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/formidable": "^3.4.5",
+    "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/mailgun-js": "^0.22.18",
     "@types/qrcode": "^1.5.5",

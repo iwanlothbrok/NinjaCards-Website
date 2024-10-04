@@ -34,5 +34,9 @@ export interface User {
     trustpilot: string;
     viber: string;
     whatsapp: string;
+    telegram: string;
+    calendly: string;
+    discord: string;
+    tripadvisor: string;
     website: string;
 }
