@@ -1,10 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface FrequentlyAskedQuestionsProps {
   searchTerm: string;
 }
+
 const faqData = [
   {
     category: 'Обща информация',
@@ -152,7 +154,6 @@ const faqData = [
   },
 ];
 
-
 const FrequentlyAskedQuestions: React.FC<FrequentlyAskedQuestionsProps> = ({
   searchTerm,
 }) => {
@@ -188,7 +189,6 @@ const FrequentlyAskedQuestions: React.FC<FrequentlyAskedQuestionsProps> = ({
   return (
     <section className=" bg-darkBg2 text-white">
       <div className="max-w-5xl mx-auto px-6">
-        
         <div className="space-y-12">
           {filteredFAQs.map((category, categoryIndex) =>
             category.items.length > 0 ? (
@@ -198,13 +198,16 @@ const FrequentlyAskedQuestions: React.FC<FrequentlyAskedQuestionsProps> = ({
                 </h3>
                 <div className="space-y-6">
                   {category.items.map((faq, itemIndex) => (
-                    <div
+                    <motion.div
                       key={itemIndex}
                       className={`bg-gray-800 rounded-lg shadow-lg p-6 transition-transform transform ${activeIndex?.category === categoryIndex &&
                         activeIndex?.item === itemIndex
                         ? 'scale-105'
                         : 'scale-100'
                         }`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
                     >
                       <div
                         onClick={() => toggleFAQ(categoryIndex, itemIndex)}
@@ -213,25 +216,39 @@ const FrequentlyAskedQuestions: React.FC<FrequentlyAskedQuestionsProps> = ({
                         <h4 className="text-xl font-semibold">
                           {faq.question}
                         </h4>
-                        <span className="text-orange">
+                        <motion.span
+                          className="text-orange"
+                          animate={{
+                            rotate: activeIndex?.category === categoryIndex &&
+                              activeIndex?.item === itemIndex
+                              ? 180
+                              : 0,
+                          }}
+                        >
                           {activeIndex?.category === categoryIndex &&
                             activeIndex?.item === itemIndex ? (
                             <FaChevronUp size={24} />
                           ) : (
                             <FaChevronDown size={24} />
                           )}
-                        </span>
+                        </motion.span>
                       </div>
-                      <div
-                        className={`overflow-hidden transition-all duration-500 ${activeIndex?.category === categoryIndex &&
-                          activeIndex?.item === itemIndex
-                          ? 'max-h-[200px] opacity-100'
-                          : 'max-h-0 opacity-0'
-                          }`}
-                      >
-                        <p className="mt-4 text-gray-300">{faq.answer}</p>
-                      </div>
-                    </div>
+
+                      <AnimatePresence>
+                        {activeIndex?.category === categoryIndex &&
+                          activeIndex?.item === itemIndex && (
+                          <motion.div
+                            className="overflow-hidden"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <p className="mt-4 text-gray-300">{faq.answer}</p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
                   ))}
                 </div>
               </div>

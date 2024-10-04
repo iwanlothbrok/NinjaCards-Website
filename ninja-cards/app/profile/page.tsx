@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 import Settings from '../components/profile/ChangePassword';
 import ChangeProfileInformation from '../components/profile/ChangeProfileInformation';
 import ImportantLinks from '../components/profile/ChangeSocialLinks';
@@ -12,9 +13,15 @@ import ChangeAddress from '../components/profile/ChangeAdress';
 import ChangeProfileImage from '../components/profile/ChangeProfileImage';
 import QRCodeDownload from '../components/profile/QRCodeDownload';
 
-const TabCard: React.FC<{ tab: string; label: string; description: string; backgroundImage: string; activeTab: string; onClick: () => void }> = ({ tab, label, description, backgroundImage, activeTab, onClick }) => (
-    <div
-        className={`relative flex flex-col items-center justify-center p-4 rounded-lg shadow-lg border border-gray-700 transition-all duration-300 cursor-pointer
+const TabCard: React.FC<{
+    tab: string;
+    label: string;
+    backgroundImage: string;
+    activeTab: string;
+    onClick: () => void
+}> = ({ tab, label, backgroundImage, activeTab, onClick }) => (
+    <motion.div
+        className={`relative flex flex-col items-center justify-center p-4 rounded-lg shadow-lg border border-gray-700 transition-all cursor-pointer
                     ${activeTab === tab ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-300'}
                     hover:bg-blue-600 hover:text-white`}
         onClick={onClick}
@@ -25,18 +32,17 @@ const TabCard: React.FC<{ tab: string; label: string; description: string; backg
             backgroundSize: 'cover',
             width: '100%',
             height: '150px',
-            filter: activeTab === tab ? 'none' : 'grayscale(100%)', // Apply grayscale if not active
+            filter: activeTab === tab ? 'none' : 'grayscale(100%)',
         }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
     >
-        {/* Overlay to darken the background */}
         <div className="absolute inset-0 bg-black opacity-70 rounded-lg"></div>
-        {/* Content */}
         <div className="relative z-10">
             <h3 className="text-lg font-semibold mb-1">{label}</h3>
         </div>
-    </div>
+    </motion.div>
 );
-
 
 function ProfileContent() {
     const router = useRouter();
@@ -105,7 +111,6 @@ function ProfileContent() {
                     <TabCard
                         tab="settings"
                         label="Смяна на паролата"
-                        description="Настройки на акаунта"
                         backgroundImage="/settingsBg/security.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('settings')}
@@ -113,7 +118,6 @@ function ProfileContent() {
                     <TabCard
                         tab="changeEmail"
                         label="Смяна на имейла"
-                        description="Промяна на имейл адреса"
                         backgroundImage="/settingsBg/email.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('changeEmail')}
@@ -121,7 +125,6 @@ function ProfileContent() {
                     <TabCard
                         tab="changeAddress"
                         label="Смяна на адреса"
-                        description="Промяна на адреса"
                         backgroundImage="/settingsBg/address.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('changeAddress')}
@@ -129,7 +132,6 @@ function ProfileContent() {
                     <TabCard
                         tab="changeImage"
                         label="Смяна на профилната снимка"
-                        description="Промяна на профилната снимка"
                         backgroundImage="/settingsBg/img.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('changeImage')}
@@ -137,7 +139,6 @@ function ProfileContent() {
                     <TabCard
                         tab="information"
                         label="Лична информация"
-                        description="Актуализиране на личните данни"
                         backgroundImage="/settingsBg/information.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('information')}
@@ -145,7 +146,6 @@ function ProfileContent() {
                     <TabCard
                         tab="links"
                         label="Важни връзки"
-                        description="Управление на външни връзки"
                         backgroundImage="/settingsBg/laptop.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('links')}
@@ -153,7 +153,6 @@ function ProfileContent() {
                     <TabCard
                         tab="preview"
                         label="Преглед на профила"
-                        description="Преглед на профила"
                         backgroundImage="/settingsBg/profile.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('preview')}
@@ -161,7 +160,6 @@ function ProfileContent() {
                     <TabCard
                         tab="profileDetails"
                         label="Визитка"
-                        description="Промяна на детайлите"
                         backgroundImage="/settingsBg/profile-details.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('profileDetails')}
@@ -169,21 +167,34 @@ function ProfileContent() {
                     <TabCard
                         tab="profileQr"
                         label="Вашият QR код"
-                        description="Преглед на QR кода"
                         backgroundImage="/settingsBg/qr.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('profileQr')}
                     />
                 </div>
-                <div className="transition-all">
+                <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="transition-all"
+                >
                     {loading ? (
                         <div className="flex justify-center items-center">
-                            <img src="/load.gif" alt="Зареждане..." className="w-12 h-12" />
+                            <motion.img
+                                src="/load.gif"
+                                alt="Зареждане..."
+                                className="w-12 h-12"
+                                initial={{ rotate: 0 }}
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity }}
+                            />
                         </div>
                     ) : (
                         renderContent
                     )}
-                </div>
+                </motion.div>
             </div>
         </div>
     );
