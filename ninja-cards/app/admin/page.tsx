@@ -3,7 +3,7 @@ import React, { useState, useMemo, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useAuth } from '../context/AuthContext';
-import AddProduct from './AddProduct';
+import AddProduct from './addProduct/page';
 
 const TabCard: React.FC<{
     tab: string;
