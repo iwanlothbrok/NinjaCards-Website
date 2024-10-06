@@ -82,11 +82,11 @@ export default function AddProduct() {
 
     if (!isAuthenticated) {
         return (
-            <div className="max-w-md mx-auto p-6 shadow-lg rounded-md bg-gray-500">
+            <div className="max-w-md mx-auto p-6 shadow-lg mt-44 rounded-md bg-gray-500">
                 <h1 className="text-2xl font-bold mb-4 text-center">Admin Access</h1>
                 <form onSubmit={handlePasswordSubmit}>
                     <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700">Admin Password</label>
+                        <label className="block text-sm font-medium text-gray-800">Admin Password</label>
                         <input
                             type="password"
                             className="mt-1 p-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -107,7 +107,7 @@ export default function AddProduct() {
     }
 
     return (
-        <div className="max-w-2xl mx-auto p-6 shadow-lg rounded-md bg-gray-700 text-gray-300">
+        <div className="max-w-2xl mx-auto p-6 shadow-lg rounded-md bg-gray-700 mt-20 text-gray-300">
             <h1 className="text-3xl font-bold mb-6 text-center">Add New Product</h1>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 {['title', 'description', 'price'].map((field) => (
