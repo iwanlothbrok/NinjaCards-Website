@@ -5,8 +5,10 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../context/AuthContext';
-import { BASE_API_URL } from '../../utils/constants'
+import { BASE_API_URL } from '@/utils/constants';
+import { useAuth } from '@/app/context/AuthContext';
+// import { useAuth } from '../context/AuthContext';
+// import { BASE_API_URL } from '../../utils/constants'
 interface Alert {
   message: string;
   title: string;
@@ -77,9 +79,6 @@ const Register: React.FC = () => {
   return (
     <section className="bg-gray-50 dark:bg-gray-950 min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center justify-center  mx-auto">
-        <a href="#" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 dark:text-white">
-          <img className="w-24 h-24 filter grayscale" src="./navlogo.png" alt="logo" />
-        </a>
         <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-lg dark:bg-gray-800 dark:border-gray-700">
           <div className="p-12 space-y-6 md:space-y-8 sm:p-14">
             <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 md:text-3xl dark:text-white">

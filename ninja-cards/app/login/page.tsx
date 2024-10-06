@@ -64,7 +64,7 @@ const Login: React.FC = () => {
         <section className="bg-gray-50 dark:bg-gray-950 min-h-screen flex items-center justify-center">
             <div className="flex flex-col items-center justify-center mx-auto">
                 <a href="#" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 dark:text-white">
-                    <Image className="w-24 h-24 filter grayscale" src="navlogo.png" alt="logo" width={96} height={96} />
+                    <Image className="w-24 h-24 filter grayscale" src="/navlogo.png" alt="logo" width={96} height={96} />
                 </a>
                 <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-lg dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-12 space-y-6 md:space-y-8 sm:p-14">
@@ -117,9 +117,9 @@ const Login: React.FC = () => {
                             >
                                 Влез
                             </button>
-                            <p className="text-base font-light text-gray-500 dark:text-gray-400">
+                            {/* <p className="text-base font-light text-gray-500 dark:text-gray-400">
                                 Нямате акаунт? <a href="/register" className="font-medium text-teal-600 hover:underline">Регистрирайте се тук</a>
-                            </p>
+                            </p> */}
                         </form>
                     </div>
                 </div>
