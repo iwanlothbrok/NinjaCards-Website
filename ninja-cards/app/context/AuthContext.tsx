@@ -2,49 +2,9 @@
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import { User } from '@/types/user';
 
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    company: string;
-    position: string;
-    phone1: string;
-    phone2: string;
-    email2: string;
-    street1: string;
-    street2: string;
-    zipCode: string;
-    city: string;
-    state: string;
-    country: string;
-    bio: string;
-    facebook: string;
-    twitter: string;
-    instagram: string;
-    linkedin: string;
-    github: string;
-    youtube: string;
-    image: string;
-    tiktok: string;
-    googleReview: string;
-    revolut: string;
-    qrCode: string;
-    selectedColor: string;
-    cv: string;
-    behance: string;
-    paypal: string;
-    trustpilot: string;
-    telegram: string;
-    calendly: string;
-    discord: string;
-    tripadvisor: string;
-    viber: string;
-    whatsapp: string;
-    website: string;
-}
+
 
 interface AuthContextType {
     user: User | null;
