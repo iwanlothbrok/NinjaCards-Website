@@ -8,9 +8,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { BASE_API_URL } from '@/utils/constants';
 
-// Validation schema using Yup
+// Enhanced validation schema using Yup
 const schema = yup.object().shape({
-    password: yup.string().min(6, 'Паролата трябва да е поне 6 символа').required('Паролата е задължителна'),
+    password: yup.string()
+        .min(8, 'Паролата трябва да е поне 8 символа')
+        .matches(/[A-Z]/, 'Паролата трябва да съдържа поне една главна буква')
+        .matches(/[a-z]/, 'Паролата трябва да съдържа поне една малка буква')
+        .matches(/[0-9]/, 'Паролата трябва да съдържа поне една цифра')
+        .matches(/[\W_]/, 'Паролата трябва да съдържа поне един специален символ')
+        .required('Паролата е задължителна'),
     confirmPassword: yup.string()
         .oneOf([yup.ref('password'), ''], 'Паролите трябва да съвпадат')
         .required('Потвърждението на паролата е задължително'),
