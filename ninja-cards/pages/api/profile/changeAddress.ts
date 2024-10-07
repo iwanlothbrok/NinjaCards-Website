@@ -90,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             const updatedUser = await prisma.user.update({
-                where: { id: Number(id) },
+                where: { id: id },
                 data: updatedData,
             });
 

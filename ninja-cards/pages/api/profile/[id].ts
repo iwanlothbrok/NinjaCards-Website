@@ -1,5 +1,3 @@
-// File: pages/api/users/[id].ts
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import cors from '@/utils/cors';
@@ -11,20 +9,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const corsHandled = cors(req, res);
     if (corsHandled) return; // If it's a preflight request, stop further execution
 
+    // Extract `id` from query and ensure it's a string
     const { id } = req.query;
+    const userId = Array.isArray(id) ? id[0] : id; // If `id` is an array, take the first element
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required' });
+    }
 
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
     try {
+        // Query the user by UUID
         const user = await prisma.user.findUnique({
             where: {
-                id: Number(id), // Convert the id to a number if it's stored as an integer
-            },
+                id: userId, // Now `userId` is safely a string
+            }, 
         });
 
-        if (!user) {    
+        if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 

@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const user = await prisma.user.findUnique({
                 where: {
-                    id: Number(id), // Convert the id to a number if it's stored as an integer
+                    id: id, // Convert the id to a number if it's stored as an integer
                 },
             });
 
@@ -62,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             const updatedUser = await prisma.user.update({
-                where: { id: Number(id) },
+                where: { id: id },
                 data: updatedData,
             });
 

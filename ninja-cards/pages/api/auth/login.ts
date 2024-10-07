@@ -15,7 +15,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (req.method === 'POST') {
             const { email, password } = req.body;
 
-            console.log('Email:', email);
 
             // Check if user exists
             const user = await prisma.user.findUnique({
@@ -27,16 +26,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(401).json({ error: 'Invalid email or password' });
             }
 
-            console.log('User found:', user);
-
             // Check if password is correct
             const isPasswordValid = await compare(password, user.password);
             if (!isPasswordValid) {
                 console.log('Invalid password');
                 return res.status(401).json({ error: 'Invalid email or password' });
             }
-
-            console.log('Password valid');
 
             // Ensure NEXTAUTH_SECRET is set
             if (!process.env.NEXTAUTH_SECRET) {

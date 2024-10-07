@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             // Update the user's profile image in the database
             const updatedUser = await prisma.user.update({
-                where: { id: Number(id) },
+                where: { id: id },
                 data: { image: base64Image },
             });
 

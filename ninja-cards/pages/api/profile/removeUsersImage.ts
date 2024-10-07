@@ -11,14 +11,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'DELETE') {
         const { id } = req.query;
 
-        if (!id) {
-            return res.status(400).json({ error: 'User ID and selected color are required' });
+        // Check if `id` is provided and if it's a string or array, ensure it's a string
+        const userId = Array.isArray(id) ? id[0] : id;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is required' });
         }
 
         try {
-
             const updatedUser = await prisma.user.update({
-                where: { id: Number(id) },
+                where: { id: userId }, // Ensure `userId` is a string
                 data: { image: null },
             });
 

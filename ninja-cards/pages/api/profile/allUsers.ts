@@ -8,19 +8,14 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        // Log the incoming request
-        console.log('Received request for all users');
-
         // Handle CORS preflight requests
         const corsHandled = await cors(req, res);
         if (corsHandled) return; // If it's a preflight request, stop further execution
 
-        // Allow only GET method
         if (req.method !== 'GET') {
             return res.status(405).json({ message: 'Method not allowed' });
         }
 
-        // Log before fetching user ids
         console.log('Fetching user ids from the database');
 
         // Fetch only the ids of all users
@@ -35,9 +30,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Log fetched user ids
-        console.log('Fetched user ids:', userIds);
-
-        // Return user ids in JSON format
         return res.status(200).json(userIds);
 
     } catch (error) {
@@ -45,7 +37,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('Error fetching user ids:', error);
         return res.status(500).json({ message: 'Internal server error', error });
     } finally {
-        // Ensure PrismaClient is disconnected to avoid connection issues in long-running processes
         await prisma.$disconnect();
     }
 }
