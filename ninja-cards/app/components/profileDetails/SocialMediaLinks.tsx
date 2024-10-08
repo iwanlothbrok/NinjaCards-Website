@@ -22,7 +22,13 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
         { key: 'whatsapp', url: user?.whatsapp ? `https://wa.me/${user.whatsapp}` : null, logo: '/logos/wa.png', label: 'WhatsApp', gradient: 'from-green-600 to-green-700' },
         { key: 'website', url: user?.website, logo: '/logos/website.png', label: 'Website', gradient: 'from-cyan-600 to-cyan-800' },
         { key: 'revolut', url: user?.revolut ? `https://revolut.me/${user.revolut}` : null, logo: '/logos/rev.png', label: 'Revolut', gradient: 'from-blue-800 to-blue-900' },
-        { key: 'googleReview', url: user?.googleReview, logo: '/logos/gr.png', label: 'Google Review', gradient: 'from-blue-500 to-blue-300' },
+        { key: 'googleReview', url: user?.googleReview, logo: '/logos/gr.png', label: 'Google Review', gradient: 'from-blue-700 to-red-700' },
+   
+        { key: 'telegram', url: user?.telegram, logo: '/logos/telegram.png', label: 'Тelegram', gradient: 'from-teal-700 to-blue-700' },
+        { key: 'calendly', url: user?.calendly, logo: '/logos/calendly.png', label: 'Calendly', gradient: 'from-green-700 to-green-900' },
+        { key: 'discord', url: user?.discord, logo: '/logos/discord.png', label: 'Discord', gradient: 'from-indigo-800 to-indigo-950' },
+        { key: 'tripadvisor', url: user?.tripadvisor, logo: '/logos/tripadvisor.png', label: 'Tripadvisor', gradient: 'from-green-500 to-yellow-500' },
+
     ];
 
     return (
