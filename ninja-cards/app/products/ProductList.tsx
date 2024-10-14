@@ -8,7 +8,10 @@ interface Product {
     image: string;
     title: string;
     price: number;
+    oldPrice: number;
     type: string;
+    qrColor: string;
+
 }
 
 interface ProductListProps {
@@ -27,6 +30,8 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                         name={product.title} // Adjusted to use the 'title' field
                         price={product.price}
                         type={product.type}
+                        oldPrice={product.oldPrice}
+                        qrColor={product.qrColor}
                     />
                 ))}
             </div>

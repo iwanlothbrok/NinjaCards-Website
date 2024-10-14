@@ -8,10 +8,12 @@ interface ProductItemProps {
     imageUrl: string;
     name: string;
     price: number;
+    oldPrice: number;
     type: string;
+    qrColor: string;
 }
 
-const ProductItem: React.FC<ProductItemProps> = ({ id, imageUrl, name, price, type }) => {
+const ProductItem: React.FC<ProductItemProps> = ({ id, imageUrl, name, price, oldPrice, type, qrColor }) => {
     return (
         <motion.div
             initial="hidden"
@@ -39,9 +41,13 @@ const ProductItem: React.FC<ProductItemProps> = ({ id, imageUrl, name, price, ty
                 <h2 className="text-2xl font-bold text-black transition-colors duration-300 group-hover:text-orange-400">
                     {name}
                 </h2>
-                <p className="text-2xl  text-red-500 line-through">117 лв.</p>
 
-                <p className="text-xl font-semibold text-green-500 mt-2">{price.toFixed(2)} лв.</p>
+                {oldPrice && (
+                    <p className="text-3xl  text-red-500 line-through">{oldPrice} лв.</p>
+
+                )}
+
+                <p className="text-2xl font-semibold text-green-500 mt-2">{price.toFixed(2)} лв.</p>
 
                 {/* Call to Action */}
                 <Link href={`/products/${type}/${id}`}>

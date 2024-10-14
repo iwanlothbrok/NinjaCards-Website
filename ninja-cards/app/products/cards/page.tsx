@@ -12,6 +12,7 @@ interface Product {
     title: string; // Prisma field
     price: number;
     type: string;
+    oldPrice: number;
 }
 
 export default function NfcCardsList() {

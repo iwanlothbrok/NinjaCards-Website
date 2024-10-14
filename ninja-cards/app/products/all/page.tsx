@@ -11,6 +11,7 @@ interface Product {
     title: string; // Prisma field
     price: number;
     type: string;
+    oldPrice: number;
 }
 
 const AllProductsPage: React.FC = () => {

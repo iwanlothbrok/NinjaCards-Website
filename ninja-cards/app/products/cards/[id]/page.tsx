@@ -11,7 +11,12 @@ interface Product {
     image: string;
     title: string;
     price: string;
+    oldPrice: number;
     type: string;
+    frontImage: string;
+    backImage: string;
+    qrColor: string;
+
 }
 
 export default function ProductPageContent() {
@@ -72,15 +77,18 @@ export default function ProductPageContent() {
         return <div className="flex justify-center items-center py-72">Няма такъв продукт!</div>;
     }
 
-    const images = ['/cards/wa-front-back.png', '/cards/mh-front-back.png', '/cards/bp-front-back.png' , '/cards/impr-front-back.png'];
+    const images = ['/cards/wa-front-back.png', '/cards/mh-front-back.png', '/cards/bp-front-back.png', '/cards/impr-front-back.png'];
 
     return (
         <div className="text-white min-h-screen">
             <Product
                 title={product.title}
-                description={''} // Assuming the API doesn't provide description
                 price={product.price}
+                oldPrice={product.oldPrice}
                 imageUrls={[product.image, ...images]}
+                back={product.backImage}
+                front={product.frontImage}
+                qrColor={product.qrColor}
             />
             <RelatedProducts products={relatedProducts} />
         </div>

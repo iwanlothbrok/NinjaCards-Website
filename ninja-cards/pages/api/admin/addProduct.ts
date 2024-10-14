@@ -42,12 +42,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             // Safely extract fields and ensure they are strings
             const title = parseField(fields.title);
-            const description = parseField(fields.description);
             const price = parseField(fields.price);
             const type = parseField(fields.type);
+            const qrColor = parseField(fields.qrColor);
+            const oldPrice = parseField(fields.oldPrice);
 
             // Check if all required fields are present
-            if (!title || !description || !price || !type) {
+            if (!title || !price || !type || !qrColor) {
                 return res.status(400).json({ error: 'Title, description, price, and type are required' });
             }
 
@@ -75,12 +76,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const product = await prisma.product.create({
                 data: {
                     title,
-                    description,
                     price: parseFloat(price),
                     type,
                     image: image ?? "",                // Fallback for image
                     frontImage,
                     backImage,
+                    qrColor,
+                    oldPrice: parseFloat(oldPrice),
                 },
             });
 
