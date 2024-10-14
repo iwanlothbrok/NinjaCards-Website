@@ -10,22 +10,15 @@ import Head from 'next/head';
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'Ninja Cards NFC | Умни визитни картички, NFC ревюта и NFC стикери',
-  description: 'Ninja Cards предлага висококачествени NFC продукти, включително умни визитни картички, Google ревюта и NFC стикери. Повишете вашия бранд с иновативни технологии.',
+  title: 'Ninja Cards NFC | Смарт Визитки, NFC ревюта и NFC стикери',
+  description: 'Ninja Cards предлага висококачествени NFC продукти, включително смарт визитки, Google ревюта и NFC стикери. Споделяйте контакти със стил.',
   openGraph: {
     type: 'website',
     url: 'https://www.ninjacardsnfc.com/',
-    title: 'Ninja Cards NFC | Умни визитни картички, Google рецензии, смарт визитки и стикери',
-    description: 'Ninja Cards предлага висококачествени NFC продукти, включително умни визитни картички, смарт визитки, NFC тагове за Google ревюта, Tripavisor ревюта и NFC стикери. Повишете вашия бранд с иновативни технологии.',
+    title: 'Ninja Cards NFC | Смарт Визитки, NFC ревюта, Google ревюта, смарт визитки и стикери',
+    description: 'Ninja Cards предлага висококачествени NFC продукти, включително умни визитни картички, смарт визитки, NFC тагове за Google ревюта, Tripavisor ревюта и NFC стикери. Споделяйте контакти със стил.',
     siteName: 'Ninja Cards',
     locale: 'bg_BG',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: '@ninjacards',
-    title: 'Ninja Cards NFC | Умни визитни картички, Google рецензии и стикери',
-    description: 'Ninja Cards предлага висококачествени NFC продукти, включително умни визитни картички, тагове за Google рецензии и NFC стикери. Повишете вашия бранд с иновативни технологии.',
-    images: ['https://www.ninjacardsnfc.com/images/ninja-cards-og.jpg'],
   },
   keywords: [
     'NFC визитни картички',
