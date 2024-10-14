@@ -68,14 +68,13 @@ model Contact {
 model Product {
   id          Int       @id @default(autoincrement())
   title       String
-  description String
   price       Float
   oldPrice Float?
   image       String   @db.LongText // Update the type to TEXT or LONGTEXT
   frontImage  String?  @db.LongText // Optional front image
   backImage   String?  @db.LongText // Optional back image
   type     String
-
+  qrColor String? 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
