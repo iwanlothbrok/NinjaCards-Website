@@ -6,11 +6,18 @@ interface Alert {
     title: string;
     color: string;
 }
-const CustomCardDesigner = () => {
+
+type CardProps = {
+    back: string;
+    front: string;
+    color: string;
+};
+
+const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
     const [qrCodeData, setQrCodeData] = useState<string>('https://example.com');
     const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
     const [name, setName] = useState<string>('Вашето име');
-    const [title, setTitle] = useState<string>('Вашата позиция');
+    const [title, setTitle] = useState<string>('Вашата фирма');
     const [backLogoUrl, setBackLogoUrl] = useState<string | null>(null);
     const [fontSizeName, setFontSizeName] = useState<number>(28);
     const [fontSizeTitle, setFontSizeTitle] = useState<number>(22);
@@ -28,27 +35,60 @@ const CustomCardDesigner = () => {
     const [alert, setAlert] = useState<Alert | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        const img1 = new Image();
-        const img2 = new Image();
-        img1.src = '/back2.png'; // You can replace this with your front card image URL
-        img2.src = '/back.png'; // You can replace this with your back card image URL
-        img1.onload = () => setFrontImage(img1);
-        img2.onload = () => setBackImage(img2);
-    }, []);
+
+    const parseBase64ToPNG = (base64String: string): Promise<HTMLImageElement> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = `data:image/png;base64,${base64String}`;
+            img.onload = () => resolve(img);
+            img.onerror = (err) => reject(err);
+        });
+    };
 
     useEffect(() => {
+        // Load front image from base64
+        parseBase64ToPNG(back)
+            .then((img) => {
+                setFrontImage(img);
+            })
+            .catch((error) => {
+                console.error("Error loading front image:", error);
+            });
+
+        // Load back image from base64
+        parseBase64ToPNG(front)
+            .then((img) => {
+                setBackImage(img);
+            })
+            .catch((error) => {
+                console.error("Error loading back image:", error);
+            });
+    }, [front, back]); // Add dependencies
+
+    useEffect(() => {
+        // white
+        // color: {
+        //     dark: '#ffffff',
+        //     light: '#00000000',
+        // },
+
+        // black
+        // color: {
+        //     dark: '#000000',  // Set the dark part of the QR code to black
+        //     light: '#00000000',  // Transparent background
+        // },
+
         QRCode.toDataURL(qrCodeData, {
             width: 100,
             margin: 2,
             color: {
-                dark: '#ffffff',
-                light: '#00000000',
+                dark: color === '#FFFFFF' ? '#ffffff' : '#000000',
+                light: '#00000000',  // Transparent background
             },
         })
             .then(url => setQrCodeUrl(url))
             .catch(err => console.error(err));
-    }, [qrCodeData, '#ffffff']);
+    }, [qrCodeData, `${color}`]);
 
     useEffect(() => {
         if (frontImage && backImage) {
@@ -116,10 +156,11 @@ const CustomCardDesigner = () => {
                     frontCtx.drawImage(qrImage, centerX, centerY, qrSize, qrSize);
                 };
             }
+            console.log(color);
 
-            frontCtx.fillStyle = '#ffffff';
+            frontCtx.fillStyle = color;
             frontCtx.font = `bold ${fontSizeName}px Arial`;
-            frontCtx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            frontCtx.shadowColor = 'rgba(0, 0, 0, 0.5)';
             frontCtx.shadowOffsetX = 2;
             frontCtx.shadowOffsetY = 2;
             frontCtx.shadowBlur = 10;
@@ -145,12 +186,12 @@ const CustomCardDesigner = () => {
                     backCtx.drawImage(grayscaleLogo, (backCanvas.width - backLogoSize) / 2, (backCanvas.height - backLogoSize) / 2, backLogoSize, backLogoSize);
                 };
             } else {
-                backCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                backCtx.fillStyle = 'rgba(128, 128, 128, 0.7)';
                 backCtx.fillRect((backCanvas.width - backLogoSize) / 2, (backCanvas.height - backLogoSize) / 2, backLogoSize, backLogoSize);
-                backCtx.fillStyle = '#ffffff';
-                backCtx.font = 'bold 16px Arial';
+                backCtx.fillStyle = '#FFFFFF';
+                backCtx.font = 'bold 22px Arial';
                 backCtx.textAlign = 'center';
-                backCtx.fillText('Качете лого/изображение', backCanvas.width / 2, backCanvas.height / 2);
+                backCtx.fillText('Качете вашето лого', backCanvas.width / 2, backCanvas.height / 2);
             }
         }
     };
