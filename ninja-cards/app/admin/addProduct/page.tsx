@@ -8,8 +8,9 @@ export default function AddProduct() {
     const [password, setPassword] = useState('');
     const [product, setProduct] = useState({
         title: '',
-        description: '',
         price: '',
+        oldPrice: '',
+        qrColor: '',  // Default to the first option
         type: 'cards',  // Default to the first option
     });
     const [image, setImage] = useState<File | null>(null);
@@ -50,9 +51,10 @@ export default function AddProduct() {
 
         const formData = new FormData();
         formData.append('title', product.title);
-        formData.append('description', product.description);
         formData.append('price', product.price);
+        formData.append('oldPrice', product.oldPrice);
         formData.append('type', product.type);
+        formData.append('qrColor', product.qrColor);
 
         if (image) {
             formData.append('image', image);
@@ -110,13 +112,13 @@ export default function AddProduct() {
         <div className="max-w-2xl mx-auto p-6 shadow-lg rounded-md bg-gray-700 mt-20 text-gray-300">
             <h1 className="text-3xl font-bold mb-6 text-center">Add New Product</h1>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
-                {['title', 'description', 'price'].map((field) => (
+                {['title', 'price', 'oldPrice', 'qrColor'].map((field) => (
                     <div key={field} className="mb-6">
                         <label className="block text-sm font-medium capitalize">
                             {field.charAt(0).toUpperCase() + field.slice(1)}
                         </label>
                         <input
-                            type={field === 'price' ? 'number' : 'text'}
+                            type={field.includes('rice') ? 'number' : 'text'}
                             className="mt-1 block w-full p-1 rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             value={product[field as keyof typeof product]}
                             onChange={(e) => handleChange(e, field)}
