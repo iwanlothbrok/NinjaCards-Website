@@ -12,6 +12,7 @@ interface Product {
     price: number;
     type: string;
     oldPrice: number;
+    qrColor: string;
 }
 
 const AllProductsPage: React.FC = () => {
