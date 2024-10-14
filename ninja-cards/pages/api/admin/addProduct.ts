@@ -82,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     frontImage,
                     backImage,
                     qrColor,
-                    oldPrice: parseFloat(oldPrice),
+                    oldPrice: parseFloat(oldPrice || '0'),
                 },
             });
 

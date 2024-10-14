@@ -52,7 +52,8 @@ export default function AddProduct() {
         const formData = new FormData();
         formData.append('title', product.title);
         formData.append('price', product.price);
-        formData.append('oldPrice', product.oldPrice);
+        formData.append('oldPrice', product.oldPrice || '0');
+
         formData.append('type', product.type);
         formData.append('qrColor', product.qrColor);
 

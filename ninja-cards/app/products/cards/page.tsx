@@ -13,6 +13,8 @@ interface Product {
     price: number;
     type: string;
     oldPrice: number;
+    qrColor: string;
+
 }
 
 export default function NfcCardsList() {

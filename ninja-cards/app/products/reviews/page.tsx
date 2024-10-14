@@ -8,10 +8,13 @@ import Header from '@/app/components/layout/Header';
 
 interface Product {
     id: number;
-    image: string; // Prisma field
-    title: string; // Prisma field
+    image: string;
+    title: string;
     price: number;
+    oldPrice: number;
     type: string;
+    qrColor: string;
+
 }
 
 export default function NfcCardsList() {
