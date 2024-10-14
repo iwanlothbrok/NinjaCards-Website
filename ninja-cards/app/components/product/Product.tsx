@@ -8,16 +8,23 @@ import Link from 'next/link';
 
 type ProductProps = {
     title: string;
-    description: string;
     price: string;
     imageUrls: string[];
+    back: string;
+    oldPrice: number;
+    front: string;
+    qrColor: string;
+
 };
 
 const Product: React.FC<ProductProps> = ({
     title,
-    description,
     price,
+    oldPrice,
     imageUrls,
+    back,
+    front,
+    qrColor
 }) => {
     const settings = {
         dots: true,
@@ -42,18 +49,34 @@ const Product: React.FC<ProductProps> = ({
                     {/* Image Carousel */}
                     <Slider {...settings}>
                         {imageUrls.map((url, index) => (
-                            <div key={index} className="relative">
-                                <img src={url} alt={`Product Image ${index + 1}`} className="w-full h-auto rounded-lg shadow-lg object-cover" />
+                            <div
+                                key={index}
+                                className="relative flex justify-center items-center overflow-hidden"
+                                style={{ height: '400px' }} // Set a fixed height for consistency
+                            >
+                                <img
+                                    src={url}
+                                    alt={`Product Image ${index + 1}`}
+                                    className="h-full rounded-lg shadow-lg object-cover"
+                                    style={{
+                                        width: index === 0 ? 'auto' : '100%', // Adjust width of the first image to make it stand out
+                                        transform: index === 0 ? 'scale(1.4)' : 'scale(1)', // Scale the first image to zoom slightly
+                                        transition: 'transform 0.5s ease-in-out', // Smooth transition for zoom effect
+                                    }}
+                                />
                             </div>
                         ))}
                     </Slider>
+
 
                     <div className="space-y-4">
                         <h2 className="text-3xl font-bold text-orange-400">{title}</h2>
 
                         <div className="flex items-center space-x-4">
                             {/* Old price with strikethrough */}
-                            <p className="text-4xl  text-red-500 line-through">117 лв.</p>
+                            {oldPrice && (
+                                <p className="text-4xl  text-red-500 line-through">{oldPrice} лв.</p>
+                            )}
 
                             {/* Current price */}
                             <p className="text-3xl font-semibold text-green-600">{price} лв.</p>
@@ -144,7 +167,7 @@ const Product: React.FC<ProductProps> = ({
 
                 {/* Customization Section */}
                 <div className="p-6 rounded-lg shadow-lg bg-gray-800">
-                    <CustomCardDesigner />
+                    <CustomCardDesigner back={back} front={front} color={qrColor} />
                 </div>
             </div>
         </div >
