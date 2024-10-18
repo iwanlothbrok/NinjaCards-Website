@@ -30,9 +30,8 @@ const FAQPage = () => {
   return (
     <div className="min-h-screen text-white">
       <Header pageInformation='Имате въпрос' textOne='Визитки' textTwo='Ревюта' textThree='Дизайн' />
-
-      {/* Hero Section */}
       <FAQVideos openModal={openModal} />
+      {/* Hero Section */}
       <header className="mt-0 mb-6 p-6 flex flex-col justify-center items-center text-center ">
         <p className="text-lg max-w-2xl">
           Имате въпроси? Имаме отговори. Разгледайте нашите често задавани въпроси по-долу или използвайте лентата за търсене, за да намерите това, което търсите.
