@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
@@ -13,6 +14,11 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+    const corsHandled = cors(req, res);
+    if (corsHandled) return; // If it's a preflight request, stop further execution
+
+
     if (req.method === 'POST') {
         const { cardName, cardTitle, userName, userPhone, userEmail, frontDataUrl, backDataUrl, backLogoUrl, courierIsSpeedy, courierAddress } = req.body;
 
