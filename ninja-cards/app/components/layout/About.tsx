@@ -109,7 +109,7 @@ const About: React.FC = () => {
           transition={{ duration: 0.7 }}
           className="text-2xl font-semibold text-white sm:text-3xl"
         >
-          Отключете мощта на NFC технологията
+          Отключете мощта на NFC технологията 
         </motion.h1>
         <motion.p
           initial="hidden"

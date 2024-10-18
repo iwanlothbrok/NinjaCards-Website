@@ -63,7 +63,7 @@ export default function RootLayout({
             <main className="flex-grow">{children}</main>
             <footer className="bg-gradient-to-t from-gray-900 via-gray-950 to-black text-center py-8">
               <p className="text-gray-200">
-                © 2024 Ninja Cards. Всички права са запазени.
+                © 2024 Ninja Cards.  Всички права са запазени.
               </p>
             </footer>
           </div>
