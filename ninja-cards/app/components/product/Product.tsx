@@ -74,7 +74,7 @@ const Product: React.FC<ProductProps> = ({
 
                         <div className="flex items-center space-x-4">
                             {/* Old price with strikethrough */}
-                            {oldPrice && (
+                            {oldPrice > 0 && (
                                 <p className="text-4xl  text-red-500 line-through">{oldPrice} лв.</p>
                             )}
 
