@@ -52,7 +52,11 @@ export default function AddProduct() {
         const formData = new FormData();
         formData.append('title', product.title);
         formData.append('price', product.price);
-        formData.append('oldPrice', product.oldPrice || '0');
+
+        // Only append oldPrice if it's provided, otherwise it will be treated as null in the database
+        if (product.oldPrice) {
+            formData.append('oldPrice', product.oldPrice);
+        }
 
         formData.append('type', product.type);
         formData.append('qrColor', product.qrColor);
@@ -66,14 +70,15 @@ export default function AddProduct() {
         if (backImage) {
             formData.append('backImage', backImage);
         }
+
         console.log(formData);
         console.log(image);
 
-
         const response = await fetch(`${BASE_API_URL}/api/admin/addProduct`, {
             method: 'POST',
-            body: formData,  // Send the FormData with the files
+            body: formData,
         });
+
         console.log(response.statusText);
 
         if (response.ok) {
@@ -113,7 +118,8 @@ export default function AddProduct() {
         <div className="max-w-2xl mx-auto p-6 shadow-lg rounded-md bg-gray-700 mt-20 text-gray-300">
             <h1 className="text-3xl font-bold mb-6 text-center">Add New Product</h1>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
-                {['title', 'price', 'oldPrice', 'qrColor'].map((field) => (
+                {/* Title, price, and qrColor fields are required */}
+                {['title', 'price', 'qrColor'].map((field) => (
                     <div key={field} className="mb-6">
                         <label className="block text-sm font-medium capitalize">
                             {field.charAt(0).toUpperCase() + field.slice(1)}
@@ -127,6 +133,20 @@ export default function AddProduct() {
                         />
                     </div>
                 ))}
+
+                {/* OldPrice is optional */}
+                <div className="mb-6">
+                    <label className="block text-sm font-medium capitalize">
+                        Old Price (optional)
+                    </label>
+                    <input
+                        type="number"
+                        className="mt-1 block w-full p-1 rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        value={product.oldPrice}
+                        onChange={(e) => handleChange(e, 'oldPrice')}
+                        placeholder="Leave blank if not applicable"
+                    />
+                </div>
 
                 {/* File inputs for images */}
                 <div className="mb-6">
