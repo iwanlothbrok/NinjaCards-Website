@@ -151,9 +151,8 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
                 qrImage.src = qrCodeUrl;
                 qrImage.onload = () => {
                     const qrSize = 170; // Increased size for better visibility
-                    const centerX = (frontCanvas.width - qrSize) / 2;
-                    const centerY = (frontCanvas.height - qrSize) / 2 - 30;
-                    frontCtx.drawImage(qrImage, centerX, centerY, qrSize, qrSize);
+                    const margin = 22; // Margin from top and left
+                    frontCtx.drawImage(qrImage, margin, margin, qrSize, qrSize); // Draw at top-left corner with margin
                 };
             }
             console.log(color);
@@ -195,6 +194,7 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
             }
         }
     };
+
 
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>, setLogoFn: React.Dispatch<React.SetStateAction<string | null>>) => {
         if (e.target.files && e.target.files[0]) {
@@ -354,11 +354,11 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
                     <h1 className="text-4xl font-bold mb-8">Дизайн на NFC Карта</h1>
                     <div className="card-preview grid gap-8">
                         <div className="row">
-                            <h3 className="text-center text-lg font-bold mb-2">Предна част на картата</h3>
+                            <h3 className="text-center text-lg font-bold mb-2">Задна част на картата</h3>
                             <canvas ref={frontCanvasRef} width={602} height={368} className="rounded-lg shadow-lg w-full"></canvas>
                         </div>
                         <div className="row">
-                            <h3 className="text-center text-lg font-bold mb-2">Задна част на картата</h3>
+                            <h3 className="text-center text-lg font-bold mb-2">Предна част на картата</h3>
                             <canvas ref={backCanvasRef} width={610} height={368} className="rounded-lg shadow-lg w-full"></canvas>
                         </div>
                     </div>
