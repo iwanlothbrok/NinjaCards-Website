@@ -26,15 +26,19 @@ const ProductItem: React.FC<ProductItemProps> = ({ id, imageUrl, name, price, ol
             className="relative w-full bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group"
         >
             {/* Image Section */}
-            <div className="w-full h-64 bg-gray-400 rounded-t-lg overflow-hidden">
-                <Link href={`/products/${type}/${id}`}>
-                    <img
-                        src={`data:image/jpeg;base64,${imageUrl}`}
-                        alt={name}
-                        className="w-full h-full object-center object-cover transition-transform duration-500 transform group-hover:scale-105"
-                    />
-                </Link>
+            <div className='bg-white'>
+                <div className="w-full h-72 bg-white rounded-t-lg overflow-hidden">
+                    <Link href={`/products/${type}/${id}`}>
+                        <img
+                            src={`data:image/jpeg;base64,${imageUrl}`}
+                            alt={name}
+                            className="w-full h-80 object-center object-contain transition-transform duration-500 transform hover:scale-110"
+                        />
+                    </Link>
+                </div>
             </div>
+
+
 
             {/* Product Info */}
             <div className="p-5 flex flex-col items-center text-center">
