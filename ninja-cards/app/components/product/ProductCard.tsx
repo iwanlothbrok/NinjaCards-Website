@@ -86,7 +86,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, name, descripti
 
 export const ProductGallery: React.FC = () => {
     return (
-        <div className="bg-gradient-to-b from-black to-gray-950 py-16 p-1">
+        <div className="bg-gradient-to-b z-0 from-black to-gray-950 py-16 p-1">
             <motion.div
                 initial="hidden"
                 animate="visible"
