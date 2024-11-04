@@ -42,12 +42,17 @@ const ProductItem: React.FC<ProductItemProps> = ({ id, imageUrl, name, price, ol
                     {name}
                 </h2>
 
-                {oldPrice && (
-                    <p className="text-3xl  text-red-500 line-through">{oldPrice} лв.</p>
+                {oldPrice > 0 ? (
+                    <>
+                        <p className="text-3xl  text-red-500 line-through">{oldPrice} лв.</p>
 
+                        <p className="text-2xl font-semibold text-green-500 mt-2">{price.toFixed(2)} лв.</p>
+                    </>
+
+                ) : (
+                    <p className="text-2xl font-semibold text-green-500">{price.toFixed(2)} лв.</p>
                 )}
 
-                <p className="text-2xl font-semibold text-green-500 mt-2">{price.toFixed(2)} лв.</p>
 
                 {/* Call to Action */}
                 <Link href={`/products/${type}/${id}`}>
