@@ -17,7 +17,7 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
     const [qrCodeData, setQrCodeData] = useState<string>('https://example.com');
     const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
     const [name, setName] = useState<string>('Вашето име');
-    const [title, setTitle] = useState<string>('Вашата фирма');
+    const [title, setTitle] = useState<string>('Фирма');
     const [backLogoUrl, setBackLogoUrl] = useState<string | null>(null);
     const [fontSizeName, setFontSizeName] = useState<number>(28);
     const [fontSizeTitle, setFontSizeTitle] = useState<number>(22);
@@ -357,12 +357,6 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
                             <h3 className="text-center text-lg font-bold mb-2">Задна част на картата</h3>
                             <canvas ref={frontCanvasRef} width={602} height={368} className="rounded-lg shadow-lg w-full"></canvas>
                         </div>
-                        <div className="row">
-                            <h3 className="text-center text-lg font-bold mb-2">Предна част на картата</h3>
-                            <canvas ref={backCanvasRef} width={610} height={368} className="rounded-lg shadow-lg w-full"></canvas>
-                        </div>
-                    </div>
-                    <div className="controls mt-8 w-full max-w-lg space-y-6">
                         <label className="block text-sm font-medium">
                             Име:
                             <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -371,26 +365,25 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
                             Позиция:
                             <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </label>
-                        <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium">Размер на шрифт за име:</label>
-                            <div className="flex space-x-2">
-                                <button onClick={decreaseFontSizeName} className="px-2 py-1 bg-gray-600 text-white rounded">-</button>
-                                <span>{fontSizeName}</span>
-                                <button onClick={increaseFontSizeName} className="px-2 py-1 bg-gray-600 text-white rounded">+</button>
-                            </div>
+                        <div className="flex space-x-2">
+                            <button onClick={increaseFontSizeName} className="px-4 py-2 bg-gray-600 text-white rounded">A+</button>
+                            <button onClick={decreaseFontSizeName} className="px-4 py-2 bg-gray-600 text-white rounded">A-</button>
+                            <span>Размер на шрифт за име: {fontSizeName}</span>
                         </div>
-                        <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium">Размер на шрифт за позиция Ви:</label>
-                            <div className="flex space-x-2">
-                                <button onClick={decreaseFontSizeTitle} className="px-2 py-1 bg-gray-600 text-white rounded">-</button>
-                                <span>{fontSizeTitle}</span>
-                                <button onClick={increaseFontSizeTitle} className="px-2 py-1 bg-gray-600 text-white rounded">+</button>
-                            </div>
+                        <div className="flex space-x-2">
+                            <button onClick={increaseFontSizeTitle} className="px-4 py-2 bg-gray-600 text-white rounded">A+</button>
+                            <button onClick={decreaseFontSizeTitle} className="px-4 py-2 bg-gray-600 text-white rounded">A-</button>
+                            <span>Размер на шрифт за позиция: {fontSizeTitle}</span>
                         </div>
                         <label className="block text-sm font-medium">
                             Данни за QR код:
                             <input type="text" value={qrCodeData} onChange={(e) => setQrCodeData(e.target.value)} className="mt-2 w-full p-3 border border-gray-400 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </label>
+                        <div className="row">
+                            <h3 className="text-center text-lg sm:text-xl font-bold mb-2">Предна част на картата</h3>
+                            <canvas ref={backCanvasRef} width={610} height={368} className="rounded-lg shadow-lg w-full h-auto"></canvas>
+                        </div>
+
                         <div className="flex items-center justify-between">
                             <label className="text-sm font-medium">Промяна на размер на лого отзад:</label>
                             <div className="flex space-x-2">
@@ -403,106 +396,108 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
                             Качете лого/изображение отзад:
                             <input type="file" onChange={(e) => handleLogoUpload(e, setBackLogoUrl)} className="mt-2 w-full p-2 border border-gray-400 rounded-lg bg-gray-700 text-white cursor-pointer" />
                         </label>
+
                     </div>
+
                     <button onClick={handleSaveDesign} className="mt-6 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 w-full max-w-xs">
                         Запазване на дизайна
                     </button>
                 </>
-            )}
+            )
+            }
+            {
+                showModal && (
+                    <div className="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-black p-10 rounded-lg shadow-lg">
+                            <h2 className="text-2xl font-bold mb-4">Изпрати Дизайн</h2>
+                            <form onSubmit={handleSubmitForm} className="space-y-6 p-4">
+                                {/* User Name */}
+                                <div>
+                                    <label className="block text-sm font-medium">Име:</label>
+                                    <input
+                                        type="text"
+                                        value={userName}
+                                        onChange={(e) => setUserName(e.target.value)}
+                                        required
+                                        className="mt-2 p-2 w-full border text-black rounded"
+                                    />
+                                </div>
 
+                                {/* User Email */}
+                                <div>
+                                    <label className="block text-sm font-medium">Имейл:</label>
+                                    <input
+                                        type="email"
+                                        value={userEmail}
+                                        onChange={(e) => setUserEmail(e.target.value)}
+                                        required
+                                        className="mt-2 p-2 w-full border text-black rounded"
+                                    />
+                                </div>
 
+                                {/* User Phone */}
+                                <div>
+                                    <label className="block text-sm font-medium">Телефон:</label>
+                                    <input
+                                        type="tel"
+                                        value={userPhone}
+                                        onChange={(e) => setUserPhone(e.target.value)}
+                                        required
+                                        className="mt-2 p-2 w-full border text-black rounded"
+                                    />
+                                </div>
 
+                                {/* Courier Type (courierIsSpeedy) */}
+                                <div>
+                                    <label className="block text-sm font-medium">Избери Куриера:</label>
+                                    <select
+                                        value={courierIsSpeedy}
+                                        onChange={(e) => setCourierIsSpeedy(Number(e.target.value))}
+                                        required
+                                        className="mt-2 p-2 w-full border text-black rounded"
+                                    >
+                                        <option value={1}>Спиди</option>
+                                        <option value={0}>Еконт</option>
+                                    </select>
+                                </div>
 
-            {showModal && (
-                <div className="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-black p-10 rounded-lg shadow-lg">
-                        <h2 className="text-2xl font-bold mb-4">Изпрати Дизайн</h2>
-                        <form onSubmit={handleSubmitForm} className="space-y-4">
-                            {/* User Name */}
-                            <div>
-                                <label className="block text-sm font-medium">Име:</label>
-                                <input
-                                    type="text"
-                                    value={userName}
-                                    onChange={(e) => setUserName(e.target.value)}
-                                    required
-                                    className="mt-2 p-2 w-full border text-black rounded"
-                                />
-                            </div>
+                                {/* Courier Address (courierAddress) */}
+                                <div>
+                                    <label className="block text-sm font-medium">Адрес на куриера:</label>
+                                    <input
+                                        type="text"
+                                        value={courierAddress}
+                                        onChange={(e) => setCourierAddress(e.target.value)}
+                                        required
+                                        className="mt-2 p-2 w-full border text-black rounded"
+                                    />
+                                </div>
 
-                            {/* User Email */}
-                            <div>
-                                <label className="block text-sm font-medium">Имейл:</label>
-                                <input
-                                    type="email"
-                                    value={userEmail}
-                                    onChange={(e) => setUserEmail(e.target.value)}
-                                    required
-                                    className="mt-2 p-2 w-full border text-black rounded"
-                                />
-                            </div>
+                                {/* Form Buttons */}
+                                <div className="flex justify-end space-x-4">
+                                    <button
+                                        onClick={handleSaveDesign}
+                                        type="submit"
+                                        className="bg-orange text-white py-2 px-4 rounded"
+                                    >
+                                        Запазване
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowModal(false)}
+                                        className="bg-gray-500 text-white py-2 px-4 rounded"
+                                    >
+                                        Отказ
+                                    </button>
 
-                            {/* User Phone */}
-                            <div>
-                                <label className="block text-sm font-medium">Телефон:</label>
-                                <input
-                                    type="tel"
-                                    value={userPhone}
-                                    onChange={(e) => setUserPhone(e.target.value)}
-                                    required
-                                    className="mt-2 p-2 w-full border text-black rounded"
-                                />
-                            </div>
-
-                            {/* Courier Type (courierIsSpeedy) */}
-                            <div>
-                                <label className="block text-sm font-medium">Избери Куриера:</label>
-                                <select
-                                    value={courierIsSpeedy}
-                                    onChange={(e) => setCourierIsSpeedy(Number(e.target.value))}
-                                    required
-                                    className="mt-2 p-2 w-full border text-black rounded"
-                                >
-                                    <option value={1}>Спиди</option>
-                                    <option value={0}>Еконт</option>
-                                </select>
-                            </div>
-
-                            {/* Courier Address (courierAddress) */}
-                            <div>
-                                <label className="block text-sm font-medium">Адрес на куриера:</label>
-                                <input
-                                    type="text"
-                                    value={courierAddress}
-                                    onChange={(e) => setCourierAddress(e.target.value)}
-                                    required
-                                    className="mt-2 p-2 w-full border text-black rounded"
-                                />
-                            </div>
-
-                            {/* Form Buttons */}
-                            <div className="flex justify-end space-x-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowModal(false)}
-                                    className="bg-gray-500 text-white py-2 px-4 rounded"
-                                >
-                                    Отказ
-                                </button>
-                                <button
-                                    onClick={handleSaveDesign}
-                                    type="submit"
-                                    className="bg-orange text-white py-2 px-4 rounded"
-                                >
-                                    Запазване
-                                </button>
-                            </div>
-                        </form>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
-        </div>
+        </div >
     );
 };
 
