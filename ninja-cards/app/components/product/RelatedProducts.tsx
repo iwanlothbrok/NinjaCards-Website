@@ -28,7 +28,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                             <img
                                 src={`data:image/jpeg;base64,${product.image}`}
                                 alt={product.title}
-                                className="w-full h-full object-center object-cover transition-transform duration-500 transform group-hover:scale-110"
+                                className="w-full h-full object-center object-cover transition-transform duration-500 transform  group-hover:scale-110"
                             />
                             {/* Add a "View More" button overlay */}
                             <div className="absolute inset-0 bg-black bg-opacity-25 opacity-0 group-hover:opacity-100 flex justify-center items-center transition-opacity duration-300">
