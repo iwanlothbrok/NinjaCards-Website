@@ -142,10 +142,10 @@ const Product: React.FC<ProductProps> = ({
                     <div className="mt-8 lg:mt-0 lg:relative lg:w-full">
                         <button
                             onClick={handleBuyNow}
-                            className="w-full z-50 px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-md 
-                   hover:bg-green-600 hover:shadow-lg hover:scale-105 transform transition-all duration-300 
+                            className="w-full z-50 px-6 py-5 bg-orange text-white text-xl font-bold rounded-lg shadow-md 
+                    hover:shadow-lg hover:scale-105 transform transition-all duration-300 
                    lg:static fixed inset-x-0 bottom-0 mb-1 lg:w-full lg:px-6 lg:py-3 lg:rounded-lg lg:shadow-md
-                   lg:hover:bg-green-600 lg:hover:shadow-lg lg:hover:scale-105"
+                    lg:hover:shadow-lg lg:hover:scale-105"
                         >
                             Купи
                         </button>
