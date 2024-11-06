@@ -117,9 +117,7 @@ const Login: React.FC = () => {
                             >
                                 Влез
                             </button>
-                            {/* <p className="text-base font-light text-gray-500 dark:text-gray-400">
-                                Нямате акаунт? <a href="/register" className="font-medium text-teal-600 hover:underline">Регистрирайте се тук</a>
-                            </p> */}
+                           
                         </form>
                     </div>
                 </div>
