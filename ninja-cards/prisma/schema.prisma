@@ -93,3 +93,9 @@ model CardDesign {
   courierIsSpeedy	Int
   createdAt   DateTime @default(now())
 }
+
+model Company {
+  id      String   @id @default(uuid())
+  name    String
+  googleReviewLink    String
+}
