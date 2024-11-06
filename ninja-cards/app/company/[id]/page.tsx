@@ -13,7 +13,7 @@ export default function CompanyReviewPage({ params }: { params: { id: string } }
 
     useEffect(() => {
         if (!id) return;
-        setTimeout(() => console.log("Third"), 12000)
+
         const fetchCompanyData = async () => {
             try {
                 const response = await fetch(`${BASE_API_URL}/api/company/${id}`);
@@ -31,14 +31,20 @@ export default function CompanyReviewPage({ params }: { params: { id: string } }
 
     useEffect(() => {
         if (googleReviewLink) {
-            router.push(googleReviewLink);
+            // Add a delay of 3 seconds before redirecting
+            const redirectTimeout = setTimeout(() => {
+                router.push(googleReviewLink);
+            }, 3000); // 3-second delay
+
+            // Clear timeout if component unmounts before redirect
+            return () => clearTimeout(redirectTimeout);
         }
     }, [googleReviewLink, router]);
 
     return (
         <div className="flex items-center justify-center px-5 min-h-screen bg-gradient-to-b from-black to-darkOrange">
             <motion.div
-                className="text-center space-y-6 p-8 px-5 bg-white rounded-lg shadow-lg "
+                className="text-center space-y-6 p-8 px-5 bg-white rounded-lg shadow-lg"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
