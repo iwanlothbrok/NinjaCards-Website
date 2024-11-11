@@ -2,7 +2,6 @@
 
 import { HomePage } from './components/layout/Home';
 import About from './components/layout/About';
-
 import Roadmap3 from './components/layout/Roadmap3';
 import VideoTextSection from './components/layout/VideoTextSection';
 import Testimonies from './components/layout/Testimonies';
