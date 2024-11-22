@@ -4,8 +4,9 @@ import screenfull from "screenfull"; // For fullscreen functionality
 import { FaExpand, FaCompress, FaTimes } from "react-icons/fa";
 
 const HowToUse = () => {
-  const containerRef = useRef(null); // Reference for fullscreen functionality
+  const containerRef = useRef<HTMLDivElement | null>(null); // Reference for the video container
   const [isFullscreen, setIsFullscreen] = useState(false); // Track fullscreen state
+  const [isPlaying, setIsPlaying] = useState(false); // Track video play state
 
   // Toggle fullscreen mode
   const toggleFullscreen = () => {
@@ -36,7 +37,8 @@ const HowToUse = () => {
           {/* Video Player Section */}
           <div
             ref={containerRef}
-            className={`relative rounded-lg overflow-hidden shadow-lg border border-gray-800 p-2 flex justify-center items-center ${isFullscreen ? "fixed inset-0 bg-black z-50" : ""}`}
+            className={`relative rounded-lg overflow-hidden shadow-lg border border-gray-800 p-2 flex justify-center items-center ${isFullscreen ? "fixed inset-0 bg-black z-50" : ""
+              }`}
             style={{
               backgroundColor: "#000",
               height: isFullscreen ? "100vh" : "400px",
@@ -46,10 +48,12 @@ const HowToUse = () => {
             <ReactPlayer
               url="https://www.youtube.com/embed/vlpRHfQ-W3E"
               controls
+              playing={isPlaying} // Video won't start automatically
+              onPlay={() => setIsPlaying(true)} // Set state to true when video is played
+              onPause={() => setIsPlaying(false)} // Set state to false when video is paused
               width="100%"
               height="100%"
               className="rounded-lg"
-              playing
               config={{
                 youtube: {
                   playerVars: {
@@ -65,7 +69,8 @@ const HowToUse = () => {
             {/* Fullscreen Toggle Button */}
             <button
               onClick={toggleFullscreen}
-              className={`absolute top-4 right-4 bg-gray-700 text-white rounded-md p-2 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 ${isFullscreen ? "hidden" : ""}`}
+              className={`absolute top-4 right-4 bg-gray-700 text-white rounded-md p-2 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 ${isFullscreen ? "hidden" : ""
+                }`}
               aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
             >
               {isFullscreen ? <FaCompress className="text-xl" /> : <FaExpand className="text-xl" />}
@@ -91,19 +96,19 @@ const HowToUse = () => {
 
             <div className="space-y-6">
               <div className="flex items-start space-x-4">
-                <div className="text-orange text-2xl font-bold">1.</div>
+                <div className="text-orange-500 text-2xl font-bold">1</div>
                 <p className="text-md text-gray-300">
                   Сканирайте вашата карта с помощта на инструкциите от видеото за бърза настройка.
                 </p>
               </div>
               <div className="flex items-start space-x-4">
-                <div className="text-orange text-2xl font-bold">2.</div>
+                <div className="text-orange-500 text-2xl font-bold">2</div>
                 <p className="text-md text-gray-300">
                   Докоснете вашия NFC карта до съвместим телефон и споделяйте информация за секунди.
                 </p>
               </div>
               <div className="flex items-start space-x-4">
-                <div className="text-orange text-2xl font-bold">3.</div>
+                <div className="text-orange-500 text-2xl font-bold">3</div>
                 <p className="text-md text-gray-300">
                   Създайте персонализиран профил, който ви представя по уникален начин.
                 </p>
