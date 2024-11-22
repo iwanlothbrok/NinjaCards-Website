@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { BASE_API_URL } from '@/utils/constants';
 import Product from '@/app/components/product/Product';
 import RelatedProducts from '@/app/components/product/RelatedProducts';
-
+import HowToUse from '@/app/components/product/HowToUse';
 interface Product {
     id: number;
     image: string;
@@ -90,6 +90,7 @@ export default function ProductPageContent() {
                 front={product.frontImage}
                 qrColor={product.qrColor}
             />
+            <HowToUse />
             <RelatedProducts products={relatedProducts} />
         </div>
     );
