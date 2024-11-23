@@ -1,9 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    // Handle CORS preflight requests
+    const corsHandled = cors(req, res);
+    if (corsHandled) return;
+
     const { id } = req.query;
 
     if (req.method === 'DELETE') {
