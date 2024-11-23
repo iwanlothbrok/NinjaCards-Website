@@ -96,19 +96,19 @@ const HowToUse = () => {
 
             <div className="space-y-6">
               <div className="flex items-start space-x-4">
-                <div className="text-orange-500 text-2xl font-bold">1</div>
+                <div className="text-orange text-2xl font-bold">1.</div>
                 <p className="text-md text-gray-300">
                   Сканирайте вашата карта с помощта на инструкциите от видеото за бърза настройка.
                 </p>
               </div>
               <div className="flex items-start space-x-4">
-                <div className="text-orange-500 text-2xl font-bold">2</div>
+                <div className="text-orange text-2xl font-bold">2.</div>
                 <p className="text-md text-gray-300">
                   Докоснете вашия NFC карта до съвместим телефон и споделяйте информация за секунди.
                 </p>
               </div>
               <div className="flex items-start space-x-4">
-                <div className="text-orange-500 text-2xl font-bold">3</div>
+                <div className="text-orange text-2xl font-bold">3.</div>
                 <p className="text-md text-gray-300">
                   Създайте персонализиран профил, който ви представя по уникален начин.
                 </p>
