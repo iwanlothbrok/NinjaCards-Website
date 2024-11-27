@@ -1,7 +1,7 @@
-// pages/api/updateLinks.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import formidable, { IncomingForm, Fields, Files } from 'formidable';
+import fs from 'fs/promises';
 import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
@@ -27,14 +27,12 @@ const parseForm = (req: NextApiRequest): Promise<{ fields: Fields; files: Files 
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-
     const corsHandled = cors(req, res);
     if (corsHandled) return; // If it's a preflight request, stop further execution
 
-
     if (req.method === 'PUT') {
         try {
-            const { fields } = await parseForm(req);
+            const { fields, files } = await parseForm(req);
 
             const id = fields.id ? fields.id[0] : undefined;
             if (!id) {
@@ -60,16 +58,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 'viber',
                 'whatsapp',
                 'trustpilot',
-                'googleReview',
                 'revolut',
                 'website',
                 'telegram',
                 'calendly',
                 'discord',
-                'tripadvisor',
-                'telegram',  // TrustPilot URL
-                'calendly',  // TrustPilot URL
-                'discord',  // TrustPilot URL
                 'tripadvisor',
             ];
 
@@ -77,9 +70,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 updatedData[field] = fields[field] ? fields[field][0] : null;
             });
 
+            // Handle PDF upload and store in the database
+            if (files.pdf) {
+                const pdfFile = Array.isArray(files.pdf) ? files.pdf[0] : files.pdf;
+                const pdfBuffer = await fs.readFile(pdfFile.filepath);
+                updatedData.pdf = pdfBuffer.toString('base64'); // Encode PDF as Base64
+            }
+
             // Update the user in the database
             const updatedUser = await prisma.user.update({
-                where: { id: id },
+                where: { id },
                 data: updatedData,
             });
 
