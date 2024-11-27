@@ -39,4 +39,5 @@ export interface User {
     discord: string;
     tripadvisor: string;
     website: string;
+    pdf: string;
 }
