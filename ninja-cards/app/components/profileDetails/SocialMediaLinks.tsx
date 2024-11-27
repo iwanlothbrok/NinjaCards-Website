@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { User } from '../../../types/user'; // Adjust the path based on your folder structure
+import { BASE_API_URL } from '@/utils/constants';
 
 interface SocialMediaLinksProps {
     user: User | null;
@@ -23,12 +24,13 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
         { key: 'website', url: user?.website, logo: '/logos/website.png', label: 'Website', gradient: 'from-cyan-600 to-cyan-800' },
         { key: 'revolut', url: user?.revolut ? `https://revolut.me/${user.revolut}` : null, logo: '/logos/rev.png', label: 'Revolut', gradient: 'from-blue-800 to-blue-900' },
         { key: 'googleReview', url: user?.googleReview, logo: '/logos/gr.png', label: 'Google Review', gradient: 'from-blue-700 to-red-700' },
-   
+
         { key: 'telegram', url: user?.telegram, logo: '/logos/telegram.png', label: 'Тelegram', gradient: 'from-teal-700 to-blue-700' },
         { key: 'calendly', url: user?.calendly, logo: '/logos/calendly.png', label: 'Calendly', gradient: 'from-green-700 to-green-900' },
         { key: 'discord', url: user?.discord, logo: '/logos/discord.png', label: 'Discord', gradient: 'from-indigo-800 to-indigo-950' },
         { key: 'tripadvisor', url: user?.tripadvisor, logo: '/logos/tripadvisor.png', label: 'Tripadvisor', gradient: 'from-green-500 to-yellow-500' },
-
+        { key: 'pdf', url: user?.pdf ? `${BASE_API_URL}/api/profile/download-pdf/${user.id}` : null, logo: '/logos/pdf.png', label: 'PDF', gradient: 'from-red-500 to-red-700' },
+        // `${BASE_API_URL}/api/profile/updateLinks`
     ];
 
     return (
