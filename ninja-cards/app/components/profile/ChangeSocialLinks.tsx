@@ -24,13 +24,13 @@ const ImportantLinks: React.FC = () => {
         behance: user?.behance || '',
         paypal: user?.paypal || '',
         trustpilot: user?.trustpilot || '',
-
         telegram: user?.telegram || '',
         calendly: user?.calendly || '',
         discord: user?.discord || '',
         tripadvisor: user?.tripadvisor || '',
 
     });
+    const [pdf, setPdf] = useState<File | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
 
@@ -55,6 +55,12 @@ const ImportantLinks: React.FC = () => {
         setFormData({ ...formData, [name]: updatedValue });
     }, [formData]);
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setPdf(e.target.files[0]);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -74,6 +80,10 @@ const ImportantLinks: React.FC = () => {
         Object.entries(formData).forEach(([key, value]) => {
             formDataObj.append(key, value);
         });
+
+        if (pdf) {
+            formDataObj.append('pdf', pdf);
+        }
 
         try {
             const response = await fetch(`${BASE_API_URL}/api/profile/updateLinks`, {
@@ -264,6 +274,23 @@ const ImportantLinks: React.FC = () => {
                     focusRingColor="text-green-500"
                 />
 
+                <div
+                    className="flex items-center gap-3 bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition-all"
+                >
+                    <img src="/logos/pdf.png" alt="PDF logo" className="w-10 h-10 object-contain" />
+                    <label className="flex-1 text-white">
+                        <span className="block mb-1">Качете PDF</span>
+                        <input
+                            type="file"
+                            accept="application/pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                        />
+                        <span className="block text-sm text-gray-400 truncate">
+                            {pdf ? pdf.name : 'Няма Качен Файл'}
+                        </span>
+                    </label>
+                </div>
 
                 <button
                     type="submit"
