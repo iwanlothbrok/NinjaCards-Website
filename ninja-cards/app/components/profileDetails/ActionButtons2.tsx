@@ -4,14 +4,8 @@ import React, { useState } from 'react';
 import { FaPhoneAlt, FaShareAlt, FaEnvelope } from 'react-icons/fa';
 import ExchangeContactModal from './ExchangeContact';
 import { BASE_API_URL } from '@/utils/constants';
+import { User } from '@/types/user';
 
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    phone1: string;
-    // ... other properties
-}
 
 const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
