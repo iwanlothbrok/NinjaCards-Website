@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect, useCallback, use } from "react";
 import ExchangeContact from '../components/profileDetails/ExchangeContact';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { FaUserCircle, FaExchangeAlt, FaDownload, FaEnvelope } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -11,9 +9,9 @@ import ActionButtons2 from '../components/profileDetails/ActionButtons2';
 import { BASE_API_URL } from '@/utils/constants';
 import SocialMediaLinks from '../components/profileDetails/SocialMediaLinks';
 import { User } from '@/types/user';
-
-type SocialProfileKeys = 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'github' | 'youtube' | 'tiktok' | 'googleReview' | 'revolut';
-
+import BackgroundSelector from '../components/profileDetails/BackgroundSelector';
+import ProfileHeader from '../components/profileDetails/ProfileHeader';
+import generateVCF from "@/utils/generateVCF";
 const cardBackgroundOptions = [
     {
         name: 'black',
@@ -103,6 +101,63 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
     const [isPhone, setIsPhone] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [coverPreview, setCoverPreview] = useState<string | null>(null);
+    const [fileForUpload, setFileForUpload] = useState<File | null>(null)
+    // Handle uploading the file and creating a base64 string
+    const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const validFileTypes = ["image/jpeg", "image/png", "image/gif"];
+            const maxSizeInBytes = 5 * 1024 * 1024;
+
+            if (!validFileTypes.includes(file.type)) {
+                // alert("Invalid file type. Please upload an image.");
+                return;
+            }
+
+            if (file.size > maxSizeInBytes) {
+                // alert("File size exceeds 5MB. Please upload a smaller image.");
+                return;
+            }
+
+            setCoverPreview(URL.createObjectURL(file));
+            setFileForUpload(file);
+        }
+    };
+
+    const saveCover = async () => {
+        if (!fileForUpload || !currentUser) return;
+        try {
+            const base64File = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(fileForUpload);
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = (error) => reject(error);
+            });
+
+            const response = await fetch(`${BASE_API_URL}/api/profile/uploadCover`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: currentUser.id, coverImage: base64File }),
+            });
+
+            if (!response.ok) throw new Error(await response.text());
+
+            const result = await response.json();
+            setCurrentUser({ ...currentUser, coverImage: result.coverImage });
+            console.log("Cover image saved successfully!");
+            cancelCover();
+        } catch (error) {
+            console.error("Error saving cover image:", error);
+            console.log("Failed to save cover image. Please try again.");
+        }
+    };
+    const cancelCover = () => {
+        setCoverPreview(null); // Clear the preview
+        setFileForUpload(null); // Clear the selected file
+    };
+
+
 
     const handleExchangeContact = () => {
         setIsModalOpen(true);
@@ -207,110 +262,20 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         </div >
     );
 
-    const generateVCF = () => {
-        if (!currentUser) return;
-
-        const vCard = [
-            "BEGIN:VCARD",
-            "VERSION:3.0",
-            "CLASS:PUBLIC", // Added CLASS
-            "PRODID:-//class_vcard //NONSGML Version 1//EN" // Added PRODID
-        ];
-
-        if (currentUser.lastName && currentUser.firstName) {
-            vCard.push(`N:${currentUser.lastName};${currentUser.firstName};;;`);
-        }
-        if (currentUser.name) {
-            vCard.push(`FN:${currentUser.name}`);
-        }
-
-        // PHOTO with flexible format support
-        if (currentUser.image) {
-            vCard.push(`PHOTO;ENCODING=b;TYPE=JPEG|PNG:${currentUser.image}`);
-        }
-
-        if (currentUser.position) {
-            vCard.push(`TITLE:${currentUser.position}`);
-            vCard.push(`ORG:${currentUser.company}`);
-        } else {
-            vCard.push("TITLE:;");
-        }
-
-        // Detailed phone number types
-        if (currentUser.phone1) {
-            vCard.push(`TEL;TYPE=Phone,type=VOICE;type=pref:${currentUser.phone1}`);
-        }
-        if (currentUser.phone2) {
-            vCard.push(`TEL;type=Phone;type=VOICE:${currentUser.phone2}`);
-        }
-
-        // Email with detailed type
-        if (currentUser.email) {
-            vCard.push(`EMAIL;type=INTERNET;type=Email;type=pref:${currentUser.email}`);
-        }
-        if (currentUser.email2) {
-            vCard.push(`EMAIL;type=INTERNET;type=Email 2:${currentUser.email2}`);
-        }
-
-        // Address, ensure it's always included
-        const address = [
-            currentUser.street1 || '',
-            currentUser.city || '',
-            currentUser.state || '',
-            currentUser.zipCode || '',
-            currentUser.country || ''
-        ].filter(Boolean).join(';');
-        vCard.push(`ADR;type=WORK;type=pref:;;${address}`);
-
-        // URLs with specific labels
-        if (currentUser.website) {
-            vCard.push(`URL;type=Website;type=pref:${currentUser.website}`);
-        }
-        const socialProfiles: Record<SocialProfileKeys, string> = {
-            facebook: 'Facebook',
-            twitter: 'Twitter',
-            instagram: 'Instagram',
-            linkedin: 'LinkedIn',
-            github: 'GitHub',
-            youtube: 'YouTube',
-            tiktok: 'TikTok',
-            googleReview: 'Google Review',
-            revolut: 'Revolut',
-        };
-
-        (Object.keys(socialProfiles) as SocialProfileKeys[]).forEach((key) => {
-            // Assuming `url` is derived or checked elsewhere based on `key`
-            const url = currentUser[key as keyof typeof currentUser];
-            if (url) vCard.push(`URL;type=${socialProfiles[key]};:${url}`);
-        });
-
-
-        // Adding a NOTE field
-        if (currentUser.bio) {
-            vCard.push(`NOTE;CHARSET=UTF-8:${currentUser.bio}`);
-        }
-
-        // Add a REV field for revision date
-        vCard.push(`REV:${new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15)}Z`);
-
-        vCard.push("END:VCARD");
-
-        const blob = new Blob([vCard.join("\r\n")], { type: 'text/vcard' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${currentUser.firstName}_${currentUser.lastName}.vcf`;
-        link.click();
-        URL.revokeObjectURL(url);
-    };
-
 
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
         <div className={`relative ${cardStyle.opposite} pt-20`}>
             {/* Profile Header Section */}
-            <ProfileHeader user={currentUser} cardStyle={cardStyle} isModalOpen={isModalOpen} />
+            <ProfileHeader
+                user={currentUser}
+                cardStyle={cardStyle}
+                coverPreview={coverPreview}
+                handleCoverChange={handleCoverChange}
+                saveCover={saveCover}
+                cancelCover={cancelCover}
+            />
 
             {/* Content Section with Background */}
             <div
@@ -358,115 +323,20 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     </motion.div>
 
                     {/* Floating Buttons */}
-                    <FloatingButtons generateVCF={generateVCF} />
+                    <FloatingButtons generateVCF={() => generateVCF(currentUser)} />
 
                     {/* Background Selector (visible only for the current user) */}
-                    {user?.id === currentUser.id && (
-                        <motion.div
-                            className="mt-8"
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{
-                                duration: 0.6,
-                                ease: 'easeOut',
-                                delay: 0.6,
-                            }}
-                        >
-                            <BackgroundSelector
-                                cardBackgroundOptions={cardBackgroundOptions}
-                                handleColorSelection={handleColorSelection}
-                                cardStyle={cardStyle}
-                            />
-                        </motion.div>
+                    {user?.id === currentUser?.id && (
+                        <BackgroundSelector
+                            cardBackgroundOptions={cardBackgroundOptions}
+                            handleColorSelection={handleColorSelection}
+                            cardStyle={cardStyle}
+                        />
                     )}
                 </motion.div>
             </div>
         </div>
     );
-
-
-
 }
-
-const ProfileHeader: React.FC<{ user: User; cardStyle: any; isModalOpen: boolean }> = ({ user, cardStyle, isModalOpen }) => (
-
-    <div
-        className={`relative flex flex-col items-center bg-cover bg-center bg-no-repeat sm:bg-none ${cardStyle.opposite} pt-72 overflow-hidden`}
-        style={{ backgroundImage: `url(${cardStyle.opposite === 'bg-black' ? '/cover02.png' : '/cover.png'})` }} // Background only for mobile
-    >
-        {/* Circular profile image with white background */}
-        <div
-            className={`absolute top-20 rounded-full  mt-32 bg-${cardStyle.name} shadow-lg`}
-            style={{ zIndex: isModalOpen ? 0 : 20 }} // Lower z-index if modal is open
-        >
-            <motion.div
-                className={`w-44 h-44 rounded-full overflow-hidden border-2 ${cardStyle.borderClass}`}
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.5 }}
-            >
-                {user?.image ? (
-                    <img
-                        className="w-full h-full object-cover"
-                        src={`data:image/jpeg;base64,${user.image}`}
-                        alt="Profile"
-                    />
-                ) : (
-                    <FaUserCircle className="w-full h-full text-gray-300" />
-                )}
-            </motion.div>
-        </div>
-
-        {/* White Background Section aligned with the card */}
-        <div className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-24 -mt-17 mx-auto rounded-none`}>
-            <div className="text-center mt-8">
-                <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
-                    {user?.name}
-                </h1>
-                <p className={`text-lg mt-1 ${cardStyle.textClass}`}>
-                    {user?.position}
-                </p>
-                <p className={`text-lg ${cardStyle.textClass}`}>
-                    {user?.company}
-                </p>
-            </div>
-        </div>
-    </div>
-);
-
-const BackgroundSelector: React.FC<{
-    cardBackgroundOptions: typeof cardBackgroundOptions;
-    handleColorSelection: (colorName: string) => void;
-    cardStyle: any;
-}> = ({ cardBackgroundOptions, handleColorSelection, cardStyle }) => (
-    <div className="mt-6 text-center">
-        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Промени цветовете</h3>
-        <div className="flex justify-center space-x-4 mt-4">
-            {cardBackgroundOptions.map(({ name, bgClass }) => (
-                <button
-                    key={name}
-                    onClick={() => handleColorSelection(name)}
-                    aria-label={`Select ${name} background`}
-                    className={`w-10 h-10 rounded-full border-2 transition-transform transform hover:scale-110 bg-${name} ${cardStyle.name === name ? 'ring-4 ring-offset-2 ring-blue-500' : ''}`}
-                >
-                    {cardStyle.name === name && (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            className="w-4 h-4 text-white mx-auto"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                    )}
-                </button>
-            ))}
-        </div>
-    </div>
-);
-
 
 export default ProfileDetailsContent;
