@@ -40,4 +40,5 @@ export interface User {
     tripadvisor: string;
     website: string;
     pdf: string;
+    coverImage: string;
 }
