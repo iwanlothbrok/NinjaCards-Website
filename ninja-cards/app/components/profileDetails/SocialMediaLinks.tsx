@@ -46,13 +46,13 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
                             aria-label={link.label}
                             className="relative group"
                         >
-                            <div className={`bg-gradient-to-r ${link.gradient} filter grayscale group-hover:filter-none p-3 rounded-full shadow-lg transition-transform transform group-hover:scale-110 flex items-center justify-center`}>
+                            <div className="p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out flex items-center justify-center bg-white hover:bg-gray-50">
                                 <Image
                                     src={link.logo}
                                     alt={link.label}
                                     width={48}
                                     height={48}
-                                    className="object-contain transition-all duration-300"
+                                    className="transition-transform duration-300 ease-in-out transform group-hover:scale-110"
                                     priority
                                     unoptimized
                                 />
