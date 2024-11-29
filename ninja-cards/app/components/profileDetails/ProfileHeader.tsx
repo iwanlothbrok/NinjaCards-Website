@@ -98,7 +98,7 @@ const ProfileHeader: React.FC<{
                         <h1 className={`text-4xl font-bold ${cardStyle.highlightClass}`}>
                             {user?.name}
                         </h1>
-                        <p className={`text-xl font-semibold mt-1 ${cardStyle.textClass}`}>
+                        <p className={`text-2xl font-semibold mt-1 ${cardStyle.textClass}`}>
                             {user?.company}
                         </p>
                         <p className={`text-xl font-semibold ${cardStyle.textClass}`}>
