@@ -58,7 +58,7 @@ const ProfileHeader: React.FC<{
                         htmlFor="cover-upload"
                         className="bg-gray-900 text-white px-4 py-2 rounded-full cursor-pointer hover:bg-gray-700 transition-all"
                     >
-                        Change Cover
+                        Промени корицата
                     </label>
                     <input
                         id="cover-upload"
@@ -73,13 +73,13 @@ const ProfileHeader: React.FC<{
                                 onClick={saveCover}
                                 className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-all"
                             >
-                                Save
+                                Запази
                             </button>
                             <button
                                 onClick={cancelCover}
                                 className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-all"
                             >
-                                Cancel
+                                Откажи
                             </button>
                         </>
                     )}
@@ -89,15 +89,18 @@ const ProfileHeader: React.FC<{
                     className={`relative w-full max-w-md ${cardStyle.bgClass} z-0 pt-24 -mt-17 mx-auto rounded-none`}
                 >
                     <div className="text-center mt-8">
-                        <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
+                        <h1 className={`text-4xl font-bold ${cardStyle.highlightClass}`}>
                             {user?.name}
                         </h1>
-                        <p className={`text-lg mt-1 ${cardStyle.textClass}`}>
+                        <p className={`text-xl font-semibold mt-1 ${cardStyle.textClass}`}>
+                            {user?.company}
+                        </p>
+                        <p className={`text-xl font-semibold ${cardStyle.textClass}`}>
                             {user?.position}
                         </p>
-                        <p className={`text-lg ${cardStyle.textClass}`}>{user?.company}</p>
                     </div>
                 </div>
+
             </div>
         );
     };
