@@ -110,9 +110,11 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
+        console.log('on change');
+        
         if (file) {
             const validFileTypes = ["image/jpeg", "image/png", "image/gif"];
-            const maxSizeInBytes = 5 * 1024 * 1024;
+            const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
 
             if (!validFileTypes.includes(file.type)) {
                 console.log("Invalid file type. Please upload an image.");
@@ -124,18 +126,49 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 return;
             }
 
+            // Set the file for cropping
             setCoverPreview(URL.createObjectURL(file));
             setFileForUpload(file);
+
+            console.log("File uploaded successfully. Proceed to cropping.");
         }
     };
 
     const cropImage = () => {
+        console.log('on crop');
         if (cropper) {
-            const cropped = cropper.getCroppedCanvas().toDataURL();
-            setCroppedImage(cropped);
-            setCoverPreview(null);
+            const croppedCanvas = cropper.getCroppedCanvas();
+            if (!croppedCanvas) {
+                console.log("Failed to crop the image.");
+                return;
+            }
+
+            // Convert the cropped area into a Blob
+            croppedCanvas.toBlob((blob: any) => {
+                if (!blob) {
+                    console.log("Failed to generate Blob from cropped image.");
+                    return;
+                }
+
+                const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+                if (blob.size > maxSizeInBytes) {
+                    console.log("Cropped image size exceeds 5MB. Please crop a smaller area.");
+                    return;
+                }
+
+                // If valid, update the cropped image and proceed
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setCroppedImage(reader.result as string); // Store the final cropped image
+                    setCoverPreview(null); // Clear the cropping preview
+                    console.log("Cropped image is valid and saved.");
+                };
+                reader.readAsDataURL(blob);
+            }, "image/jpeg"); // Adjust the image format/quality as needed
         }
     };
+
 
     const zoomIn = () => {
         if (cropper) cropper.zoom(0.1); // Zoom in by 10%
@@ -297,51 +330,51 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             />
             {coverPreview && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-4 rounded w-11/12 max-w-3xl">
-                        <h2 className="text-lg font-bold mb-4">Crop Your Cover Image</h2>
+                    <div className="bg-white p-4 rounded w-11/12 max-w-3xl mx-auto">
+                        <h2 className="text-lg font-bold mb-4">Обрежи изображението си за корица</h2>
                         <Cropper
-                            style={{ height: 400, width: "100%" }}
-                            initialAspectRatio={16 / 9} // Set the correct aspect ratio
-                            aspectRatio={16 / 9} // Ensure it matches the cover display area
+                            style={{ height: "auto", width: "100%" }}  // Adjusted for better responsiveness
+                            initialAspectRatio={16 / 9}
+                            aspectRatio={16 / 9}
                             src={coverPreview}
-                            viewMode={1} // Prevents dragging crop area outside of the canvas
+                            viewMode={1}
                             guides={true}
-                            zoomable={true} // Allow zooming
+                            zoomable={true}
                             background={false}
                             responsive={true}
-                            autoCropArea={1} // Ensure the crop box covers the canvas
+                            autoCropArea={1}
                             checkOrientation={false}
                             onInitialized={(instance) => setCropper(instance)}
                         />
 
-                        <div className="flex justify-between mt-4">
+                        <div className="mt-4">
                             {/* Zoom Controls */}
-                            <div className="flex space-x-2">
-                                <button onClick={zoomOut} className="bg-gray-300 text-black px-4 py-2 rounded">
-                                    Zoom Out
+                            <div className="flex justify-center space-x-2 mb-2">
+                                <button onClick={zoomOut} className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 transition-colors duration-300">
+                                    Намали
                                 </button>
-                                <button onClick={zoomIn} className="bg-gray-300 text-black px-4 py-2 rounded">
-                                    Zoom In
+                                <button onClick={zoomIn} className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 transition-colors duration-300">
+                                    Увеличи
                                 </button>
-                                <button onClick={resetZoom} className="bg-gray-300 text-black px-4 py-2 rounded">
-                                    Reset
+                                <button onClick={resetZoom} className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 transition-colors duration-300">
+                                    Нулиране
                                 </button>
                             </div>
 
                             {/* Save and Cancel */}
-                            <div className="flex space-x-2">
-                                <button onClick={() => setCoverPreview(null)} className="bg-red-500 text-white px-4 py-2 rounded">
-                                    Cancel
+                            <div className="flex justify-center space-x-2">
+                                <button onClick={() => setCoverPreview(null)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-300">
+                                    Отказ
                                 </button>
-                                <button onClick={cropImage} className="bg-green-500 text-white px-4 py-2 rounded">
-                                    Crop
+                                <button onClick={cropImage} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors duration-300">
+                                    Изрежи
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            )
-            }
+            )}
+
             {/* Content Section with Background */}
             <div
                 className={`relative z-0 flex items-center justify-center ${cardStyle.textClass}`}
