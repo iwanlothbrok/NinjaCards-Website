@@ -4,6 +4,8 @@ import React, { useState, useEffect, useCallback, use } from "react";
 import ExchangeContact from '../components/profileDetails/ExchangeContact';
 import { FaUserCircle, FaExchangeAlt, FaDownload, FaEnvelope } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { Cropper } from "react-cropper";
+import "cropperjs/dist/cropper.css"; // Import cropper styles
 import { useAuth } from '../context/AuthContext';
 import ActionButtons2 from '../components/profileDetails/ActionButtons2';
 import { BASE_API_URL } from '@/utils/constants';
@@ -102,8 +104,10 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [isPhone, setIsPhone] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [coverPreview, setCoverPreview] = useState<string | null>(null);
-    const [fileForUpload, setFileForUpload] = useState<File | null>(null)
-    // Handle uploading the file and creating a base64 string
+    const [fileForUpload, setFileForUpload] = useState<File | null>(null);
+    const [cropper, setCropper] = useState<any>(null);
+    const [croppedImage, setCroppedImage] = useState<string | null>(null);
+
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -111,12 +115,12 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             const maxSizeInBytes = 5 * 1024 * 1024;
 
             if (!validFileTypes.includes(file.type)) {
-                // alert("Invalid file type. Please upload an image.");
+                console.log("Invalid file type. Please upload an image.");
                 return;
             }
 
             if (file.size > maxSizeInBytes) {
-                // alert("File size exceeds 5MB. Please upload a smaller image.");
+                console.log("File size exceeds 5MB. Please upload a smaller image.");
                 return;
             }
 
@@ -125,20 +129,36 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         }
     };
 
+    const cropImage = () => {
+        if (cropper) {
+            const cropped = cropper.getCroppedCanvas().toDataURL();
+            setCroppedImage(cropped);
+            setCoverPreview(null);
+        }
+    };
+
+    const zoomIn = () => {
+        if (cropper) cropper.zoom(0.1); // Zoom in by 10%
+    };
+
+    const zoomOut = () => {
+        if (cropper) cropper.zoom(-0.1); // Zoom out by 10%
+    };
+
+    const resetZoom = () => {
+        if (cropper) cropper.reset();
+    };
+
     const saveCover = async () => {
-        if (!fileForUpload || !currentUser) return;
+        if (!croppedImage || !currentUser) return;
         try {
-            const base64File = await new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(fileForUpload);
-                reader.onload = () => resolve(reader.result as string);
-                reader.onerror = (error) => reject(error);
-            });
+
+            console.log('cropped ' + croppedImage);
 
             const response = await fetch(`${BASE_API_URL}/api/profile/uploadCover`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id: currentUser.id, coverImage: base64File }),
+                body: JSON.stringify({ id: currentUser.id, coverImage: croppedImage }),
             });
 
             if (!response.ok) throw new Error(await response.text());
@@ -149,15 +169,14 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             cancelCover();
         } catch (error) {
             console.error("Error saving cover image:", error);
-            console.log("Failed to save cover image. Please try again.");
         }
     };
+
     const cancelCover = () => {
-        setCoverPreview(null); // Clear the preview
-        setFileForUpload(null); // Clear the selected file
+        setCoverPreview(null);
+        setFileForUpload(null);
+        setCroppedImage(null);
     };
-
-
 
     const handleExchangeContact = () => {
         setIsModalOpen(true);
@@ -266,31 +285,77 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
-        <div className={`relative ${cardStyle.opposite} pt-20`}>
+        <div className={`relative ${cardStyle.opposite}`}>
             {/* Profile Header Section */}
             <ProfileHeader
                 user={currentUser}
                 cardStyle={cardStyle}
-                coverPreview={coverPreview}
+                coverPreview={croppedImage || coverPreview}
                 handleCoverChange={handleCoverChange}
                 saveCover={saveCover}
                 cancelCover={cancelCover}
             />
+            {coverPreview && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-4 rounded w-11/12 max-w-3xl">
+                        <h2 className="text-lg font-bold mb-4">Crop Your Cover Image</h2>
+                        <Cropper
+                            style={{ height: 400, width: "100%" }}
+                            initialAspectRatio={16 / 9} // Set the correct aspect ratio
+                            aspectRatio={16 / 9} // Ensure it matches the cover display area
+                            src={coverPreview}
+                            viewMode={1} // Prevents dragging crop area outside of the canvas
+                            guides={true}
+                            zoomable={true} // Allow zooming
+                            background={false}
+                            responsive={true}
+                            autoCropArea={1} // Ensure the crop box covers the canvas
+                            checkOrientation={false}
+                            onInitialized={(instance) => setCropper(instance)}
+                        />
 
+                        <div className="flex justify-between mt-4">
+                            {/* Zoom Controls */}
+                            <div className="flex space-x-2">
+                                <button onClick={zoomOut} className="bg-gray-300 text-black px-4 py-2 rounded">
+                                    Zoom Out
+                                </button>
+                                <button onClick={zoomIn} className="bg-gray-300 text-black px-4 py-2 rounded">
+                                    Zoom In
+                                </button>
+                                <button onClick={resetZoom} className="bg-gray-300 text-black px-4 py-2 rounded">
+                                    Reset
+                                </button>
+                            </div>
+
+                            {/* Save and Cancel */}
+                            <div className="flex space-x-2">
+                                <button onClick={() => setCoverPreview(null)} className="bg-red-500 text-white px-4 py-2 rounded">
+                                    Cancel
+                                </button>
+                                <button onClick={cropImage} className="bg-green-500 text-white px-4 py-2 rounded">
+                                    Crop
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+            }
             {/* Content Section with Background */}
             <div
-                className={`relative flex items-center justify-center ${cardStyle.textClass}`}
+                className={`relative z-0 flex items-center justify-center ${cardStyle.textClass}`}
                 style={{
                     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
-                    boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.8)',
+                    // boxShadow: '0px 20px 0px rgba(0, 0, 0, 0.8)',
                 }}
             >
                 {/* Card Section with White Background */}
                 <motion.div
-                    className={`relative z-10 w-full  p-8 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black shadow-none`} // Removed shadow
+                    className={`relative z-0 w-full  p-8 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black `} // Removed shadow
                 >
                     {/* Action Buttons */}
                     <motion.div
@@ -299,7 +364,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
-                        <div className="flex flex-col space-y-4 mb-4 z-10001">
+                        <div className="flex flex-col space-y-4 mb-4 ">
 
                             <ActionButtons2 user={currentUser} />
                             <button
@@ -335,7 +400,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     )}
                 </motion.div>
             </div>
-        </div>
+        </div >
     );
 }
 
