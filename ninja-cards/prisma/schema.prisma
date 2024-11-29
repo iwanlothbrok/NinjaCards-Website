@@ -1,12 +1,11 @@
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
 
 model User {
   id            String   @id @default(uuid())
@@ -28,74 +27,73 @@ model User {
   country       String?
   bio           String?
   image         String?  @db.LongText
-  facebook      String?  // Facebook URL
-  instagram     String?  // Instagram URL
-  linkedin      String?  // LinkedIn URL
-  twitter       String?  // Twitter (X) URL
-  tiktok        String?  // TikTok URL
-  googleReview  String?  // Google Review URL
-  revolut       String?  // Revolut Username
-  website       String?  // Website URL
-  viber         String?  // Viber Phone Number
-  whatsapp      String?  // WhatsApp Phone Number
-  github        String?  // GitHub URL
-  behance       String?  // Behance URL
+  facebook      String?
+  instagram     String?
+  linkedin      String?
+  twitter       String?
+  tiktok        String?
+  googleReview  String?
+  revolut       String?
+  website       String?
+  viber         String?
+  whatsapp      String?
+  github        String?
+  behance       String?
   youtube       String?
-  paypal        String?  // PayPal URL
-  trustpilot    String?  // TrustPilot URL
-  
-  telegram      String?  // TrustPilot URL
-  calendly      String?  // TrustPilot URL
-  discord       String?  // TrustPilot URL
-  tripadvisor   String?
-
+  paypal        String?
+  trustpilot    String?
+  pdf  String? @db.LongText  // Use LongText for larger data
   qrCode        String?  @db.Text
-  selectedColor String?  // Selected color
+  selectedColor String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
+  calendly      String?
+  discord       String?
+  telegram      String?
+  tripadvisor   String?
+  coverImage    String?  @db.LongText // New field for cover image
 }
- 
+
 model Contact {
-  id            Int      @id @default(autoincrement())
-  name          String
-  email         String
-  phone         String?
-  subject       String?
-  sendedOn      DateTime @default(now())
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String
+  phone    String?
+  subject  String?
+  sendedOn DateTime @default(now())
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
-  title       String
-  price       Float
-  oldPrice Float?
-  image       String   @db.LongText // Update the type to TEXT or LONGTEXT
-  frontImage  String?  @db.LongText // Optional front image
-  backImage   String?  @db.LongText // Optional back image
-  type     String
-  qrColor String? 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         Int      @id @default(autoincrement())
+  title      String
+  price      Float
+  oldPrice   Float?
+  image      String   @db.LongText
+  frontImage String?  @db.LongText
+  backImage  String?  @db.LongText
+  type       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  qrColor    String?
 }
 
 model CardDesign {
-  id          Int      @id @default(autoincrement())
-  cardName    String
-  cardTitle   String
-  userName    String
-  userPhone   String
-  userEmail   String
-  frontDataUrl String  @db.LongText // Store base64-encoded image or URLs if needed
-  backDataUrl  String  @db.LongText // Store base64-encoded image or URLs if needed
-  backLogoUrl  String?  @db.LongText // Store base64-encoded image or URLs if needed
-  courierAddress	String?
-  courierIsSpeedy	Int
-  createdAt   DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  cardName        String
+  cardTitle       String
+  userName        String
+  userPhone       String
+  userEmail       String
+  frontDataUrl    String   @db.LongText
+  backDataUrl     String   @db.LongText
+  createdAt       DateTime @default(now())
+  courierAddress  String?
+  courierIsSpeedy Int
+  backLogoUrl     String?  @db.LongText
 }
 
 model Company {
-  id      String   @id @default(uuid())
-  name    String
-  googleReviewLink    String
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
 }
