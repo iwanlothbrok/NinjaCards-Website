@@ -4,6 +4,7 @@ import React from "react";
 import CoverImage from "./CoverImage"; // Import the CoverImage component
 import { FaUserCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useAuth } from "@/app/context/AuthContext";
 
 const ProfileHeader: React.FC<{
     user: any;
@@ -20,6 +21,9 @@ const ProfileHeader: React.FC<{
     saveCover,
     cancelCover,
 }) => {
+        const { user: currentUser } = useAuth();
+
+
         return (
             <div className={`relative ${cardStyle.bgClass}`}>
                 {/* Cover Section */}
@@ -51,40 +55,42 @@ const ProfileHeader: React.FC<{
                         )}
                     </motion.div>
                 </div>
+                {user?.id === currentUser?.id && (
+                    <div className="absolute top-5 left-5 right-5 z-50 flex space-x-2">
+                        <label
+                            htmlFor="cover-upload"
+                            className="bg-gray-900 text-white px-4 py-2 rounded-full cursor-pointer hover:bg-gray-700 transition-all"
+                        >
+                            Промени корицата
+                        </label>
+                        <input
+                            id="cover-upload"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleCoverChange}
+                        />
+                        {coverPreview && (
+                            <>
+                                <button
+                                    onClick={saveCover}
+                                    className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-all"
+                                >
+                                    Запази
+                                </button>
+                                <button
+                                    onClick={cancelCover}
+                                    className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-all"
+                                >
+                                    Откажи
+                                </button>
+                            </>
+                        )}
 
+                    </div>
+                )}
                 {/* Upload and Save/Cancel Buttons */}
-                <div className="absolute top-5 left-5 right-5 z-50 flex space-x-2">
-                    <label
-                        htmlFor="cover-upload"
-                        className="bg-gray-900 text-white px-4 py-2 rounded-full cursor-pointer hover:bg-gray-700 transition-all"
-                    >
-                        Промени корицата
-                    </label>
-                    <input
-                        id="cover-upload"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleCoverChange}
-                    />
-                    {coverPreview && (
-                        <>
-                            <button
-                                onClick={saveCover}
-                                className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-all"
-                            >
-                                Запази
-                            </button>
-                            <button
-                                onClick={cancelCover}
-                                className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-all"
-                            >
-                                Откажи
-                            </button>
-                        </>
-                    )}
 
-                </div>
                 <div
                     className={`relative w-full max-w-md ${cardStyle.bgClass} z-0 pt-24 -mt-17 mx-auto rounded-none`}
                 >
