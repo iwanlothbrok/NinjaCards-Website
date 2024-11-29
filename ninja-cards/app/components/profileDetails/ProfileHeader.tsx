@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import CoverImage from "./CoverImage"; // Import the CoverImage component
 import { FaUserCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 
@@ -20,23 +21,20 @@ const ProfileHeader: React.FC<{
     cancelCover,
 }) => {
         return (
-            <div
-                className={`relative flex flex-col items-center bg-cover bg-center bg-no-repeat ${cardStyle.opposite} pt-72 overflow-hidden`}
-                style={{
-                    backgroundImage: coverPreview
-                        ? `url(${coverPreview})`
-                        : `url(${user.coverImage || ""})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                }}
-            >
-                {/* Circular profile image */}
+            <div className={`relative ${cardStyle.bgClass}`}>
+                {/* Cover Section */}
+                <CoverImage
+                    coverPreview={coverPreview}
+                    userCoverImage={user.coverImage || ""}
+                    height="270px"
+                />
+
+                {/* Circular Profile Image Positioned on Top */}
                 <div
-                    className={`absolute top-20 rounded-full mt-32 bg-${cardStyle.name} shadow-lg`}
-                    style={{ zIndex: 20 }}
+                    className="absolute mt-10 top-40 left-1/2 transform -translate-x-1/2 z-10 bg-white p-0.5 rounded-full shadow-lg"
                 >
                     <motion.div
-                        className={`w-44 h-44 rounded-full overflow-hidden border-2 ${cardStyle.borderClass}`}
+                        className={`w-44 h-44 rounded-full overflow-hidden border-4 ${cardStyle.borderClass}`}
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
                         whileHover={{ scale: 1.1 }}
@@ -54,46 +52,41 @@ const ProfileHeader: React.FC<{
                     </motion.div>
                 </div>
 
-                {/* Upload Cover Button */}
-                {user?.id && (
-                    <div className="absolute top-5 right-5 z-50 flex space-x-2">
-                        <label
-                            htmlFor="cover-upload"
-                            className="bg-gray-900 text-white px-4 py-2 rounded-full cursor-pointer hover:bg-gray-700 transition-all"
-                        >
-                            Change Cover
-                        </label>
-                        <input
-                            id="cover-upload"
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleCoverChange}
-                        />
+                {/* Upload and Save/Cancel Buttons */}
+                <div className="absolute top-5 left-5 right-5 z-50 flex space-x-2">
+                    <label
+                        htmlFor="cover-upload"
+                        className="bg-gray-900 text-white px-4 py-2 rounded-full cursor-pointer hover:bg-gray-700 transition-all"
+                    >
+                        Change Cover
+                    </label>
+                    <input
+                        id="cover-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleCoverChange}
+                    />
+                    {coverPreview && (
+                        <>
+                            <button
+                                onClick={saveCover}
+                                className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-all"
+                            >
+                                Save
+                            </button>
+                            <button
+                                onClick={cancelCover}
+                                className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-all"
+                            >
+                                Cancel
+                            </button>
+                        </>
+                    )}
 
-                        {/* Save and Cancel Buttons */}
-                        {coverPreview && (
-                            <>
-                                <button
-                                    onClick={saveCover}
-                                    className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-all"
-                                >
-                                    Save
-                                </button>
-                                <button
-                                    onClick={cancelCover}
-                                    className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-all"
-                                >
-                                    Cancel
-                                </button>
-                            </>
-                        )}
-                    </div>
-                )}
-
-                {/* White Background Section */}
+                </div>
                 <div
-                    className={`relative w-full max-w-md ${cardStyle.bgClass} z-10 pt-24 -mt-17 mx-auto rounded-none`}
+                    className={`relative w-full max-w-md ${cardStyle.bgClass} z-0 pt-24 -mt-17 mx-auto rounded-none`}
                 >
                     <div className="text-center mt-8">
                         <h1 className={`text-3xl font-bold ${cardStyle.highlightClass}`}>
