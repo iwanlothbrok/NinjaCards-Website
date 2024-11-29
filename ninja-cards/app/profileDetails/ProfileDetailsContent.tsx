@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, use } from "react";
 import ExchangeContact from '../components/profileDetails/ExchangeContact';
-import { FaUserCircle, FaExchangeAlt, FaDownload, FaEnvelope } from 'react-icons/fa';
+import { FaUserCircle, FaExchangeAlt, FaDownload, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css"; // Import cropper styles
@@ -111,7 +111,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         console.log('on change');
-        
+
         if (file) {
             const validFileTypes = ["image/jpeg", "image/png", "image/gif"];
             const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
@@ -284,7 +284,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         setTimeout(() => setAlert(null), 4000);
     };
 
-    const FloatingButtons: React.FC<{ generateVCF: () => void; }> = ({ generateVCF }) => (
+    const FloatingButtons: React.FC<{ generateVCF: () => void; phoneNumber: string; }> = ({ generateVCF, phoneNumber }) => (
         <div className="fixed bottom-6 left-0 right-0 px-4 z-20 flex justify-center space-x-4 max-w-screen-md mx-auto">
             {/* Save Contact Button */}
             <button
@@ -295,23 +295,19 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 <span className="text-lg font-semibold">СВАЛИ КОНТАКТ</span>
             </button>
 
-            {/* Exchange Contact Button */}
+            {/* Call Button - Updated to have consistent appearance */}
             <button
-                onClick={handleExchangeContact}
-                className="w-16 flex items-center justify-center bg-gray-800 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-950 transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-                <FaExchangeAlt className="text-3xl" />
+
+                onClick={() => {
+                    if (phoneNumber) {  // Changed to use phoneNumber for direct access
+                        window.location.href = `tel:${phoneNumber}`;
+                    }
+                }}
+                className="w-16 flex items-center justify-center bg-gray-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-105"            >
+                <FaPhoneAlt className="text-3xl" />
             </button>
-            <div className="z-50"  >
 
-                <ExchangeContact
-                    isOpen={isModalOpen}
-                    onClose={handleModalClose}
-                    onSubmit={handleSubmitContact}
-                />
-            </div>
-
-        </div >
+        </div>
     );
 
 
@@ -392,7 +388,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 >
                     {/* Action Buttons */}
                     <motion.div
-                        className={`mt-6 z-50`}
+                        className={`mt-2 z-50`}
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -400,13 +396,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                         <div className="flex flex-col space-y-4 mb-4 ">
 
                             <ActionButtons2 user={currentUser} />
-                            <button
-                                onClick={handleExchangeContact}
-                                className="flex items-center justify-center bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50 w-full sm:w-auto"
-                            >
-                                <FaEnvelope className="mr-3 text-2xl" />
-                                <span className="text-lg font-semibold">Разменете Контакти</span>
-                            </button>
                         </div>
                     </motion.div>
 
@@ -421,7 +410,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     </motion.div>
 
                     {/* Floating Buttons */}
-                    <FloatingButtons generateVCF={() => generateVCF(currentUser)} />
+                    <FloatingButtons generateVCF={() => generateVCF(currentUser)} phoneNumber={currentUser.phone1} />
 
                     {/* Background Selector (visible only for the current user) */}
                     {user?.id === currentUser?.id && (
