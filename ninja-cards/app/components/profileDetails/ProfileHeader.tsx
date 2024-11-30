@@ -35,7 +35,7 @@ const ProfileHeader: React.FC<{
 
                 {/* Circular Profile Image Positioned on Top */}
                 <div
-                    className="absolute mt-10 top-40 left-1/2 transform -translate-x-1/2 z-10 bg-white p-0.5 rounded-full shadow-lg"
+                    className="absolute mt-10 top-40 left-1/2 transform -translate-x-1/2 z-10 bg-white  rounded-full shadow-lg"
                 >
                     <motion.div
                         className={`w-44 h-44 rounded-full overflow-hidden border-4 ${cardStyle.borderClass}`}
