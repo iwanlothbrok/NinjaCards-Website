@@ -9,6 +9,10 @@ interface SocialMediaLinksProps {
 
 const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
     const socialMediaLinks = [
+
+        { key: 'website', url: user?.website, logo: '/logos/website.png', label: 'Website', gradient: 'from-cyan-600 to-cyan-800' },
+        { key: 'viber', url: user?.viber ? `viber://chat?number=${user.viber}` : null, logo: '/logos/viber.png', label: 'Viber', gradient: 'from-purple-500 to-purple-700' },
+        { key: 'pdf', url: user?.pdf ? `${BASE_API_URL}/api/profile/download-pdf/${user.id}` : null, logo: '/logos/pdf.png', label: 'PDF', gradient: 'from-red-500 to-red-700' },
         { key: 'facebook', url: user?.facebook, logo: '/logos/fb.png', label: 'Facebook', gradient: 'from-blue-600 to-purple-600' },
         { key: 'instagram', url: user?.instagram, logo: '/logos/ig.png', label: 'Instagram', gradient: 'from-yellow-500 to-red-700' },
         { key: 'linkedin', url: user?.linkedin, logo: '/logos/lk.png', label: 'LinkedIn', gradient: 'from-blue-700 to-blue-900' },
@@ -19,9 +23,7 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
         { key: 'behance', url: user?.behance, logo: '/logos/be.png', label: 'Behance', gradient: 'from-blue-600 to-blue-400' },
         { key: 'paypal', url: user?.paypal, logo: '/logos/icons8-paypal48.png', label: 'PayPal', gradient: 'from-blue-500 to-blue-300' },
         { key: 'trustpilot', url: user?.trustpilot, logo: '/logos/tp.png', label: 'TrustPilot', gradient: 'from-black to-gray-800' },
-        { key: 'viber', url: user?.viber ? `viber://chat?number=${user.viber}` : null, logo: '/logos/viber.png', label: 'Viber', gradient: 'from-purple-500 to-purple-700' },
         { key: 'whatsapp', url: user?.whatsapp ? `https://wa.me/${user.whatsapp}` : null, logo: '/logos/wa.png', label: 'WhatsApp', gradient: 'from-green-600 to-green-700' },
-        { key: 'website', url: user?.website, logo: '/logos/website.png', label: 'Website', gradient: 'from-cyan-600 to-cyan-800' },
         { key: 'revolut', url: user?.revolut ? `https://revolut.me/${user.revolut}` : null, logo: '/logos/rev.png', label: 'Revolut', gradient: 'from-blue-800 to-blue-900' },
         { key: 'googleReview', url: user?.googleReview, logo: '/logos/gr.png', label: 'Google Review', gradient: 'from-blue-700 to-red-700' },
 
@@ -29,7 +31,6 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
         { key: 'calendly', url: user?.calendly, logo: '/logos/calendly.png', label: 'Calendly', gradient: 'from-green-700 to-green-900' },
         { key: 'discord', url: user?.discord, logo: '/logos/discord.png', label: 'Discord', gradient: 'from-indigo-800 to-indigo-950' },
         { key: 'tripadvisor', url: user?.tripadvisor, logo: '/logos/tripadvisor.png', label: 'Tripadvisor', gradient: 'from-green-500 to-yellow-500' },
-        { key: 'pdf', url: user?.pdf ? `${BASE_API_URL}/api/profile/download-pdf/${user.id}` : null, logo: '/logos/pdf.png', label: 'PDF', gradient: 'from-red-500 to-red-700' },
         // `${BASE_API_URL}/api/profile/updateLinks`
     ];
 
