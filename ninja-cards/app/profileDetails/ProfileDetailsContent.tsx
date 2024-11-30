@@ -53,13 +53,14 @@ const cardBackgroundOptions = [
     },
     {
         name: 'teal-700',
-        bgClass: "bg-teal-700",          // Bold teal background
+        bgClass: "bg-teal-900",          // Bold teal background
         textClass: "text-white",         // White text for contrast
         borderClass: "border-teal-500",  // Darker teal border
         highlightClass: "text-orange", // Bright pink highlight for contrast
-        cardCoverBgClass: "from-teal-700",
+        cardCoverBgClass: "from-teal-900",
         opposite: 'bg-white'
-    }
+    },
+
 ];
 
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
@@ -285,7 +286,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     };
 
     const FloatingButtons: React.FC<{ generateVCF: () => void; phoneNumber: string; }> = ({ generateVCF, phoneNumber }) => (
-        <div className="fixed bottom-6 left-0 right-0 px-4 z-20 flex justify-center space-x-4 max-w-screen-md mx-auto">
+        <div className="fixed bottom-6 left-0 right-0 px-4 z-20  flex justify-center space-x-4 max-w-screen-md mx-auto">
             {/* Save Contact Button */}
             <button
                 onClick={generateVCF}
