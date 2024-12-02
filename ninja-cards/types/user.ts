@@ -41,4 +41,5 @@ export interface User {
     website: string;
     pdf: string;
     coverImage: string;
+    isDirect: boolean;
 }
