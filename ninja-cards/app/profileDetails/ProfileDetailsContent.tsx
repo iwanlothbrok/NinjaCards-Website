@@ -225,6 +225,14 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 setCardStyle(selectedCardStyle);
             }
         }
+        console.log('cur ' + currentUser);
+
+        if (currentUser?.isDirect) {
+            console.log('isDirect ' + currentUser?.isDirect);
+
+            // If isDirect is true, generate the VCF and then show the profile
+            generateVCF(currentUser);
+        }
     }, [currentUser]);
 
     useEffect(() => {
@@ -237,7 +245,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 
         // Listen for window resize
         window.addEventListener('resize', checkIfPhone);
-
         // Cleanup the event listener on component unmount
         return () => {
             window.removeEventListener('resize', checkIfPhone);
@@ -259,31 +266,48 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         setTimeout(() => setAlert(null), 4000);
     };
 
-    const FloatingButtons: React.FC<{ generateVCF: () => void; phoneNumber: string; }> = ({ generateVCF, phoneNumber }) => (
-        <div className="fixed bottom-6 left-0 right-0 px-4 z-20  flex justify-center space-x-4 max-w-screen-md mx-auto">
-            {/* Save Contact Button */}
-            <button
-                onClick={generateVCF}
-                className="flex-grow flex items-center justify-center bg-white text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-                <FaDownload className="mr-2 text-3xl" />
-                <span className="text-lg font-semibold">СВАЛИ КОНТАКТ</span>
-            </button>
+    const FloatingButtons: React.FC<{ generateVCF: () => void; phoneNumber: string; isDirect: boolean }> = ({
+        generateVCF,
+        phoneNumber,
+        isDirect,
+    }) => {
+        const handleButtonClick = () => {
+            console.log('isDirect ' + isDirect);
 
-            {/* Call Button - Updated to have consistent appearance */}
-            <button
+            if (isDirect) {
+                console.log('isDirect ' + isDirect);
 
-                onClick={() => {
-                    if (phoneNumber) {  // Changed to use phoneNumber for direct access
-                        window.location.href = `tel:${phoneNumber}`;
-                    }
-                }}
-                className="w-16 flex items-center justify-center bg-gray-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-105"            >
-                <FaPhoneAlt className="text-3xl" />
-            </button>
+                // If isDirect is true, generate the VCF and then show the profile
+                generateVCF();
+            }
+            // Showing the profile happens automatically as it's part of the UI
+        };
 
-        </div>
-    );
+        return (
+            <div className="fixed bottom-6 left-0 right-0 px-4 z-20 flex justify-center space-x-4 max-w-screen-md mx-auto">
+                {/* Save Contact Button */}
+                <button
+                    onClick={handleButtonClick}
+                    className="flex-grow flex items-center justify-center bg-white text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105"
+                >
+                    <FaDownload className="mr-2 text-3xl" />
+                    <span className="text-lg font-semibold">СВАЛИ КОНТАКТ</span>
+                </button>
+
+                {/* Call Button */}
+                <button
+                    onClick={() => {
+                        if (phoneNumber) {
+                            window.location.href = `tel:${phoneNumber}`;
+                        }
+                    }}
+                    className="w-16 flex items-center justify-center bg-gray-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-105"
+                >
+                    <FaPhoneAlt className="text-3xl" />
+                </button>
+            </div>
+        );
+    };
 
 
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
@@ -385,7 +409,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     </motion.div>
 
                     {/* Floating Buttons */}
-                    <FloatingButtons generateVCF={() => generateVCF(currentUser)} phoneNumber={currentUser.phone1} />
+                    <FloatingButtons generateVCF={() => generateVCF(currentUser)} phoneNumber={currentUser.phone1} isDirect={currentUser.isDirect} // Pass the isDirect property to FloatingButtons
+                    />
 
                     {/* Background Selector (visible only for the current user) */}
                     {user?.id === currentUser?.id && (
