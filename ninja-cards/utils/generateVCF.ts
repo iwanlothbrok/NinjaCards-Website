@@ -104,8 +104,7 @@ export default function generateVCF(currentUser: User): void {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${currentUser.firstName || "User"}_${currentUser.lastName || "Profile"
-        }.vcf`;
+    link.download = `${currentUser.name || "User"}_Profile.vcf`;
     link.click();
     URL.revokeObjectURL(url);
 }
