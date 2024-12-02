@@ -27,7 +27,6 @@ const FeaturesComponent: React.FC = () => {
 
             const userData = await response.json();
             setIsDirect(userData.isDirect); // Set the isDirect state from fetched data
-            if (setUser) setUser((prevUser) => ({ ...prevUser, isDirect: userData.isDirect })); // Update global user state
         } catch (error) {
             console.error("Error fetching user details:", error);
             setMessage("Грешка при зареждане на данните на потребителя.");
@@ -60,7 +59,7 @@ const FeaturesComponent: React.FC = () => {
             const result = await response.json();
             setMessage(result.message || "Настройката е успешно актуализирана.");
             setIsDirect(newIsDirect); // Update local state
-            if (setUser) setUser((prevUser) => ({ ...prevUser, isDirect: newIsDirect })); // Update global user state
+            if (setUser) setUser(result.user); // Update global user state
         } catch (error) {
             setMessage("Грешка при актуализиране на настройката.");
             console.error(error);
