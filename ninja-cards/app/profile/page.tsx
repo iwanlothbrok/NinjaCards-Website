@@ -12,6 +12,7 @@ import ChangeEmail from '../components/profile/ChangeEmail';
 import ChangeAddress from '../components/profile/ChangeAdress';
 import ChangeProfileImage from '../components/profile/ChangeProfileImage';
 import QRCodeDownload from '../components/profile/QRCodeDownload';
+import FeaturesComponent from '../components/profile/FeaturesComponent';
 
 const TabCard: React.FC<{
     tab: string;
@@ -84,6 +85,8 @@ function ProfileContent() {
                 return <ChangeProfileImage />;
             case 'profileQr':
                 return <QRCodeDownload />;
+            case 'features':
+                return <FeaturesComponent />;
             default:
                 return <Settings />;
         }
@@ -170,6 +173,13 @@ function ProfileContent() {
                         backgroundImage="/settingsBg/qr.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('profileQr')}
+                    />
+                    <TabCard
+                        tab="features"
+                        label="Функции"
+                        backgroundImage="/settingsBg/important.png"
+                        activeTab={activeTab}
+                        onClick={() => handleTabClick('features')}
                     />
                 </div>
                 <motion.div
