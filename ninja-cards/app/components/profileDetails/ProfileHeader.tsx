@@ -97,13 +97,22 @@ const ProfileHeader: React.FC<{
                     <div className="text-center mt-8">
                         <h1 className={`text-4xl font-bold ${cardStyle.highlightClass}`}>
                             {user?.name}
+
                         </h1>
-                        <p className={`text-2xl font-semibold mt-1 ${cardStyle.textClass}`}>
-                            {user?.company}
-                        </p>
-                        <p className={`text-xl font-semibold ${cardStyle.textClass}`}>
-                            {user?.position}
-                        </p>
+                        {user?.company ? (
+                            <p className={`text-2xl font-semibold mt-1 ${cardStyle.textClass}`}>
+                                {user?.company ? user?.company : ''}
+                            </p>
+                        ) : ('')}
+                        {user?.position ? (
+                            <p className={`text-xl font-semibold ${cardStyle.textClass}`}>
+                                {user?.position ? user?.position : ''}
+                            </p>)
+                            : (
+                                ' '
+                            )
+                        }
+
                     </div>
                 </div>
 
