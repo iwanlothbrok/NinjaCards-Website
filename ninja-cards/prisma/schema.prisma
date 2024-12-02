@@ -52,6 +52,8 @@ model User {
   telegram      String?
   tripadvisor   String?
   coverImage    String?  @db.LongText // New field for cover image
+  isDirect  Boolean  @default(false)
+
 }
 
 model Contact {
