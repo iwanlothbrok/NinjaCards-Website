@@ -212,32 +212,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         setCroppedImage(null);
     };
 
-    const handleExchangeContact = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleSubmitContact = async (vCard: string) => {
-        try {
-            await fetch(`${BASE_API_URL}/api/profile/exchangeContact`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    vCard,
-                }),
-            });
-            // alert('Contact information sent successfully');
-        } catch (error) {
-            console.error('Error sending contact information:', error);
-            // alert('Failed to send contact information. Please try again.');
-        }
-    };
-
     useEffect(() => {
         if (userId) {
             fetchUser(userId, setCurrentUser, setLoading, showAlert);
