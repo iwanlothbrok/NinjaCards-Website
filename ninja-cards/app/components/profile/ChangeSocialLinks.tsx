@@ -113,6 +113,36 @@ const ImportantLinks: React.FC = () => {
         }
     };
 
+    const handleDeletePdf = async () => {
+        if (!user || !user.pdf) return;
+
+        try {
+            setLoading(true);
+            setAlert({ message: '', type: null });
+
+            const response = await fetch(`${BASE_API_URL}/api/profile/deletePdf`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: user.id }),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.json();
+                setAlert({ message: errorText.error || 'Неуспешно изтриване на PDF файла', type: 'error' });
+                return;
+            }
+
+            // Update user data locally
+
+            setAlert({ message: 'PDF файлът е успешно изтрит', type: 'success' });
+        } catch (error) {
+            console.error('Грешка при изтриване на PDF файла:', error);
+            setAlert({ message: 'Възникна неочаквана грешка. Моля, опитайте отново.', type: 'error' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="w-full max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-b from-black via-gray-950 to-gray-950 rounded-xl shadow-2xl">
             <h2 className="text-3xl font-bold mb-8 text-center text-white">Управление на важни връзки</h2>
@@ -274,22 +304,48 @@ const ImportantLinks: React.FC = () => {
                     focusRingColor="text-green-500"
                 />
 
-                <div
-                    className="flex items-center gap-3 bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition-all"
-                >
-                    <img src="/logos/pdf.png" alt="PDF logo" className="w-10 h-10 object-contain" />
-                    <label className="flex-1 text-white">
-                        <span className="block mb-1">Качете PDF</span>
-                        <input
-                            type="file"
-                            accept="application/pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
+                <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-3 bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition-all"
+                    >
+                        <img
+                            src="/logos/pdf.png"
+                            alt="Upload logo"
+                            className="w-12 h-12 object-contain"
                         />
-                        <span className="block text-sm text-gray-400 truncate">
-                            {pdf ? pdf.name : 'Няма Качен Файл'}
-                        </span>
-                    </label>
+                        <div className="flex-1">
+                            {/* Label wraps the visible area for better interaction */}
+                            <label className="block text-white font-medium text-lg cursor-pointer">
+                                Качете Нов PDF
+                                {/* Make the input clickable by associating it with the label */}
+                                <input
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={handleFileChange}
+                                    className="hidden"
+                                />
+                            </label>
+                            <span className="block text-sm text-gray-400 truncate">
+                                {pdf ? (
+                                    <span className="text-blue-400">{pdf.name}</span>
+                                ) : (
+                                    'Няма Качен Файл'
+                                )}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Delete Button for Database PDF */}
+                    {user?.pdf && (
+                        <button
+                            type="button"
+                            className={`w-full px-4 py-2 text-md font-semibold text-white bg-gradient-to-r from-red-600 via-red-500 to-red-600 hover:from-red-700 hover:via-red-600 hover:to-red-700 rounded-lg shadow-md transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''
+                                }`}
+                            onClick={handleDeletePdf}
+                            disabled={loading}
+                        >
+                            {loading ? 'Изтриване...' : 'Изтрий PDF от Базата'}
+                        </button>
+                    )}
                 </div>
 
                 <button
@@ -299,8 +355,8 @@ const ImportantLinks: React.FC = () => {
                 >
                     {loading ? 'Запазване...' : 'Запази'}
                 </button>
-            </form>
-        </div>
+            </form >
+        </div >
     );
 };
 
