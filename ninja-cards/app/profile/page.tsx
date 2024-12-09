@@ -19,11 +19,14 @@ const TabCard: React.FC<{
     label: string;
     backgroundImage: string;
     activeTab: string;
-    onClick: () => void
+    onClick: () => void;
 }> = ({ tab, label, backgroundImage, activeTab, onClick }) => (
     <motion.div
         className={`relative flex flex-col items-center justify-center p-4 rounded-lg shadow-lg border border-gray-700 transition-all cursor-pointer
-                    ${activeTab === tab ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-300'}
+                    ${activeTab === tab
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-800 text-gray-300'
+            }
                     hover:bg-blue-600 hover:text-white`}
         onClick={onClick}
         aria-pressed={activeTab === tab}
@@ -38,9 +41,14 @@ const TabCard: React.FC<{
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
     >
-        <div className="absolute inset-0 bg-black opacity-70 rounded-lg"></div>
-        <div className="relative z-10">
-            <h3 className="text-lg font-semibold mb-1">{label}</h3>
+        {/* Overlay for better text contrast */}
+        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg"></div>
+
+        {/* Responsive Text */}
+        <div className="relative z-10 text-center">
+            <h3 className="text-base sm:text-md md:text-lg lg:text-lg font-semibold mb-1">
+                {label}
+            </h3>
         </div>
     </motion.div>
 );

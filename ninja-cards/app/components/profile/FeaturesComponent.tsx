@@ -59,6 +59,8 @@ const FeaturesComponent: React.FC = () => {
             const result = await response.json();
             setMessage(result.message || "Настройката е успешно актуализирана.");
             setIsDirect(newIsDirect); // Update local state
+
+            
             if (setUser) setUser(result.user); // Update global user state
         } catch (error) {
             setMessage("Грешка при актуализиране на настройката.");
