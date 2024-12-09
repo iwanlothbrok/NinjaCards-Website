@@ -274,12 +274,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         const handleButtonClick = () => {
             console.log('isDirect ' + isDirect);
 
-            if (isDirect) {
-                console.log('isDirect ' + isDirect);
-
-                // If isDirect is true, generate the VCF and then show the profile
-                generateVCF();
-            }
+            // If isDirect is true, generate the VCF and then show the profile
+            generateVCF();
             // Showing the profile happens automatically as it's part of the UI
         };
 
