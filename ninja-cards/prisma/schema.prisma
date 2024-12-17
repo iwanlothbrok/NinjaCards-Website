@@ -27,14 +27,14 @@ model User {
   country       String?
   bio           String?
   image         String?  @db.LongText
-  facebook      String?
-  instagram     String?
+  facebook      String?  @db.Text
+  instagram     String?  @db.Text
   linkedin      String?
   twitter       String?
   tiktok        String?
-  googleReview  String?
+  googleReview  String?  @db.Text
   revolut       String?
-  website       String?
+  website       String? @db.Text
   viber         String?
   whatsapp      String?
   github        String?
@@ -42,7 +42,6 @@ model User {
   youtube       String?
   paypal        String?
   trustpilot    String?
-  pdf  String? @db.LongText  // Use LongText for larger data
   qrCode        String?  @db.Text
   selectedColor String?
   createdAt     DateTime @default(now())
@@ -51,9 +50,23 @@ model User {
   discord       String?
   telegram      String?
   tripadvisor   String?
-  coverImage    String?  @db.LongText // New field for cover image
-  isDirect  Boolean  @default(false)
+  pdf           String?  @db.LongText
+  coverImage    String?  @db.LongText
+  isDirect      Boolean  @default(false)
+  dashboard     Dashboard?
 
+}
+
+
+model Dashboard {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  profileVisits     Int       @default(0)
+  vcfDownloads      Int       @default(0)
+  profileShares     Int       @default(0)
+  socialLinkClicks  Int       @default(0)
+  // Relation to User
+  user              User      @relation(fields: [userId], references: [id])
 }
 
 model Contact {
@@ -97,5 +110,6 @@ model CardDesign {
 model Company {
   id        String   @id @default(uuid())
   name      String
+  googleReviewLink  String   @db.LongText
   createdAt DateTime @default(now())
 }
