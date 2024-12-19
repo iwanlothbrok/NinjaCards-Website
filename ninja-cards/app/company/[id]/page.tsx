@@ -10,6 +10,7 @@ export default function CompanyReviewPage({ params }: { params: { id: string } }
     const router = useRouter();
     const [googleReviewLink, setGoogleReviewLink] = useState<string | null>(null);
     const { id } = params;
+    console.log(id);
 
     useEffect(() => {
         if (!id) return;
@@ -19,7 +20,10 @@ export default function CompanyReviewPage({ params }: { params: { id: string } }
                 const response = await fetch(`${BASE_API_URL}/api/company/${id}`);
                 if (!response.ok) throw new Error("Failed to fetch company data");
 
+
+
                 const company = await response.json();
+                console.log(company);
                 setGoogleReviewLink(company.googleReviewLink);
             } catch (error) {
                 console.error("Error fetching company data:", error);
