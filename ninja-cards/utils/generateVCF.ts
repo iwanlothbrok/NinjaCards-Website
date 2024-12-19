@@ -1,6 +1,7 @@
 // import { User } from "@prisma/client";
 
 import { User } from "@/types/user";
+import { BASE_API_URL } from "./constants";
 
 type SocialProfileKeys =
     | "facebook"
@@ -13,8 +14,19 @@ type SocialProfileKeys =
     | "googleReview"
     | "revolut";
 
-export default function generateVCF(currentUser: User): void {
+export default async function generateVCF(currentUser: User): Promise<void> {
     if (!currentUser) return;
+
+    try {
+        // Increment VCF download count in the backend
+        await fetch(`${BASE_API_URL}/api/dashboard/incrementVCFDownload`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: currentUser.id }),
+        });
+    } catch (error) {
+        console.error("Failed to increment VCF download count:", error);
+    }
 
     const vCard: string[] = [
         "BEGIN:VCARD",
