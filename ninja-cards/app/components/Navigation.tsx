@@ -290,7 +290,7 @@ const Navbar: React.FC = () => {
                             Профил
                           </NavItem>
                           <NavItem
-                            href="/earnings"
+                            href="/analyse"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             Анализ
