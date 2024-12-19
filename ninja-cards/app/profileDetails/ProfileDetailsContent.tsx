@@ -108,6 +108,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [fileForUpload, setFileForUpload] = useState<File | null>(null);
     const [cropper, setCropper] = useState<any>(null);
     const [croppedImage, setCroppedImage] = useState<string | null>(null);
+    const [hasIncrementedVisit, setHasIncrementedVisit] = useState(false); // Guard state
+    const [hasDownoadedVCF, sethasDownoadedVCF] = useState(false); // Guard state
 
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -212,6 +214,18 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         setCroppedImage(null);
     };
 
+    const incrementProfileVisits = async (userId: string) => {
+        try {
+            await fetch(`${BASE_API_URL}/api/dashboard/increaseProfileVisits`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId }),
+            });
+        } catch (error) {
+            console.error('Error incrementing profile visits:', error);
+        }
+    };
+
     useEffect(() => {
         if (userId) {
             fetchUser(userId, setCurrentUser, setLoading, showAlert);
@@ -225,11 +239,15 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 setCardStyle(selectedCardStyle);
             }
         }
-        console.log('cur ' + currentUser);
 
-        if (currentUser?.isDirect) {
+        if (!hasIncrementedVisit && currentUser) {
+            incrementProfileVisits(currentUser?.id); // Increment visits when the profile is visualized
+            setHasIncrementedVisit(true); // Ensure this runs only once
+        }
+
+        if (!hasDownoadedVCF && currentUser?.isDirect) {
             console.log('isDirect ' + currentUser?.isDirect);
-
+            sethasDownoadedVCF(true);
             // If isDirect is true, generate the VCF and then show the profile
             generateVCF(currentUser);
         }
