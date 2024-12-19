@@ -34,6 +34,21 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
         // `${BASE_API_URL}/api/profile/updateLinks`
     ];
 
+    const handleLinkClick = async () => {
+        if (user?.id) {
+            try {
+                // Call API to increment social media link clicks
+                await fetch(`${BASE_API_URL}/api/dashboard/incrementSocialMediaLinks`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userId: user.id }),
+                });
+            } catch (error) {
+                console.error("Failed to increment social media link clicks:", error);
+            }
+        }
+    };
+
     return (
         <div className="mt-10 text-center">
             <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-6">
@@ -46,6 +61,7 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
                             rel="noopener noreferrer"
                             aria-label={link.label}
                             className="relative group"
+                            onClick={() => handleLinkClick()} // Invoke API on link click
                         >
                             <div className="p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out flex items-center justify-center bg-white hover:bg-gray-50">
                                 <Image
