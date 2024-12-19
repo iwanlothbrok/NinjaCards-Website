@@ -1,4 +1,3 @@
-
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -39,7 +38,8 @@ const ProfileDetailsPage = ({ params }: { params: { id: string } }) => {
     const { id } = params;
 
     console.log('id is ' + id);
-    if (!id) return notFound();  // Handle 404 if no id is provided
+    if (!id) return notFound();
+    // Handle 404 if no id is provided
 
     return (
         <Suspense fallback={<div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>}>
