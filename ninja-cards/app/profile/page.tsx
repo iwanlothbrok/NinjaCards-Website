@@ -104,7 +104,11 @@ function ProfileContent() {
         setLoading(true);
         if (tab === 'profileDetails') {
             router.push(`/profileDetails/${userId}`);
-        } else {
+        }
+        else if (tab === 'analyse') {
+            router.push('/analyse');
+        }
+        else {
             setActiveTab(tab);
             router.push(`/profile?tab=${tab}`);
         }
@@ -188,6 +192,13 @@ function ProfileContent() {
                         backgroundImage="/settingsBg/important.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('features')}
+                    />
+                    <TabCard
+                        tab="analyse"
+                        label="Анализ"
+                        backgroundImage="/settingsBg/analyze.png"
+                        activeTab={activeTab}
+                        onClick={() => handleTabClick('analyse')}
                     />
                 </div>
                 <motion.div
