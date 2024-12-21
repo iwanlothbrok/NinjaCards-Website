@@ -49,8 +49,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
 
             // Validate image file size
-            if (imageFile.size > 700 * 1024) {
-                res.status(400).json({ error: 'Image size exceeds the 700 KB limit' });
+            if (imageFile.size > 2500 * 1024) {
+                res.status(400).json({ error: 'Image size exceeds the 2500 KB limit' });
                 return;
             }
 

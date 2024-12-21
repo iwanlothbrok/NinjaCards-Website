@@ -27,7 +27,7 @@ const ProfileImageUploader: React.FC = () => {
 
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file && file.size <= 1000 * 1024) {  // Проверка дали размерът на изображението е в лимита (1MB)
+        if (file && file.size <= 2500 * 1024) {  // Проверка дали размерът на изображението е в лимита (1MB)
             const reader = new FileReader();
             reader.onload = () => {
                 setImageSrc(reader.result as string);
@@ -35,7 +35,7 @@ const ProfileImageUploader: React.FC = () => {
             };
             reader.readAsDataURL(file);
         } else {
-            setImageError('Размерът на изображението надвишава лимита от 1 MB');
+            setImageError('Размерът на изображението надвишава лимита от 2,5 MB');
         }
     }, []);
 
