@@ -28,6 +28,8 @@ const ImportantLinks: React.FC = () => {
         calendly: user?.calendly || '',
         discord: user?.discord || '',
         tripadvisor: user?.tripadvisor || '',
+        youtube: user?.youtube || '',
+
 
     });
     const [pdf, setPdf] = useState<File | null>(null);
@@ -304,6 +306,14 @@ const ImportantLinks: React.FC = () => {
                     focusRingColor="text-green-500"
                 />
 
+                <LinkInput
+                    name="youtube"
+                    value={formData.youtube}
+                    onChange={handleChange}
+                    placeholder="Youtube URL"
+                    iconSrc="/logos/youtube.png"
+                    focusRingColor="text-red-500"
+                />
                 <div className="flex flex-col gap-4">
                     <div className="flex items-center gap-3 bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition-all"
                     >
