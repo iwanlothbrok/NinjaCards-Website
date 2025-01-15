@@ -14,6 +14,9 @@ import { User } from '@/types/user';
 import BackgroundSelector from '../components/profileDetails/BackgroundSelector';
 import ProfileHeader from '../components/profileDetails/ProfileHeader';
 import generateVCF from "@/utils/generateVCF";
+import { useRouter } from "next/navigation";
+
+
 const cardBackgroundOptions = [
     {
         name: 'black',
@@ -110,6 +113,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [croppedImage, setCroppedImage] = useState<string | null>(null);
     const [hasIncrementedVisit, setHasIncrementedVisit] = useState(false); // Guard state
     const [hasDownoadedVCF, sethasDownoadedVCF] = useState(false); // Guard state
+    const router = useRouter();
 
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -232,7 +236,29 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         }
     }, [userId]);
 
+
+
+
     useEffect(() => {
+        const checkUserData = async () => {
+            try {
+                const res = await fetch(`${BASE_API_URL}/api/profile/check?userId=${userId}`);
+                if (!res.ok) throw new Error("Неуспешна проверка");
+
+                const data = await res.json();
+
+                console.log(data);
+
+                if (data.needsSetup) {
+                    router.push(`/finishProfile/${userId}`);
+                }
+            } catch (error) {
+                console.error("Грешка при проверка на акаунт:", error);
+            }
+        };
+
+        checkUserData();
+
         if (currentUser && currentUser.selectedColor) {
             const selectedCardStyle = cardBackgroundOptions.find(option => option.name === currentUser.selectedColor);
             if (selectedCardStyle) {
