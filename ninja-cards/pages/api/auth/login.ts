@@ -15,14 +15,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (req.method === 'POST') {
             const { email, password } = req.body;
 
-
             // Check if user exists
             const user = await prisma.user.findUnique({
                 where: { email },
             });
 
-            if (!user) {
-                console.log('User not found');
+            if (!user || !user.password) {  // Ensure user exists and has a password
+                console.log('User not found or password missing');
                 return res.status(401).json({ error: 'Invalid email or password' });
             }
 
@@ -52,6 +51,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
     } catch (error) {
         console.error('Internal server error:', error);
-        return res.status(501).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
 }

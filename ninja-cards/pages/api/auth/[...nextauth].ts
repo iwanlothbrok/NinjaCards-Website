@@ -20,15 +20,16 @@ export default NextAuth({
           where: { email: credentials.email },
         });
 
-        if (user && await compare(credentials.password, user.password)) {
+        if (user && user.password && await compare(credentials.password, user.password)) {
           return {
             id: user.id,
             name: user.name,
             email: user.email,
             image: user.image,
           };
+        } else {
+          throw new Error("Invalid credentials");
         }
-        return null;
       },
     }),
   ],
