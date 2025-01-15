@@ -1,10 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import cors from "@/utils/cors";
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+        const corsHandled = cors(req, res);
+        if (corsHandled) return; // If it's a preflight request, stop further execution
+    
     if (req.method !== "PUT") return res.status(405).json({ error: "Методът не е разрешен" });
 
     try {
