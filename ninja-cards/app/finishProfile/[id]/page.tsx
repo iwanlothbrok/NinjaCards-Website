@@ -76,7 +76,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
             const response = await res.json();
             if (res.ok) {
                 showAlert("Успешно запазване!", "Успех", "green");
-                router.push(`/profileDetails/${userId}`);
+                router.push(`/login`);
             } else {
                 showAlert(response.error || "Грешка при регистрация", "Грешка", "red");
             }
