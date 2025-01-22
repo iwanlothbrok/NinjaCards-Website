@@ -31,9 +31,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(404).json({ error: "Потребителят не съществува" });
         }
 
-        if (existingUser.email || existingUser.password) {
-            return res.status(403).json({ error: "Акаунтът вече има зададени имейл и парола" });
-        }
+        // if (existingUser.email || existingUser.password) {
+        //     return res.status(403).json({ error: "Акаунтът вече има зададени имейл и парола" });
+        // }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
