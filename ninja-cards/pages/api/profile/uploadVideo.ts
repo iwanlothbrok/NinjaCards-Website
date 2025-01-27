@@ -11,9 +11,11 @@ export const config = {
         bodyParser: false,
     },
 };
-
 const parseForm = (req: NextApiRequest): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
-    const form = new IncomingForm({ keepExtensions: true });
+    const form = new IncomingForm({
+        keepExtensions: true,
+        maxFileSize: 10 * 1024 * 1024, // Allow files up to 20MB
+    });
 
     return new Promise((resolve, reject) => {
         form.parse(req, (err, fields, files) => {
@@ -22,7 +24,6 @@ const parseForm = (req: NextApiRequest): Promise<{ fields: formidable.Fields; fi
         });
     });
 };
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const corsHandled = cors(req, res);
     if (corsHandled) return; // If it's a preflight request, stop further execution
