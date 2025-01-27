@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, use } from "react";
+import React, { useState, useEffect } from "react";
 import ExchangeContact from '../components/profileDetails/ExchangeContact';
-import { FaUserCircle, FaExchangeAlt, FaDownload, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
+import { FaUserCircle, FaExchangeAlt, FaDownload, FaEnvelope, FaPhoneAlt, FaPlayCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css"; // Import cropper styles
@@ -114,10 +114,10 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [hasIncrementedVisit, setHasIncrementedVisit] = useState(false); // Guard state
     const [hasDownoadedVCF, sethasDownoadedVCF] = useState(false); // Guard state
     const router = useRouter();
+    const [isVideoModalOpen, setVideoModalOpen] = useState(false);
 
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        console.log('on change');
 
         if (file) {
             const validFileTypes = ["image/jpeg", "image/png", "image/gif"];
@@ -353,7 +353,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
-        <div className={`relative ${cardStyle.opposite}`}>
+        <div className={`relative ${cardStyle.opposite} min-h-screen`}>
             {/* Profile Header Section */}
             <ProfileHeader
                 user={currentUser}
@@ -440,12 +440,13 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
 
                     {/* Social Media Links */}
                     <motion.div
-                        className="mt-6"
+                        className="mt-6 z-50"
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
                         <SocialMediaLinks user={currentUser} />
+
                     </motion.div>
 
                     {/* Floating Buttons */}
