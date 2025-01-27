@@ -13,6 +13,7 @@ import ChangeAddress from '../components/profile/ChangeAdress';
 import ChangeProfileImage from '../components/profile/ChangeProfileImage';
 import QRCodeDownload from '../components/profile/QRCodeDownload';
 import FeaturesComponent from '../components/profile/FeaturesComponent';
+import VideoPreview from '../components/profile/VideoPreview';
 
 const TabCard: React.FC<{
     tab: string;
@@ -95,6 +96,8 @@ function ProfileContent() {
                 return <QRCodeDownload />;
             case 'features':
                 return <FeaturesComponent />;
+            case 'video':
+                return <VideoPreview />;
             default:
                 return <Settings />;
         }
@@ -199,6 +202,13 @@ function ProfileContent() {
                         backgroundImage="/settingsBg/analyze.png"
                         activeTab={activeTab}
                         onClick={() => handleTabClick('analyse')}
+                    />
+                    <TabCard
+                        tab="video"
+                        label="Видео клип"
+                        backgroundImage="/settingsBg/security02.png"
+                        activeTab={activeTab}
+                        onClick={() => handleTabClick('video')}
                     />
                 </div>
                 <motion.div
