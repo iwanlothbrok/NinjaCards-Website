@@ -40,8 +40,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return;
             }
 
+
             // Initialize an empty object to store the updated data
             const updatedData: any = {};
+            if (files.video) {
+                const videoFile = Array.isArray(files.video) ? files.video[0] : files.video;
+                const videoBuffer = await fs.readFile(videoFile.filepath);
+                updatedData.video = videoBuffer.toString('base64'); // Store video as Base64 in the database
+            }
 
             // Iterate over the expected fields and set them to null if not provided
             const fieldsToCheck = [
@@ -64,6 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 'calendly',
                 'discord',
                 'tripadvisor',
+
             ];
 
             fieldsToCheck.forEach((field) => {
@@ -81,6 +88,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const updatedUser = await prisma.user.update({
                 where: { id },
                 data: updatedData,
+                select: {
+                    id: true,
+                    facebook: true,
+                    twitter: true,
+                    instagram: true,
+                    linkedin: true,
+                    github: true,
+                    youtube: true,
+                    tiktok: true,
+                    googleReview: true,
+                    behance: true,
+                    paypal: true,
+                    viber: true,
+                    whatsapp: true,
+                    trustpilot: true,
+                    revolut: true,
+                    website: true,
+                    telegram: true,
+                    calendly: true,
+                    discord: true,
+                    tripadvisor: true,
+                    video: false,
+                    pdf: false,
+                },
             });
 
             res.status(200).json(updatedUser);
