@@ -26,7 +26,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const user = await prisma.user.findUnique({
             where: {
                 id: userId, // Now `userId` is safely a string
-            }, 
+            }, include: {
+                video: true, // Include the video relation
+            },
         });
 
         if (!user) {
