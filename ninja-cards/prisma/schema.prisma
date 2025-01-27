@@ -54,9 +54,16 @@ model User {
   coverImage    String?  @db.LongText
   isDirect      Boolean  @default(false)
   dashboard     Dashboard?
-
+  video     Video?   // One-to-one relation with Video table 
 }
 
+model Video {
+  id        String   @id @default(uuid())
+  data      Bytes    @db.LongBlob  // Use `Bytes` for more efficient storage of binary data
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
 
 model Dashboard {
   id                String    @id @default(uuid())
