@@ -29,8 +29,7 @@ const ImportantLinks: React.FC = () => {
         discord: user?.discord || '',
         tripadvisor: user?.tripadvisor || '',
         youtube: user?.youtube || '',
-
-
+        video: user?.video || null, // Add video field here
     });
     const [pdf, setPdf] = useState<File | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -80,7 +79,11 @@ const ImportantLinks: React.FC = () => {
         formDataObj.append('id', user.id);
 
         Object.entries(formData).forEach(([key, value]) => {
-            formDataObj.append(key, value);
+            if (key === 'video' && value instanceof File) {
+                formDataObj.append(key, value); // Append the video file
+            } else if (typeof value === 'string') {
+                formDataObj.append(key, value); // Append other fields as strings
+            }
         });
 
         if (pdf) {
@@ -357,7 +360,6 @@ const ImportantLinks: React.FC = () => {
                         </button>
                     )}
                 </div>
-
                 <button
                     type="submit"
                     className={`col-span-1 md:col-span-2 w-full bg-gradient-to-r from-teal-500 via-teal-600 to-orange text-white py-3 rounded-lg mt-6 hover:from-teal-600 hover:via-teal-700 hover:to-orange focus:outline-none focus:ring-4 focus:ring-teal-400 transition-transform transform hover:scale-105 ${loading ? 'opacity-100 cursor-not-allowed' : ''}`}
