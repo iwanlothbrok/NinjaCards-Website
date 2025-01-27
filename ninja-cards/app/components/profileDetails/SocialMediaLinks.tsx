@@ -1,13 +1,24 @@
-import React from 'react';
+'use client'
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { User } from '../../../types/user'; // Adjust the path based on your folder structure
 import { BASE_API_URL } from '@/utils/constants';
+import { FaPlayCircle } from 'react-icons/fa'; // Video play icon
+import { motion } from 'framer-motion';
+import { createPortal } from 'react-dom';
 
 interface SocialMediaLinksProps {
     user: User | null;
 }
 
 const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    console.log(user?.video?.data);
+    console.log(typeof user?.video?.data); // Should be 'object'
+    console.log(user?.video?.data instanceof Uint8Array); // Should return true or false
+    console.log(user?.video?.data instanceof ArrayBuffer); // Should return true or false
+
     const socialMediaLinks = [
 
         { key: 'website', url: user?.website, logo: '/logos/website.png', label: 'Website', gradient: 'from-cyan-600 to-cyan-800' },
@@ -52,32 +63,124 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
     return (
         <div className="mt-10 text-center">
             <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-6">
-                {socialMediaLinks.map((link) =>
-                    link.url && (
-                        <a
-                            key={link.key}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={link.label}
-                            className="relative group"
-                            onClick={() => handleLinkClick()} // Invoke API on link click
-                        >
-                            <div className="p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out flex items-center justify-center bg-white hover:bg-gray-50">
-                                <Image
-                                    src={link.logo}
-                                    alt={link.label}
-                                    width={48}
-                                    height={48}
-                                    className="transition-transform duration-300 ease-in-out transform group-hover:scale-110"
-                                    priority
-                                    unoptimized
-                                />
-                            </div>
-                        </a>
-                    )
+                {socialMediaLinks.map(
+                    (link) =>
+                        link.url && (
+                            <a
+                                key={link.key}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={link.label}
+                                className="relative group"
+                                onClick={() => handleLinkClick()}
+                            >
+                                <div className="p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out flex items-center justify-center bg-white hover:bg-gray-50">
+                                    <Image
+                                        src={link.logo}
+                                        alt={link.label}
+                                        width={48}
+                                        height={48}
+                                        className="transition-transform duration-300 ease-in-out transform group-hover:scale-110"
+                                        priority
+                                        unoptimized
+                                    />
+                                </div>
+                            </a>
+                        )
+                )}
+
+                {/* Video Icon */}
+                {user?.video && (
+                    <button
+                        onClick={() => setModalOpen(true)}
+                        aria-label="Watch Video"
+                        className="relative group flex items-center justify-center bg-white p-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300"
+                    >
+                        <FaPlayCircle className="text-red-600 text-4xl group-hover:text-red-700 transition-all" />
+                    </button>
                 )}
             </div>
+
+            {/* Video Modal */}
+            {isModalOpen &&
+                createPortal(
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            zIndex: 2147483647, // Maximum z-index
+                            position: 'fixed', // Ensures it's detached from parent stacking contexts
+                            inset: 0, // Full-screen modal
+                            backgroundColor: 'rgba(0, 0, 0, 0.75)', // Dark overlay
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '2px'
+                        }}
+                    >
+                        <div
+                            style={{
+                                position: 'relative',
+                                zIndex: 2147483647,
+                                backgroundColor: '#1f2937', // Dark background
+                                padding: '1.25rem',
+                                borderRadius: '0.5rem',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                maxWidth: '1024px',
+                                width: '100%',
+                            }}
+                        >
+                            {/* Close Button */}
+                            <button
+                                onClick={() => setModalOpen(false)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '0.5rem',
+                                    right: '0.5rem',
+                                    backgroundColor: '#e11d48', // Tailwind red-600
+                                    color: 'white',
+                                    borderRadius: '50%',
+                                    padding: '1.2rem',
+                                    zIndex: 2147483647,
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                ✕
+                            </button>
+
+                            {/* Video Player */}
+                            {user?.video?.data ? (
+                                <video
+                                    controls
+                                    autoPlay
+                                    style={{
+                                        width: '100%',
+                                        height: 'auto',
+                                        maxHeight: '80vh',
+                                        borderRadius: '0.5rem',
+                                    }}
+                                    src={(() => {
+                                        try {
+                                            const buffer = new Uint8Array(user.video.data.data); // Convert to Uint8Array
+                                            //const buffer = new Uint8Array(user.video?.data || new ArrayBuffer(0)); // Directly use the `data` field
+                                            const blob = new Blob([buffer], { type: 'video/mp4' }); // Create a Blob
+                                            return URL.createObjectURL(blob); // Generate Blob URL
+                                        } catch (error) {
+                                            console.error('Error creating video Blob:', error);
+                                            return undefined;
+                                        }
+                                    })()}
+                                />
+                            ) : (
+                                <p style={{ color: 'white' }}>Видео не е налично</p>
+                            )}
+                        </div>
+                    </motion.div>,
+                    document.body // Render modal at the root of the DOM
+                )}
+
         </div>
     );
 };
