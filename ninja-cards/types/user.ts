@@ -47,4 +47,5 @@ export interface User {
             data: ArrayBuffer | Uint8Array;
         }; type?: string; // Optional MIME type
     } | null;
+    videoUrl: string;
 }
