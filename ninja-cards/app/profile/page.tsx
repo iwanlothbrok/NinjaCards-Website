@@ -13,7 +13,7 @@ import ChangeAddress from '../components/profile/ChangeAdress';
 import ChangeProfileImage from '../components/profile/ChangeProfileImage';
 import QRCodeDownload from '../components/profile/QRCodeDownload';
 import FeaturesComponent from '../components/profile/FeaturesComponent';
-import VideoPreview from '../components/profile/VideoPreview';
+import VideoUpload from '../components/profile/VideoUpload';
 
 const TabCard: React.FC<{
     tab: string;
@@ -97,7 +97,7 @@ function ProfileContent() {
             case 'features':
                 return <FeaturesComponent />;
             case 'video':
-                return <VideoPreview />;
+                return <VideoUpload />;
             default:
                 return <Settings />;
         }

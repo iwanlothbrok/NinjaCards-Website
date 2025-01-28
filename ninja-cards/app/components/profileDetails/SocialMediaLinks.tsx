@@ -13,12 +13,6 @@ interface SocialMediaLinksProps {
 
 const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
     const [isModalOpen, setModalOpen] = useState(false);
-
-    console.log(user?.video?.data);
-    console.log(typeof user?.video?.data); // Should be 'object'
-    console.log(user?.video?.data instanceof Uint8Array); // Should return true or false
-    console.log(user?.video?.data instanceof ArrayBuffer); // Should return true or false
-
     const socialMediaLinks = [
 
         { key: 'website', url: user?.website, logo: '/logos/website.png', label: 'Website', gradient: 'from-cyan-600 to-cyan-800' },
@@ -91,7 +85,7 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
                 )}
 
                 {/* Video Icon */}
-                {user?.video && (
+                {user?.videoUrl && (
                     <button
                         onClick={() => setModalOpen(true)}
                         aria-label="Watch Video"
@@ -109,76 +103,39 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        style={{
-                            zIndex: 2147483647, // Maximum z-index
-                            position: 'fixed', // Ensures it's detached from parent stacking contexts
-                            inset: 0, // Full-screen modal
-                            backgroundColor: 'rgba(0, 0, 0, 0.75)', // Dark overlay
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: '2px'
-                        }}
+                        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-[9999] p-2"
                     >
-                        <div
-                            style={{
-                                position: 'relative',
-                                zIndex: 2147483647,
-                                backgroundColor: '#1f2937', // Dark background
-                                padding: '1.25rem',
-                                borderRadius: '0.5rem',
-                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                                maxWidth: '1024px',
-                                width: '100%',
-                            }}
-                        >
+                        <div className="relative bg-gray-900 p-4 rounded-lg shadow-2xl max-w-sm w-full md:w-[400px]">
+
                             {/* Close Button */}
                             <button
                                 onClick={() => setModalOpen(false)}
-                                style={{
-                                    position: 'absolute',
-                                    top: '0.5rem',
-                                    right: '0.5rem',
-                                    backgroundColor: '#e11d48', // Tailwind red-600
-                                    color: 'white',
-                                    borderRadius: '50%',
-                                    padding: '1.2rem',
-                                    zIndex: 2147483647,
-                                    cursor: 'pointer',
-                                }}
+                                className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg transition-all"
+                                aria-label="Затвори видеото"
                             >
                                 ✕
                             </button>
 
                             {/* Video Player */}
-                            {user?.video?.data ? (
-                                <video
-                                    controls
-                                    autoPlay
-                                    style={{
-                                        width: '100%',
-                                        height: 'auto',
-                                        maxHeight: '80vh',
-                                        borderRadius: '0.5rem',
-                                    }}
-                                    src={(() => {
-                                        try {
-                                            const buffer = new Uint8Array(user.video.data.data); // Convert to Uint8Array
-                                            //const buffer = new Uint8Array(user.video?.data || new ArrayBuffer(0)); // Directly use the `data` field
-                                            const blob = new Blob([buffer], { type: 'video/mp4' }); // Create a Blob
-                                            return URL.createObjectURL(blob); // Generate Blob URL
-                                        } catch (error) {
-                                            console.error('Error creating video Blob:', error);
-                                            return undefined;
-                                        }
-                                    })()}
-                                />
+                            {user?.videoUrl ? (
+                                <div className="flex flex-col items-center text-center">
+                                    <h3 className="text-white text-lg font-semibold mb-3 animate-fadeIn">
+                                        Вашето видео
+                                    </h3>
+                                    <video
+                                        controls
+                                        className="w-full rounded-xl shadow-lg border-2 border-gray-700 max-h-[70vh]"
+                                    >
+                                        <source src={user.videoUrl} type="video/mp4" />
+                                        Вашият браузър не поддържа видеото.
+                                    </video>
+                                </div>
                             ) : (
-                                <p style={{ color: 'white' }}>Видео не е налично</p>
+                                <p className="text-white text-center">Няма налично видео</p>
                             )}
                         </div>
                     </motion.div>,
-                    document.body // Render modal at the root of the DOM
+                    document.body // Ensures modal is rendered outside stacking context
                 )}
 
         </div>
