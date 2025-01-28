@@ -55,6 +55,7 @@ model User {
   isDirect      Boolean  @default(false)
   dashboard     Dashboard?
   video     Video?   // One-to-one relation with Video table 
+  videoUrl String?  @db.LongText
 }
 
 model Video {
