@@ -1,69 +1,35 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-import formidable, { IncomingForm } from "formidable";
-import fs from "fs/promises";
-import cors from "@/utils/cors";
+import { v2 as cloudinary } from 'cloudinary';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-const prisma = new PrismaClient();
-
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
-
-const parseForm = (req: NextApiRequest): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
-    const form = new IncomingForm({
-        keepExtensions: true,
-        maxFileSize: 10 * 1024 * 1024, // Allow files up to 10MB
-    });
-
-    return new Promise((resolve, reject) => {
-        form.parse(req, (err, fields, files) => {
-            if (err) reject(err);
-            resolve({ fields, files });
-        });
-    });
-};
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    // Handle CORS
-    const corsHandled = cors(req, res);
-    if (corsHandled) return; // If it's a preflight request, stop further execution
-
-    // Ensure POST method
-    if (req.method !== "POST") {
-        return res.status(405).json({ error: "Методът не е разрешен" });
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Методът не е разрешен' });
     }
 
     try {
-        const { fields, files } = await parseForm(req);
+        const { folder } = req.body;
 
-        // Ensure `userId` exists and is valid
-        const userId = Array.isArray(fields.id) ? fields.id[0] : fields.id;
-        if (!userId || typeof userId !== "string") {
-            return res.status(400).json({ error: "ID на потребителя е задължително" });
-        }
+        // Generate a signed upload preset
+        const timestamp = Math.round(new Date().getTime() / 1000);
+        const signature = cloudinary.utils.api_sign_request(
+            { timestamp, folder: folder || 'uploads' },
+            process.env.CLOUDINARY_API_SECRET!
+        );
 
-        // Ensure a video file is uploaded
-        const videoFile = Array.isArray(files.video) ? files.video[0] : files.video;
-        if (!videoFile) {
-            return res.status(400).json({ error: "Няма избран видео файл" });
-        }
-
-        const videoBuffer = await fs.readFile(videoFile.filepath);
-
-        // Use upsert to add or update the video for the user
-        const video = await prisma.video.upsert({
-            where: { userId },
-            update: { data: videoBuffer }, // Update existing video data
-            create: { userId, data: videoBuffer }, // Create a new video entry
+        res.status(200).json({
+            signature,
+            timestamp,
+            cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+            uploadPreset: folder || 'uploads',
         });
-
-        // Respond with success
-        res.status(200).json({ success: true, videoId: video.id });
     } catch (error) {
-        console.error("Error uploading video:", error);
-        res.status(500).json({ error: "Вътрешна грешка при качването на видеото" });
+        console.error('Error generating signature:', error);
+        res.status(500).json({ error: 'Възникна грешка при генериране на подписа' });
     }
 }

@@ -6,35 +6,37 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const corsHandled = cors(req, res);
-    if (corsHandled) return; // Stop if it's a preflight request
+    if (corsHandled) return; // Handle CORS preflight
 
     if (req.method !== "DELETE") {
         return res.status(405).json({ error: "Методът не е разрешен" });
     }
 
     try {
-        const { id } = req.body;
-        if (!id) {
-            return res.status(400).json({ error: "ID на потребителя е задължително" });
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ error: "Липсва потребителско ID" });
         }
 
-        // Check if a video exists for the user
-        const existingVideo = await prisma.video.findFirst({
-            where: { userId: id },
+        // Check if the user has a video saved
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
         });
 
-        if (!existingVideo) {
-            return res.status(404).json({ error: "Няма качено видео за този потребител" });
+        if (!user || !user.videoUrl) {
+            return res.status(404).json({ error: "Няма налично видео за премахване" });
         }
 
-        // Remove video for the user
-        await prisma.video.deleteMany({
-            where: { userId: id },
+        // Remove video URL from the database
+        await prisma.user.update({
+            where: { id: userId },
+            data: { videoUrl: null }, // Ensure this matches your Prisma schema
         });
 
-        res.status(200).json({ message: "Видеото беше премахнато успешно" });
+        return res.status(200).json({ success: true, message: "Видеото беше премахнато успешно!" });
     } catch (error) {
-        console.error("Error removing video:", error);
-        res.status(500).json({ error: "Възникна грешка при премахването на видеото" });
+        console.error("❌ Error removing video:", error);
+        return res.status(500).json({ error: "Грешка при премахването на видеото" });
     }
 }
