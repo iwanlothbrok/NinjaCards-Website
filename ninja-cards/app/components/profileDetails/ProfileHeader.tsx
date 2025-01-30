@@ -35,7 +35,7 @@ const ProfileHeader: React.FC<{
 
                 {/* Circular Profile Image Positioned on Top */}
                 <div
-                    className="absolute mt-10 top-40 left-1/2 transform -translate-x-1/2 z-10 bg-white  rounded-full shadow-lg"
+                    className={`absolute mt-10 top-40 left-1/2 transform -translate-x-1/2 z-10 ${cardStyle.bgClass}  rounded-full shadow-lg`}
                 >
                     <motion.div
                         className={`w-44 h-44 rounded-full overflow-hidden border-4 ${cardStyle.borderClass}`}
@@ -96,23 +96,22 @@ const ProfileHeader: React.FC<{
                 >
                     <div className="text-center mt-8">
                         <h1 className={`text-4xl font-bold ${cardStyle.highlightClass}`}>
-                            {user?.name}
-
+                            {user?.name || '\u00A0'}
                         </h1>
                         {user?.company ? (
                             <p className={`text-2xl font-semibold mt-1 ${cardStyle.textClass}`}>
-                                {user?.company ? user?.company : ''}
+                                {user?.company}
                             </p>
-                        ) : ('')}
+                        ) : (
+                            '\u00A0'
+                        )}
                         {user?.position ? (
                             <p className={`text-xl font-semibold ${cardStyle.textClass}`}>
-                                {user?.position ? user?.position : ''}
-                            </p>)
-                            : (
-                                ' '
-                            )
-                        }
-
+                                {user?.position}
+                            </p>
+                        ) : (
+                            '\u00A0'
+                        )}
                     </div>
                 </div>
 
