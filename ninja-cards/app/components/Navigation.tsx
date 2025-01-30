@@ -265,12 +265,20 @@ const Navbar: React.FC = () => {
                 </li>
                 {isAuthenticated ? (
                   <li className="relative flex items-center group mt-5 lg:mt-0">
-                    <img
-                      onClick={handleDropdownToggle}
-                      className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md"
-                      src={`data:image/jpeg;base64,${user.image}`}
-                      alt="User avatar"
-                    />
+                    {user.image ? (
+                      <img
+                        onClick={handleDropdownToggle}
+                        className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md"
+                        src={`data:image/jpeg;base64,${user.image}`}
+                        alt="User avatar"
+                      />
+                    ) : (
+                      <div
+                        onClick={handleDropdownToggle}
+                        className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md flex items-center justify-center bg-gray-700 text-white"
+                      >
+                      </div>
+                    )}
                     {isDropdownOpen && (
                       <div
                         ref={dropdownRef}
@@ -309,7 +317,6 @@ const Navbar: React.FC = () => {
                   </li>
                 ) : isPhone ? (
                   <div className="flex flex-col items-center justify-center space-y-4 mt-2 lg:mt-0">
-
                     <Link
                       href="/login"
                       className="px-6 py-3 text-lg font-semibold text-orange bg-transparent border border-orange rounded-full transition-all duration-300 hover:bg-orange hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
@@ -320,7 +327,6 @@ const Navbar: React.FC = () => {
                   </div>
                 ) : (
                   <div className="hidden lg:flex items-center ml-5 space-x-2 lg:space-x-3">
-
                     <Link
                       href="/login"
                       className="px-6 py-3 text-lg font-semibold text-orange bg-transparent border border-orange rounded-full transition-all duration-300 hover:bg-orange hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
@@ -330,6 +336,7 @@ const Navbar: React.FC = () => {
                     </Link>
                   </div>
                 )}
+
               </ul>
             </nav>
           </div>
