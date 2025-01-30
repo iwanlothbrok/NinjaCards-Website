@@ -3,12 +3,28 @@
 import React, { useState, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import LinkInput from './LinkInput';
 import { BASE_API_URL } from '@/utils/constants';
 
+const countryCodes = [
+    { code: "+1", country: "🇺🇸 USA" },
+    { code: "+44", country: "🇬🇧 UK" },
+    { code: "+33", country: "🇫🇷 France" },
+    { code: "+49", country: "🇩🇪 Germany" },
+    { code: "+39", country: "🇮🇹 Italy" },
+    { code: "+34", country: "🇪🇸 Spain" },
+    { code: "+359", country: "🇧🇬 Bulgaria" },
+
+];
+
+
 const ImportantLinks: React.FC = () => {
+
     const { user, setUser } = useAuth();
+    const storedWhatsApp = user?.whatsapp || '';
+    const defaultCode = countryCodes.find(({ code }) => storedWhatsApp.startsWith(code))?.code || "+359";
+    const defaultNumber = storedWhatsApp.replace(defaultCode, "").trim();
+
     const [formData, setFormData] = useState({
         facebook: user?.facebook || '',
         instagram: user?.instagram || '',
@@ -19,7 +35,8 @@ const ImportantLinks: React.FC = () => {
         tiktok: user?.tiktok || '',
         website: user?.website || '',
         viber: user?.viber || '',
-        whatsapp: user?.whatsapp || '',
+        whatsappCode: defaultCode, // Extracted from user's WhatsApp
+        whatsapp: defaultNumber, // Extracted phone number
         github: user?.github || '',
         behance: user?.behance || '',
         paypal: user?.paypal || '',
@@ -35,26 +52,23 @@ const ImportantLinks: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
 
+    // Extract country code & number from user's stored WhatsApp
+
     const router = useRouter();
 
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
 
-        let updatedValue = value;
-
-        // Ensure Viber and WhatsApp phone numbers start with +359 and remove any spaces
-        if (name === 'viber' || name === 'whatsapp') {
-            // Remove all spaces from the input
-            updatedValue = value.replace(/\s+/g, '');
-
-            // Ensure the number starts with +359
-            if (!updatedValue.startsWith('+359')) {
-                updatedValue = `+359${updatedValue.replace(/^\+?359/, '')}`; // Ensure no double prefix
+        setFormData((prev) => {
+            if (name === "whatsappCode") {
+                return { ...prev, whatsappCode: value };
             }
-        }
-
-        setFormData({ ...formData, [name]: updatedValue });
-    }, [formData]);
+            if (name === "whatsapp") {
+                return { ...prev, whatsapp: value.replace(/\s+/g, '') }; // Remove spaces
+            }
+            return { ...prev, [name]: value };
+        });
+    }, []);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -65,6 +79,7 @@ const ImportantLinks: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        const fullWhatsAppNumber = `${formData.whatsappCode}${formData.whatsapp}`;
 
         setLoading(true);
         setAlert({ message: '', type: null });
@@ -81,6 +96,8 @@ const ImportantLinks: React.FC = () => {
         Object.entries(formData).forEach(([key, value]) => {
             if (key === 'video' && value instanceof File) {
                 formDataObj.append(key, value); // Append the video file
+            } else if (key === 'whatsapp') {
+                formDataObj.append(key, fullWhatsAppNumber); // Append the full WhatsApp number
             } else if (typeof value === 'string') {
                 formDataObj.append(key, value); // Append other fields as strings
             }
@@ -223,14 +240,33 @@ const ImportantLinks: React.FC = () => {
                     iconSrc="/logos/viber.png"
                     focusRingColor="text-purple-500"
                 />
-                <LinkInput
-                    name="whatsapp"
-                    value={formData.whatsapp}
-                    onChange={handleChange}
-                    placeholder="WhatsApp Телефонен номер"
-                    iconSrc="/logos/wa.png"
-                    focusRingColor="text-green-500"
-                />
+                <div className="flex items-center space-x-3 bg-gray-800 p-4 rounded-lg shadow-md">
+                    <img src="/logos/wa.png" alt="WhatsApp" className="w-10 h-10 object-contain" />
+
+                    {/* Country Code Selector */}
+                    <select
+                        name="whatsappCode"
+                        value={formData.whatsappCode}
+                        onChange={handleChange}
+                        className="p-2 text-white bg-gray-900 border border-gray-700 rounded-lg outline-none"
+                    >
+                        {countryCodes.map(({ code, country }) => (
+                            <option key={code} value={code}>
+                                {country} ({code})
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* WhatsApp Number Input */}
+                    <input
+                        type="text"
+                        name="whatsapp"
+                        value={formData.whatsapp}
+                        onChange={handleChange}
+                        placeholder="Телефонен номер"
+                        className="flex-grow bg-transparent text-gray-200 border-none focus:ring-0 placeholder-gray-400 focus:outline-none"
+                    />
+                </div>
                 <LinkInput
                     name="github"
                     value={formData.github}
