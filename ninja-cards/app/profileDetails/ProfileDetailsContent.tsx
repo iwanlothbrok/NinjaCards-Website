@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import ExchangeContact from '../components/profileDetails/ExchangeContact';
-import { FaUserCircle, FaExchangeAlt, FaDownload, FaEnvelope, FaPhoneAlt, FaPlayCircle } from 'react-icons/fa';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { FaUserCircle, FaExchangeAlt, FaDownload, FaPhoneAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css"; // Import cropper styles
 import { useAuth } from '../context/AuthContext';
-import ActionButtons2 from '../components/profileDetails/ActionButtons2';
 import { BASE_API_URL } from '@/utils/constants';
-import SocialMediaLinks from '../components/profileDetails/SocialMediaLinks';
 import { User } from '@/types/user';
-import BackgroundSelector from '../components/profileDetails/BackgroundSelector';
-import ProfileHeader from '../components/profileDetails/ProfileHeader';
 import generateVCF from "@/utils/generateVCF";
 import { useRouter } from "next/navigation";
+import dynamic from 'next/dynamic';
+import ProfileHeader from '../components/profileDetails/ProfileHeader';
+import BackgroundSelector from '../components/profileDetails/BackgroundSelector';
+import SocialMediaLinks from '../components/profileDetails/SocialMediaLinks';
+import ActionButtons2 from '../components/profileDetails/ActionButtons2';
 
 
 const cardBackgroundOptions = [
@@ -66,7 +66,13 @@ const cardBackgroundOptions = [
 
 ];
 
+
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
+    if (!BASE_API_URL) {
+        console.error('BASE_API_URL is not defined');
+        showAlert('Failed to save color', 'Error', 'red');
+        return;
+    }
     try {
         const response = await fetch(`${BASE_API_URL}/api/profile/saveColor`, {
             method: 'PUT',
@@ -112,12 +118,15 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [cropper, setCropper] = useState<any>(null);
     const [croppedImage, setCroppedImage] = useState<string | null>(null);
     const [hasIncrementedVisit, setHasIncrementedVisit] = useState(false); // Guard state
-    const [hasDownoadedVCF, sethasDownoadedVCF] = useState(false); // Guard state
+    const [hasDownloadedVCF, setHasDownloadedVCF] = useState(false); // Guard state
     const router = useRouter();
-    const [isVideoModalOpen, setVideoModalOpen] = useState(false);
 
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
+        if (!event.target.files) {
+            console.log("No files selected.");
+            return;
+        }
+        const file = event.target.files[0];
 
         if (file) {
             const validFileTypes = ["image/jpeg", "image/png", "image/gif"];
@@ -141,8 +150,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         }
     };
 
-    const cropImage = () => {
-        console.log('on crop');
+
+    const cropImage = useCallback(() => {
         if (cropper) {
             const croppedCanvas = cropper.getCroppedCanvas();
             if (!croppedCanvas) {
@@ -174,22 +183,23 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 reader.readAsDataURL(blob);
             }, "image/jpeg"); // Adjust the image format/quality as needed
         }
-    };
+    }, [cropper]);
+
+    const zoomIn = useCallback(() => {
+        if (cropper) cropper.zoom(0.1);
+    }, [cropper]);
 
 
-    const zoomIn = () => {
-        if (cropper) cropper.zoom(0.1); // Zoom in by 10%
-    };
+    const zoomOut = useCallback(() => {
+        if (cropper) cropper.zoom(-0.1);
+    }, [cropper]);
 
-    const zoomOut = () => {
-        if (cropper) cropper.zoom(-0.1); // Zoom out by 10%
-    };
-
-    const resetZoom = () => {
+    const resetZoom = useCallback(() => {
         if (cropper) cropper.reset();
-    };
+    }, [cropper]);
 
-    const saveCover = async () => {
+
+    const saveCover = useCallback(async () => {
         if (!croppedImage || !currentUser) return;
         try {
 
@@ -210,15 +220,16 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         } catch (error) {
             console.error("Error saving cover image:", error);
         }
-    };
+    }, [croppedImage, currentUser]);
 
-    const cancelCover = () => {
+
+    const cancelCover = useCallback(() => {
         setCoverPreview(null);
         setFileForUpload(null);
         setCroppedImage(null);
-    };
+    }, []);
 
-    const incrementProfileVisits = async (userId: string) => {
+    const incrementProfileVisits = useCallback(async (userId: string) => {
         try {
             await fetch(`${BASE_API_URL}/api/dashboard/increaseProfileVisits`, {
                 method: 'PUT',
@@ -228,16 +239,13 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         } catch (error) {
             console.error('Error incrementing profile visits:', error);
         }
-    };
+    }, []);
 
     useEffect(() => {
         if (userId) {
             fetchUser(userId, setCurrentUser, setLoading, showAlert);
         }
     }, [userId]);
-
-
-
 
     useEffect(() => {
         const checkUserData = async () => {
@@ -271,13 +279,13 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             setHasIncrementedVisit(true); // Ensure this runs only once
         }
 
-        if (!hasDownoadedVCF && currentUser?.isDirect) {
+        if (!hasDownloadedVCF && currentUser?.isDirect) {
             console.log('isDirect ' + currentUser?.isDirect);
-            sethasDownoadedVCF(true);
+            setHasDownloadedVCF(true);
             // If isDirect is true, generate the VCF and then show the profile
             generateVCF(currentUser);
         }
-    }, [currentUser]);
+    }, [currentUser, userId]);
 
     useEffect(() => {
         const checkIfPhone = () => {
@@ -295,7 +303,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         };
     }, []);
 
-    const handleColorSelection = (colorName: string) => {
+    const handleColorSelection = useCallback((colorName: string) => {
         if (currentUser && currentUser.id) {
             saveSelectedColor(currentUser.id, colorName, showAlert);
             const selectedCardStyle = cardBackgroundOptions.find(option => option.name === colorName);
@@ -303,58 +311,49 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 setCardStyle(selectedCardStyle);
             }
         }
-    };
+    }, [currentUser]);
 
-    const showAlert = (message: string, title: string, color: string) => {
+
+    const showAlert = useCallback((message: string, title: string, color: string) => {
         setAlert({ message, title, color });
         setTimeout(() => setAlert(null), 4000);
-    };
+    }, []);
 
-    const FloatingButtons: React.FC<{ generateVCF: () => void; phoneNumber: string; isDirect: boolean }> = ({
-        generateVCF,
-        phoneNumber,
-        isDirect,
-    }) => {
-        const handleButtonClick = () => {
-            console.log('isDirect ' + isDirect);
 
-            // If isDirect is true, generate the VCF and then show the profile
-            generateVCF();
-            // Showing the profile happens automatically as it's part of the UI
+    const FloatingButtons = useMemo(() => {
+        return ({ generateVCF, phoneNumber, isDirect }: { generateVCF: () => void; phoneNumber: string; isDirect: boolean }) => {
+            const handleButtonClick = () => {
+                generateVCF();
+            };
+
+            return (
+                <div className="fixed bottom-6 left-0 right-0 px-4 z-20 flex justify-center space-x-4 max-w-screen-md mx-auto">
+                    <button
+                        onClick={handleButtonClick}
+                        className="flex-grow flex items-center justify-center bg-white text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105"
+                    >
+                        <FaDownload className="mr-2 text-3xl" />
+                        <span className="text-lg font-semibold">СВАЛИ КОНТАКТ</span>
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (phoneNumber) {
+                                window.location.href = `tel:${phoneNumber}`;
+                            }
+                        }}
+                        className="w-16 flex items-center justify-center bg-gray-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-105"
+                    >
+                        <FaPhoneAlt className="text-3xl" />
+                    </button>
+                </div>
+            );
         };
-
-        return (
-            <div className="fixed bottom-6 left-0 right-0 px-4 z-20 flex justify-center space-x-4 max-w-screen-md mx-auto">
-                {/* Save Contact Button */}
-                <button
-                    onClick={handleButtonClick}
-                    className="flex-grow flex items-center justify-center bg-white text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105"
-                >
-                    <FaDownload className="mr-2 text-3xl" />
-                    <span className="text-lg font-semibold">СВАЛИ КОНТАКТ</span>
-                </button>
-
-                {/* Call Button */}
-                <button
-                    onClick={() => {
-                        if (phoneNumber) {
-                            window.location.href = `tel:${phoneNumber}`;
-                        }
-                    }}
-                    className="w-16 flex items-center justify-center bg-gray-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-105"
-                >
-                    <FaPhoneAlt className="text-3xl" />
-                </button>
-            </div>
-        );
-    };
+    }, []);
 
 
-    if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
-    if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
+    if (!currentUser || loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
-        <div className={`relative ${cardStyle.opposite} min-h-screen`}>
-            {/* Profile Header Section */}
+        <div className={`relative ${cardStyle.bgClass} min-h-screen`}>
             <ProfileHeader
                 user={currentUser}
                 cardStyle={cardStyle}
@@ -366,9 +365,9 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             {coverPreview && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-4 rounded w-11/12 max-w-3xl mx-auto">
-                        <h2 className="text-lg font-bold mb-4">Обрежи изображението си за корица</h2>
+                        <h2 className="text-lg text-orange font-bold mb-4">Изрежи изображението си за корица</h2>
                         <Cropper
-                            style={{ height: "auto", width: "100%" }}  // Adjusted for better responsiveness
+                            style={{ height: "auto", width: "100%" }}
                             initialAspectRatio={16 / 9}
                             aspectRatio={16 / 9}
                             src={coverPreview}
@@ -381,9 +380,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                             checkOrientation={false}
                             onInitialized={(instance) => setCropper(instance)}
                         />
-
                         <div className="mt-4">
-                            {/* Zoom Controls */}
                             <div className="flex justify-center space-x-2 mb-2">
                                 <button onClick={zoomOut} className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 transition-colors duration-300">
                                     Намали
@@ -395,8 +392,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                                     Нулиране
                                 </button>
                             </div>
-
-                            {/* Save and Cancel */}
                             <div className="flex justify-center space-x-2">
                                 <button onClick={() => setCoverPreview(null)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-300">
                                     Отказ
@@ -409,8 +404,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     </div>
                 </div>
             )}
-
-            {/* Content Section with Background */}
             <div
                 className={`relative z-0 flex items-center justify-center ${cardStyle.textClass}`}
                 style={{
@@ -418,27 +411,21 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
-                    // boxShadow: '0px 20px 0px rgba(0, 0, 0, 0.8)',
                 }}
             >
-                {/* Card Section with White Background */}
                 <motion.div
-                    className={`relative z-0 w-full  p-8 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black `} // Removed shadow
+                    className={`relative z-0 w-full p-8 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black`}
                 >
-                    {/* Action Buttons */}
                     <motion.div
                         className={`mt-2 z-50`}
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
-                        <div className="flex flex-col space-y-4 mb-4 ">
-
+                        <div className="flex flex-col space-y-4 mb-4">
                             <ActionButtons2 user={currentUser} />
                         </div>
                     </motion.div>
-
-                    {/* Social Media Links */}
                     <motion.div
                         className="mt-6 z-50"
                         initial={{ opacity: 0, x: -50 }}
@@ -446,14 +433,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                         transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
                         <SocialMediaLinks user={currentUser} />
-
                     </motion.div>
-
-                    {/* Floating Buttons */}
-                    <FloatingButtons generateVCF={() => generateVCF(currentUser)} phoneNumber={currentUser.phone1} isDirect={currentUser.isDirect} // Pass the isDirect property to FloatingButtons
-                    />
-
-                    {/* Background Selector (visible only for the current user) */}
+                    <FloatingButtons generateVCF={() => generateVCF(currentUser)} phoneNumber={currentUser.phone1} isDirect={currentUser.isDirect} />
                     {user?.id === currentUser?.id && (
                         <BackgroundSelector
                             cardBackgroundOptions={cardBackgroundOptions}
@@ -463,8 +444,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     )}
                 </motion.div>
             </div>
-        </div >
+        </div>
     );
 }
 
-export default ProfileDetailsContent;
+export default React.memo(ProfileDetailsContent);
