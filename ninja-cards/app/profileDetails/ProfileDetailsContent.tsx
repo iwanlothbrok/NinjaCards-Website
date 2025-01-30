@@ -351,8 +351,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     }, []);
 
 
-    if (!currentUser || loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
-    return (
+    if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
+    if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>; return (
         <div className={`relative ${cardStyle.bgClass} min-h-screen`}>
             <ProfileHeader
                 user={currentUser}
