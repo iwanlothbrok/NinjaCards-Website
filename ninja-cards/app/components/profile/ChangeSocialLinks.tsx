@@ -94,12 +94,34 @@ const ImportantLinks: React.FC = () => {
         formDataObj.append('id', user.id);
 
         Object.entries(formData).forEach(([key, value]) => {
-            if (key === 'video' && value instanceof File) {
-                formDataObj.append(key, value); // Append the video file
-            } else if (key === 'whatsapp') {
-                formDataObj.append(key, fullWhatsAppNumber); // Append the full WhatsApp number
-            } else if (typeof value === 'string') {
-                formDataObj.append(key, value); // Append other fields as strings
+            if (key === "video" && value instanceof File) {
+                formDataObj.append(key, value);
+            } else if (key === "whatsapp") {
+                formDataObj.append(key, fullWhatsAppNumber);
+            } else if (key === "website" && typeof value === "string") {
+                let formattedUrl = value.trim();
+
+                // Ensure URL starts with http:// or https://
+                if (!formattedUrl.startsWith("http://") && !formattedUrl.startsWith("https://")) {
+                    formattedUrl = `https://${formattedUrl}`;
+                }
+
+                try {
+                    const urlObj = new URL(formattedUrl);
+
+                    // Ensure `www.` is included if it's missing but not a subdomain
+                    if (!urlObj.hostname.startsWith("www.") && urlObj.hostname.split(".").length === 2) {
+                        formattedUrl = `https://www.${urlObj.hostname}${urlObj.pathname}${urlObj.search}${urlObj.hash}`;
+                    }
+
+                    formDataObj.append(key, formattedUrl);
+                } catch (error) {
+                    setAlert({ message: "Невалиден уебсайт URL. Проверете и опитайте отново.", type: "error" });
+                    setLoading(false);
+                    return;
+                }
+            } else if (typeof value === "string") {
+                formDataObj.append(key, value);
             }
         });
 
