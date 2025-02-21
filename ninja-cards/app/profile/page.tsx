@@ -131,6 +131,7 @@ function ProfileContent() {
             window.location.reload();  // Force a hard reload on Safari
         }
     }, []);
+    
 
 
     return (
