@@ -258,7 +258,7 @@ const ImportantLinks: React.FC = () => {
                     name="viber"
                     value={formData.viber}
                     onChange={handleChange}
-                    placeholder="Viber Телефонен номер"
+                    placeholder="Тел."
                     iconSrc="/logos/viber.png"
                     focusRingColor="text-purple-500"
                 />
@@ -285,7 +285,7 @@ const ImportantLinks: React.FC = () => {
                         name="whatsapp"
                         value={formData.whatsapp}
                         onChange={handleChange}
-                        placeholder="Телефонен номер"
+                        placeholder="Teл."
                         className="flex-grow bg-transparent text-gray-200 border-none focus:ring-0 placeholder-gray-400 focus:outline-none"
                     />
                 </div>
