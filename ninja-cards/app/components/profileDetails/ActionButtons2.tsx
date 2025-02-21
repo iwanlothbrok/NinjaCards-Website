@@ -6,39 +6,37 @@ import html2canvas from 'html2canvas';
 
 const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
     const captureScreenshot = async () => {
-        // Select the target section to capture
         const element = document.querySelector('#profile-content') as HTMLElement;
-
-        // Check if the element is found before proceeding
         if (!element) {
             console.error("Element with id 'profile-content' not found.");
             return;
         }
 
-        // Capture the screenshot with enhanced settings
         const canvas = await html2canvas(element, {
             useCORS: true,
             scale: 2,
             scrollX: -window.scrollX,
             scrollY: -window.scrollY,
             windowWidth: element.scrollWidth,
-            windowHeight: element.scrollHeight + 100
+            windowHeight: element.scrollHeight
         });
 
         const image = canvas.toDataURL("image/png");
 
-        // Trigger download
         const link = document.createElement("a");
         link.href = image;
         link.download = `${user?.name || "profile"}_screenshot.png`;
 
-        // Fix for iOS and Android
         link.style.display = "none";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    };
 
+        // 🚀 Display prompt on iOS to guide the user
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            alert("За да запазите изображението в галерията, задръжте върху него и изберете 'Добави в Снимки'.");
+        }
+    };
 
     return (
         <>
@@ -86,7 +84,7 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 className="flex items-center justify-center bg-white text-gray-900 px-8 py-3 rounded-full shadow-xl hover:shadow-2xl hover:bg-gray-50 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50 w-full sm:w-auto mt-4"
             >
                 <FaCamera className="mr-3 text-xl text-orange" />
-                <span className="text-xl bg-white font-semibold">Screenshot</span>
+                <span className="text-xl bg-white font-semibold">Eкранна Снимка</span>
             </button>
         </>
     )
