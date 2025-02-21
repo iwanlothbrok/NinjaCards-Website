@@ -1,5 +1,3 @@
-// File: components/ActionButtons2.tsx
-
 import React from 'react';
 import { FaCamera, FaPhoneAlt, FaShareAlt } from 'react-icons/fa';
 import { User } from '@/types/user';
@@ -7,17 +5,38 @@ import { BASE_API_URL } from '@/utils/constants';
 import html2canvas from 'html2canvas';
 
 const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
-
     const captureScreenshot = async () => {
-        const element = document.body; // Capture entire page, or change to specific element
-        const canvas = await html2canvas(element, { useCORS: true, scale: 2 });
+        // Select the target section to capture
+        const element = document.querySelector('#profile-content') as HTMLElement;
+
+        // Check if the element is found before proceeding
+        if (!element) {
+            console.error("Element with id 'profile-content' not found.");
+            return;
+        }
+
+        // Capture the screenshot with enhanced settings
+        const canvas = await html2canvas(element, {
+            useCORS: true,
+            scale: 2,
+            scrollX: -window.scrollX,
+            scrollY: -window.scrollY,
+            windowWidth: element.scrollWidth,
+            windowHeight: element.scrollHeight + 100
+        });
+
         const image = canvas.toDataURL("image/png");
 
-        // Create a download link
+        // Trigger download
         const link = document.createElement("a");
         link.href = image;
         link.download = `${user?.name || "profile"}_screenshot.png`;
+
+        // Fix for iOS and Android
+        link.style.display = "none";
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
     };
 
 
@@ -35,7 +54,6 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
             {/* Share Button */}
             <button
                 onClick={() => {
-                    // Trigger the API call asynchronously (non-blocking)
                     if (user?.id) {
                         fetch(`${BASE_API_URL}/api/dashboard/incrementProfileShares`, {
                             method: 'PUT',
@@ -44,7 +62,6 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                         }).catch((error) => console.error('Failed to increment profile shares:', error));
                     }
 
-                    // Trigger the share functionality immediately
                     if (navigator.share) {
                         navigator
                             .share({
@@ -62,6 +79,8 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 <FaShareAlt className="mr-3 text-xl text-blue-600" />
                 <span className="text-xl font-semibold">Сподели</span>
             </button>
+
+            {/* Screenshot Button */}
             <button
                 onClick={captureScreenshot}
                 className="flex items-center justify-center bg-white text-gray-900 px-8 py-3 rounded-full shadow-xl hover:shadow-2xl hover:bg-gray-50 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50 w-full sm:w-auto mt-4"

@@ -25,7 +25,7 @@ const ProfileHeader: React.FC<{
 
 
         return (
-            <div className={`relative ${cardStyle.bgClass}`}>
+            <div id="profile-content" className={`relative ${cardStyle.bgClass}`}>
                 {/* Cover Section */}
                 <CoverImage
                     coverPreview={coverPreview}
