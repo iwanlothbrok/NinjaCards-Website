@@ -121,6 +121,18 @@ function ProfileContent() {
         setLoading(false);
     }, [activeTab]);
 
+
+    useEffect(() => {
+        // Detect Safari (iOS and macOS) but exclude Chrome on iOS
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    
+        if (isSafari) {
+            console.log("Safari detected, forcing hard reload...");
+            window.location.reload(true);  // Force a hard reload on Safari
+        }
+    }, []);
+
+    
     return (
         <div className="flex flex-col items-center pt-28 sm:pt-36 justify-center min-h-screen p-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200">
             <div className="w-full max-w-4xl">
