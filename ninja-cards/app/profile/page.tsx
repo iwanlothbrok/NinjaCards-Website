@@ -122,16 +122,16 @@ function ProfileContent() {
     }, [activeTab]);
 
 
-    useEffect(() => {
-        // Detect Safari (iOS and macOS) but exclude Chrome on iOS
-        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    // useEffect(() => {
+    //     // Detect Safari (iOS and macOS) but exclude Chrome on iOS
+    //     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-        if (isSafari) {
-            console.log("Safari detected, forcing hard reload...");
-            window.location.reload();  // Force a hard reload on Safari
-        }
-    }, []);
-    
+    //     if (isSafari) {
+    //         console.log("Safari detected, forcing hard reload...");
+    //         window.location.reload();  // Force a hard reload on Safari
+    //     }
+    // }, []);
+
 
 
     return (
