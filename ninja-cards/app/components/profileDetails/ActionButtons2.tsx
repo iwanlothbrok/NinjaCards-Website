@@ -1,11 +1,26 @@
 // File: components/ActionButtons2.tsx
 
 import React from 'react';
-import { FaPhoneAlt, FaShareAlt } from 'react-icons/fa';
+import { FaCamera, FaPhoneAlt, FaShareAlt } from 'react-icons/fa';
 import { User } from '@/types/user';
 import { BASE_API_URL } from '@/utils/constants';
+import html2canvas from 'html2canvas';
 
 const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
+
+    const captureScreenshot = async () => {
+        const element = document.body; // Capture entire page, or change to specific element
+        const canvas = await html2canvas(element, { useCORS: true, scale: 2 });
+        const image = canvas.toDataURL("image/png");
+
+        // Create a download link
+        const link = document.createElement("a");
+        link.href = image;
+        link.download = `${user?.name || "profile"}_screenshot.png`;
+        link.click();
+    };
+
+
     return (
         <>
             {/* Call Button */}
@@ -47,7 +62,13 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 <FaShareAlt className="mr-3 text-xl text-blue-600" />
                 <span className="text-xl font-semibold">Сподели</span>
             </button>
-
+            <button
+                onClick={captureScreenshot}
+                className="flex items-center justify-center bg-white text-gray-900 px-8 py-3 rounded-full shadow-xl hover:shadow-2xl hover:bg-gray-50 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50 w-full sm:w-auto mt-4"
+            >
+                <FaCamera className="mr-3 text-xl text-orange" />
+                <span className="text-xl bg-white font-semibold">Screenshot</span>
+            </button>
         </>
     )
 };
