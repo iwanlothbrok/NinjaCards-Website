@@ -28,7 +28,7 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user }) => {
         { key: 'behance', url: user?.behance, logo: '/logos/be.png', label: 'Behance', gradient: 'from-blue-600 to-blue-400' },
         { key: 'paypal', url: user?.paypal, logo: '/logos/icons8-paypal48.png', label: 'PayPal', gradient: 'from-blue-500 to-blue-300' },
         { key: 'trustpilot', url: user?.trustpilot, logo: '/logos/tp.png', label: 'TrustPilot', gradient: 'from-black to-gray-800' },
-        { key: 'whatsapp', url: user?.whatsapp ? `https://wa.me/${user.whatsapp}` : null, logo: '/logos/wa.png', label: 'WhatsApp', gradient: 'from-green-600 to-green-700' },
+        { key: 'whatsapp', url: user?.whatsapp && user.whatsapp.length > 5 ? `https://wa.me/${user.whatsapp}` : null, logo: '/logos/wa.png', label: 'WhatsApp', gradient: 'from-green-600 to-green-700' },
         { key: 'revolut', url: user?.revolut ? `https://revolut.me/${user.revolut}` : null, logo: '/logos/rev.png', label: 'Revolut', gradient: 'from-blue-800 to-blue-900' },
         { key: 'googleReview', url: user?.googleReview, logo: '/logos/gr.png', label: 'Google Review', gradient: 'from-blue-700 to-red-700' },
 
