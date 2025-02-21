@@ -121,16 +121,22 @@ function ProfileContent() {
         setLoading(false);
     }, [activeTab]);
 
+    useEffect(() => {
+        // Check if the device is an iPhone
+        const isIphone = /iPhone/.test(navigator.userAgent);
+        // Check if the browser is Safari (excluding Chrome on iOS)
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-    // useEffect(() => {
-    //     // Detect Safari (iOS and macOS) but exclude Chrome on iOS
-    //     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        if (isIphone && isSafari) {
+            console.log("iPhone Safari detected, forcing hard reload...");
+            const newUrl = window.location.origin + window.location.pathname + '?iphoneReload=' + new Date().getTime();
 
-    //     if (isSafari) {
-    //         console.log("Safari detected, forcing hard reload...");
-    //         window.location.reload();  // Force a hard reload on Safari
-    //     }
-    // }, []);
+            // Only reload if the parameter is not already present (to avoid infinite loops)
+            if (!window.location.search.includes('iphoneReload')) {
+                window.location.replace(newUrl);
+            }
+        }
+    }, []);
 
 
 
