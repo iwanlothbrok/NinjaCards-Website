@@ -262,7 +262,7 @@ const ImportantLinks: React.FC = () => {
                     iconSrc="/logos/viber.png"
                     focusRingColor="text-purple-500"
                 />
-                <div className="flex items-center space-x-3 bg-gray-800 p-4 rounded-lg shadow-md">
+                <div className="flex flex-col md:flex-row items-center space-y-3 md:space-y-0 md:space-x-3 bg-gray-800 p-4 rounded-lg shadow-md">
                     <img src="/logos/wa.png" alt="WhatsApp" className="w-10 h-10 object-contain" />
 
                     {/* Country Code Selector */}
@@ -286,7 +286,7 @@ const ImportantLinks: React.FC = () => {
                         value={formData.whatsapp}
                         onChange={handleChange}
                         placeholder="Teл."
-                        className="flex-grow bg-transparent text-gray-200 border-none focus:ring-0 placeholder-gray-400 focus:outline-none"
+                        className="w-full md:flex-grow bg-transparent text-gray-200 border-none focus:ring-0 placeholder-gray-400 focus:outline-none"
                     />
                 </div>
                 <LinkInput
