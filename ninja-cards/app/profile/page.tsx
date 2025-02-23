@@ -46,6 +46,8 @@ const TabCard: React.FC<{
     </div>
 ));
 
+TabCard.displayName = 'TabCard';
+
 function ProfileContent() {
     const router = useRouter();
     const { user } = useAuth();
