@@ -60,11 +60,14 @@ const QRCodeDownload: React.FC = () => {
                         width={120}
                         height={120}
                         className="w-40 h-40 rounded-full border-4 border-orange shadow-lg mb-4"
+                        loading="lazy"
+                        unoptimized
+                        sizes="(max-width: 1024px) 100vw, 1024px"
                     />
                 )}
                 <p className="text-lg font-semibold text-white mb-4">{user.name}</p>
                 <div className="bg-orange p-4 rounded-lg shadow-lg mb-4">
-                    <img src={user.qrCode} alt="QR код" className="w-40 h-40" />
+                    <img src={user.qrCode} alt="QR код" className="w-40 h-40" loading="lazy" />
                 </div>
                 <div className="flex space-x-4">
                     <button
