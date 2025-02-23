@@ -104,6 +104,7 @@ const Preview: React.FC = () => {
             {user?.image && (
                 <div className="flex flex-col items-center mb-6">
                     <img
+                        loading="lazy"
                         src={user?.image ? `data:image/jpeg;base64,${user.image}` : 'default-image-url.jpg'}
                         alt={`${user?.firstName} ${user?.lastName}`}
                         className="w-40 h-40 rounded-full border-4 border-teal-400 shadow-lg mb-4"
