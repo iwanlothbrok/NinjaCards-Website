@@ -21,11 +21,11 @@ const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange,
     return (
         <div className="flex items-center bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
             <Image
+                loading="lazy"
                 src={iconSrc}
                 alt={`${name} икона`}
                 width={40}
                 height={40}
-                priority
                 className={`mr-4 transition-colors duration-300 ${isFocused ? focusRingColor : 'text-gray-400'} !important`}
             />
             <input
