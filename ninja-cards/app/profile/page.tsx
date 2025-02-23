@@ -21,13 +21,10 @@ const TabCard: React.FC<{
     backgroundImage: string;
     activeTab: string;
     onClick: () => void;
-}> = ({ tab, label, backgroundImage, activeTab, onClick }) => (
-    <motion.div
+}> = React.memo(({ tab, label, backgroundImage, activeTab, onClick }) => (
+    <div
         className={`relative flex flex-col items-center justify-center p-4 rounded-lg shadow-lg border border-gray-700 transition-all cursor-pointer
-                    ${activeTab === tab
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-800 text-gray-300'
-            }
+                    ${activeTab === tab ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-300'}
                     hover:bg-blue-600 hover:text-white`}
         onClick={onClick}
         aria-pressed={activeTab === tab}
@@ -39,20 +36,15 @@ const TabCard: React.FC<{
             height: '150px',
             filter: activeTab === tab ? 'none' : 'grayscale(100%)',
         }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
     >
-        {/* Overlay for better text contrast */}
         <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg"></div>
-
-        {/* Responsive Text */}
         <div className="relative z-10 text-center">
             <h3 className="text-base sm:text-md md:text-lg lg:text-lg font-semibold mb-1">
                 {label}
             </h3>
         </div>
-    </motion.div>
-);
+    </div>
+));
 
 function ProfileContent() {
     const router = useRouter();
@@ -122,22 +114,15 @@ function ProfileContent() {
     }, [activeTab]);
 
     useEffect(() => {
-        // Check if the device is an iPhone
         const isIphone = /iPhone/.test(navigator.userAgent);
-        // Check if the browser is Safari (excluding Chrome on iOS)
         const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-        if (isIphone && isSafari) {
+        if (isIphone && isSafari && !window.location.search.includes('iphoneReload')) {
             console.log("iPhone Safari detected, forcing hard reload...");
             const newUrl = window.location.origin + window.location.pathname + '?iphoneReload=' + new Date().getTime();
-
-            // Only reload if the parameter is not already present (to avoid infinite loops)
-            if (!window.location.search.includes('iphoneReload')) {
-                window.location.replace(newUrl);
-            }
+            window.location.replace(newUrl);
         }
     }, []);
-
 
 
     return (
@@ -230,29 +215,20 @@ function ProfileContent() {
                         onClick={() => handleTabClick('video')}
                     />
                 </div>
-                <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
-                    className="transition-all"
-                >
-                    {loading ? (
-                        <div className="flex justify-center items-center">
-                            <motion.img
-                                src="/load.gif"
-                                alt="Зареждане..."
-                                className="w-12 h-12"
-                                initial={{ rotate: 0 }}
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 1, repeat: Infinity }}
-                            />
-                        </div>
-                    ) : (
-                        renderContent
-                    )}
-                </motion.div>
+                {loading ? (
+                    <div className="flex justify-center items-center">
+                        <motion.img
+                            src="/load.gif"
+                            alt="Зареждане..."
+                            className="w-12 h-12"
+                            initial={{ rotate: 0 }}
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity }}
+                        />
+                    </div>
+                ) : (
+                    renderContent
+                )}
             </div>
         </div>
     );
