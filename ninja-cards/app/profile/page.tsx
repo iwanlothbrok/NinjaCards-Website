@@ -14,30 +14,28 @@ import ChangeProfileImage from '../components/profile/ChangeProfileImage';
 import QRCodeDownload from '../components/profile/QRCodeDownload';
 import FeaturesComponent from '../components/profile/FeaturesComponent';
 import VideoUpload from '../components/profile/VideoUpload';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock, faEnvelope, faMapMarkerAlt, faImage, faUser, faLink, faEye, faIdCard, faQrcode, faCogs, faChartBar, faVideo } from '@fortawesome/free-solid-svg-icons';
 
 const TabCard: React.FC<{
     tab: string;
     label: string;
-    backgroundImage: string;
+    icon: any;
     activeTab: string;
     onClick: () => void;
-}> = React.memo(({ tab, label, backgroundImage, activeTab, onClick }) => (
+}> = React.memo(({ tab, label, icon, activeTab, onClick }) => (
     <div
         className={`relative flex flex-col items-center justify-center p-4 rounded-lg shadow-lg border border-gray-700 transition-all cursor-pointer
-                    ${activeTab === tab ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-300'}
-                    hover:bg-blue-600 hover:text-white`}
+                    ${activeTab === tab ? 'bg-gradient-to-b from-amber-500 to-amber-800 text-white' : 'bg-gray-800 text-gray-300'}
+                    hover:bg-gradient-to-r hover:from-amber-500 hover:via-amber-600 hover:to-amber-700 hover:text-white`}
         onClick={onClick}
         aria-pressed={activeTab === tab}
         style={{
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundPosition: 'center',
-            backgroundSize: 'cover',
             width: '100%',
             height: '150px',
-            filter: activeTab === tab ? 'none' : 'grayscale(100%)',
         }}
     >
-        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg"></div>
+        <FontAwesomeIcon icon={icon} size="2x" className="mb-2" />
         <div className="relative z-10 text-center">
             <h3 className="text-base sm:text-md md:text-lg lg:text-lg font-semibold mb-1">
                 {label}
@@ -135,84 +133,84 @@ function ProfileContent() {
                     <TabCard
                         tab="settings"
                         label="Смяна на паролата"
-                        backgroundImage="/settingsBg/security.png"
+                        icon={faLock}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('settings')}
                     />
                     <TabCard
                         tab="changeEmail"
                         label="Смяна на имейла"
-                        backgroundImage="/settingsBg/email.png"
+                        icon={faEnvelope}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('changeEmail')}
                     />
                     <TabCard
                         tab="changeAddress"
                         label="Смяна на адреса"
-                        backgroundImage="/settingsBg/address.png"
+                        icon={faMapMarkerAlt}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('changeAddress')}
                     />
                     <TabCard
                         tab="changeImage"
                         label="Смяна на профилната снимка"
-                        backgroundImage="/settingsBg/img.png"
+                        icon={faImage}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('changeImage')}
                     />
                     <TabCard
                         tab="information"
                         label="Лична информация"
-                        backgroundImage="/settingsBg/information.png"
+                        icon={faUser}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('information')}
                     />
                     <TabCard
                         tab="links"
                         label="Важни връзки"
-                        backgroundImage="/settingsBg/laptop.png"
+                        icon={faLink}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('links')}
                     />
                     <TabCard
                         tab="preview"
                         label="Преглед на профила"
-                        backgroundImage="/settingsBg/profile.png"
+                        icon={faEye}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('preview')}
                     />
                     <TabCard
                         tab="profileDetails"
                         label="Визитка"
-                        backgroundImage="/settingsBg/profile-details.png"
+                        icon={faIdCard}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('profileDetails')}
                     />
                     <TabCard
                         tab="profileQr"
                         label="Вашият QR код"
-                        backgroundImage="/settingsBg/qr.png"
+                        icon={faQrcode}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('profileQr')}
                     />
                     <TabCard
                         tab="features"
                         label="Функции"
-                        backgroundImage="/settingsBg/important.png"
+                        icon={faCogs}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('features')}
                     />
                     <TabCard
                         tab="analyse"
                         label="Анализ"
-                        backgroundImage="/settingsBg/analyze.png"
+                        icon={faChartBar}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('analyse')}
                     />
                     <TabCard
                         tab="video"
                         label="Видео клип"
-                        backgroundImage="/settingsBg/security02.png"
+                        icon={faVideo}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('video')}
                     />
