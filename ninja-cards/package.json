@@ -13,6 +13,8 @@
     "export": "cross-env CPANEL_BUILD=true npm run build && next export"
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@headlessui/react": "^2.1.2",
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.22.0",
