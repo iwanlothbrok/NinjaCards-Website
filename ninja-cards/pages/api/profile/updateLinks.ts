@@ -43,11 +43,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             // Initialize an empty object to store the updated data
             const updatedData: any = {};
-            if (files.video) {
-                const videoFile = Array.isArray(files.video) ? files.video[0] : files.video;
-                const videoBuffer = await fs.readFile(videoFile.filepath);
-                updatedData.video = videoBuffer.toString('base64'); // Store video as Base64 in the database
-            }
 
             // Iterate over the expected fields and set them to null if not provided
             const fieldsToCheck = [
@@ -109,7 +104,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     calendly: true,
                     discord: true,
                     tripadvisor: true,
-                    video: false,
                     pdf: false,
                 },
             });
