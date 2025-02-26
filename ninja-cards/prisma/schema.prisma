@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+url      = env("DATABASE_URL")
 }
 
 model User {
@@ -54,16 +54,8 @@ model User {
   coverImage    String?  @db.LongText
   isDirect      Boolean  @default(false)
   dashboard     Dashboard?
-  video     Video?   // One-to-one relation with Video table 
-  videoUrl String?  @db.LongText
-}
-
-model Video {
-  id        String   @id @default(uuid())
-  data      Bytes    @db.LongBlob  // Use `Bytes` for more efficient storage of binary data
-  userId    String   @unique
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+  videoUrl String?  @db.LongText 
+  language  String   @default("bg") 
 }
 
 model Dashboard {
