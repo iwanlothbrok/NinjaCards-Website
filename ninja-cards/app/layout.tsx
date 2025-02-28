@@ -9,6 +9,7 @@ import Head from 'next/head';
 import Script from 'next/script'; // ✅ Import `next/script`
 import { appWithTranslation } from 'next-i18next';  // ✅ Import this
 import nextI18nextConfig from '../next-i18next.config';  // ✅ Import the config
+import i18n from '@/i18n'; // Import the i18n instance from i18n.ts
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 

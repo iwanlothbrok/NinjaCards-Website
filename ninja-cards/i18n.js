@@ -1,16 +1,15 @@
-// File: i18n.ts
-import i18next from 'i18next';
+import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import HttpApi from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-const i18nInstance = i18next.createInstance();
-i18nInstance
+
+i18n
     .use(HttpApi)
     .use(LanguageDetector)
     .use(initReactI18next)
     .init({
         debug: false,
-        fallbackLng: 'en',
+        fallbackLng: 'bg',
         supportedLngs: ['en', 'bg', 'de'],
         interpolation: {
             escapeValue: false, // React already safes from XSS
@@ -23,24 +22,4 @@ i18nInstance
         },
     });
 
-export default i18nInstance;
-// i18n
-//     .use(HttpApi)
-//     .use(LanguageDetector)
-//     .use(initReactI18next)
-//     .init({
-//         debug: false,
-//         fallbackLng: 'en',
-//         supportedLngs: ['en', 'bg', 'de'],
-//         interpolation: {
-//             escapeValue: false, // React already safes from XSS
-//         },
-//         backend: {
-//             loadPath: '/locales/{{lng}}/{{ns}}.json',
-//         },
-//         react: {
-//             useSuspense: false, // Disable suspense to prevent loading issues
-//         },
-//     });
-
-// export default i18n;
+export default i18n;
