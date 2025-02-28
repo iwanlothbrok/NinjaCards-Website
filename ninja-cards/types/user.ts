@@ -48,4 +48,5 @@ export interface User {
         }; type?: string; // Optional MIME type
     } | null;
     videoUrl: string;
+    language: string;
 }
