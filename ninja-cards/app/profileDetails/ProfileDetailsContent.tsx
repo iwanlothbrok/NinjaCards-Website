@@ -14,8 +14,8 @@ import BackgroundSelector from '../components/profileDetails/BackgroundSelector'
 import ProfileHeader from '../components/profileDetails/ProfileHeader';
 import generateVCF from "@/utils/generateVCF";
 import { useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
-
+import { useTranslation } from 'react-i18next';
+import i18n from '@/i18n'; // Ensure this import is present
 
 const cardBackgroundOptions = [
     {
