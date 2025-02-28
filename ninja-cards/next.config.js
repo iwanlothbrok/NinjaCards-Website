@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const { i18n } = require('./next-i18next.config');
 const isCPanelBuild = process.env.CPANEL_BUILD === 'true';
 
 const nextConfig = {
@@ -15,6 +16,7 @@ const nextConfig = {
     },
     assetPrefix: isCPanelBuild ? '' : undefined,
     ...(isCPanelBuild ? { output: 'export' } : {}),
+    i18n,
 };
 
 module.exports = nextConfig;
