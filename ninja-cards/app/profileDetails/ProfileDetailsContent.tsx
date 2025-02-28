@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ExchangeContact from '../components/profileDetails/ExchangeContact';
-import { FaUserCircle, FaExchangeAlt, FaDownload, FaEnvelope, FaPhoneAlt, FaPlayCircle } from 'react-icons/fa';
+import { FaDownload, FaPhoneAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css"; // Import cropper styles
@@ -15,6 +14,7 @@ import BackgroundSelector from '../components/profileDetails/BackgroundSelector'
 import ProfileHeader from '../components/profileDetails/ProfileHeader';
 import generateVCF from "@/utils/generateVCF";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 
 const cardBackgroundOptions = [
@@ -103,10 +103,9 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const { user } = useAuth();
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
+    const [, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
-    const [isPhone, setIsPhone] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [, setIsPhone] = useState(false);
     const [coverPreview, setCoverPreview] = useState<string | null>(null);
     const [fileForUpload, setFileForUpload] = useState<File | null>(null);
     const [cropper, setCropper] = useState<any>(null);
@@ -114,7 +113,9 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [hasIncrementedVisit, setHasIncrementedVisit] = useState(false); // Guard state
     const [hasDownoadedVCF, sethasDownoadedVCF] = useState(false); // Guard state
     const router = useRouter();
-    const [isVideoModalOpen, setVideoModalOpen] = useState(false);
+    const { t } = useTranslation('common');
+
+
 
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -331,7 +332,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     className="flex-grow flex items-center justify-center bg-white text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105"
                 >
                     <FaDownload className="mr-2 text-3xl" />
-                    <span className="text-lg font-semibold">СВАЛИ КОНТАКТ</span>
+                    <span className="text-lg font-semibold">{t('contact')}</span>
                 </button>
 
                 {/* Call Button */}
