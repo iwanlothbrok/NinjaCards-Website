@@ -15,7 +15,8 @@ import QRCodeDownload from '../components/profile/QRCodeDownload';
 import FeaturesComponent from '../components/profile/FeaturesComponent';
 import VideoUpload from '../components/profile/VideoUpload';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faEnvelope, faMapMarkerAlt, faImage, faUser, faLink, faEye, faIdCard, faQrcode, faCogs, faChartBar, faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faEnvelope, faMapMarkerAlt, faImage, faUser, faLink, faEye, faIdCard, faQrcode, faCogs, faChartBar, faVideo, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import LanguageSwitcher from '../components/profile/LanguageSwitcher';
 
 const TabCard: React.FC<{
     tab: string;
@@ -90,6 +91,8 @@ function ProfileContent() {
                 return <FeaturesComponent />;
             case 'video':
                 return <VideoUpload />;
+            case 'changeLanguage':
+                return <LanguageSwitcher />;
             default:
                 return <Settings />;
         }
@@ -213,6 +216,13 @@ function ProfileContent() {
                         icon={faVideo}
                         activeTab={activeTab}
                         onClick={() => handleTabClick('video')}
+                    />
+                    <TabCard
+                        tab="changeLanguage"
+                        label="Смяна на езика"
+                        icon={faGlobe}
+                        activeTab={activeTab}
+                        onClick={() => handleTabClick('changeLanguage')}
                     />
                 </div>
                 {loading ? (
