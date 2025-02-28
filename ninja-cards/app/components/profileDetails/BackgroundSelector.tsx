@@ -8,7 +8,7 @@ const BackgroundSelector: React.FC<{
     cardStyle: any;
 }> = ({ cardBackgroundOptions, handleColorSelection, cardStyle }) => (
     <div className="mt-6 text-center">
-        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Change Background Color</h3>
+        <h3 className={`text-xl font-semibold ${cardStyle.highlightClass}`}>Смяна на цвета на фона</h3>
         <div className="flex justify-center space-x-4 mt-4">
             {cardBackgroundOptions.map(({ name, bgClass }) => (
                 <button
