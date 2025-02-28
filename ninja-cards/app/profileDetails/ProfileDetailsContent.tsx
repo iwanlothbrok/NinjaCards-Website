@@ -14,8 +14,6 @@ import BackgroundSelector from '../components/profileDetails/BackgroundSelector'
 import ProfileHeader from '../components/profileDetails/ProfileHeader';
 import generateVCF from "@/utils/generateVCF";
 import { useRouter } from "next/navigation";
-import { useTranslation } from 'react-i18next';
-import i18n from '@/i18n'; // Ensure this import is present
 
 const cardBackgroundOptions = [
     {
@@ -113,9 +111,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const [hasIncrementedVisit, setHasIncrementedVisit] = useState(false); // Guard state
     const [hasDownoadedVCF, sethasDownoadedVCF] = useState(false); // Guard state
     const router = useRouter();
-    const { t } = useTranslation('common');
-
-
 
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -332,7 +327,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     className="flex-grow flex items-center justify-center bg-white text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105"
                 >
                     <FaDownload className="mr-2 text-3xl" />
-                    <span className="text-lg font-semibold">{t('contact')}</span>
+                    <span className="text-lg font-semibold">ЗАПАЗИ КОНТАНТ</span>
                 </button>
 
                 {/* Call Button */}

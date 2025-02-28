@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import i18n from '@/i18n'; // Import the i18n instance from i18n.ts
 import { BASE_API_URL } from '@/utils/constants';
 
 const LanguageSwitcher: React.FC = () => {
@@ -32,11 +31,6 @@ const LanguageSwitcher: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        console.log('Language changed 36:', language);
-
-        i18n.changeLanguage(language);
-    }, [language]);
 
     const changeLanguage = async (lng: string) => {
         setLanguage(lng);

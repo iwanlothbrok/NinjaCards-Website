@@ -11,8 +11,7 @@ import FrequentlyAskedQuestions from './askedQuestions/FAQQuestions';
 import SimpleContactForm from './components/layout/SimpleContactForm';
 import Hero from './components/layout/Hero';
 import { BASE_API_URL } from '@/utils/constants';
-import { appWithTranslation } from 'next-i18next';
-import i18n from '@/i18n';
+
 export default function Home() {
   if (!BASE_API_URL) {
     return null;
