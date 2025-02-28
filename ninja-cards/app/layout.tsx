@@ -7,7 +7,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Head from 'next/head';
 import Script from 'next/script'; // ✅ Import `next/script`
-import { Analytics } from "@vercel/analytics/react";
+import { appWithTranslation } from 'next-i18next';  // ✅ Import this
+import nextI18nextConfig from '../next-i18next.config';  // ✅ Import the config
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
