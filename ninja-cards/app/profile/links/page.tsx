@@ -100,7 +100,9 @@ const ImportantLinks: React.FC = () => {
                 formDataObj.append(key, fullWhatsAppNumber);
             } else if (key === "website" && typeof value === "string") {
                 let formattedUrl = value.trim();
-
+                if (!value) {
+                    return;
+                }
                 // Ensure URL starts with http:// or https://
                 if (!formattedUrl.startsWith("http://") && !formattedUrl.startsWith("https://")) {
                     formattedUrl = `https://${formattedUrl}`;
@@ -144,9 +146,9 @@ const ImportantLinks: React.FC = () => {
             document.documentElement.scrollTop = 0;
             document.body.scrollTop = 0;
 
-            const updatedUser = await response.json();
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            setUser(updatedUser);
+            //   const updatedUser = await response.json();
+            // localStorage.setItem('user', JSON.stringify(updatedUser));
+            //setUser(updatedUser);
 
             setAlert({ message: 'Връзките са успешно актуализирани', type: 'success' });
         } catch (error) {
@@ -175,8 +177,6 @@ const ImportantLinks: React.FC = () => {
                 setAlert({ message: errorText.error || 'Неуспешно изтриване на PDF файла', type: 'error' });
                 return;
             }
-
-            // Update user data locally
 
             setAlert({ message: 'PDF файлът е успешно изтрит', type: 'success' });
         } catch (error) {
