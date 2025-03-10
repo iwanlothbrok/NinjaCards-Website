@@ -109,7 +109,7 @@ const About: React.FC = () => {
           transition={{ duration: 0.7 }}
           className="text-2xl font-semibold text-white sm:text-3xl"
         >
-          Отключете мощта на NFC технологията 
+          Отключете мощта на NFC технологията
         </motion.h1>
         <motion.p
           initial="hidden"
@@ -244,7 +244,7 @@ const About: React.FC = () => {
           <img
             src="/realMockup.png"
             alt="Profile Details Screenshot"
-            className="absolute w-[99%] h-[100%] object-cover rounded-[29px] shadow-2xl transform transition-transform duration-500 hover:scale-100"
+            className="absolute w-[99%] h-[100%] object-cover shadow-2xl transform transition-transform duration-500 hover:scale-100"
           />
         </motion.section>
         {isMobile === true ? (
