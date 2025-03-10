@@ -47,7 +47,7 @@ const DashboardPage = () => {
     }, [id]);
 
     const doughnutData = {
-        labels: ["Посещения на профила", "VCF сваляния", "Споделяния на профила", "Кликове по социални мрежи"],
+        labels: ["Посещения на профила", "Изтегляния на профил", "Споделяния на профила", "Кликове по социални мрежи"],
         datasets: [
             {
                 data: [
@@ -63,7 +63,7 @@ const DashboardPage = () => {
     };
 
     const barData = {
-        labels: ["Посещения на профила", "VCF сваляния", "Споделяния на профила", "Кликове по социални мрежи"],
+        labels: ["Посещения на профила", "Изтегляния на профил", "Споделяния на профила", "Кликове по социални мрежи"],
         datasets: [
             {
                 label: "Статистика",
@@ -101,7 +101,7 @@ const DashboardPage = () => {
                     </div>
                     <div className="bg-gray-300 shadow-lg rounded-lg p-6 text-center">
                         <h2 className="text-2xl font-semibold text-black">{dashboardData.vcfDownloads}</h2>
-                        <p className="text-black mt-2">VCF сваляния</p>
+                        <p className="text-black mt-2">Изтегляния на профил</p>
                     </div>
                     <div className="bg-gray-300 shadow-lg rounded-lg p-6 text-center">
                         <h2 className="text-2xl font-semibold text-black">{dashboardData.profileShares}</h2>
