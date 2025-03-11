@@ -303,7 +303,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         setTimeout(() => setAlert(null), 4000);
     };
 
-    const FloatingButtons: React.FC<{ generateVCF: () => void; phoneNumber: string; isDirect: boolean }> = ({
+    const FloatingButtons: React.FC<{ user: User, generateVCF: () => void; phoneNumber: string; isDirect: boolean }> = ({
+        user,
         generateVCF,
         phoneNumber,
         isDirect,
@@ -324,7 +325,9 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     className="flex-grow flex items-center justify-center bg-white text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105"
                 >
                     <FaDownload className="mr-2 text-3xl" />
-                    <span className="text-lg font-semibold">ЗАПАЗИ КОНТАНТ</span>
+                    <span className="text-lg font-semibold">
+                        {user.language === 'bg' ? 'ЗАПАЗИ КОНТАКТ' : 'SAVE CONTACT'}
+                    </span>
                 </button>
 
                 {/* Call Button */}
@@ -443,7 +446,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     </motion.div>
 
                     {/* Floating Buttons */}
-                    <FloatingButtons generateVCF={() => generateVCF(currentUser)} phoneNumber={currentUser.phone1} isDirect={currentUser.isDirect} // Pass the isDirect property to FloatingButtons
+                    <FloatingButtons user={currentUser} generateVCF={() => generateVCF(currentUser)} phoneNumber={currentUser.phone1} isDirect={currentUser.isDirect} // Pass the isDirect property to FloatingButtons
                     />
 
                     {/* Background Selector (visible only for the current user) */}

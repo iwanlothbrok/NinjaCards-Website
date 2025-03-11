@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
 import { BASE_API_URL } from '@/utils/constants';
 
 const LanguageSwitcher: React.FC = () => {
@@ -94,14 +93,14 @@ const LanguageSwitcher: React.FC = () => {
                         >
                             🇬🇧 English
                         </button>
-                        <button
+                        {/* <button
                             onClick={() => changeLanguage('de')}
                             className={`py-3 px-8 rounded-lg font-semibold text-lg transition-all duration-300 
                                 ${language === 'de' ? 'bg-orange text-white shadow-lg' : 'bg-gray-300 text-gray-700 hover:bg-gray-400'} 
                                 hover:scale-105 focus:ring-4 focus:ring-orange-400`}
                         >
                             🇩🇪 German
-                        </button>
+                        </button> */}
                     </div>
 
                     {/* Back Button */}

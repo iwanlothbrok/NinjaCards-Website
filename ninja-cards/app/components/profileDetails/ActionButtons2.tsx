@@ -61,7 +61,9 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 className={`${buttonStyles} focus:ring-teal-500 focus:ring-opacity-50`}
             >
                 <FaPhoneAlt className="mr-3 text-xl text-teal-600" />
-                <span className="text-xl font-semibold">Обади се</span>
+                <span className="text-xl font-semibold">
+                    {user.language === 'bg' ? 'Обади се' : 'Call'}
+                </span>
             </button>
 
             <button
@@ -89,7 +91,9 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 className={`${buttonStyles} focus:ring-blue-600 focus:ring-opacity-50 mt-4`}
             >
                 <FaShareAlt className="mr-3 text-xl text-blue-600" />
-                <span className="text-xl font-semibold">Сподели Контант</span>
+                <span className="text-xl font-semibold">
+                    {user.language === 'bg' ? 'Сподели Контакт' : 'Share Contact'}
+                </span>
             </button>
 
             <button
@@ -97,7 +101,9 @@ const ActionButtons2: React.FC<{ user: User | null }> = ({ user }) => {
                 className={`${buttonStyles} focus:ring-blue-600 focus:ring-opacity-50 mt-4`}
             >
                 <FaCamera className="mr-3 text-xl text-orange" />
-                <span className="text-xl bg-white font-semibold">Екранна Снимка</span>
+                <span className="text-xl bg-white font-semibold">
+                    {user.language === 'bg' ? 'Екранна Снимка' : 'Screenshot'}
+                </span>
             </button>
         </>
     );
