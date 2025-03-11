@@ -232,9 +232,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         }
     }, [userId]);
 
-
-
-
     useEffect(() => {
         const checkUserData = async () => {
             try {
@@ -350,7 +347,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
         <div className={`relative ${cardStyle.name} min-h-screen`}>
-            {/* Profile Header Section */}
+            {/* /* Profile Header Section */}
             <ProfileHeader
                 user={currentUser}
                 cardStyle={cardStyle}
@@ -360,7 +357,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 cancelCover={cancelCover}
             />
             {coverPreview && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-auto">
                     <div className="bg-white p-4 rounded w-11/12 max-w-3xl mx-auto">
                         <h2 className="text-lg text-orange font-bold mb-4">Изрежи изображението си за корица</h2>
                         <Cropper
