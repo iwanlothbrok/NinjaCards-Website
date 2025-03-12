@@ -159,7 +159,9 @@ const ProfileImageUploader: React.FC = () => {
                 throw new Error('Неуспешно премахване на изображение');
             }
 
+
             const updatedUser = await response.json();
+            localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);
 
             showAlert('Изображението е премахнато успешно', 'Успех', 'green');
