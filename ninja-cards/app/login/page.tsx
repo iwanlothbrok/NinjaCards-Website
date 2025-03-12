@@ -46,7 +46,7 @@ const Login: React.FC = () => {
 
             setTimeout(() => {
                 window.location.href = "/profile";
-            }, 1500);
+            }, 1000);
         } else {
             showAlert("Неуспешен вход", "Грешка", "red");
         }
