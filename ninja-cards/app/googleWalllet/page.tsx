@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import AddToGoogleWallet from '../components/profile/GoogleWallet'
 import { useAuth } from '../context/AuthContext'
