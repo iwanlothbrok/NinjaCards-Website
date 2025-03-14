@@ -3,6 +3,9 @@ import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
 
+if (!process.env.GOOGLE_WALLET_KEY_PATH) {
+    throw new Error("Environment variable GOOGLE_WALLET_KEY_PATH is not defined");
+}
 const SERVICE_ACCOUNT_KEY_PATH = path.resolve(process.cwd(), process.env.GOOGLE_WALLET_KEY_PATH);
 
 export async function generateGoogleWalletJwt(userId: string) {
