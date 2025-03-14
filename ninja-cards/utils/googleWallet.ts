@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
 
-const SERVICE_ACCOUNT_KEY_PATH = path.resolve(process.cwd(), "config/whiztechsystem-08fdab0e2cd6.json");
+const SERVICE_ACCOUNT_KEY_PATH = path.resolve(process.cwd(), process.env.GOOGLE_WALLET_KEY_PATH);
 
 export async function generateGoogleWalletJwt(userId: string) {
     console.log("🔵 Inside Google Wallet utility");
