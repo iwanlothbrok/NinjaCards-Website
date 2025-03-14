@@ -3,7 +3,7 @@ import React from 'react'
 import AddToGoogleWallet from '../components/profile/GoogleWallet'
 import { useAuth } from '../context/AuthContext'
 
-export default function page() {
+export default function Page() {
     const { user } = useAuth()
     return (
 
