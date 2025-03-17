@@ -44,7 +44,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log("✅ Generating Google Wallet JWT for user:", userId);
         const jwtToken = await generateGoogleWalletJwt(userId);
 
-        console.log("✅ JWT generated successfully");
+        console.log("✅ JWT generated successfully:", jwtToken);
+
+        // ✅ Send the JWT token as the response (fixing the API handler issue)
         return res.status(200).json({ token: jwtToken });
 
     } catch (error) {
