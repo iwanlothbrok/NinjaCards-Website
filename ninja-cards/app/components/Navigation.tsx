@@ -253,16 +253,18 @@ const Navbar: React.FC = () => {
                     Контакт
                   </Link>
                 </li>
-                <li className="relative group">
-                  <Link
-                    href="/profile"
-                    className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === '/profile' ? 'text-orange' : ''
-                      }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Профил
-                  </Link>
-                </li>
+                {isAuthenticated ? (
+                  <li className="relative group">
+                    <Link
+                      href="/profile"
+                      className={`flex py-2 text-lg font-medium text-white lg:inline-flex group-hover:text-orange transition-colors duration-300 ${pathname === '/profile' ? 'text-orange' : ''
+                        }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Профил
+                    </Link>
+                  </li>) : (<span></span>)
+                }
                 {isAuthenticated ? (
                   <li className="relative flex items-center group mt-5 lg:mt-0">
                     {user.image ? (
