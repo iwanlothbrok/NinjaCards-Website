@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const userId = Array.isArray(id) ? id[0] : id;
 
         if (!userId) {
-            return res.status(400).json({ error: 'User ID is required' });
+            return res.status(400).json({ error: 'Не е предоставен потребителски идентификатор' });
         }
 
         try {
@@ -26,10 +26,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             res.status(200).json(updatedUser);
         } catch (error) {
-            console.error('Error removing user image:', error);
-            res.status(500).json({ error: 'Failed to remove user image' });
+            console.error('Грешка при премахване на изображението на потребителя:', error);
+            res.status(500).json({ error: 'Неуспешно премахване на изображението на потребителя' });
         }
     } else {
-        res.status(405).json({ error: 'Method not allowed' });
+        res.status(405).json({ error: 'Методът не е разрешен' });
     }
 }
