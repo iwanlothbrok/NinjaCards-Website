@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (corsHandled) return; // If it's a preflight request, stop further execution
 
     if (req.method !== 'DELETE') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        return res.status(405).json({ error: 'Методът не е разрешен' });
     }
 
     try {
@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log(id);
 
         if (!id || typeof id !== 'string') {
-            return res.status(400).json({ error: 'User ID is required' });
+            return res.status(400).json({ error: 'Необходим е идентификатор на потребителя' });
         }
 
         // Check if the user exists
@@ -28,11 +28,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'Потребителят не е намерен' });
         }
 
         if (!user.pdf) {
-            return res.status(404).json({ error: 'No PDF found for this user' });
+            return res.status(404).json({ error: 'Не е намерен PDF за този потребител' });
         }
 
         // Update the user's record and remove the PDF
@@ -41,9 +41,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             data: { pdf: null },
         });
 
-        return res.status(200).json({ message: 'PDF successfully deleted' });
+        return res.status(200).json({ message: 'PDF успешно изтрит' });
     } catch (error) {
-        console.error('Error deleting PDF:', error);
-        return res.status(500).json({ error: 'Failed to delete PDF' });
+        console.error('Грешка при изтриване на PDF:', error);
+        return res.status(500).json({ error: 'Неуспешно изтриване на PDF' });
     }
 }
