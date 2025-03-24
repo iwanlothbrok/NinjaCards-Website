@@ -37,16 +37,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const id = fields.id ? fields.id[0] : undefined;
             const password = fields.password ? fields.password[0] : undefined;
 
-
             const user = await prisma.user.findUnique({
                 where: {
                     id: id, // Convert the id to a number if it's stored as an integer
                 },
             });
 
-
             if (!id || (!password)) {
-                res.status(400).json({ error: 'ID, and either password are required' });
+                res.status(400).json({ error: 'ID и парола са задължителни' });
                 return;
             }
 
@@ -57,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             if (user?.password === updatedData.password) {
-                res.status(400).json({ error: 'Do not use the same password' });
+                res.status(400).json({ error: 'Не използвайте същата парола' });
                 return;
             }
 
@@ -68,9 +66,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             res.status(200).json(updatedUser);
         } catch (error: any) {
-            res.status(500).json({ error: 'Failed to update user', details: error.message });
+            res.status(500).json({ error: 'Неуспешно обновяване на потребителя', details: error.message });
         }
     } else {
-        res.status(405).json({ error: 'Method not allowed' });
+        res.status(405).json({ error: 'Методът не е разрешен' });
     }
 }
