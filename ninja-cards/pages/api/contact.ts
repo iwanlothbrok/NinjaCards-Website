@@ -20,16 +20,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const corsHandled = cors(req, res);
     if (corsHandled) return; // If it's a preflight request, stop further execution
 
-
     if (req.method === 'POST') {
         const { name, email, subject, phone }: ContactFormData = req.body;
 
         if (!name || !email || !subject || !phone) {
-            return res.status(400).json({ error: 'All fields are required' });
+            return res.status(400).json({ error: 'Всички полета са задължителни' });
         }
 
         if (!validateEmail(email)) {
-            return res.status(400).json({ error: 'Invalid email address' });
+            return res.status(400).json({ error: 'Невалиден имейл адрес' });
         }
 
         // You can add more validation logic here
@@ -45,6 +44,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(200).json(contact);
     } else {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${req.method} Not Allowed`);
+        return res.status(405).end(`Методът ${req.method} не е разрешен`);
     }
 }
