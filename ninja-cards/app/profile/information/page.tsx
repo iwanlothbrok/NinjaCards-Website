@@ -107,11 +107,10 @@ const ChangeProfileInformation: React.FC = () => {
             });
 
 
-            const result = await response.json().catch(() => null); // fallback if not JSON
+            const result = await response.json().catch(() => null);
 
             if (!response.ok) {
-                const errorMessage =
-                    result?.error || 'Неуспешно актуализиране на профила';
+                const errorMessage = result?.error || 'Неуспешно актуализиране на профила';
                 const errorDetails = result?.details;
 
                 console.error('Грешка при актуализацията:', errorMessage, errorDetails);
@@ -122,7 +121,10 @@ const ChangeProfileInformation: React.FC = () => {
             document.documentElement.scrollTop = 0;
             document.body.scrollTop = 0;
 
-            const updatedUser = await response.json();
+            // ❌ This was causing the issue — second read attempt
+            // const updatedUser = await response.json();
+
+            const updatedUser = result;
             localStorage.setItem('user', JSON.stringify(updatedUser));
 
             setUser(updatedUser);
