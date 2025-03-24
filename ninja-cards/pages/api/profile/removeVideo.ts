@@ -9,14 +9,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (corsHandled) return; // Handle CORS preflight
 
     if (req.method !== "DELETE") {
-        return res.status(405).json({ error: "Методът не е разрешен" });
+        return res.status(405).json({ error: "Грешка: Методът DELETE е единственият разрешен за този крайна точка." });
     }
 
     try {
         const { userId } = req.body;
 
         if (!userId) {
-            return res.status(400).json({ error: "Липсва потребителско ID" });
+            return res.status(400).json({ error: "Грешка: Липсва потребителско ID. Моля, предоставете валидно ID." });
         }
 
         // Check if the user has a video saved
@@ -24,8 +24,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             where: { id: userId },
         });
 
-        if (!user || !user.videoUrl) {
-            return res.status(404).json({ error: "Няма налично видео за премахване" });
+        if (!user) {
+            return res.status(404).json({ error: "Грешка: Потребителят с предоставеното ID не съществува." });
+        }
+
+        if (!user.videoUrl) {
+            return res.status(404).json({ error: "Грешка: Няма налично видео за премахване за този потребител." });
         }
 
         // Remove video URL from the database
@@ -36,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         return res.status(200).json({ success: true, message: "Видеото беше премахнато успешно!" });
     } catch (error) {
-        console.error("❌ Error removing video:", error);
-        return res.status(500).json({ error: "Грешка при премахването на видеото" });
+        console.error("❌ Грешка при премахването на видеото:", error);
+        return res.status(500).json({ error: "Грешка: Възникна проблем при премахването на видеото. Моля, опитайте отново." });
     }
 }
