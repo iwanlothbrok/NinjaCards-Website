@@ -15,6 +15,12 @@ import ProfileHeader from '../components/profileDetails/ProfileHeader';
 import generateVCF from "@/utils/generateVCF";
 import { useRouter } from "next/navigation";
 
+interface Alert {
+    message: string;
+    title: string;
+    color: string;
+}
+
 const cardBackgroundOptions = [
     {
         name: 'black',
@@ -99,9 +105,10 @@ const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateA
 
 const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     const { user } = useAuth();
+
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
-    const [, setAlert] = useState<{ message: string; title: string; color: string } | null>(null);
+    const [alert, setAlert] = useState<Alert | null>(null);
     const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
     const [, setIsPhone] = useState(false);
     const [coverPreview, setCoverPreview] = useState<string | null>(null);
@@ -137,41 +144,74 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         }
     };
 
+    // const cropImage = () => {
+    //     console.log('on crop');
+    //     if (cropper) {
+    //         const croppedCanvas = cropper.getCroppedCanvas();
+    //         if (!croppedCanvas) {
+    //             console.log("Failed to crop the image.");
+    //             return;
+    //         }
+
+    //         // Convert the cropped area into a Blob
+    //         croppedCanvas.toBlob((blob: any) => {
+    //             if (!blob) {
+    //                 console.log("Failed to generate Blob from cropped image.");
+    //                 return;
+    //             }
+
+    //             const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+    //             if (blob.size > maxSizeInBytes) {
+    //                 console.log("Cropped image size exceeds 5MB. Please crop a smaller area.");
+    //                 return;
+    //             }
+
+    //             // If valid, update the cropped image and proceed
+    //             const reader = new FileReader();
+    //             reader.onloadend = () => {
+    //                 setCroppedImage(reader.result as string); // Store the final cropped image
+    //                 setCoverPreview(null); // Clear the cropping preview
+    //                 console.log("Cropped image is valid and saved.");
+    //             };
+    //             reader.readAsDataURL(blob);
+    //         }, "image/jpeg"); // Adjust the image format/quality as needed
+    //     }
+    // };
+
     const cropImage = () => {
-        console.log('on crop');
-        if (cropper) {
-            const croppedCanvas = cropper.getCroppedCanvas();
-            if (!croppedCanvas) {
-                console.log("Failed to crop the image.");
+        if (!cropper) {
+            showAlert("Не е избрана снимка за изрязване.", "Грешка", "red");
+            return;
+        }
+
+        const croppedCanvas = cropper.getCroppedCanvas();
+        if (!croppedCanvas) {
+            showAlert("Изрязването на изображението не бе успешно.", "Грешка", "red");
+            return;
+        }
+
+        croppedCanvas.toBlob((blob: any) => {
+            if (!blob) {
+                showAlert("Неуспешно генериране на изображение от изрязания участък.", "Грешка", "red");
                 return;
             }
 
-            // Convert the cropped area into a Blob
-            croppedCanvas.toBlob((blob: any) => {
-                if (!blob) {
-                    console.log("Failed to generate Blob from cropped image.");
-                    return;
-                }
+            const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
 
-                const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+            if (blob.size > maxSizeInBytes) {
+                showAlert("Изрязаното изображение надвишава 5MB. Моля, изрежете по-малка област.", "Грешка", "red");
+                return;
+            }
 
-                if (blob.size > maxSizeInBytes) {
-                    console.log("Cropped image size exceeds 5MB. Please crop a smaller area.");
-                    return;
-                }
-
-                // If valid, update the cropped image and proceed
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setCroppedImage(reader.result as string); // Store the final cropped image
-                    setCoverPreview(null); // Clear the cropping preview
-                    console.log("Cropped image is valid and saved.");
-                };
-                reader.readAsDataURL(blob);
-            }, "image/jpeg"); // Adjust the image format/quality as needed
-        }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setCroppedImage(reader.result as string);
+                setCoverPreview(null);
+            };
+            reader.readAsDataURL(blob);
+        }, "image/jpeg");
     };
-
 
     const zoomIn = () => {
         if (cropper) cropper.zoom(0.1); // Zoom in by 10%
@@ -186,27 +226,39 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     };
 
     const saveCover = async () => {
-        if (!croppedImage || !currentUser) return;
+        if (!croppedImage) {
+            showAlert("Моля, изрежете изображение преди запазване.", "Грешка", "red");
+            return;
+        }
+
+        if (!currentUser) {
+            showAlert("Потребителят не е удостоверен.", "Грешка", "red");
+            return;
+        }
+
         try {
-
-            console.log('cropped ' + croppedImage);
-
             const response = await fetch(`${BASE_API_URL}/api/profile/uploadCover`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id: currentUser.id, coverImage: croppedImage }),
             });
 
-            if (!response.ok) throw new Error(await response.text());
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Неуспешно запазване на корицата.");
+            }
 
             const result = await response.json();
             setCurrentUser({ ...currentUser, coverImage: result.coverImage });
-            console.log("Cover image saved successfully!");
+
+            showAlert("Изображението на корицата бе успешно запазено.", "Успех", "green");
             cancelCover();
         } catch (error) {
-            console.error("Error saving cover image:", error);
+            console.error("Грешка при запазване на корицата:", error);
+            showAlert("Възникна грешка при запазване на корицата.", "Грешка", "red");
         }
     };
+
 
     const cancelCover = () => {
         setCoverPreview(null);
@@ -298,9 +350,12 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         }
     };
 
+
     const showAlert = (message: string, title: string, color: string) => {
         setAlert({ message, title, color });
-        setTimeout(() => setAlert(null), 4000);
+        setTimeout(() => {
+            setAlert(null);
+        }, 4000);
     };
 
     const FloatingButtons: React.FC<{ user: User, generateVCF: () => void; phoneNumber: string; isDirect: boolean }> = ({
@@ -350,6 +405,13 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
         <div className={`relative ${cardStyle.name} min-h-screen`}>
+
+            {alert && (
+                <div className={`p-4  text-white text-center font-medium transition-all duration-300 
+                    ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} animate-fadeIn`}>
+                    <strong>{alert.title}:</strong> {alert.message}
+                </div>
+            )}
             {/* /* Profile Header Section */}
             <ProfileHeader
                 user={currentUser}
