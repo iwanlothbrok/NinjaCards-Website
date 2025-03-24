@@ -9,7 +9,7 @@ cloudinary.config({
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Методът не е разрешен' });
+        return res.status(405).json({ error: 'Грешка: Методът не е разрешен. Моля, използвайте POST заявка.' });
     }
 
     try {
@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             uploadPreset: folder || 'uploads',
         });
     } catch (error) {
-        console.error('Error generating signature:', error);
-        res.status(500).json({ error: 'Възникна грешка при генериране на подписа' });
+        console.error('Грешка при генериране на подписа:', error);
+        res.status(500).json({ error: 'Грешка: Възникна проблем при генериране на подписа. Моля, опитайте отново.' });
     }
 }
