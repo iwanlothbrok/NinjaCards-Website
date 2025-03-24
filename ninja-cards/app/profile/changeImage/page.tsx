@@ -155,10 +155,17 @@ const ProfileImageUploader: React.FC = () => {
                 method: 'DELETE',
             });
 
-            if (!response.ok) {
-                throw new Error('Неуспешно премахване на изображение');
-            }
+            const result = await response.json().catch(() => null); // fallback if not JSON
 
+            if (!response.ok) {
+                const errorMessage =
+                    result?.error || 'Неуспешно актуализиране на профила';
+                const errorDetails = result?.details;
+
+                console.error('Грешка при актуализацията:', errorMessage, errorDetails);
+                showAlert(errorMessage, 'Грешка', 'red');
+                return;
+            }
 
             const updatedUser = await response.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));
