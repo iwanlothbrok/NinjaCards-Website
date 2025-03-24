@@ -14,11 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const userId = Array.isArray(id) ? id[0] : id; // If `id` is an array, take the first element
 
     if (!userId) {
-        return res.status(400).json({ message: 'User ID is required' });
+        return res.status(400).json({ message: 'Необходим е ключ на потребителя' });
     }
 
     if (req.method !== 'GET') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        return res.status(405).json({ message: 'Методът не е разрешен' });
     }
 
     try {
@@ -30,12 +30,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'Потребителят не е намерен' });
         }
 
         return res.status(200).json(user);
     } catch (error) {
         console.error('Error fetching user:', error);
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Вътрешна грешка в сървъра' });
     }
 }
