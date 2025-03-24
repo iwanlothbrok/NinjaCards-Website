@@ -9,25 +9,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (corsHandled) return;
 
     if (req.method !== "POST") {
-        return res.status(405).json({ error: "Методът не е разрешен" });
+        return res.status(405).json({ error: "Грешка: Методът не е разрешен. Моля, използвайте POST заявка." });
     }
 
     try {
         const { userId, videoUrl } = req.body;
 
         if (!userId || !videoUrl) {
-            return res.status(400).json({ error: "Необходим е userId и videoUrl" });
+            return res.status(400).json({ error: "Грешка: Липсва информация. Моля, предоставете userId и videoUrl." });
         }
 
-        // Save video URL in the user's profile
+        // Запазване на URL на видеото в профила на потребителя
         await prisma.user.update({
             where: { id: userId },
-            data: { videoUrl: videoUrl }, // Save Cloudinary URL
+            data: { videoUrl: videoUrl }, // Запазване на Cloudinary URL
         });
 
-        res.status(200).json({ message: "Видеото беше запазено успешно" });
+        res.status(200).json({ message: "Успех: Видеото беше запазено успешно." });
     } catch (error) {
-        console.error("Error updating video URL:", error);
-        res.status(500).json({ error: "Възникна грешка при запазването на видеото" });
+        console.error("Грешка при актуализиране на URL на видеото:", error);
+        res.status(500).json({ error: "Грешка: Възникна проблем при запазването на видеото. Моля, опитайте отново." });
     }
 }
