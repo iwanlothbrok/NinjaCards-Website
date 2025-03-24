@@ -2,8 +2,7 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import formidable, { IncomingForm, Fields } from 'formidable';
+import { IncomingForm, Fields } from 'formidable';
 import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
@@ -43,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const country = fields.country ? fields.country[0] : undefined;
 
             if (!id) {
-                res.status(400).json({ error: 'ID, and either password are required' });
+                res.status(400).json({ error: 'ID е задължително поле.' });
                 return;
             }
 
@@ -96,9 +95,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             res.status(200).json(updatedUser);
         } catch (error: any) {
-            res.status(500).json({ error: 'Failed to update user', details: error.message });
+            res.status(500).json({ error: 'Неуспешно актуализиране на профила.', details: error.message });
         }
     } else {
-        res.status(405).json({ error: 'Method not allowed' });
+        res.status(405).json({ error: 'Методът не е позволен.' });
     }
 }
