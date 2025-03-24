@@ -6,11 +6,17 @@ import { FaCheckCircle, FaInfoCircle, FaExclamationTriangle } from "react-icons/
 import { RiSettings3Line } from "react-icons/ri";
 import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from 'next/navigation';
-
+interface Alert {
+    message: string;
+    title: string;
+    color: string;
+}
 const FeaturesComponent: React.FC = () => {
     const { user, setUser } = useAuth();
     const [isDirect, setIsDirect] = useState<boolean | null>(null); // Start as null to indicate loading
     const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState<Alert | null>(null);
+
     const [message, setMessage] = useState("");
     const router = useRouter();
 
@@ -54,11 +60,18 @@ const FeaturesComponent: React.FC = () => {
                 body: JSON.stringify({ userId: user.id, isDirect: newIsDirect }),
             });
 
-            if (!response.ok) {
-                throw new Error("Неуспешно актуализиране на настройката.");
-            }
+            const result = await response.json().catch(() => null); // fallback if not JSON
 
-            const result = await response.json();
+            if (!response.ok) {
+                const errorMessage =
+                    result?.error || 'Неуспешно актуализиране на профила';
+                const errorDetails = result?.details;
+
+                console.error('Грешка при актуализацията:', errorMessage, errorDetails);
+                showAlert(errorMessage, 'Грешка', 'red');
+                return;
+            }
+            
             setMessage(result.message || "Настройката е успешно актуализирана.");
             setIsDirect(newIsDirect); // Update local state
 
@@ -70,6 +83,13 @@ const FeaturesComponent: React.FC = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const showAlert = (message: string, title: string, color: string) => {
+        setAlert({ message, title, color });
+        setTimeout(() => {
+            setAlert(null);
+        }, 4000);
     };
 
     const handleCheckboxChange = (checked: boolean) => {
@@ -95,6 +115,13 @@ const FeaturesComponent: React.FC = () => {
                 <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wide flex items-center justify-center">
                     ⚙️ Настройки на картата
                 </h2>
+                {/* Alert Message */}
+                {alert && (
+                    <div className={`p-4 rounded-lg mb-6 text-white text-center font-medium transition-all duration-300 
+                    ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} animate-fadeIn`}>
+                        <strong>{alert.title}:</strong> {alert.message}
+                    </div>
+                )}
 
                 {/* Checkbox Option */}
                 <div className="mb-6">
