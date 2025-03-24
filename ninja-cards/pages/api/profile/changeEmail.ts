@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.log(fields);
 
             if (!id || (!email)) {
-                res.status(400).json({ error: 'ID, and either email or password are required' });
+                res.status(400).json({ error: 'ID и поне един от имейлите са задължителни' });
                 return;
             }
 
@@ -63,9 +63,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             res.status(200).json(updatedUser);
         } catch (error: any) {
-            res.status(500).json({ error: 'Failed to update user', details: error.message });
+            res.status(500).json({ error: 'Неуспешно обновяване на потребителя', details: error.message });
         }
     } else {
-        res.status(405).json({ error: 'Method not allowed' });
+        res.status(405).json({ error: 'Методът не е позволен' });
     }
 }
