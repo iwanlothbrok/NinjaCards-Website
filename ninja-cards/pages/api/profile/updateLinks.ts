@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import formidable, { IncomingForm, Fields, Files } from 'formidable';
+import { IncomingForm, Fields, Files } from 'formidable';
 import fs from 'fs/promises';
 import cors from '@/utils/cors';
 
@@ -36,10 +36,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const id = fields.id ? fields.id[0] : undefined;
             if (!id) {
-                res.status(400).json({ error: 'ID is required' });
+                res.status(400).json({ error: 'ID е задължително поле' });
                 return;
             }
-
 
             // Initialize an empty object to store the updated data
             const updatedData: any = {};
@@ -65,7 +64,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 'calendly',
                 'discord',
                 'tripadvisor',
-
             ];
 
             fieldsToCheck.forEach((field) => {
@@ -110,10 +108,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             res.status(200).json(updatedUser);
         } catch (error: any) {
-            console.error('Error updating user links:', error);
-            res.status(500).json({ error: 'Failed to update user links', details: error.message });
+            console.error('Грешка при актуализиране на връзките на потребителя:', error);
+            res.status(500).json({
+                error: 'Неуспешно актуализиране на връзките на потребителя',
+                details: error.message
+            });
         }
     } else {
-        res.status(405).json({ error: 'Method not allowed' });
+        res.status(405).json({ error: 'Методът не е разрешен' });
     }
 }
