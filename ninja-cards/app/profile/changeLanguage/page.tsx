@@ -4,11 +4,18 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { BASE_API_URL } from '@/utils/constants';
+interface Alert {
+    message: string;
+    title: string;
+    color: string;
+}
 
 const LanguageSwitcher: React.FC = () => {
     const { user, setUser } = useAuth();
     const [language, setLanguage] = useState<string>(user?.language || 'bg');
     const [loading, setLoading] = useState<boolean>(false);
+    const [alert, setAlert] = useState<Alert | null>(null);
+
     const router = useRouter();
 
     useEffect(() => {
@@ -47,9 +54,19 @@ const LanguageSwitcher: React.FC = () => {
                 body: JSON.stringify({ userId: user?.id, language: lng }),
             });
 
+
+            const result = await response.json().catch(() => null); // fallback if not JSON
+
             if (!response.ok) {
-                throw new Error('Failed to change language');
+                const errorMessage =
+                    result?.error || 'Неуспешно актуализиране на профила';
+                const errorDetails = result?.details;
+
+                console.error('Грешка при актуализацията:', errorMessage, errorDetails);
+                showAlert(errorMessage, 'Грешка', 'red');
+                return;
             }
+
             const userData = await response.json();
             setUser(userData);
             router.refresh(); // Refresh to apply language change
@@ -60,6 +77,13 @@ const LanguageSwitcher: React.FC = () => {
         }
     };
 
+    const showAlert = (message: string, title: string, color: string) => {
+        setAlert({ message, title, color });
+        setTimeout(() => {
+            setAlert(null);
+        }, 4000);
+    };
+
     return (
         <div className="w-full max-w-3xl mx-auto mt-28 p-10 bg-gradient-to-b from-gray-900 to-gray-800 
             rounded-2xl shadow-xl border border-gray-700 sm:mx-6 md:mx-10 lg:mx-auto">
@@ -67,7 +91,13 @@ const LanguageSwitcher: React.FC = () => {
             <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wide">
                 🌍 Изберете език за визитката
             </h2>
-
+            {/* Alert Message */}
+            {alert && (
+                <div className={`p-4 rounded-lg mb-6 text-white text-center font-medium transition-all duration-300 
+                    ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} animate-fadeIn`}>
+                    <strong>{alert.title}:</strong> {alert.message}
+                </div>
+            )}
             {/* Loading State */}
             {loading ? (
                 <div className="flex justify-center items-center py-40">
