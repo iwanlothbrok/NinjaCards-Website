@@ -69,10 +69,16 @@ export default function ChangeEmail() {
                 body: updateData,
             });
 
+
+            const result = await response.json().catch(() => null); // fallback if not JSON
+
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Грешка при актуализацията:', errorText);
-                showAlert('Неуспешно актуализиране на профила', 'Грешка', 'red');
+                const errorMessage =
+                    result?.error || 'Неуспешно актуализиране на профила';
+                const errorDetails = result?.details;
+
+                console.error('Грешка при актуализацията:', errorMessage, errorDetails);
+                showAlert(errorMessage, 'Грешка', 'red');
                 return;
             }
 

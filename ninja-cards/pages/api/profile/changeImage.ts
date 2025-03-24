@@ -36,13 +36,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const id = fields.id ? fields.id[0] : undefined;
             if (!id) {
-                res.status(400).json({ error: 'ID is required' });
+                res.status(400).json({ error: 'ID е задължително поле' });
                 return;
             }
 
             // Check if an image file is provided
             if (!files.image) {
-                res.status(400).json({ error: 'Image file is required' });
+                res.status(400).json({ error: 'Файл с изображение е задължителен' });
                 return;
             }
 
@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             // Validate image file size
             if (imageFile.size > 2500 * 1024) {
-                res.status(400).json({ error: 'Image size exceeds the 2500 KB limit' });
+                res.status(400).json({ error: 'Размерът на изображението надвишава лимита от 2500 KB' });
                 return;
             }
 
@@ -66,10 +66,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             res.status(200).json(updatedUser);
         } catch (error: any) {
-            console.error('Error updating profile image:', error);
-            res.status(500).json({ error: 'Failed to update profile image', details: error.message });
+            console.error('Грешка при актуализиране на профилната снимка:', error);
+            res.status(500).json({ error: 'Неуспешно актуализиране на профилната снимка', details: error.message });
         }
     } else {
-        res.status(405).json({ error: 'Method not allowed' });
+        res.status(405).json({ error: 'Методът не е разрешен' });
     }
 }
