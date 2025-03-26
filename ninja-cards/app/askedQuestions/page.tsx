@@ -8,6 +8,16 @@ import { FaPlay } from 'react-icons/fa'; // Importing the play icon from Font Aw
 import FAQVideos from './FAQVideos';
 import Header from '../components/layout/Header';
 
+const howToUseUrl = 'https://www.youtube.com/embed/vlpRHfQ-W3E?si=MRGOS-OEeyrw4Ox9';
+const headerText = 'Ninja Cards - Как да използвате нашите NFC смарт визитки';
+const paragraphText = 'Ето кратко видео, което показва как да използвате нашите смарт визитки.';
+const imagePath = '/features/02.png';
+
+const howToUseUrl02 = 'https://www.youtube.com/embed/KIJho0mfSIU?si=vgPWvP4JVdnAnVqm';
+const headerText02 = 'Какво да направиш, когато получиш своята Ninja Card?';
+const paragraphText02 = 'Виж кои са първите стъпки, за да активираш и използваш пълноценно своята умна визитка Ninja Card.';
+const imagePath02 = '/features/first-steps.png';
+
 const FAQPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -29,8 +39,12 @@ const FAQPage = () => {
 
   return (
     <div className="min-h-screen text-white">
+
       <Header pageInformation='Имате въпрос' textOne='Визитки' textTwo='Ревюта' textThree='Дизайн' />
-      <FAQVideos openModal={openModal} />
+      <div className="grid grid-cols-1 md:grid-cols-2 mx-10 justify-center items-stretch mt-8">
+        <FAQVideos imagePath={imagePath02} headerText={headerText02} paragraphText={paragraphText02} url={howToUseUrl02} openModal={openModal} />
+        <FAQVideos imagePath={imagePath} headerText={headerText} paragraphText={paragraphText} url={howToUseUrl} openModal={openModal} />
+      </div>
       {/* Hero Section */}
       <header className="mt-0 mb-6 p-6 flex flex-col justify-center items-center text-center ">
         <p className="text-lg max-w-2xl">
