@@ -45,7 +45,7 @@ const Login: React.FC = () => {
             showAlert("Входът беше успешен", "Успех", "green");
 
             setTimeout(() => {
-                window.location.href = "/profile";
+                window.location.href = "/profile/help";
             }, 1000);
         } else {
             showAlert("Неуспешен вход", "Грешка", "red");
