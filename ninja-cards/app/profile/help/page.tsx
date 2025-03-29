@@ -26,13 +26,10 @@ const imagePath01 = '/features/setUp.jpg';
 
 
 const documents = [
+
     {
-        name: 'Инструкция за потребителя (PDF)',
-        url: '/docs/user-guide.pdf',
-    },
-    {
-        name: 'Информация за продукта (PDF)',
-        url: '/docs/product-info.pdf',
+        name: 'Научи повече за функциите на профила (PDF)',
+        url: '/func.pdf',
     },
 ];
 
@@ -82,7 +79,7 @@ const Help: React.FC = () => {
                     openModal={openModal}
                 />
 
-                {/* <div className="mt-12">
+                <div className="mt-12">
                     <h3 className="text-2xl font-semibold text-white mb-4">📄 Документи за изтегляне</h3>
                     <ul className="space-y-3">
                         {documents.map((doc) => (
@@ -100,7 +97,7 @@ const Help: React.FC = () => {
                             </li>
                         ))}
                     </ul>
-                </div> */}
+                </div>
 
                 <Modal
                     isOpen={modalIsOpen}
