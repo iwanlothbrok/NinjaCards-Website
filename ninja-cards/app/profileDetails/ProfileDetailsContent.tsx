@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FaDownload, FaPhoneAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css"; // Import cropper styles
@@ -87,7 +86,6 @@ const saveSelectedColor = async (userId: string, color: string, showAlert: (mess
     }
 };
 
-
 const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateAction<User | null>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, showAlert: (message: string, title: string, color: string) => void) => {
     setLoading(true);
     try {
@@ -143,41 +141,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             console.log("File uploaded successfully. Proceed to cropping.");
         }
     };
-
-    // const cropImage = () => {
-    //     console.log('on crop');
-    //     if (cropper) {
-    //         const croppedCanvas = cropper.getCroppedCanvas();
-    //         if (!croppedCanvas) {
-    //             console.log("Failed to crop the image.");
-    //             return;
-    //         }
-
-    //         // Convert the cropped area into a Blob
-    //         croppedCanvas.toBlob((blob: any) => {
-    //             if (!blob) {
-    //                 console.log("Failed to generate Blob from cropped image.");
-    //                 return;
-    //             }
-
-    //             const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
-
-    //             if (blob.size > maxSizeInBytes) {
-    //                 console.log("Cropped image size exceeds 5MB. Please crop a smaller area.");
-    //                 return;
-    //             }
-
-    //             // If valid, update the cropped image and proceed
-    //             const reader = new FileReader();
-    //             reader.onloadend = () => {
-    //                 setCroppedImage(reader.result as string); // Store the final cropped image
-    //                 setCoverPreview(null); // Clear the cropping preview
-    //                 console.log("Cropped image is valid and saved.");
-    //             };
-    //             reader.readAsDataURL(blob);
-    //         }, "image/jpeg"); // Adjust the image format/quality as needed
-    //     }
-    // };
 
     const cropImage = () => {
         if (!cropper) {
@@ -258,7 +221,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             showAlert("Възникна грешка при запазване на корицата.", "Грешка", "red");
         }
     };
-
 
     const cancelCover = () => {
         setCoverPreview(null);
@@ -350,56 +312,12 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         }
     };
 
-
     const showAlert = (message: string, title: string, color: string) => {
         setAlert({ message, title, color });
         setTimeout(() => {
             setAlert(null);
         }, 4000);
     };
-
-    const FloatingButtons: React.FC<{ user: User, generateVCF: () => void; phoneNumber: string; isDirect: boolean }> = ({
-        user,
-        generateVCF,
-        phoneNumber,
-        isDirect,
-    }) => {
-        const handleButtonClick = () => {
-            console.log('isDirect ' + isDirect);
-
-            // If isDirect is true, generate the VCF and then show the profile
-            generateVCF();
-            // Showing the profile happens automatically as it's part of the UI
-        };
-
-        return (
-            <div className="fixed bottom-6 left-0 right-0 px-4 z-20 flex justify-center space-x-4 max-w-screen-md mx-auto">
-                {/* Save Contact Button */}
-                <button
-                    onClick={handleButtonClick}
-                    className="flex-grow flex items-center justify-center bg-white text-black py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105"
-                >
-                    <FaDownload className="mr-2 text-3xl" />
-                    <span className="text-lg font-semibold">
-                        {user.language === 'bg' ? 'ЗАПАЗИ КОНТАКТ' : 'SAVE CONTACT'}
-                    </span>
-                </button>
-
-                {/* Call Button */}
-                <button
-                    onClick={() => {
-                        if (phoneNumber) {
-                            window.location.href = `tel:${phoneNumber}`;
-                        }
-                    }}
-                    className="w-16 flex items-center justify-center bg-gray-700 text-white py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-105"
-                >
-                    <FaPhoneAlt className="text-3xl" />
-                </button>
-            </div>
-        );
-    };
-
 
     if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
@@ -492,7 +410,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                     >
                         <div className="flex flex-col space-y-4 mb-4 ">
 
-                            <ActionButtons2 user={currentUser} />
+                            <ActionButtons2 generateVCF={() => generateVCF(currentUser)} user={currentUser} />
                         </div>
                     </motion.div>
 
@@ -506,10 +424,6 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                         <SocialMediaLinks user={currentUser} />
 
                     </motion.div>
-
-                    {/* Floating Buttons */}
-                    <FloatingButtons user={currentUser} generateVCF={() => generateVCF(currentUser)} phoneNumber={currentUser.phone1} isDirect={currentUser.isDirect} // Pass the isDirect property to FloatingButtons
-                    />
 
                     {/* Background Selector (visible only for the current user) */}
                     {user?.id === currentUser?.id && (
