@@ -37,7 +37,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             where: { id: userId },
             data: { videoUrl: null }, // Ensure this matches your Prisma schema
         });
-
+        const updatedUser = await prisma.user.findUnique({
+            where: { id: userId },
+        });
         return res.status(200).json({ success: true, message: "Видеото беше премахнато успешно!" });
     } catch (error) {
         console.error("❌ Грешка при премахването на видеото:", error);
