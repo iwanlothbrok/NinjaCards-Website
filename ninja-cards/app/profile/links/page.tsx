@@ -137,18 +137,26 @@ const ImportantLinks: React.FC = () => {
                 body: formDataObj,
             });
 
+            const result = await response.json().catch(() => null);
             if (!response.ok) {
-                const errorText = await response.json();
-                setAlert({ message: errorText.error || 'Неуспешна актуализация на връзките', type: 'error' });
+                const errorMessage = result?.error || 'Неуспешно актуализиране на профила';
+                const errorDetails = result?.details;
+
+                console.error('Грешка при актуализацията:', errorMessage, errorDetails);
+                setAlert({ message: 'Грешка при актуализация на връзките:', type: 'error' });
                 return;
             }
 
             document.documentElement.scrollTop = 0;
             document.body.scrollTop = 0;
 
-            //   const updatedUser = await response.json();
-            // localStorage.setItem('user', JSON.stringify(updatedUser));
-            //setUser(updatedUser);
+            // ❌ This was causing the issue — second read attempt
+            // const updatedUser = await response.json();
+
+            const updatedUser = result;
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+
+            setUser(updatedUser);
 
             setAlert({ message: 'Връзките са успешно актуализирани', type: 'success' });
         } catch (error) {
