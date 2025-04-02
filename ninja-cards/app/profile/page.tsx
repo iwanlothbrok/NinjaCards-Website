@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faEnvelope, faMapMarkerAlt, faImage, faUser, faLink, faEye, faIdCard, faQrcode, faCogs, faChartBar, faVideo, faGlobe, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faEnvelope, faMapMarkerAlt, faImage, faChartLine, faUser, faLink, faEye, faIdCard, faQrcode, faCogs, faChartBar, faVideo, faGlobe, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 
 const tabs = [
@@ -20,8 +20,8 @@ const tabs = [
     { tab: 'analyse', label: 'Анализ', icon: faChartBar },
     { tab: 'video', label: 'Видео клип', icon: faVideo },
     { tab: 'changeLanguage', label: 'Смяна на езика', icon: faGlobe },
-    { tab: 'help', label: 'Помощ и Инструкции', icon: faCircleQuestion }
-
+    { tab: 'help', label: 'Помощ и Инструкции', icon: faCircleQuestion },
+    { tab: 'subscribed', label: 'Потенциални клиенти', icon: faChartLine }
 ];
 
 interface TabCardProps {
