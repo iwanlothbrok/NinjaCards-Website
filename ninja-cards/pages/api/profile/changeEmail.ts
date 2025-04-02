@@ -56,11 +56,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 updatedData.email2 = '';
             }
 
-            const updatedUser = await prisma.user.update({
+            await prisma.user.update({
                 where: { id: id },
                 data: updatedData,
             });
-
+            const updatedUser = await prisma.user.findUnique({
+                where: { id: id },
+            });
             res.status(200).json(updatedUser);
         } catch (error: any) {
             res.status(500).json({ error: 'Неуспешно обновяване на потребителя', details: error.message });
