@@ -59,9 +59,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const base64Image = imageData.toString('base64');
 
             // Update the user's profile image in the database
-            const updatedUser = await prisma.user.update({
+            await prisma.user.update({
                 where: { id: id },
                 data: { image: base64Image },
+            });
+
+            const updatedUser = await prisma.user.findUnique({
+                where: { id: id },
             });
 
             res.status(200).json(updatedUser);
