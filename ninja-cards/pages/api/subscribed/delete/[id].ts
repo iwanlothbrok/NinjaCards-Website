@@ -2,6 +2,7 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
+import cors from '@/utils/cors';
 
 const prisma = new PrismaClient()
 
@@ -10,6 +11,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         query: { id },
         method,
     } = req
+    const corsHandled = cors(req, res);
+    if (corsHandled) return; // If it'
 
     if (!id || typeof id !== 'string') {
         return res.status(400).json({ error: 'Липсващ или невалиден ID' })
