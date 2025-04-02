@@ -19,9 +19,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ error: 'ID на потребителя е задължително.' });
         }
 
-        const updatedUser = await prisma.user.update({
+        await prisma.user.update({
             where: { id: userId },
             data: { isDirect },
+        });
+        const updatedUser = await prisma.user.findUnique({
+            where: { id: userId },
         });
 
         res.status(200).json({ message: 'Настройката е успешно актуализирана.', user: updatedUser });
