@@ -13,6 +13,7 @@ import BackgroundSelector from '../components/profileDetails/BackgroundSelector'
 import ProfileHeader from '../components/profileDetails/ProfileHeader';
 import generateVCF from "@/utils/generateVCF";
 import { useRouter } from "next/navigation";
+import LeadForm from "../components/profileDetails/LeadForm";
 
 interface Alert {
     message: string;
@@ -323,6 +324,9 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
     return (
         <div className={`relative ${cardStyle.name} min-h-screen`}>
+            {user?.id != currentUser?.id && (
+                <LeadForm userId={currentUser.id} />
+            )}
 
             {alert && (
                 <div className={`p-4  text-white text-center font-medium transition-all duration-300 
