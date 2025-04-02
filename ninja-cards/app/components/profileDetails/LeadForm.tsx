@@ -46,7 +46,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ userId }) => {
         }
         setSubmitting(true);
         try {
-            const res = await fetch(`${BASE_API_URL}/api/leads`, {
+            const res = await fetch(`${BASE_API_URL}/api/subscribed`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...form, userId, isAccepted: true }),
