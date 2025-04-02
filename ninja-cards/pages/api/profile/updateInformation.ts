@@ -70,9 +70,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
             // Update the user in the database
-            const updatedUser = await prisma.user.update({
+            await prisma.user.update({
                 where: { id: id },
                 data: updatedData,
+            });
+
+            // Fetch the updated user with all their information
+            const updatedUser = await prisma.user.findUnique({
+                where: { id: id },
             });
 
             res.status(200).json(updatedUser);
