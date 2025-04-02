@@ -19,11 +19,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         try {
-            const updatedUser = await prisma.user.update({
+            await prisma.user.update({
                 where: { id: userId }, // Ensure `userId` is a string
                 data: { image: null },
             });
 
+            const updatedUser = await prisma.user.findUnique({
+                where: { id: userId },
+            });
             res.status(200).json(updatedUser);
         } catch (error) {
             console.error('Грешка при премахване на изображението на потребителя:', error);
