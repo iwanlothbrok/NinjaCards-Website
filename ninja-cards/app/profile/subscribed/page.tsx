@@ -15,11 +15,8 @@ interface Lead {
     createdAt: string
 }
 
-interface UserLeadsTableProps {
-    userId: string
-}
 
-const UserLeadsTable: React.FC<UserLeadsTableProps> = ({ }) => {
+const UserLeadsTable: React.FC = () => {
     const { user } = useAuth();
     const [leads, setLeads] = useState<Lead[]>([])
     const [loading, setLoading] = useState(true)
