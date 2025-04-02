@@ -88,9 +88,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 updatedData.country = '';
             }
 
-            const updatedUser = await prisma.user.update({
+            await prisma.user.update({
                 where: { id: id },
                 data: updatedData,
+            });
+
+            const updatedUser = await prisma.user.findUnique({
+                where: { id: id },
             });
 
             res.status(200).json(updatedUser);
