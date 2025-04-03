@@ -21,6 +21,13 @@ const UserLeadsTable: React.FC = () => {
     const [leads, setLeads] = useState<Lead[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [visibleCount, setVisibleCount] = useState(6);
+    const [successMsg, setSuccessMsg] = useState('');
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+
+    const loadMore = () => {
+        setVisibleCount((prev) => prev + 6);
+    };
 
     useEffect(() => {
         const fetchLeads = async () => {
@@ -64,75 +71,97 @@ const UserLeadsTable: React.FC = () => {
 
     return (
         <div className="p-4">
-            <div className="w-full max-w-5xl mx-auto mt-36 p-8 bg-gradient-to-b from-gray-800 to-gray-900 
-            rounded-3xl shadow-2xl border border-gray-700 sm:mx-6 md:mx-10 lg:mx-auto">
-
-                <h2 className="text-4xl font-extrabold text-center text-white mb-8 tracking-wide">
+            <div className="w-full max-w-5xl mx-auto mt-32 p-8 bg-gradient-to-b from-gray-800 to-gray-900 rounded-3xl shadow-2xl border border-gray-700 sm:mx-6 md:mx-10 lg:mx-auto">
+                <h2 className="sticky top-0 z-20 text-4xl font-extrabold text-center text-white mb-2 tracking-wide py-4">
                     📋 Вашите Потенциални клиенти
                 </h2>
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-2xl font-semibold text-white">Списък с Потенциални клиенти</h3>
+                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                     <button
                         onClick={downloadCSV}
-                        className="bg-orange text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-yellow-700 transition duration-200"
+                        className="bg-gradient-to-r from-orange to-yellow-500 text-white px-6 py-2 rounded-lg text-sm font-medium hover:from-yellow-700 hover:to-yellow-600 transition duration-200 shadow-md"
                     >
                         Изтегли като CSV
                     </button>
                 </div>
-                <div className="overflow-x-auto bg-gray-800 rounded-lg shadow-inner">
-                    <table className="w-full text-left border-collapse">
-                        <thead className="bg-gray-700 text-white">
-                            <tr>
-                                <th className="p-4 text-sm font-semibold">Име</th>
-                                <th className="p-4 text-sm font-semibold">Имейл</th>
-                                <th className="p-4 text-sm font-semibold">Телефон</th>
-                                <th className="p-4 text-sm font-semibold">Съобщение</th>
-                                <th className="p-4 text-sm font-semibold">Дата</th>
-                                <th className="p-4 text-sm font-semibold">Функции</th>
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {leads.map((lead, index) => (
-                                <tr
-                                    key={lead.id}
-                                    className={`border-t border-gray-700 ${index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-900'
-                                        } hover:bg-gray-700 transition duration-150`}
+                {successMsg && (
+                    <div className="text-green-400 text-sm mb-4 text-center">{successMsg}</div>
+                )}
+
+                <div className="space-y-6">
+                    {leads.slice(0, visibleCount).map((lead) => (
+                        <div
+                            key={lead.id}
+                            className="p-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 shadow-lg hover:shadow-xl transition duration-300 relative overflow-hidden animate-fade-in"
+                        >
+                            <div className="absolute top-0 right-0 m-2 flex items-center gap-1 text-gray-300 text-xs px-3 py-1 bg-gray-700/80 backdrop-blur-sm rounded-bl-xl">
+                                📅 {new Date(lead.createdAt).toLocaleDateString('bg-BG')}
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <div>
+                                    <p className="text-sm text-gray-400">Име</p>
+                                    <p className="text-lg text-white font-semibold">{lead.name}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-400">Телефон</p>
+                                    <p className="text-gray-300">{lead.phone || '-'}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-400">Имейл</p>
+                                    <p className="text-gray-300 break-all">{lead.email || '-'}</p>
+                                </div>
+                                <div className="sm:col-span-2 md:col-span-3">
+                                    <p className="text-sm text-gray-400">Съобщение</p>
+                                    <p className="text-gray-300 whitespace-pre-line break-words">{lead.message || '-'}</p>
+                                </div>
+                            </div>
+                            <div className="mt-6 flex justify-end">
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            setDeletingId(lead.id);
+                                            const res = await fetch(`${BASE_API_URL}/api/subscribed/delete/${lead.id}`, {
+                                                method: 'DELETE',
+                                            });
+                                            if (!res.ok) throw new Error('Грешка при изтриване на лийда');
+                                            setLeads((prev) => prev.filter((l) => l.id !== lead.id));
+                                            setSuccessMsg('Успешно изтрито ✅');
+                                            setTimeout(() => setSuccessMsg(''), 3000);
+                                        } catch (err) {
+                                            console.error(err);
+                                            setError('Неуспешно изтриване на лийда.');
+                                        } finally {
+                                            setDeletingId(null);
+                                        }
+                                    }}
+                                    disabled={deletingId === lead.id}
+                                    className="bg-red-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <td className="p-4 text-sm text-gray-300">{lead.name}</td>
-                                    <td className="p-4 text-sm text-gray-300">{lead.email || '-'}</td>
-                                    <td className="p-4 text-sm text-gray-300">{lead.phone || '-'}</td>
-                                    <td className="p-4 text-sm text-gray-300">{lead.message || '-'}</td>
-                                    <td className="p-4 text-sm text-gray-300">
-                                        {new Date(lead.createdAt).toLocaleString('bg-BG')}
-                                    </td>
-                                    <td className="p-4 text-sm text-gray-300">
-                                        <button
-                                            onClick={async () => {
-                                                try {
-                                                    const res = await fetch(`${BASE_API_URL}/api/subscribed/delete/${lead.id}`, {
-                                                        method: 'DELETE',
-                                                    });
-                                                    if (!res.ok) throw new Error('Грешка при изтриване на лийда');
-                                                    setLeads((prevLeads) => prevLeads.filter((l) => l.id !== lead.id));
-                                                } catch (err) {
-                                                    console.error(err);
-                                                    setError('Неуспешно изтриване на лийда.');
-                                                }
-                                            }}
-                                            className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition duration-200"
-                                        >
-                                            Изтрий
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                    {deletingId === lead.id ? 'Изтрива се...' : 'Изтрий'}
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
+
+                {visibleCount < leads.length ? (
+                    <div className="flex justify-center mt-10">
+                        <button
+                            onClick={loadMore}
+                            className="text-sm text-white bg-gray-700 hover:bg-gray-600 transition px-5 py-2 rounded-md shadow-md"
+                        >
+                            Зареди още
+                        </button>
+                    </div>
+                ) : (
+                    <div className="text-center text-gray-500 mt-10 text-sm">
+                        📭 Всички потенциални клиенти са заредени.
+                    </div>
+                )}
             </div>
         </div>
-    )
+    );
+
 }
 
 export default UserLeadsTable
