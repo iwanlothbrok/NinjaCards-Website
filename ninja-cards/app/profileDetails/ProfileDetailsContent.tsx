@@ -325,7 +325,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
     return (
         <div className={`relative ${cardStyle.name} min-h-screen`}>
             {user?.id != currentUser?.id && (
-                <LeadForm userId={currentUser.id} />
+                <LeadForm userId={currentUser.id} name={currentUser.name ? currentUser.name : currentUser.firstName} />
             )}
 
             {alert && (

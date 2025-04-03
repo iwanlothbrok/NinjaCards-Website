@@ -15,9 +15,10 @@ type LeadFormData = {
 
 type LeadFormProps = {
     userId: string;
+    name: string;
 };
 
-const LeadForm: React.FC<LeadFormProps> = ({ userId }) => {
+const LeadForm: React.FC<LeadFormProps> = ({ userId, name }) => {
     const [showLeadForm, setShowLeadForm] = useState(true);
     const [form, setForm] = useState<LeadFormData>({ name: '', gdpr: false });
     const [submitting, setSubmitting] = useState(false);
@@ -68,7 +69,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ userId }) => {
 
                 <div className="fixed inset-0 flex items-center justify-center p-4">
                     <div className="w-full max-w-lg space-y-6 rounded-lg bg-white p-8 shadow-2xl">
-                        <h2 className="text-xl font-semibold text-gray-800">Оставете контактна информация</h2>
+                        <h2 className="text-xl font-semibold text-gray-800">Оставете контактите си на {name}</h2>
                         <div className="space-y-4 text-black">
                             <input
                                 type="text"
