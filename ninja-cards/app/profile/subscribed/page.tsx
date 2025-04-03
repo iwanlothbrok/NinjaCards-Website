@@ -94,25 +94,25 @@ const UserLeadsTable: React.FC = () => {
                             key={lead.id}
                             className="p-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 shadow-lg hover:shadow-xl transition duration-300 relative overflow-hidden animate-fade-in"
                         >
-                            <div className="absolute top-0 right-0 m-2 flex items-center gap-1 text-gray-300 text-xs px-3 py-1 bg-gray-700/80 backdrop-blur-sm rounded-bl-xl">
+                            <div className="absolute top-0 right-0 m-2 flex items-center gap-1 text-gray-300 text-sm px-3 py-1 bg-gray-700/80 backdrop-blur-sm rounded-bl-xl">
                                 📅 {new Date(lead.createdAt).toLocaleDateString('bg-BG')}
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                 <div>
                                     <p className="text-sm text-gray-400">Име</p>
-                                    <p className="text-lg text-white font-semibold">{lead.name}</p>
+                                    <p className="text-lg text-white font-normal">{lead.name}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-400">Телефон</p>
-                                    <p className="text-gray-300">{lead.phone || '-'}</p>
+                                    <p className="text-lg text-white font-normal">{lead.phone || '-'}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-400">Имейл</p>
-                                    <p className="text-gray-300 break-all">{lead.email || '-'}</p>
+                                    <p className="text-lg text-white font-normal break-all">{lead.email || '-'}</p>
                                 </div>
                                 <div className="sm:col-span-2 md:col-span-3">
                                     <p className="text-sm text-gray-400">Съобщение</p>
-                                    <p className="text-gray-300 whitespace-pre-line break-words">{lead.message || '-'}</p>
+                                    <p className="text-lg text-white font-normal whitespace-pre-line break-words">{lead.message || '-'}</p>
                                 </div>
                             </div>
                             <div className="mt-6 flex justify-end">
