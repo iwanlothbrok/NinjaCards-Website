@@ -10,7 +10,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'GET') {
         try {
-            const products = await prisma.product.findMany();
+            const products = await prisma.product.findMany({
+                select: {
+                    id: true,
+                    title: true,
+                    price: true,
+                    oldPrice: true,
+                    type: true,
+                    image: true,
+                }
+            });
             res.status(200).json(products);
         } catch (error) {
             console.error('Error fetching products:', error);
