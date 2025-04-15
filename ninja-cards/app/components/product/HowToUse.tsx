@@ -25,7 +25,7 @@ const HowToUse = () => {
   };
 
   return (
-    <section className="py-16 text-white">
+    <section className="py-6 text-white">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Title */}
         <h2 className="text-3xl font-extrabold text-center mb-12 text-orange-500">
