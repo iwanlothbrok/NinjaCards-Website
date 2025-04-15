@@ -15,8 +15,8 @@ interface RelatedProductsProps {
 
 const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
     return (
-        <div className="mt-16">
-            <h3 className="text-3xl font-semibold text-white mb-8 text-center">Свързани продукти</h3>
+        <div className="mt-6">
+            <h3 className="text-3xl font-semibold text-white mb-8 text-center">Подобни продукти</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-6 gap-8">
                 {products.map((product) => (
                     <div
