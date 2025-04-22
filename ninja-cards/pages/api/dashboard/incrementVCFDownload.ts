@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import cors from '@/utils/cors';
+import { getTime } from '@/utils/bgTime';
 
 const prisma = new PrismaClient();
 
@@ -30,8 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             data: { 
             userId, 
             type: 'download', 
-            timestamp: new Date().toLocaleString('bg-BG', { timeZone: 'Europe/Sofia' }) 
-            },
+            timestamp: getTime(),
+        },
         });
 
         return res.status(200).json({
