@@ -60,14 +60,24 @@ model User {
 }
 
 model Dashboard {
-  id                String    @id @default(uuid())
-  userId            String    @unique
-  profileVisits     Int       @default(0)
-  vcfDownloads      Int       @default(0)
-  profileShares     Int       @default(0)
-  socialLinkClicks  Int       @default(0)
-  // Relation to User
-  user              User      @relation(fields: [userId], references: [id])
+  id               String           @id @default(uuid())
+  userId           String           @unique
+  profileVisits    Int              @default(0)
+  vcfDownloads     Int              @default(0)
+  profileShares    Int              @default(0)
+  socialLinkClicks Int              @default(0)
+  user             User             @relation(fields: [userId], references: [id])
+  events           DashboardEvent[]
+}
+
+model DashboardEvent {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String   // "visit" | "share" | "download" | "socialClick"
+  timestamp DateTime @default(now())
+  dashboard Dashboard @relation(fields: [userId], references: [userId])
+
+  @@index([userId, timestamp])
 }
 
 model Contact {
