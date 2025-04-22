@@ -241,56 +241,59 @@ const DashboardPage = () => {
                         )}
                     </select>
                 </div>
-                <div className="bg-gray-300 shadow-lg rounded-lg p-8">
-                    <h3 className="text-lg font-medium text-gray-700 mb-4">Месечна активност</h3>
-                    <Line
-                        data={lineData}
-                        options={{
-                            responsive: true,
-                            interaction: {
-                                mode: "nearest",
-                                axis: "x",
-                                intersect: false,
-                            },
-                            plugins: {
-                                legend: { position: "top" },
-                                tooltip: {
-                                    mode: "index",
+                <div className="bg-gray-300 shadow-lg rounded-lg p-4 sm:p-8">
+                    <h3 className="text-lg font-medium text-gray-700 mb-4 text-center">Месечна активност</h3>
+                    <div className="w-full overflow-x-auto">
+                        <Line
+                            data={lineData}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: {
+                                    mode: "nearest",
+                                    axis: "x",
                                     intersect: false,
-                                    callbacks: {
-                                        label: function (tooltipItem) {
-                                            const dataset = lineData.datasets[tooltipItem.datasetIndex];
-                                            const value = dataset.data[tooltipItem.dataIndex];
-                                            return `${dataset.label}: ${value}`;
+                                },
+                                plugins: {
+                                    legend: { position: "top" },
+                                    tooltip: {
+                                        mode: "index",
+                                        intersect: false,
+                                        callbacks: {
+                                            label: function (tooltipItem) {
+                                                const dataset = lineData.datasets[tooltipItem.datasetIndex];
+                                                const value = dataset.data[tooltipItem.dataIndex];
+                                                return `${dataset.label}: ${value}`;
+                                            },
                                         },
                                     },
                                 },
-                            },
-                            scales: {
-                                x: {
-                                    type: "time",
-                                    time: {
-                                        unit: "month",
-                                        tooltipFormat: "PPP",
-                                        displayFormats: {
-                                            month: "MMM yyyy",
+                                scales: {
+                                    x: {
+                                        type: "time",
+                                        time: {
+                                            unit: "month",
+                                            tooltipFormat: "PPP",
+                                            displayFormats: {
+                                                month: "MMM yyyy",
+                                            },
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: "Месец",
                                         },
                                     },
-                                    title: {
-                                        display: true,
-                                        text: "Месец",
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: "Брой събития",
+                                        },
                                     },
                                 },
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: "Брой събития",
-                                    },
-                                },
-                            },
-                        }}
-                    />
+                            }}
+                        />
+                    </div>
                 </div>
 
             </div>
