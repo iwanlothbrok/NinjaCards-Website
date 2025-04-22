@@ -27,6 +27,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             create: { userId, socialLinkClicks: 1 }, // Create with vcfDownloads initialized to 1
         });
 
+        await prisma.dashboardEvent.create({
+            data: {
+                userId, type: 'socialClick', timestamp: new Date().toLocaleString('bg-BG', { timeZone: 'Europe/Sofia' })
+            },
+        });
+
+
         return res.status(200).json({
             message: 'Social Links incremented successfully',
             dashboard,
