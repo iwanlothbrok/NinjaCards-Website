@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import cors from '@/utils/cors';
+import { getTime } from '@/utils/bgTime';
 
 const prisma = new PrismaClient();
 
@@ -40,7 +41,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         await prisma.dashboardEvent.create({
             data: {
-                userId, type: 'share', timestamp: new Date().toLocaleString('bg-BG', { timeZone: 'Europe/Sofia' })
+                userId, type: 'share',
+                timestamp: getTime(),
             },
         });
 
