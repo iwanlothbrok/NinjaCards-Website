@@ -258,6 +258,10 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
                 throw new Error('Неуспешно запазване на дизайна');
             }
 
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+
+
             const result = await response.json();
             setAlert({
                 message: 'Дизайнът беше успешно запазен!',
