@@ -11,6 +11,7 @@ import FrequentlyAskedQuestions from './askedQuestions/FAQQuestions';
 import SimpleContactForm from './components/layout/SimpleContactForm';
 import Hero from './components/layout/Hero';
 import { BASE_API_URL } from '@/utils/constants';
+import Pricing from './components/Pricings';
 
 export default function Home() {
   if (!BASE_API_URL) {
@@ -24,6 +25,7 @@ export default function Home() {
       <About />
       <ProductGallery />
       <Testimonies />
+      {/* <Pricing /> */}
       <SimpleContactForm />
 
     </main>
