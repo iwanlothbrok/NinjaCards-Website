@@ -4,8 +4,8 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
-  }
+url      = env("DATABASE_URL") 
+   }
 
 model User {
   id            String   @id @default(uuid())
@@ -57,6 +57,9 @@ model User {
   videoUrl String?  @db.LongText 
   language  String   @default("bg") 
   leads Subscribed[]  // one-to-many relation: user -> leads
+  subscriptionId   String?        @unique
+  subscription     Subscription?  @relation("UserSubscription")
+  invoices         Invoice[]
 }
 
 model Dashboard {
@@ -78,15 +81,6 @@ model DashboardEvent {
   dashboard Dashboard @relation(fields: [userId], references: [userId])
 
   @@index([userId, timestamp])
-}
-
-model Contact {
-  id       Int      @id @default(autoincrement())
-  name     String
-  email    String
-  phone    String?
-  subject  String?
-  sendedOn DateTime @default(now())
 }
 
 model Product {
@@ -140,4 +134,39 @@ model Subscribed {
 
   ipAddress   String?
   userAgent   String?
+}
+
+model Subscription {
+  id              String   @id @default(cuid())
+  subscription_id String   @unique
+  stripe_user_id  String
+  plan_id         String
+  status          String   // active | canceled | trialing
+  start_date      DateTime
+  end_date        DateTime?
+
+  userId          String   @unique
+  user            User     @relation("UserSubscription", fields: [userId], references: [id])
+}
+
+
+model Invoice {
+  id                String   @id @default(cuid())
+  stripeId          String   @unique
+  userId            String
+  amountPaid        Int
+  currency          String
+  hostedInvoiceUrl  String
+  createdAt         DateTime @default(now())
+
+  user              User     @relation(fields: [userId], references: [id])
+}
+
+model Contact {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String
+  phone    String?
+  subject  String?
+  sendedOn DateTime @default(now())
 }
