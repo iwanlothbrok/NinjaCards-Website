@@ -7,6 +7,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Head from 'next/head';
 import Script from 'next/script'; // ✅ Import `next/script`
+import ChatlingWidget from './components/ChatlingWidget';
 
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
@@ -94,6 +95,8 @@ export default function RootLayout({
             </footer>
           </div>
         </AuthProvider>
+        <ChatlingWidget />
+
       </body>
     </html>
   );
