@@ -59,19 +59,18 @@ const SimpleContactForm: React.FC = () => {
                     <div className="inline-block px-4 py-2 text-sm font-semibold text-indigo-100 rounded-full bg-[#202c47] bg-opacity-70 hover:cursor-pointer hover:bg-opacity-50">
                         Свържете се с нас
                     </div>
-                    <h1 className="text-2xl font-semibold text-white sm:text-3xl">
+                    <h1 className="text-3xl font-bold text-white sm:text-4xl">
                         Връзка с нашия екип
                     </h1>
-                    <p className="text-md text-gray-100 sm:text-lg">
-                        Имаме готовност да помогнем. Свържете се с нас за всякакви въпроси или предложения.
+                    <p className="text-lg text-gray-300 sm:text-xl">
+                        Ние сме тук, за да помогнем. Свържете се с нас за всякакви въпроси или предложения.
                     </p>
                 </div>
             </div>
 
-            <div className="w-full max-w-md bg-[#1e293b] bg-opacity-95 rounded-lg shadow-xl p-6 mt-8">
-                <h2 className="text-2xl font-semibold text-center text-orange mb-6">Изпрати запитване</h2>
+            <div className="w-full max-w-lg bg-[#121923] bg-opacity-95 rounded-lg shadow-2xl p-8 mt-10">
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
+                    <div className="mb-6">
                         <label className="block text-white font-medium mb-2" htmlFor="name">
                             Имена
                         </label>
@@ -82,11 +81,11 @@ const SimpleContactForm: React.FC = () => {
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="Вашето име"
-                            className="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full px-4 py-3 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                             required
                         />
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-6">
                         <label className="block text-white font-medium mb-2" htmlFor="email">
                             Имейл
                         </label>
@@ -97,11 +96,11 @@ const SimpleContactForm: React.FC = () => {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Вашият имейл"
-                            className="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full px-4 py-3 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                             required
                         />
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-6">
                         <label className="block text-white font-medium mb-2" htmlFor="phone">
                             Телефонен номер
                         </label>
@@ -112,11 +111,11 @@ const SimpleContactForm: React.FC = () => {
                             value={formData.phone}
                             onChange={handleChange}
                             placeholder="Вашият телефонен номер"
-                            className="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full px-4 py-3 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                             required
                         />
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-6">
                         <label className="block text-white font-medium mb-2" htmlFor="subject">
                             Запитване
                         </label>
@@ -126,14 +125,14 @@ const SimpleContactForm: React.FC = () => {
                             value={formData.subject}
                             onChange={handleChange}
                             placeholder="Вашето съобщение"
-                            className="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 h-24 resize-none"
+                            className="w-full px-4 py-3 border border-gray-700 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 h-28 resize-none"
                             required
                         />
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                         <button
                             type="submit"
-                            className="px-8 py-2 bg-orange  text-white rounded-lg shadow hover:bg-orange-600 transition-transform transform hover:scale-105"
+                            className="px-8 py-3 bg-orange text-white font-semibold rounded-lg shadow-lg hover:bg-orange-600 transition-transform transform hover:scale-105"
                         >
                             Изпрати
                         </button>
@@ -147,12 +146,13 @@ const SimpleContactForm: React.FC = () => {
                                     subject: '',
                                 })
                             }
-                            className="px-8 ml-5 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition-transform transform hover:scale-105"
+                            className="px-8 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-lg hover:bg-red-600 transition-transform transform hover:scale-105"
                         >
-                            Нулиране на формуляра                        </button>
+                            Нулиране
+                        </button>
                     </div>
-                    {error && <p className="mt-4 text-red-500 text-center">{error}</p>}
-                    {success && <p className="mt-4 text-green-500 text-center">{success}</p>}
+                    {error && <p className="mt-6 text-red-500 text-center font-medium">{error}</p>}
+                    {success && <p className="mt-6 text-green-500 text-center font-medium">{success}</p>}
                 </form>
             </div>
         </div>
