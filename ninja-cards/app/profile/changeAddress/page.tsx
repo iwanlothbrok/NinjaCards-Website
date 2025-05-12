@@ -89,8 +89,7 @@ const ChangeAddress: React.FC = () => {
             const result = await response.json().catch(() => null); // fallback if not JSON
 
             if (!response.ok) {
-                const errorMessage =
-                    result?.error || 'Неуспешно актуализиране на профила';
+                const errorMessage = result?.error || 'Неуспешно актуализиране на профила';
                 const errorDetails = result?.details;
 
                 console.error('Грешка при актуализацията:', errorMessage, errorDetails);
@@ -102,9 +101,8 @@ const ChangeAddress: React.FC = () => {
             document.documentElement.scrollTop = 0;
             document.body.scrollTop = 0;
 
-            const updatedUser = await response.json();
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(result));
+            setUser(result);
             showAlert('Адресът е успешно актуализиран', 'Успех', 'green');
         } catch (error) {
             console.error('Грешка:', error);
