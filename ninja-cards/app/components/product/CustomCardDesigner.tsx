@@ -34,6 +34,7 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
     const [courierAddress, setCourierAddress] = useState('');
     const [alert, setAlert] = useState<Alert | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [acceptTerms, setAcceptTerms] = useState(false);
 
 
     const parseBase64ToPNG = (base64String: string): Promise<HTMLImageElement> => {
@@ -218,6 +219,16 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
         const frontCanvas = frontCanvasRef.current;
         const backCanvas = backCanvasRef.current;
 
+
+        if (!acceptTerms) {
+            setAlert({
+                message: 'Моля, приемете условията и политиката за поверителност.',
+                title: 'Грешка',
+                color: 'red',
+            }); return;
+        }
+
+
         let frontDataUrl = '';
         let backDataUrl = '';
         if (frontCanvas && backCanvas) {
@@ -279,7 +290,10 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
             setLoading(false);  // Спиране на зареждането
         }
 
-        setShowModal(false); // Hide modal after submission
+
+        setTimeout(() => {
+            window.location.href = window.location.href; // Redirect to the current URL
+        }, 4000);
     };
 
     const showAlert = (message: string, title: string, color: string) => {
@@ -405,7 +419,32 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
             )}
             {showModal && (
                 <div className="modal fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+
                     <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+                        {alert && (
+                            <div
+                                className={`p-4 rounded-lg mb-6 text-white transition-transform duration-500 ease-in-out transform ${alert.color === 'green'
+                                    ? 'bg-green-600 border border-green-700 shadow-lg scale-105'
+                                    : 'bg-red-600 border border-red-700 shadow-lg scale-105'
+                                    } flex items-center space-x-4`}
+                            >
+                                <div>
+                                    {alert.color === 'green' ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414 0L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clipRule="evenodd" />
+                                        </svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-9-4a1 1 0 10-2 0v4a1 1 0 002 0V6zm0 6a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" />
+                                        </svg>
+                                    )}
+                                </div>
+                                <div>
+                                    <strong className="text-lg font-bold">{alert.title}:</strong> <span className="text-md">{alert.message}</span>
+                                </div>
+                            </div>
+                        )}
+
                         <h2 className="text-2xl font-bold mb-4 text-center text-blue-400">Изпрати Дизайн</h2>
                         <form onSubmit={handleSubmitForm} className="space-y-6">
                             <div>
@@ -475,6 +514,21 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
                                     Отказ
                                 </button>
                             </div>
+                            <div className="flex items-start gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="acceptTerms"
+                                    checked={acceptTerms}
+                                    onChange={(e) => setAcceptTerms(e.target.checked)}
+                                    className="mt-1"
+                                />
+                                <label htmlFor="acceptTerms" className="text-xs text-gray-300">
+                                    С финализирането на поръчката вие се съгласявате с нашите{" "}
+                                    <a href="/privacy/PrivacyPolic" className="text-blue-500 underline">Политика за поверителност</a> и{' '}
+                                    <a href="/privacy/TermsOfUse" className="text-blue-500 underline">Общи условия</a>.
+                                </label>
+                            </div>
+
                         </form>
                     </div>
                 </div>
