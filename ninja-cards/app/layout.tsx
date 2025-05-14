@@ -8,7 +8,8 @@ import "slick-carousel/slick/slick-theme.css";
 import Head from 'next/head';
 import Script from 'next/script'; // ✅ Import `next/script`
 import ChatlingWidget from './components/ChatlingWidget';
-
+import Link from 'next/link';
+import CookieBanner from './components/layout/CookieBanner';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -90,11 +91,26 @@ export default function RootLayout({
             <main className="flex-grow">{children}</main>
             <footer className="bg-gradient-to-t from-gray-900 via-gray-950 to-black text-center py-8">
               <p className="text-gray-200">
-                © 2024 Ninja Cards. Всички права са запазени.
+                © 2024-2025 Ninja Cards. Всички права са запазени.
               </p>
+              <div className="mt-4 space-x-4 p-3">
+                <Link href="/privacy/CookiePolicy" className="text-gray-400 hover:text-gray-200">
+                  Политика за бисквитки
+                </Link>
+
+                <Link href="/privacy/TermsOfUse" className="text-gray-400 hover:text-gray-200">
+                  Общи условия
+                </Link>
+
+                <Link href="/privacy/PrivacyPolicy" className="text-gray-400 hover:text-gray-200">
+                  Политика за поверителност
+                </Link>
+              </div>
             </footer>
+
           </div>
         </AuthProvider>
+        <CookieBanner />
         <ChatlingWidget />
 
       </body>
