@@ -23,6 +23,8 @@ const schema = yup.object().shape({
         .string()
         .oneOf([yup.ref("password"), ""], "Паролите не съвпадат")
         .required("Потвърдете паролата"),
+    acceptTerms: yup.boolean().oneOf([true], "Трябва да приемете условията и политиката за поверителност"),
+    acceptGdpr: yup.boolean().oneOf([true], "Трябва да приемете обработката на лични данни по GDPR")
 });
 
 const RegisterPage = ({ params }: { params?: { id?: string } }) => {
@@ -47,7 +49,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
                 if (data.needsSetup) {
                     setIsUpdating(true);
                 } else {
-                    router.push(`/profile/${userId}`);
+                    router.push(`/profile`);
                 }
             } catch (error) {
                 console.error("Грешка при проверка на акаунта:", error);
@@ -94,7 +96,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
     };
 
     return (
-        <section className="bg-black min-h-screen flex items-center justify-center px-6">
+        <section className="bg-black min-h-screen flex items-center justify-center px-6 pt-32">
             <div className="w-full max-w-lg bg-gray-900 p-10 rounded-xl shadow-lg border border-gray-800">
                 <a href="#" className="flex items-center mb-6 text-3xl justify-center  font-semibold text-white">
                     <Image className="w-28 h-28 filter grayscale" src="/navlogo.png" alt="лого" width={122} height={122} />
@@ -112,8 +114,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
                         <label className="block text-gray-300 mb-2">Имейл</label>
                         <input
                             type="email"
-                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange ${errors.email ? "border-red-500" : ""
-                                }`}
+                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange ${errors.email ? "border-red-500" : ""}`}
                             placeholder="example@email.com"
                             {...register("email")}
                         />
@@ -124,8 +125,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
                         <label className="block text-gray-300 mb-2">Парола</label>
                         <input
                             type="password"
-                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange ${errors.password ? "border-red-500" : ""
-                                }`}
+                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange ${errors.password ? "border-red-500" : ""}`}
                             placeholder="••••••••"
                             {...register("password")}
                         />
@@ -136,13 +136,32 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
                         <label className="block text-gray-300 mb-2">Потвърдете паролата</label>
                         <input
                             type="password"
-                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange  ${errors.confirmPassword ? "border-red-500" : ""
-                                }`}
+                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange  ${errors.confirmPassword ? "border-red-500" : ""}`}
                             placeholder="••••••••"
                             {...register("confirmPassword")}
                         />
                         {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
                     </div>
+
+                    <div className="flex items-start gap-2">
+                        <input type="checkbox" id="acceptTerms" {...register("acceptTerms")} className="mt-1" />
+                        <label htmlFor="acceptTerms" className="text-sm text-gray-300">
+                            С регистрацията си вие приемате нашите{' '}
+                            <a href="/privacy/PrivacyPolicy" className="text-blue-500 underline">Политика за поверителност</a> и{' '}
+                            <a href="/privacy/TermsOfUse" className="text-blue-500 underline">Общи условия</a>.
+                        </label>
+                    </div>
+                    {errors.acceptTerms && <p className="text-red-500 text-sm">{errors.acceptTerms.message}</p>}
+
+                    <div className="flex items-start gap-2">
+                        <input type="checkbox" id="acceptGdpr" {...register("acceptGdpr")} className="mt-1" />
+                        <label htmlFor="acceptGdpr" className="text-sm text-gray-300">
+                            Съгласен съм личните ми данни да бъдат обработвани за целите на създаване на
+                            NFC визитка съгласно Политиката за поверителност. Заявката ми се подава
+                            доброволно. (Обработката е на основание чл. 6, пар. 1, б. "а" и "б" от GDPR)
+                        </label>
+                    </div>
+                    {errors.acceptGdpr && <p className="text-red-500 text-sm">{errors.acceptGdpr.message}</p>}
 
                     <button
                         type="submit"
