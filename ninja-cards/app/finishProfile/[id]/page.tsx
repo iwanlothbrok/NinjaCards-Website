@@ -158,8 +158,9 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
                         <label htmlFor="acceptGdpr" className="text-sm text-gray-300">
                             Съгласен съм личните ми данни да бъдат обработвани за целите на създаване на
                             NFC визитка съгласно Политиката за поверителност. Заявката ми се подава
-                            доброволно. (Обработката е на основание чл. 6, пар. 1, б. "а" и "б" от GDPR)
+                            доброволно. (Обработката е на основание чл. 6, пар. 1, б. &quot;а&quot; и &quot;б&quot; от GDPR)
                         </label>
+
                     </div>
                     {errors.acceptGdpr && <p className="text-red-500 text-sm">{errors.acceptGdpr.message}</p>}
 
