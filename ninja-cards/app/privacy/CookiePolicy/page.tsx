@@ -13,7 +13,7 @@ export default function CookiePolicyPage() {
             </ul>
             <h2 className="text-xl font-semibold mt-6 mb-2">Правно основание:</h2>
             <p className="mb-4">
-                Съгласие по чл. 6, пар. 1, б. "а" GDPR чрез банер при първо посещение.
+                Съгласие по чл. 6, пар. 1, б. &quot;а&quot; GDPR чрез банер при първо посещение.
             </p>
             <h2 className="text-xl font-semibold mt-6 mb-2">Как да ги контролирате:</h2>
             <p>
