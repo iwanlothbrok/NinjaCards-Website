@@ -1,4 +1,3 @@
-// components/ChatlingWidget.tsx
 'use client';
 
 import { useEffect, useState } from "react";
@@ -9,28 +8,29 @@ export default function ChatlingWidget() {
   const chatbotId = process.env.NEXT_PUBLIC_CHATLING_BOT_ID;
 
   useEffect(() => {
+    // Hide widget if URL contains "profile-details"
+    if (typeof window !== "undefined" && window.location.href.includes("profileDetails")) {
+      setShowChatling(false);
+      return;
+    }
     const timer = setTimeout(() => {
       setShowChatling(true);
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  if (!chatbotId) return null; // guard if env is missing
+  if (!chatbotId || !showChatling) return null;
 
   return (
     <>
-      {showChatling && (
-        <>
-          <Script id="chatling-config" strategy="afterInteractive">
-            {`window.chtlConfig = { chatbotId: "${chatbotId}", color: "#FFA500" };`}
-          </Script>
-          <Script
-            src="https://chatling.ai/js/embed.js"
-            strategy="afterInteractive"
-            defer
-          />
-        </>
-      )}
+      <Script id="chatling-config" strategy="afterInteractive">
+        {`window.chtlConfig = { chatbotId: "${chatbotId}", color: "#FFA500" };`}
+      </Script>
+      <Script
+        src="https://chatling.ai/js/embed.js"
+        strategy="afterInteractive"
+        defer
+      />
       <style jsx>{`
         .fade-bounce-in {
           animation: fadeBounceIn 1.2s ease forwards;
