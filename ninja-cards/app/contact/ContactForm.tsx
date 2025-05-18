@@ -8,6 +8,7 @@ interface FormData {
     email: string;
     phone: string;
     subject: string;
+    acceptPrivacy: boolean;
 }
 
 const ContactForm: React.FC = () => {
@@ -16,16 +17,17 @@ const ContactForm: React.FC = () => {
         email: '',
         phone: '',
         subject: '',
+        acceptPrivacy: false,
     });
 
     const [error, setError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target as HTMLInputElement;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: type === 'checkbox' ? checked : value,
         }));
     };
 
@@ -33,6 +35,11 @@ const ContactForm: React.FC = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
+
+        if (!formData.acceptPrivacy) {
+            setError('Трябва да приемете политиката за поверителност.');
+            return;
+        }
 
         const response = await fetch(`${BASE_API_URL}/api/contact`, {
             method: 'POST',
@@ -49,6 +56,7 @@ const ContactForm: React.FC = () => {
                 email: '',
                 phone: '',
                 subject: '',
+                acceptPrivacy: false,
             });
         } else {
             setError('Неуспешно изпращане на съобщение. Моля, опитайте отново.');
@@ -58,10 +66,9 @@ const ContactForm: React.FC = () => {
     return (
         <div className="max-w-screen-lg mx-auto p-5">
             <div className="grid grid-cols-1 md:grid-cols-12">
+                {/* Left Section */}
                 <div className="bg-gray-800 md:col-span-4 p-10 text-white">
-                    <p className="mt-4 text-sm leading-7 font-regular uppercase">
-                        Контакт
-                    </p>
+                    <p className="mt-4 text-sm leading-7 font-regular uppercase">Контакт</p>
                     <h3 className="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight">
                         Свържете се с нас <span className="text-orange">Сега</span>
                     </h3>
@@ -69,24 +76,18 @@ const ContactForm: React.FC = () => {
                         Изпратете ни вашето съобщение и получете отговор в рамките на 24 часа.
                     </p>
 
-                    {/* Phone Section */}
                     <div className="flex items-center mt-5">
                         <FaPhone className="h-6 mr-2 text-orange" />
                         <span className="text-sm">+359 88 904 4614</span>
                     </div>
-                    {/* New Phone Number */}
                     <div className="flex items-center mt-2">
                         <FaPhone className="h-6 mr-2 text-orange" />
                         <span className="text-sm">+359 88 956 1329</span>
                     </div>
-
-                    {/* Email Section */}
                     <div className="flex items-center mt-5">
                         <FaEnvelope className="h-6 mr-2 text-orange" />
                         <span className="text-sm">ninjacardnfc@gmail.com</span>
                     </div>
-
-                    {/* 24/7 Section */}
                     <div className="flex items-center mt-5">
                         <FaClock className="h-6 mr-2 text-orange" />
                         <span className="text-sm">24/7</span>
@@ -160,15 +161,23 @@ const ContactForm: React.FC = () => {
                         </div>
                     </div>
 
+                    {/* Privacy Policy */}
+                    <div className="flex items-start mb-6 px-3 gap-2">
+                        <input
+                            type="checkbox"
+                            id="acceptPrivacy"
+                            name="acceptPrivacy"
+                            checked={formData.acceptPrivacy}
+                            onChange={handleChange}
+                            className="mt-1"
+                        />
+                        <label htmlFor="acceptPrivacy" className="text-sm text-gray-300">
+                            С попълването на формата се съгласявате личните ви данни да бъдат използвани с цел обработка на вашето запитване, съгласно нашата{' '}
+                            <a href="/privacy/PrivacyPolicy" className="text-blue-400 underline">Политика за поверителност</a>.
+                        </label>
+                    </div>
+
                     <div className="flex justify-between w-full px-3">
-                        <div className="md:flex md:items-center">
-                            <label className="block text-gray-500 font-bold">
-                                <input className="mr-2 leading-tight" type="checkbox" />
-                                <span className="text-sm">
-                                    Изпратете ми вашия бюлетин!
-                                </span>
-                            </label>
-                        </div>
                         <button
                             className="shadow bg-orange hover:bg-opacity-50 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded"
                             type="submit"
