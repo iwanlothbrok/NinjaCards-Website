@@ -56,7 +56,7 @@ const ProfileHeader: React.FC<{
                     </motion.div>
                 </div>
                 {user?.id === currentUser?.id && (
-                    <div className="absolute top-5 left-5 right-5 z-50 flex space-x-2">
+                    <div className="absolute top-5 left-5 right-5 z-40 flex space-x-2">
                         <label
                             htmlFor="cover-upload"
                             className="bg-gray-900 text-white px-4 py-2 rounded-full cursor-pointer hover:bg-gray-700 transition-all"
