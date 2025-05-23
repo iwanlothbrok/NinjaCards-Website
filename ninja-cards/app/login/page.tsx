@@ -105,9 +105,6 @@ const Login: React.FC = () => {
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </div>
                                 {errors.password && <p className="text-red-500 text-sm italic">{errors.password.message}</p>}
-                                <div className="mt-2 text-sm text-right">
-                                    <a href="/changePassword" className="text-red-600 hover:underline">Забравена парола?</a>
-                                </div>
                             </div>
                             <button
                                 type="submit"
