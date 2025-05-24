@@ -167,9 +167,9 @@ const ProfileImageUploader: React.FC = () => {
                 return;
             }
 
-            const updatedUser = await response.json();
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            setUser(updatedUser);
+            // Use the already parsed result as updatedUser
+            localStorage.setItem('user', JSON.stringify(result));
+            setUser(result);
 
             showAlert('Изображението е премахнато успешно', 'Успех', 'green');
 
