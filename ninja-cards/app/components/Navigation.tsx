@@ -136,7 +136,7 @@ const Navbar: React.FC = () => {
 
   return (
     <header
-      className={`fixed ${isOnDetailsPage && isPhone ? 'top-9' : 'top-0'}  left-0 z-40 w-full transition-all duration-500 ${isScrolled
+      className={`fixed ${isOnDetailsPage && isPhone ? 'top-16' : 'top-0'}  left-0 z-40 w-full transition-all duration-500 ${isScrolled
         ? 'bg-gradient-to-b !top-0 from-gray-900 via-gray-950 to-black shadow-md'
         : 'bg-transparent'
         }`}
