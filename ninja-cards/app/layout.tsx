@@ -10,6 +10,7 @@ import Script from 'next/script'; // ✅ Import `next/script`
 import ChatlingWidget from './components/ChatlingWidget';
 import Link from 'next/link';
 import CookieBanner from './components/layout/CookieBanner';
+import ClientLayoutWrapper from './components/layout/ClientLayoutWrapper';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -62,6 +63,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
+
   return (
     <html lang="bg">
       <Head>
@@ -111,7 +114,7 @@ export default function RootLayout({
           </div>
         </AuthProvider>
         <CookieBanner />
-        <ChatlingWidget />
+        <ClientLayoutWrapper />
 
       </body>
     </html>
