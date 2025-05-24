@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Script from "next/script";
+import { usePathname } from "next/navigation";
 
 export default function ChatlingWidget() {
   const [showChatling, setShowChatling] = useState(false);
   const chatbotId = process.env.NEXT_PUBLIC_CHATLING_BOT_ID;
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Hide widget if URL contains "profile-details"
-    if (typeof window !== "undefined" && window.location.href.includes("profileDetails")) {
+    // Hide widget if URL contains "profiledetails" (case-insensitive)
+    if (pathname && pathname.toLowerCase().includes("profileDetails")) {
       setShowChatling(false);
       return;
     }
@@ -17,7 +19,7 @@ export default function ChatlingWidget() {
       setShowChatling(true);
     }, 2000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [pathname]);
 
   if (!chatbotId || !showChatling) return null;
 
