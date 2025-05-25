@@ -17,6 +17,15 @@ const countryCodes = [
 
 ];
 
+const validateURL = (url: string) => {
+    if (!url.trim()) return true; // allow empty (optional field)
+    try {
+        const parsed = new URL(url.trim());
+        return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+    } catch {
+        return false;
+    }
+};
 
 const ImportantLinks: React.FC = () => {
 
@@ -89,7 +98,21 @@ const ImportantLinks: React.FC = () => {
             setLoading(false);
             return;
         }
-
+        for (const [key, value] of Object.entries(formData)) {
+            if (
+                [
+                    "facebook", "instagram", "linkedin", "twitter", "googleReview",
+                    "tiktok", "github", "behance", "paypal", "trustpilot",
+                    "telegram", "calendly", "discord", "tripadvisor", "youtube", "website"
+                ].includes(key)
+            ) {
+                if (typeof value === "string" && !validateURL(value)) {
+                    setAlert({ message: `Невалиден URL за поле: ${key}`, type: 'error' });
+                    setLoading(false);
+                    return;
+                }
+            }
+        }
         const formDataObj = new FormData();
         formDataObj.append('id', user.id);
 
