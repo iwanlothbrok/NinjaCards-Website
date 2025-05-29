@@ -1,24 +1,18 @@
-import React, { useCallback } from 'react';
-import { FaCamera, FaDownload, FaPhoneAlt, FaShareAlt } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaPhoneAlt, FaShareAlt, FaDownload, FaWpforms, FaRegAddressBook } from 'react-icons/fa';
 import { User } from '@/types/user';
 import { BASE_API_URL } from '@/utils/constants';
-import html2canvas from 'html2canvas';
-
+import LeadForm from '@/app/components/profileDetails/LeadForm';
 
 const buttonStyles = "flex items-center justify-center bg-white text-gray-900 px-8 py-3 rounded-full shadow-xl hover:shadow-2xl hover:bg-gray-50 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 w-full sm:w-auto";
 
 const ActionButtons2: React.FC<{ generateVCF: () => void; user: User | null }> = ({ generateVCF, user }) => {
-
-
+    const [showLeadForm, setShowLeadForm] = useState(false);
 
     if (!user) return null;
 
     const handleButtonClick = () => {
-        console.log('isDirect ' + user.isDirect);
-
-        // If isDirect is true, generate the VCF and then show the profile
         generateVCF();
-        // Showing the profile happens automatically as it's part of the UI
     };
 
     const handleContactShare = () => {
@@ -41,6 +35,11 @@ const ActionButtons2: React.FC<{ generateVCF: () => void; user: User | null }> =
         } else {
             console.log('Share API is not supported in this browser.');
         }
+    };
+
+    const closeModal = () => {
+        console.log('Closing modal');
+        setShowLeadForm(false);
     };
 
     return (
@@ -74,6 +73,24 @@ const ActionButtons2: React.FC<{ generateVCF: () => void; user: User | null }> =
                     {user.language === 'bg' ? 'Запази Контакт' : 'Save Contact'}
                 </span>
             </button>
+
+            <button
+                onClick={() => setShowLeadForm(true)}
+                className={`${buttonStyles} focus:ring-purple-600 focus:ring-opacity-50 mt-4`}
+            >
+                <FaRegAddressBook className="mr-3 text-xl text-purple-600" />
+                <span className="text-xl font-semibold">
+                    {user.language === 'bg' ? 'Остави контакт' : 'Leave Contact'}
+                </span>
+            </button>
+
+            <LeadForm
+                userId={user.id}
+                name={user.name ?? user.firstName}
+                isVisible={showLeadForm}
+                onClose={() => setShowLeadForm(false)}
+            />
+
         </>
     );
 };
