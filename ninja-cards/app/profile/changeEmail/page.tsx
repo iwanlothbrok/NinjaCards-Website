@@ -69,7 +69,6 @@ export default function ChangeEmail() {
                 body: updateData,
             });
 
-
             const result = await response.json().catch(() => null); // fallback if not JSON
 
             if (!response.ok) {
@@ -85,9 +84,8 @@ export default function ChangeEmail() {
             document.documentElement.scrollTop = 0;
             document.body.scrollTop = 0;
 
-            const updatedUser = await response.json();
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(result));
+            setUser(result);
             showAlert('Профилът е успешно актуализиран', 'Успех', 'green');
 
         } catch (error) {
