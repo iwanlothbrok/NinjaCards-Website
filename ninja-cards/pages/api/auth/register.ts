@@ -1,5 +1,7 @@
+import { generateQRCode } from '@/lib/generateQRCode';
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcryptjs';
+import { readFileSync } from 'fs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import QRCode from 'qrcode';
 
@@ -44,6 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
 
             const qrCodeUrl = `https://www.ninjacardsnfc.com/profileDetails/${user.id}`;
+            const qrPath = await generateQRCode(qrCodeUrl, name, user.id);
 
             // Generate the QR code from the URL
             const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
@@ -54,7 +57,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 data: { qrCode: qrCodeImage },
             });
 
-            res.status(201).json(updatedUser);
+            const qrImageBase64 = readFileSync(qrPath).toString('base64');
+            const qrImageDataUrl = `data:image/png;base64,${qrImageBase64}`;
+
+            res.status(201).json({
+                user,
+                qrImage: qrImageDataUrl, // 👈 изпращаме го към фронта
+            });
         } else {
             console.log('Unsupported method:', req.method);
             res.status(405).json({ error: 'Method not allowed' });
