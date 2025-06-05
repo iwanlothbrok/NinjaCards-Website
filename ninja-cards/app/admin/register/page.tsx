@@ -51,6 +51,14 @@ const Register: React.FC = () => {
     }
   };
 
+  // Автоматично сваляне на QR кода като PNG
+  const downloadQRCode = (dataUrl: string, fileName: string) => {
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = fileName;
+    link.click();
+  };
+
   // ✅ Handle Registration
   const onSubmit = async (data: any) => {
     try {
@@ -73,8 +81,12 @@ const Register: React.FC = () => {
         showAlert("Успешна регистрация!", "Успех", "green");
       }, SUCCESS_DELAY);
 
-      const { token, user } = await res.json();
+      const { token, user, qrImage } = await res.json();
+      downloadQRCode(qrImage, `${user.name}-qrcode.png`);
+
       login(token, user);
+
+
       router.push("/login");
     } else {
       showAlert("Неуспешна регистрация", "Грешка", "red");
