@@ -8,8 +8,11 @@ export default function CookieBanner() {
         <CookieConsent
             location="bottom"
             buttonText="Разбрах"
+            declineButtonText="Отказ"
+            enableDeclineButton
             style={{ background: "#2B373B" }}
             buttonStyle={{ color: "#fff", background: "#ff8000", borderRadius: "4px", padding: "8px 16px" }}
+            declineButtonStyle={{ color: "#fff", background: "#888", borderRadius: "4px", padding: "8px 16px", marginLeft: "8px" }}
             expires={150}
         >
             Ние използваме бисквитки за да подобрим вашето преживяване.{" "}
