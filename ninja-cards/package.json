@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "18.x"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "next dev",
@@ -60,6 +60,7 @@
     "next-auth": "^4.24.7",
     "next-cloudinary": "^6.16.0",
     "next-i18next": "^15.4.2",
+    "next-intl": "^4.3.4",
     "next-seo": "^6.6.0",
     "passbook": "^2.3.0",
     "passkit-generator": "^3.3.1",
