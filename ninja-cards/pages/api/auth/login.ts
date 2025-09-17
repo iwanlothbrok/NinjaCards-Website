@@ -9,8 +9,8 @@ import cors from '@/utils/cors';
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const corsHandled = cors(req, res);
-    if (corsHandled) return;
+    // Handle CORS (preflight may end here).
+    if (cors(req, res)) return;
 
     try {
         if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -23,21 +23,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const isPasswordValid = await compare(password, user.password);
         if (!isPasswordValid) return res.status(401).json({ error: 'Invalid email or password' });
 
-        if (!process.env.NEXTAUTH_SECRET) return res.status(500).json({ error: 'Internal server error: Missing secret' });
+        if (!process.env.NEXTAUTH_SECRET)
+            return res.status(500).json({ error: 'Internal server error: Missing secret' });
 
-        // 12h access token
-        const token = sign({ id: user.id, email: user.email }, process.env.NEXTAUTH_SECRET, { expiresIn: '12h' });
+        const token = sign({ id: user.id, email: user.email }, process.env.NEXTAUTH_SECRET, {
+            expiresIn: '12h',
+        });
 
-        // Cookie mirrors JWT lifetime. Match attributes when clearing.
+        // Cross-site request => require SameSite=None; Secure for the cookie to be accepted.
+        // Note: This will still be blocked if the browser disables third-party cookies entirely.
         const cookie = serialize('token', token, {
-            httpOnly: true, // why: reduce XSS risk
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            httpOnly: true, // why: mitigate XSS exfiltration
+            secure: true, // must be true with SameSite=None
+            sameSite: 'none',
             path: '/',
-            maxAge: 60 * 60 * 12, // 12h
+            maxAge: 60 * 60 * 12,
+            // Do NOT set `domain` here; it must default to the API host (vercel.app).
+            // Setting a mismatched domain would break the cookie.
         });
 
         res.setHeader('Set-Cookie', cookie);
+
         return res.status(200).json({ token, user });
     } catch (error) {
         console.error('Internal server error:', error);

@@ -1,32 +1,48 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-const allowedOrigins = [
+const allowedOrigins: Array<string | RegExp> = [
     'https://www.ninjacardsnfc.com',
-    'https://www.ninjacardsnfc.com/en',
-    'https://www.ninjacardsnfc.com/bg'
+    // Helpful in dev:
+    /^https?:\/\/localhost:\d+$/,
 ];
 
-export default function cors(req: NextApiRequest, res: NextApiResponse) {
-    const origin = req.headers.origin;
+function isAllowed(origin: string | undefined): origin is string {
+    if (!origin) return false;
+    return allowedOrigins.some((o) => (o instanceof RegExp ? o.test(origin) : o === origin));
+}
 
-    if (!origin) {
-        return;
-    }
+export default function cors(req: NextApiRequest, res: NextApiResponse): boolean {
+    const origin = req.headers.origin as string | undefined;
 
-    // Check if the origin is allowed
-    if (allowedOrigins.includes(origin)) {
+    if (origin && isAllowed(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
-    } else {
-        res.setHeader('Access-Control-Allow-Origin', 'https://www.ninjacardsnfc.com'); // Default origin
+        res.setHeader('Access-Control-Allow-Credentials', 'true'); // why: required for cookies w/ credentials
     }
 
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    // Reflect requested headers if present; otherwise use a safe default.
+    const reqHeaders =
+        (req.headers['access-control-request-headers'] as string | undefined) ||
+        'Content-Type, Authorization';
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', reqHeaders);
+    res.setHeader('Access-Control-Max-Age', '86400'); // cache preflight
+
+    // Ensure proxies/CDNs don’t cache one origin for all.
+    const varyValues = ['Origin', 'Access-Control-Request-Method', 'Access-Control-Request-Headers'];
+    const existingVary = (res.getHeader('Vary') as string | string[] | undefined) || '';
+    const varySet = new Set(
+        (Array.isArray(existingVary) ? existingVary.join(',') : existingVary)
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean),
+    );
+    varyValues.forEach((v) => varySet.add(v));
+    res.setHeader('Vary', Array.from(varySet).join(', '));
 
     if (req.method === 'OPTIONS') {
-        res.status(200).end();
+        res.status(204).end();
         return true;
     }
-
     return false;
 }

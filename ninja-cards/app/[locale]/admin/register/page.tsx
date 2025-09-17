@@ -62,6 +62,8 @@ const Register: React.FC = () => {
   // ✅ Handle Registration
   const onSubmit = async (data: any) => {
     try {
+      console.log('base api url: ', BASE_API_URL);
+
       const res = await fetch(`${BASE_API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
