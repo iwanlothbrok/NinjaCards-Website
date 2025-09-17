@@ -1,7 +1,10 @@
-// lib/cors.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const allowedOrigins = ['https://www.ninjacardsnfc.com']; // Add all allowed origins here
+const allowedOrigins = [
+    'https://www.ninjacardsnfc.com',
+    'https://www.ninjacardsnfc.com/en',
+    'https://www.ninjacardsnfc.com/bg'
+];
 
 export default function cors(req: NextApiRequest, res: NextApiResponse) {
     const origin = req.headers.origin;
@@ -11,7 +14,7 @@ export default function cors(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Check if the origin is allowed
-    if (allowedOrigins.includes(origin!)) {
+    if (allowedOrigins.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     } else {
         res.setHeader('Access-Control-Allow-Origin', 'https://www.ninjacardsnfc.com'); // Default origin
@@ -21,10 +24,9 @@ export default function cors(req: NextApiRequest, res: NextApiResponse) {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     if (req.method === 'OPTIONS') {
-        // End preflight requests
         res.status(200).end();
-        return true; // Early exit
+        return true;
     }
 
-    return false; // Continue with API logic
+    return false;
 }
