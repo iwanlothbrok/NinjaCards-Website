@@ -33,9 +33,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Cross-site request => require SameSite=None; Secure for the cookie to be accepted.
         // Note: This will still be blocked if the browser disables third-party cookies entirely.
         const cookie = serialize('token', token, {
-            httpOnly: true, // why: mitigate XSS exfiltration
-            secure: true, // must be true with SameSite=None
-            sameSite: 'none',
+            httpOnly: true, // why: reduce XSS risk
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
             path: '/',
             maxAge: 60 * 60 * 12,
             // Do NOT set `domain` here; it must default to the API host (vercel.app).
