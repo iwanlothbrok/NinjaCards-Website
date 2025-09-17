@@ -1,0 +1,1056 @@
+{
+  "LoginPage": {
+    "login": {
+      "title": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "logoAlt": "Ninja Cards logo"
+    },
+    "placeholders": {
+      "email": "Enter email",
+      "password": "Enter password"
+    },
+    "alerts": {
+      "successTitle": "Success",
+      "successMessage": "Login successful",
+      "errorTitle": "Error",
+      "errorMessage": "Login failed"
+    },
+    "errors": {
+      "emailInvalid": "Invalid email format",
+      "emailRequired": "Email is required",
+      "passwordMin": "Password must be at least 6 characters",
+      "passwordRequired": "Password is required"
+    },
+    "a11y": {
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    }
+  },
+  "HeroPage": {
+    "hero": {
+      "titlePrefix": "PREMIUM",
+      "titleHighlight": "SMART BUSINESS CARD",
+      "subtitlePrefix": "The most powerful tool for making connections.",
+      "subtitleHighlight": "Grow your business",
+      "subtitleSuffix": " with our NFC products.",
+      "buyNow": "ORDER NOW",
+      "learnMore": "LEARN MORE"
+    }
+  },
+  "AboutPage": {
+    "header": {
+      "badge": "Profile",
+      "title": "Unlock the power of NFC technology",
+      "subtitle": "Step into the next generation of business cards. Our NFC solutions make sharing contact details easy and impressive."
+    },
+    "section": {
+      "titlePrefix": "Your personalized profile in",
+      "titleHighlight": "NinjaCard",
+      "p1": "Get a unique smart business card with a fully custom design that contains everything you and your future clients need. Your profile will always be up to date and easily accessible, giving clients instant access to key information and contacts.",
+      "p2Prefix": "With",
+      "p2Suffix": "you can easily share all your contact details, links to social media, websites, and much more! Stay connected in the modern digital world."
+    },
+    "features": {
+      "instantShare": "Instant sharing",
+      "customDesign": "Custom design",
+      "durability": "Durability and longevity",
+      "contactless": "Contactless use",
+      "sixtyLinks": "60 links in one place",
+      "allInOne": "Everything in one place"
+    },
+    "cta": {
+      "getCard": "GET YOUR CARD"
+    },
+    "alt": {
+      "profileScreenshot": "Profile details screenshot"
+    }
+  },
+  "ProductsPage": {
+    "header": {
+      "badge": "Products",
+      "title": "Discover our range of NFC products",
+      "subtitle": "We offer a variety of NFC solutions tailored to your specific needs. Browse our collection and find the perfect fit for your business."
+    },
+    "cta": {
+      "learnMore": "LEARN MORE"
+    },
+    "sr": {
+      "view": "VIEW {name}"
+    },
+    "items": {
+      "cards": {
+        "name": "Smart Business Cards",
+        "description": "Personalized NFC business cards for modern contact sharing."
+      },
+      "googleReviews": {
+        "name": "Reviews",
+        "description": "An easy way to collect Google, Tripadvisor and other reviews."
+      },
+      "stickers": {
+        "name": "Stickers",
+        "description": "An easy way to collect Google reviews."
+      }
+    }
+  },
+  "ShowcasePage": {
+    "header": {
+      "badge": "Clients",
+      "title": "Voices of our clients",
+      "subtitle": "Hear what our satisfied customers are saying about our products and services."
+    },
+    "alt": {
+      "showcase": "Showcase of Ninja Cards"
+    }
+  },
+  "ContactPage": {
+    "header": {
+      "badge": "Contact us",
+      "title": "Get in touch with our team",
+      "subtitle": "We’re here to help. Reach out with any questions or suggestions."
+    },
+    "form": {
+      "nameLabel": "Full name",
+      "namePlaceholder": "Your name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Your email",
+      "phoneLabel": "Phone number",
+      "phonePlaceholder": "Your phone number",
+      "subjectLabel": "Message",
+      "subjectPlaceholder": "Your message",
+      "submit": "Send",
+      "reset": "Reset"
+    },
+    "privacy": {
+      "textPrefix": "By submitting this form you agree that your personal data will be used to process your inquiry, in accordance with our",
+      "policy": "Privacy Policy",
+      "textSuffix": "."
+    },
+    "alerts": {
+      "privacyRequired": "You must accept the privacy policy.",
+      "success": "Your message has been sent successfully!",
+      "error": "We couldn’t send your message. Please try again."
+    }
+  },
+  "Navbar": {
+    "logoAlt": "logo",
+    "aria": {
+      "header": "Primary navigation",
+      "toggleMenu": "Toggle menu",
+      "closeMenu": "Close menu",
+      "mainNav": "Main menu"
+    },
+    "menu": {
+      "home": "Home",
+      "products": "Products",
+      "cards": "Cards",
+      "reviews": "Reviews",
+      "all": "All",
+      "features": "Features",
+      "faq": "FAQ",
+      "contact": "Contact",
+      "profile": "Profile",
+      "analysis": "Analysis",
+      "logout": "Log out",
+      "login": "Log in"
+    },
+    "alt": {
+      "userAvatar": "User avatar"
+    }
+  },
+  "AllProductsPage": {
+    "header": {
+      "pageInformation": "All Products",
+      "textOne": "NFC Business Cards",
+      "textTwo": "Google Reviews",
+      "textThree": "TripAdvisor Reviews"
+    },
+    "states": {
+      "loadingAlt": "Loading...",
+      "fetchError": "No such products have been added!",
+      "noProductsOfType": "There are no products of this type."
+    }
+  },
+  "ProductList": {
+    "aria": {
+      "grid": "Product list"
+    }
+  },
+  "ProductItem": {
+    "currency": "BGN",
+    "cta": {
+      "learnMore": "Learn more"
+    },
+    "alt": {
+      "productImage": "Image of {name}"
+    }
+  },
+  "NfcCardsPage": {
+    "header": {
+      "pageInformation": "Smart Cards",
+      "textOne": "NFC Business Cards",
+      "textTwo": "Custom design",
+      "textThree": "Business contacts"
+    },
+    "states": {
+      "loadingAlt": "Loading...",
+      "fetchError": "No such products have been added!",
+      "noProductsOfType": "There are no products of this type."
+    }
+  },
+  "Features": {
+    "header": {
+      "pageInformation": "Features",
+      "textOne": "Sharing",
+      "textTwo": "Connecting",
+      "textThree": "Success"
+    },
+    "features": {
+      "header1": "NFC & QR Code",
+      "mainHeader1": "Sharing Contacts",
+      "description1": "With NinjaCard's NFC digital business card, sharing your contacts is seamless. Just tap your NinjaCard NFC card to another NFC-enabled device, and your digital profile will be shared instantly.",
+      "buttonText1": "Sample Profile",
+      "header2": "Lead Generation",
+      "mainHeader2": "Capture New Contacts",
+      "description2": "Each NinjaCard NFC digital business card has a powerful tool for generating new contacts via the 'Swap Contacts' button. This feature allows you to easily capture new contacts, making it the perfect tool for expanding your network.",
+      "buttonText2": "",
+      "header3": "Easy Updates",
+      "mainHeader3": "Update Your Information in Real Time",
+      "description3": "With NinjaCard, you can update your contact information at any time, ensuring that your network always has the most up-to-date information. Just tap your phone to share the updated profile instantly.",
+      "buttonText3": "Update Now",
+      "header4": "QR Code",
+      "mainHeader4": "Save and Share QR",
+      "description4": "The Ninja card offers the ability to download a QR code for your smart business card, allowing easy sharing and accessibility of your information. This feature streamlines the process of clients and users accessing your information and provides a seamless user experience.",
+      "buttonText4": "See Here",
+      "header5": "Business Card Colors",
+      "mainHeader5": "Personalize Your Profile",
+      "description5": "Your smart business card profile offers customization options that allow you to change colors. This flexibility ensures that your business card reflects your brand identity and stands out from the rest. With Ninja Cards, you can create a unique and professional profile for your business card.",
+      "buttonText5": "",
+      "header6": "Statistics",
+      "mainHeader6": "Profile Analytics",
+      "description6": "Track the performance of your NinjaCard in real time! Get detailed statistics on profile visits, contact downloads, and client engagement.\nSee how many people have viewed your profile, downloaded your contacts, or clicked on your social media links. With NinjaCard's analytics, you're always informed and can improve the effectiveness of your digital business card.",
+      "buttonText6": ""
+    }
+  },
+  "FAQ": {
+    "categories": [
+      {
+        "category": "General Information",
+        "items": [
+          {
+            "question": "What is an NFC Card?",
+            "answer": "An NFC (Near Field Communication) card is a smart card that interacts with NFC-enabled devices, such as smartphones. Simply tap your Ninja NFC card to a phone to instantly share your contact details, social profiles or other digital content."
+          },
+          {
+            "question": "How do I use my Ninja NFC Card?",
+            "answer": "Tap your Ninja NFC card to any NFC-enabled device and your personalized profile or info will be shared instantly. No app installation required!"
+          }
+        ]
+      },
+      {
+        "category": "Customization",
+        "items": [
+          {
+            "question": "Can I customize my Ninja NFC Card?",
+            "answer": "Absolutely. Choose from a variety of designs or upload your own so your card matches your brand and style."
+          },
+          {
+            "question": "How do I update the information on my Ninja NFC Card?",
+            "answer": "Use our online portal: log in, make your changes and your card will reflect them immediately."
+          }
+        ]
+      },
+      {
+        "category": "Security",
+        "items": [
+          {
+            "question": "Are my data safe with Ninja NFC cards?",
+            "answer": "Yes. The card itself stores no personal data; it only triggers a redirect to a secure URL where your information is hosted."
+          }
+        ]
+      },
+      {
+        "category": "Compatibility",
+        "items": [
+          {
+            "question": "Do Ninja NFC cards work on all phones?",
+            "answer": "They work with most modern smartphones supporting NFC, including iPhone (7 and newer) and most Android devices."
+          }
+        ]
+      },
+      {
+        "category": "Ninja Cards NFC Products",
+        "items": [
+          {
+            "question": "What are the benefits of smart business cards?",
+            "answer": "Efficient networking, eco-friendly reusability, and full customization to your brand."
+          },
+          {
+            "question": "How do I get started with Ninja Cards products?",
+            "answer": "Program smart cards via our platform. NFC stickers can be applied to surfaces and lead to any action/link you configure."
+          }
+        ]
+      },
+      {
+        "category": "Google Reviews Integration",
+        "items": [
+          {
+            "question": "How does the Google Reviews integration work?",
+            "answer": "With a tap, customers are sent directly to your Google review page, making it quick and frictionless to leave feedback."
+          }
+        ]
+      },
+      {
+        "category": "NFC Stickers",
+        "items": [
+          {
+            "question": "How can I use NFC stickers in my business?",
+            "answer": "Place them on products, storefronts, POS terminals or marketing materials for instant access to your site, menu, contacts, etc."
+          },
+          {
+            "question": "What functions can I customize on the NFC stickers?",
+            "answer": "Configure them to open specific pages, show contact cards or deep-link to review pages (e.g., Google)."
+          }
+        ]
+      },
+      {
+        "category": "Customization Options",
+        "items": [
+          {
+            "question": "What customization options do you offer?",
+            "answer": "Design, materials and functionality — tailored to your needs and visual identity."
+          },
+          {
+            "question": "Can I place a bulk order?",
+            "answer": "Yes, we support corporate/bulk orders for teams and events."
+          }
+        ]
+      },
+      {
+        "category": "Security Features",
+        "items": [
+          {
+            "question": "How secure are Ninja Cards products?",
+            "answer": "We follow strong security practices and don’t store sensitive data on the card itself."
+          },
+          {
+            "question": "Can an NFC card be compromised?",
+            "answer": "Since the card holds no personal data and only triggers a secure URL, risk is minimized."
+          }
+        ]
+      },
+      {
+        "category": "Tracking & Analytics",
+        "items": [
+          {
+            "question": "Can I track interactions with my NFC products?",
+            "answer": "Yes, our analytics show profile views, contact downloads, clicks and more."
+          },
+          {
+            "question": "How does the data tracking work?",
+            "answer": "Through the analytics portal you’ll see usage frequency and key performance metrics."
+          }
+        ]
+      },
+      {
+        "category": "International Use",
+        "items": [
+          {
+            "question": "Do Ninja Cards NFC products work worldwide?",
+            "answer": "Yes, NFC standards are global, so products work internationally."
+          },
+          {
+            "question": "Are there country-specific limitations?",
+            "answer": "No specific geographic restrictions as long as the device supports NFC."
+          }
+        ]
+      },
+      {
+        "category": "Durability",
+        "items": [
+          {
+            "question": "How durable are the smart business cards?",
+            "answer": "They’re designed to be sturdy and wear-resistant for long-term use."
+          },
+          {
+            "question": "Can I wash the NFC stickers?",
+            "answer": "Yes, they’re water-resistant and withstand contact with water without losing functionality."
+          }
+        ]
+      }
+    ]
+  },
+  "FAQPage": {
+    "header": {
+      "pageInformation": "Got a Question",
+      "textOne": "Cards",
+      "textTwo": "Reviews",
+      "textThree": "Design"
+    },
+    "intro": "Got questions? We’ve got answers. Browse our frequently asked questions below or use the search bar to find what you’re looking for.",
+    "search": {
+      "placeholder": "Search for an answer...",
+      "ariaLabel": "FAQ search input"
+    },
+    "modal": {
+      "label": "Video modal",
+      "close": "Close video"
+    },
+    "videos": [
+      {
+        "imagePath": "/features/first-steps.png",
+        "headerText": "What to do when you receive your Ninja Card?",
+        "paragraphText": "See the first steps to activate and get the most out of your Ninja Card smart business card.",
+        "url": "https://www.youtube.com/embed/KIJho0mfSIU?si=vgPWvP4JVdnAnVqm"
+      },
+      {
+        "imagePath": "/features/02.png",
+        "headerText": "Ninja Cards – How to use our NFC smart business cards",
+        "paragraphText": "Here’s a short video showing how to use our smart business cards.",
+        "url": "https://www.youtube.com/embed/vlpRHfQ-W3E?si=MRGOS-OEeyrw4Ox9"
+      }
+    ]
+  },
+  "FAQVideos": {
+    "cta": "Watch Video",
+    "alt": "Ninja Cards video"
+  },
+  "Contact": {
+    "pageInformation": "Contact",
+    "textOne": "Feedback",
+    "textTwo": "24/7 Support",
+    "textThree": "Questions",
+    "left": {
+      "sectionTitle": "Contact",
+      "header": "Get in Touch <span class='text-orange'>Now</span>",
+      "description": "Send us your message and receive a reply within 24 hours.",
+      "phone1": "+359 88 904 4614",
+      "phone2": "+359 88 956 1329",
+      "email": "ninjacardnfc@gmail.com",
+      "workingHours": "24/7"
+    },
+    "form": {
+      "labels": {
+        "name": "Name",
+        "phone": "Phone Number",
+        "email": "Email Address",
+        "subject": "Your Message",
+        "privacy": "By submitting the form, you agree that your personal data will be used for processing your request, according to our <a href='/privacy/PrivacyPolicy' class='text-blue-400 underline'>Privacy Policy</a>."
+      },
+      "submit": "Send Message",
+      "errors": {
+        "privacyRequired": "You must accept the privacy policy.",
+        "sendFailed": "Message sending failed. Please try again."
+      },
+      "success": "Your message has been sent successfully!"
+    }
+  },
+  "Footer": {
+    "rights": "All rights reserved."
+  },
+  "ProfileTabs": {
+    "title": "Profile Management",
+    "tabs": {
+      "changePassword": "Change Password",
+      "changeEmail": "Change Email",
+      "changeAddress": "Change Address",
+      "changeImage": "Change Profile Picture",
+      "info": "Personal Information",
+      "links": "Important Links",
+      "preview": "Profile Preview",
+      "businessCard": "Business Card",
+      "qr": "Your QR Code",
+      "features": "Features",
+      "analyse": "Analysis",
+      "video": "Video Clip",
+      "language": "Language of the Card",
+      "help": "Help & Instructions",
+      "clients": "Potential Clients"
+    },
+    "needId": "Profile ID required"
+  },
+  "ChangeAddress": {
+    "title": "Change Address",
+    "labels": {
+      "street1": "Street 1",
+      "street2": "Street 2",
+      "zipCode": "ZIP Code",
+      "city": "City",
+      "state": "State/Region",
+      "country": "Country"
+    },
+    "placeholders": {
+      "street1": "Enter street 1",
+      "street2": "Enter street 2",
+      "zipCode": "Enter ZIP code",
+      "city": "Enter city",
+      "state": "Enter state/region",
+      "country": "Enter country"
+    },
+    "buttons": {
+      "back": "Back",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "alerts": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "notAuthenticated": "User is not authenticated",
+      "updateSuccess": "Address updated successfully",
+      "updateFailed": "Failed to update profile"
+    },
+    "a11y": {
+      "loading": "Loading…"
+    }
+  },
+  "ChangeEmail": {
+    "title": "Change Email",
+    "labels": {
+      "email": "New email",
+      "workEmail": "New work email (optional)"
+    },
+    "placeholders": {
+      "email": "Enter your new email",
+      "workEmail": "Enter your new work email"
+    },
+    "buttons": {
+      "back": "Back",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "alerts": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "notAuthenticated": "User is not authenticated",
+      "updateSuccess": "Profile updated successfully",
+      "updateFailed": "Failed to update profile",
+      "noChanges": "You need to enter new values"
+    },
+    "errors": {
+      "emailInvalid": "Invalid email format",
+      "emailRequired": "Email is required"
+    },
+    "a11y": {
+      "loading": "Loading…"
+    }
+  },
+  "ChangePassword": {
+    "title": "Change Password",
+    "labels": {
+      "password": "Enter new password",
+      "confirmPassword": "Confirm password"
+    },
+    "placeholders": {
+      "password": "Enter your new password",
+      "confirmPassword": "Confirm your new password"
+    },
+    "buttons": {
+      "back": "Back",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "alerts": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "notAuthenticated": "User is not authenticated",
+      "updateSuccess": "Profile updated successfully",
+      "updateFailed": "Failed to update profile"
+    },
+    "errors": {
+      "required": "Password is required",
+      "confirmRequired": "Password confirmation is required",
+      "min": "Password must be at least 8 characters",
+      "upper": "Password must contain at least one uppercase letter",
+      "lower": "Password must contain at least one lowercase letter",
+      "digit": "Password must contain at least one digit",
+      "special": "Password must contain at least one special character",
+      "match": "Passwords must match"
+    },
+    "a11y": {
+      "loading": "Loading…"
+    }
+  },
+  "ChangeImage": {
+    "title": "Change Profile Picture",
+    "labels": {
+      "photo": "Profile photo"
+    },
+    "buttons": {
+      "back": "Back",
+      "save": "Save",
+      "saving": "Saving...",
+      "remove": "Remove photo"
+    },
+    "alerts": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "notAuthenticated": "User is not authenticated.",
+      "selectAndCrop": "Please select and crop an image before uploading.",
+      "uploadSuccess": "Image uploaded successfully.",
+      "uploadFailed": "Failed to upload image.",
+      "removedSuccess": "Image removed successfully.",
+      "updateFailed": "Failed to update profile.",
+      "unexpected": "An unexpected error occurred. Please try again."
+    },
+    "errors": {
+      "fileTooLarge": "Image exceeds the {size} limit."
+    },
+    "hints": {
+      "maxSize": "Maximum file size: {size}."
+    },
+    "preview": {
+      "title": "Cropped image preview",
+      "alt": "Crop preview"
+    },
+    "a11y": {
+      "currentAvatar": "Current avatar of {name}",
+      "user": "user",
+      "fileInput": "Upload a new profile photo",
+      "cropPreview": "Image to crop"
+    }
+  },
+  "ProfileInformation": {
+    "title": "Update Information",
+    "loading": "Loading...",
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "name": "Card Name *",
+      "company": "Company",
+      "position": "Position",
+      "phone1": "Phone 1",
+      "phone2": "Phone 2",
+      "bio": "Biography"
+    },
+    "placeholders": {
+      "firstName": "Enter first name",
+      "lastName": "Enter last name",
+      "name": "Enter card name",
+      "company": "Enter company",
+      "position": "Enter position",
+      "phone1": "Enter phone 1",
+      "phone2": "Enter phone 2",
+      "bio": "Tell us more about yourself"
+    },
+    "buttons": {
+      "back": "Back",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "alerts": {
+      "unauthenticated": "User is not authenticated",
+      "warning": "Warning",
+      "errorUpdate": "Failed to update profile information",
+      "successUpdate": "Profile updated successfully",
+      "error": "Error",
+      "success": "Success"
+    }
+  },
+  "ImportantLinks": {
+    "title": "Manage Important Links",
+    "buttons": {
+      "back": "Back",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "alerts": {
+      "unauthenticated": "User is not authenticated",
+      "invalidUrl": "Invalid URL for field:",
+      "errorUpdate": "Failed to update profile links",
+      "successUpdate": "Links updated successfully",
+      "errorDeletePdf": "Failed to delete PDF file",
+      "successDeletePdf": "PDF file deleted successfully",
+      "unknownError": "An unexpected error occurred. Please try again."
+    }
+  },
+  "ProfileQR": {
+    "noQr": "No QR code available.",
+    "heading": "📌 Profile QR Code",
+    "alt": {
+      "profileImage": "{{name}}'s profile image",
+      "qr": "QR code"
+    },
+    "actions": {
+      "download": "Download QR code",
+      "share": "Share QR code",
+      "back": "Back"
+    },
+    "share": {
+      "title": "QR Code",
+      "text": "Scan this QR code to get {{name}}'s information.",
+      "unsupported": "Your device does not support file sharing via this feature."
+    }
+  },
+  "CardSettings": {
+    "heading": "Card Settings",
+    "options": {
+      "directDownload": "Direct contact download",
+      "directOn": "Contacts will be downloaded automatically, then your profile will be displayed.",
+      "directOff": "Your profile will be displayed, and contacts can be downloaded manually."
+    },
+    "info": {
+      "title": "What will happen:",
+      "direct": {
+        "1": "Your contacts will be downloaded automatically upon scanning.",
+        "2": "After download, your profile will appear on the screen.",
+        "3": "This setting is suitable for quick contact sharing."
+      },
+      "indirect": {
+        "1": "Your profile will be displayed when scanned.",
+        "2": "Contacts can be downloaded manually from the profile.",
+        "3": "Suitable for more interactive situations."
+      }
+    },
+    "errors": {
+      "loadUser": "Failed to load user data.",
+      "noUser": "Failed: User not found.",
+      "updateFail": "Failed to update profile."
+    },
+    "messages": {
+      "updated": "Setting updated successfully."
+    },
+    "alert": {
+      "errorTitle": "Error"
+    },
+    "keywords": {
+      "success": "success"
+    },
+    "loading": {
+      "alt": "Loading...",
+      "text": "Updating setting..."
+    },
+    "actions": {
+      "back": "Back"
+    }
+  },
+  "VideoUpload": {
+    "title": "Upload Video",
+    "alerts": {
+      "uploadSuccess": "Video uploaded successfully!",
+      "uploadFail": "Failed to save video.",
+      "uploadError": "Video upload failed.",
+      "removeSuccess": "Video removed successfully!",
+      "removeFail": "Failed to remove video.",
+      "unexpected": "An unexpected error occurred."
+    },
+    "buttons": {
+      "upload": "Upload Video",
+      "uploading": "Uploading...",
+      "remove": "Remove Video",
+      "removing": "Removing...",
+      "back": "Back"
+    },
+    "uploadedVideo": "Uploaded video:",
+    "noSupport": "Your browser does not support video."
+  },
+  "LanguageSwitcher": {
+    "title": "Choose a language for your card",
+    "bulgarian": "Bulgarian",
+    "english": "English",
+    "buttons": {
+      "back": "Back"
+    },
+    "loading": "Loading...",
+    "alerts": {
+      "errorTitle": "Error"
+    },
+    "errors": {
+      "fetchFail": "Failed to load user data.",
+      "updateFail": "Failed to update language."
+    }
+  },
+  "Help": {
+    "title": "Help & Instructions",
+    "video": {
+      "header": "How to set up your Ninja Card and activate all features?",
+      "paragraph": "A short video that shows how to easily enter your information and use all the features of the smart business card."
+    },
+    "documents": {
+      "title": "Downloadable Documents"
+    },
+    "docs": {
+      "profileFunctions": "Learn more about profile features (PDF)"
+    },
+    "buttons": {
+      "download": "Download",
+      "back": "Back"
+    }
+  },
+  "video": {
+    "header": "How to set up your Ninja Card and activate all features?",
+    "paragraph": "A short video that shows how to easily enter your information and use all the features of the smart business card.",
+    "cta": "Watch video"
+  },
+  "leads": {
+    "title": "Your Leads",
+    "downloadCsv": "Download as CSV",
+    "loading": "Loading...",
+    "empty": "No leads found.",
+    "fields": {
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "message": "Message"
+    },
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "loadMore": "Load more",
+    "allLoaded": "All leads have been loaded.",
+    "success": {
+      "delete": "Deleted successfully ✅"
+    },
+    "errors": {
+      "load": "Error loading leads",
+      "generic": "Failed to load data.",
+      "delete": "Error deleting lead",
+      "deleteFail": "Lead deletion failed."
+    }
+  },
+  "dashboard": {
+    "title": "Profile Analytics",
+    "loading": "Loading...",
+    "overview": "Overall Data Overview",
+    "breakdown": "Statistics Breakdown",
+    "filter": "Filter by month:",
+    "allMonths": "All months",
+    "monthlyActivity": "Monthly Activity",
+    "overall": "Total count",
+    "metrics": {
+      "profileVisits": "Profile visits",
+      "vcfDownloads": "Business card downloads",
+      "profileShares": "Profile shares",
+      "socialLinkClicks": "Social link clicks"
+    },
+    "errors": {
+      "load": "Error loading data"
+    }
+  },
+  "profileHeader": {
+    "changeCover": "Change cover",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "cropModal": {
+    "title": "Crop your cover image",
+    "zoomOut": "Zoom Out",
+    "zoomIn": "Zoom In",
+    "reset": "Reset",
+    "cancel": "Cancel",
+    "crop": "Crop"
+  },
+  "backgroundSelector": {
+    "title": "Change background color",
+    "ariaSelect": "Select {name} background"
+  },
+  "howToUse": {
+    "title": "How to use our NFC Ninja Cards?",
+    "intro": "Discover a new way of sharing your contacts with our NFC Ninja Cards. Here's how it works:",
+    "steps": {
+      "1": "Scan your card following the video instructions for a quick setup.",
+      "2": "Tap your NFC card on a compatible phone and share information in seconds.",
+      "3": "Create a personalized profile that represents you in a unique way."
+    },
+    "outro": "Your contacts will never look the same. Order your NFC Ninja Cards today and impress at every meeting!",
+    "enterFullscreen": "Enter fullscreen",
+    "exitFullscreen": "Exit fullscreen"
+  },
+  "Product": {
+    "badge": "Best-selling product!",
+    "example": "Example: {index}",
+    "customize": "Customize Your Card",
+    "freeShipping": "Order now and get free shipping!",
+    "sections": {
+      "description": "Description",
+      "shipping": "Shipping Information",
+      "details": "How do I add my data?",
+      "questions": "Have a question?"
+    },
+    "description": {
+      "title": "Ninja Card PVC Smart Business Card",
+      "subtitle": "customize your first impression",
+      "paragraph1": "Make every introduction count with the Ninja Card PVC Smart Business Card – a modern, personalized tool for seamless and memorable networking. Designed for professionals who value innovation and personal branding, this smart card combines technology with style to boost your presence.",
+      "customizable": "Customizable front and back:",
+      "design": "Design: Choose your brand colors or upload your own artwork to customize both sides of the card.",
+      "logo": "Logo integration: Add your company logo on both sides to strengthen brand identity.",
+      "qr": "QR code & NFC icons: Personalize your card with branded QR and NFC elements for a clean, modern look.",
+      "contact": "Professional details: Include your name, title, and contact information for a strong and reliable impression."
+    },
+    "shipping": "We deliver to any location in Bulgaria. Cards are produced within 3–5 business days and arrive fully ready to use.",
+    "details": "Once you receive the card and scan it for the first time, you’ll activate your profile and get access to resources and video tutorials.",
+    "questions": "Contact us {link}. Our team is ready to help!",
+    "questionsLink": "HERE",
+    "benefits": {
+      "fast": {
+        "title": "Fast Production",
+        "subtitle": "Your card will be ready within 3–5 business days."
+      },
+      "payment": {
+        "title": "One-time Payment",
+        "subtitle": "Pay only once and use the card with no extra fees."
+      },
+      "design": {
+        "title": "Compact & Elegant Design",
+        "subtitle": "Standard size – 85.6mm x 53.98mm, fits in any wallet."
+      },
+      "tech": {
+        "title": "NFC & QR Code Technology",
+        "subtitle": "Easily share your contacts via tap or scan."
+      },
+      "ready": {
+        "title": "Ready to Use",
+        "subtitle": "The card arrives fully set up. Just activate it."
+      },
+      "compatibility": {
+        "title": "Device Compatibility",
+        "subtitle": "Works with iOS and Android devices, including older models."
+      }
+    }
+  },
+  "RelatedProducts": {
+    "title": "Related Products",
+    "view": "View"
+  },
+  "LeadForm": {
+    "title": "Leave your contact details for {name}",
+    "placeholders": {
+      "name": "Name*",
+      "phone": "Phone*",
+      "email": "Email (optional)",
+      "message": "Message (optional)"
+    },
+    "gdpr": "I agree to the processing of my personal data.",
+    "skip": "Skip",
+    "submit": "Send",
+    "submitting": "Sending...",
+    "errors": {
+      "name": "Please enter your name.",
+      "phone": "Please enter your phone.",
+      "gdpr": "Please agree to the processing of personal data.",
+      "submit": "Error while sending.",
+      "failed": "Form submission failed."
+    }
+  },
+  "CookiePolicy": {
+    "title": "Cookie Policy",
+    "intro": "The website ninjacardsnfc.com uses cookies to improve functionality and user experience.",
+    "cookiesUsed": {
+      "title": "What cookies we use:",
+      "session": "Session cookies (mandatory)",
+      "analytics": "Analytics (Google Analytics – if enabled)",
+      "marketing": "Marketing (Facebook Pixel – if enabled)"
+    },
+    "legalBasis": {
+      "title": "Legal basis:",
+      "text": "Consent under Art. 6, para. 1, letter \"a\" GDPR via banner on first visit."
+    },
+    "control": {
+      "title": "How to control them:",
+      "text": "You can manage settings via the banner or your browser preferences."
+    }
+  },
+  "PrivacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: 14.05.2025",
+    "intro": "This Privacy Policy aims to inform you about what personal data we collect through the website https://www.ninjacardsnfc.com/, how we use, store and protect it, as well as your rights as a data subject.",
+    "sections": {
+      "admin": {
+        "title": "Data Controller:",
+        "content": "Ivan Tsvetanov Ivanov\nFreelance – Programmer\nEmail: ivaniwork030@gmail.com\nPhone: +359 88 904 4614"
+      },
+      "dataCollected": {
+        "title": "Categories of data we collect:",
+        "items": [
+          "Name and surname",
+          "Email",
+          "Phone",
+          "Social networks",
+          "Office address",
+          "Photo / Cover (for profile)",
+          "Photo / Logo (for business cards)",
+          "Potential clients' data: name, phone, email, message"
+        ]
+      },
+      "legalBasis": {
+        "title": "Legal basis for processing:",
+        "content": "The processing is based on:\n- Art. 6, para. 1, letter (a) GDPR – consent\n- Art. 6, para. 1, letter (b) GDPR – performance of a contract"
+      },
+      "purpose": {
+        "title": "Purpose of processing:",
+        "items": [
+          "Production and delivery of personalized NFC business cards",
+          "Creation and maintenance of client profiles",
+          "Communication via email",
+          "Sending newsletters (only with explicit consent)"
+        ]
+      },
+      "storage": {
+        "title": "Data storage:",
+        "content": "Personal data is stored in a secure database via Railway. Emails are managed through [Gmail or CRM]. Data is kept until the client requests deletion or for up to 12 months after last activity."
+      },
+      "recipients": {
+        "title": "Data recipients:",
+        "content": "Data is only shared with courier providers (Speedy, Econt) for delivery purposes. It is not provided to third parties for marketing purposes."
+      },
+      "rights": {
+        "title": "Your rights:",
+        "items": [
+          "Right of access",
+          "Right of rectification",
+          "Right to erasure (“right to be forgotten”)",
+          "Right to object",
+          "Right to lodge a complaint with CPDP (www.cpdp.bg)"
+        ]
+      },
+      "contact": {
+        "title": "Contact us:",
+        "content": "If you have questions about data processing, you can contact us via the contact form or email."
+      }
+    }
+  },
+  "TermsOfUse": {
+    "title": "Terms of Use for ninjacardsnfc.com",
+    "sections": [
+      {
+        "title": "Parties to the Agreement:",
+        "content": "The website is operated by Ivan Ivanov, registered as a freelancer."
+      },
+      {
+        "title": "Service Description:",
+        "content": "The website offers the creation and sale of personalized NFC business cards, ordered by clients through online forms."
+      },
+      {
+        "title": "Orders and Delivery:",
+        "content": "Orders are placed by completing the form on the website. Deliveries are made via courier services (Speedy/Econt) with cash on delivery."
+      },
+      {
+        "title": "Prices and Payment:",
+        "content": "Prices are listed in Bulgarian lev (BGN) including VAT where applicable. Payment is made upon delivery or by an agreed method."
+      },
+      {
+        "title": "Order Cancellation and Returns:",
+        "content": "The customer has the right to cancel the order within 14 days of receipt, in accordance with the Consumer Protection Act. Personalized products cannot be returned except in cases of proven defects."
+      },
+      {
+        "title": "Limitation of Liability:",
+        "content": "We are not liable for improper use of the NFC cards by the client."
+      },
+      {
+        "title": "Intellectual Property:",
+        "content": "All texts, designs, and content on the website are the property of the administrator unless otherwise stated."
+      },
+      {
+        "title": "Amendments:",
+        "content": "The administrator reserves the right to change these terms without prior notice."
+      },
+      {
+        "title": "Governing Law:",
+        "content": "These terms are governed by Bulgarian law."
+      }
+    ]
+  }
+}
