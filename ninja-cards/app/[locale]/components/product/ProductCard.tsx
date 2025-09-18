@@ -11,7 +11,7 @@ interface ProductCardProps {
     /** kept for API compatibility but not used for UI text (we read from i18n) */
     name?: string;
     description?: string;
-    type: "/products/cards" | "/products/reviews" | "/products/all";
+    type: "/products/cards" | "/products/all" | "/products/all";
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, type }) => {
@@ -133,7 +133,7 @@ export const ProductGallery: React.FC = () => {
                 <ProductCard
                     id="googleReviews"
                     imageUrl="/cards/gr-1.png"
-                    type="/products/reviews"
+                    type="/products/all"
                 />
                 <ProductCard
                     id="stickers"
