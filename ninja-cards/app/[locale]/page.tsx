@@ -27,7 +27,7 @@ export default function Home() {
       <ProductGallery />
       <Testimonies />
       {/* <Pricing /> */}
-      {/* <NinjaCardImpact /> */}
+      <NinjaCardImpact />
       <SimpleContactForm />
 
     </main>
