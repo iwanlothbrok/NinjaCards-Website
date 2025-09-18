@@ -244,7 +244,7 @@ export default function Features() {
                         description={t("features.description3")}
                         imagePath="/features/03.png"
                         buttonText={t("features.buttonText3")}
-                        buttonLink="https://www.ninjacardsnfc.com/profile"
+                        buttonLink=""
                     />
                     <FeatureItemLeftImage
                         header={t("features.header4")}
@@ -252,7 +252,7 @@ export default function Features() {
                         description={t("features.description4")}
                         imagePath="/features/04.png"
                         buttonText={t("features.buttonText4")}
-                        buttonLink="https://www.ninjacardsnfc.com/profile?tab=profileQr"
+                        buttonLink=""
                     />
                     <FeatureItemLeftImage
                         header={t("features.header5")}
