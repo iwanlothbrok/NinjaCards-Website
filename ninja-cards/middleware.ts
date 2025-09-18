@@ -23,17 +23,17 @@ export default function middleware(request: NextRequest) {
   const pathWithoutLocale = stripTrailingSlash(hasLocale ? `/${rest.join('/')}` : pathname);
 
   // Protect *only* /profile (not /profileDetails/*)
-  // if (pathWithoutLocale === '/profile') {
-  //   const token = request.cookies.get('token')?.value;
+  if (pathWithoutLocale === '/profile') {
+    const token = request.cookies.get('token')?.value;
 
-  //   console.log('Auth token:', token);
-    
-  //   if (!token) {
-  //     const targetLocale = currentLocale ?? defaultLocale;
+    console.log('Auth token:', token);
 
-  //     return NextResponse.redirect(new URL(`/${targetLocale}`, request.url));
-  //   }
-  // }
+    if (!token) {
+      const targetLocale = currentLocale ?? defaultLocale;
+
+      return NextResponse.redirect(new URL(`/${targetLocale}`, request.url));
+    }
+  }
 
   // Everything else goes through next-intl
   return intlMiddleware(request);
