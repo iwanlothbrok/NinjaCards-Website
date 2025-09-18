@@ -1052,5 +1052,18 @@
         "content": "These terms are governed by Bulgarian law."
       }
     ]
+  },
+  "Impact": {
+    "badge": "Eco Friendly Impact",
+    "title": "Environmental Impact Calculator",
+    "subtitle": "Discover the positive impact of switching to Ninja Cards.",
+    "label": "Number of Ninja Cards Sold",
+    "help": "Enter a value between {min} and {max}.",
+    "inputError": "Please enter a value between {min} and {max}.",
+    "money": "Money Saved",
+    "trees": "Trees Saved",
+    "co2": "CO₂ Reduced",
+    "reset": "Reset",
+    "footer": "Calculations are estimates based on industry averages."
   }
 }
