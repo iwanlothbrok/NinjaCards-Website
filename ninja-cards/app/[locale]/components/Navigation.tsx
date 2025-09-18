@@ -3,16 +3,10 @@
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Link, usePathname } from "@/navigation";
-import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { locales } from "@/config";
 import { useTranslations } from "next-intl";
 import { LangSwitcher } from "./layout/LangSwitcher";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faLock, faEnvelope, faMapMarkerAlt, faImage, faChartLine, faUser, faLink as faLinkIcon,
-  faEye, faIdCard, faQrcode, faCogs, faChartBar, faVideo, faGlobe, faCircleQuestion
-} from '@fortawesome/free-solid-svg-icons';
 
 type LinkHref = React.ComponentProps<typeof Link>["href"];
 
@@ -73,7 +67,6 @@ const Navbar: React.FC = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const isAuthenticated = !!user;
-  const router = useRouter();
 
   // Hide switcher on dynamic detail pages
   const hideLangSwitcher =
@@ -138,6 +131,12 @@ const Navbar: React.FC = () => {
     handleDropdownItemClick();
   }, [logout, handleDropdownItemClick]);
 
+  const handleNavLinkClick = useCallback(() => {
+    if (isPhone) setIsMenuOpen(false);
+  }, [isPhone]);
+
+  // ... (rest of the code)
+
   return (
     <header
       className={`fixed ${isOnDetailsPage && isPhone ? "top-16" : "top-0"} left-0 z-40 w-full transition-all duration-500 ${isScrolled ? "bg-gradient-to-b !top-0 from-gray-900 via-gray-950 to-black shadow-md" : "bg-transparent"
@@ -149,7 +148,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-4">
             <div className="flex-shrink-0 w-28">
               {!isOnDetailsPage ? (
-                <Link href="/" className="block">
+                <Link href="/" className="block" onClick={handleNavLinkClick}>
                   <img src="/navlogo.png" alt={t("logoAlt")} className="w-full" />
                 </Link>
               ) : (
@@ -201,7 +200,7 @@ const Navbar: React.FC = () => {
 
               <ul className="flex flex-col items-center justify-center h-2/3 lg:flex-row lg:space-x-8">
                 <li>
-                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/">
+                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/" onClick={handleNavLinkClick}>
                     {t("menu.home")}
                   </Link>
                 </li>
@@ -221,13 +220,13 @@ const Navbar: React.FC = () => {
                       className="absolute left-0 mt-2 w-44 bg-gray-800 rounded-lg shadow-lg z-50"
                     >
                       <ul className="py-2 text-sm text-gray-200">
-                        <NavItem href="/products/cards" onClick={() => setIsMenuOpen(false)}>
+                        <NavItem href="/products/cards" onClick={handleNavLinkClick}>
                           {t("menu.cards")}
                         </NavItem>
-                        <NavItem href="/products/reviews" onClick={() => setIsMenuOpen(false)}>
+                        <NavItem href="/products/reviews" onClick={handleNavLinkClick}>
                           {t("menu.reviews")}
                         </NavItem>
-                        <NavItem href="/products/all" onClick={() => setIsMenuOpen(false)}>
+                        <NavItem href="/products/all" onClick={handleNavLinkClick}>
                           {t("menu.all")}
                         </NavItem>
                       </ul>
@@ -236,24 +235,24 @@ const Navbar: React.FC = () => {
                 </li>
 
                 <li>
-                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/features">
+                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/features" onClick={handleNavLinkClick}>
                     {t("menu.features")}
                   </Link>
                 </li>
                 <li>
-                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/askedQuestions">
+                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/askedQuestions" onClick={handleNavLinkClick}>
                     {t("menu.faq")}
                   </Link>
                 </li>
                 <li>
-                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/contact">
+                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/contact" onClick={handleNavLinkClick}>
                     {t("menu.contact")}
                   </Link>
                 </li>
 
                 {isAuthenticated && (
                   <li>
-                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/profile">
+                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/profile" onClick={handleNavLinkClick}>
                       {t("menu.profile")}
                     </Link>
                   </li>
@@ -287,10 +286,10 @@ const Navbar: React.FC = () => {
                           <div className="font-medium truncate text-orange">{user?.email}</div>
                         </div>
                         <ul className="py-2 text-sm text-gray-200">
-                          <NavItem href="/profile" onClick={() => setIsMenuOpen(false)}>
+                          <NavItem href="/profile" onClick={handleNavLinkClick}>
                             {t("menu.profile")}
                           </NavItem>
-                          <NavItem href="/analyse" onClick={() => setIsMenuOpen(false)}>
+                          <NavItem href="/analyse" onClick={handleNavLinkClick}>
                             {t("menu.analysis")}
                           </NavItem>
                         </ul>
@@ -310,6 +309,7 @@ const Navbar: React.FC = () => {
                     <Link
                       href="/login"
                       className="px-6 py-3 text-lg font-semibold text-orange border border-orange rounded-full hover:bg-orange hover:text-white"
+                      onClick={handleNavLinkClick}
                     >
                       {t("menu.login")}
                     </Link>
@@ -319,6 +319,7 @@ const Navbar: React.FC = () => {
                     <Link
                       href="/login"
                       className="px-6 py-3 text-lg font-semibold text-orange border border-orange rounded-full hover:bg-orange hover:text-white"
+                      onClick={handleNavLinkClick}
                     >
                       {t("menu.login")}
                     </Link>
