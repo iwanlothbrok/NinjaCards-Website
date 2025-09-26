@@ -60,14 +60,28 @@ const Product: React.FC<ProductProps> = ({
                         >
                             {imageUrls.map((url, index) => (
                                 <div key={index} className="relative">
-                                    <img
-                                        src={url}
-                                        alt={`Product Image ${index + 1}`}
-                                        className="w-full object-cover mx-auto"
-                                        style={{
-                                            maxHeight: typeof window !== 'undefined' && window.innerWidth >= 768 ? '532px' : '300px'
-                                        }}
-                                    />
+                                    {index === 2 ? (
+                                        <video
+                                            src={url}
+                                            controls
+                                            autoPlay
+                                            muted
+                                            loop
+                                            className="w-full object-cover mx-auto"
+                                            style={{
+                                                maxHeight: typeof window !== 'undefined' && window.innerWidth >= 768 ? '532px' : '300px'
+                                            }}
+                                        />
+                                    ) : (
+                                        <img
+                                            src={url}
+                                            alt={`Product Image ${index + 1}`}
+                                            className="w-full object-cover mx-auto"
+                                            style={{
+                                                maxHeight: typeof window !== 'undefined' && window.innerWidth >= 768 ? '532px' : '300px'
+                                            }}
+                                        />
+                                    )}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
                                         <p className="text-white text-lg font-semibold">
                                             {t('example', { index: index + 1 })}
