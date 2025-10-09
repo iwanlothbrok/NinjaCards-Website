@@ -1,36 +1,62 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useRouter } from "next/navigation";
-import { BASE_API_URL } from "@/utils/constants";
-import Image from "next/image";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useTranslations } from 'next-intl';
+import { BASE_API_URL } from '@/utils/constants';
+
+type FormValues = {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    acceptTerms: boolean;
+    acceptGdpr: boolean;
+};
 
 interface Alert {
     message: string;
     title: string;
-    color: string;
+    color: 'green' | 'red';
 }
-
-const SUCCESS_DELAY = 1000;
-
-const schema = yup.object().shape({
-    email: yup.string().email("Въведете коректен имейл").required("Имейлът е задължителен"),
-    password: yup.string().min(6, "Паролата трябва да е с поне 6 символа").required("Паролата е задължителна"),
-    confirmPassword: yup
-        .string()
-        .oneOf([yup.ref("password"), ""], "Паролите не съвпадат")
-        .required("Потвърдете паролата"),
-    acceptTerms: yup.boolean().oneOf([true], "Трябва да приемете условията и политиката за поверителност"),
-    acceptGdpr: yup.boolean().oneOf([true], "Трябва да приемете обработката на лични данни по GDPR")
-});
 
 const RegisterPage = ({ params }: { params?: { id?: string } }) => {
     const userId = params?.id;
     const router = useRouter();
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const t = useTranslations('Register');
+
+    // Build the schema with localized messages
+    const schema: yup.ObjectSchema<FormValues> = yup.object({
+        email: yup
+            .string()
+            .email(t('errors.emailInvalid'))
+            .required(t('errors.emailRequired')),
+        password: yup
+            .string()
+            .min(6, t('errors.passwordMin'))
+            .required(t('errors.passwordRequired')),
+        confirmPassword: yup
+            .string()
+            .oneOf([yup.ref('password')], t('errors.passwordsMismatch'))
+            .required(t('errors.confirmRequired')),
+        acceptTerms: yup
+            .boolean()
+            .oneOf([true], t('errors.acceptTerms'))
+            .required(t('errors.acceptTerms')),
+        acceptGdpr: yup
+            .boolean()
+            .oneOf([true], t('errors.acceptGdpr'))
+            .required(t('errors.acceptGdpr')),
+    });
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FormValues>({
         resolver: yupResolver(schema),
     });
 
@@ -43,133 +69,213 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
             if (!userId) return;
             try {
                 const res = await fetch(`${BASE_API_URL}/api/profile/check?userId=${userId}`);
-                if (!res.ok) throw new Error("Грешка при проверката");
-
+                if (!res.ok) throw new Error('check_failed');
                 const data = await res.json();
                 if (data.needsSetup) {
                     setIsUpdating(true);
                 } else {
-                    router.push(`/profile`);
+                    router.push('/profile');
                 }
-            } catch (error) {
-                console.error("Грешка при проверка на акаунта:", error);
+            } catch (e) {
+                // soft-fail; keep user on page
+                // console.error(e);
             }
         };
-
         checkUserData();
     }, [userId, router]);
 
-    const onSubmit = async (data: any) => {
+    const showAlert = (message: string, title: string, color: Alert['color']) => {
+        setAlert({ message, title, color });
+        setTimeout(() => setAlert(null), 4000);
+    };
+
+    const onSubmit = async (data: FormValues) => {
         setLoading(true);
         setAlert(null);
-
         try {
             const res = await fetch(`${BASE_API_URL}/api/profile/update`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     userId,
                     email: data.email,
                     password: data.password,
-                    confirmPassword: data.confirmPassword
+                    confirmPassword: data.confirmPassword,
                 }),
             });
 
-            const response = await res.json();
+            const payload = await res.json().catch(() => null);
+
             if (res.ok) {
-                showAlert("Успешно запазване!", "Успех", "green");
-                router.push(`/login`);
+                showAlert(t('success.saved'), t('success.title'), 'green');
+                router.push('/login');
             } else {
-                showAlert(response.error || "Грешка при регистрация", "Грешка", "red");
+                showAlert(payload?.error || t('errors.generic'), t('errors.title'), 'red');
             }
-        } catch (error) {
-            showAlert("Възникна грешка. Опитайте отново.", "Грешка", "red");
-            console.error("Грешка при обработка на заявката:", error);
+        } catch {
+            showAlert(t('errors.tryAgain'), t('errors.title'), 'red');
         } finally {
             setLoading(false);
         }
     };
 
-    const showAlert = (message: string, title: string, color: string) => {
-        setAlert({ message, title, color });
-        setTimeout(() => setAlert(null), 4000);
-    };
-
     return (
         <section className="bg-black min-h-screen flex items-center justify-center px-6 pt-32">
             <div className="w-full max-w-lg bg-gray-900 p-10 rounded-xl shadow-lg border border-gray-800">
-                <a href="#" className="flex items-center mb-6 text-3xl justify-center  font-semibold text-white">
-                    <Image className="w-28 h-28 filter grayscale" src="/navlogo.png" alt="лого" width={122} height={122} />
+                <a
+                    href="#"
+                    className="flex items-center mb-6 text-3xl justify-center font-semibold text-white"
+                    aria-label="Logo"
+                >
+                    <Image
+                        className="w-28 h-28 filter grayscale"
+                        src="/navlogo.png"
+                        alt="logo"
+                        width={122}
+                        height={122}
+                        priority
+                    />
                 </a>
-                <h1 className="text-3xl font-bold text-white text-center mb-6">Добавяне на имейл и парола</h1>
+
+                <h1 className="text-3xl font-bold text-white text-center mb-6">
+                    {t('title')}
+                </h1>
 
                 {alert && (
-                    <div className={`my-4 p-3 text-white text-center font-semibold rounded ${alert.color === "green" ? "bg-green-500" : "bg-red-500"}`}>
+                    <div
+                        className={`my-4 p-3 text-white text-center font-semibold rounded ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'
+                            }`}
+                        role="status"
+                        aria-live="polite"
+                    >
                         {alert.title}: {alert.message}
                     </div>
                 )}
 
-                <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+                <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+                    {/* Email */}
                     <div>
-                        <label className="block text-gray-300 mb-2">Имейл</label>
+                        <label className="block text-gray-300 mb-2" htmlFor="email">
+                            {t('fields.email')}
+                        </label>
                         <input
+                            id="email"
                             type="email"
-                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange ${errors.email ? "border-red-500" : ""}`}
+                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange ${errors.email ? 'border-red-500' : ''
+                                }`}
                             placeholder="example@email.com"
-                            {...register("email")}
+                            {...register('email')}
+                            aria-invalid={!!errors.email}
+                            aria-describedby={errors.email ? 'email-error' : undefined}
                         />
-                        {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                        {errors.email && (
+                            <p id="email-error" className="text-red-500 text-sm">
+                                {errors.email.message}
+                            </p>
+                        )}
                     </div>
 
+                    {/* Password */}
                     <div>
-                        <label className="block text-gray-300 mb-2">Парола</label>
+                        <label className="block text-gray-300 mb-2" htmlFor="password">
+                            {t('fields.password')}
+                        </label>
                         <input
+                            id="password"
                             type="password"
-                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange ${errors.password ? "border-red-500" : ""}`}
+                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange ${errors.password ? 'border-red-500' : ''
+                                }`}
                             placeholder="••••••••"
-                            {...register("password")}
+                            {...register('password')}
+                            aria-invalid={!!errors.password}
+                            aria-describedby={errors.password ? 'password-error' : undefined}
                         />
-                        {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                        {errors.password && (
+                            <p id="password-error" className="text-red-500 text-sm">
+                                {errors.password.message}
+                            </p>
+                        )}
                     </div>
 
+                    {/* Confirm Password */}
                     <div>
-                        <label className="block text-gray-300 mb-2">Потвърдете паролата</label>
+                        <label className="block text-gray-300 mb-2" htmlFor="confirmPassword">
+                            {t('fields.confirm')}
+                        </label>
                         <input
+                            id="confirmPassword"
                             type="password"
-                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange  ${errors.confirmPassword ? "border-red-500" : ""}`}
+                            className={`w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-orange ${errors.confirmPassword ? 'border-red-500' : ''
+                                }`}
                             placeholder="••••••••"
-                            {...register("confirmPassword")}
+                            {...register('confirmPassword')}
+                            aria-invalid={!!errors.confirmPassword}
+                            aria-describedby={errors.confirmPassword ? 'confirm-error' : undefined}
                         />
-                        {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
+                        {errors.confirmPassword && (
+                            <p id="confirm-error" className="text-red-500 text-sm">
+                                {errors.confirmPassword.message}
+                            </p>
+                        )}
                     </div>
 
+                    {/* Terms */}
                     <div className="flex items-start gap-2">
-                        <input type="checkbox" id="acceptTerms" {...register("acceptTerms")} className="mt-1" />
+                        <input
+                            type="checkbox"
+                            id="acceptTerms"
+                            {...register('acceptTerms')}
+                            className="mt-1"
+                            aria-invalid={!!errors.acceptTerms}
+                            aria-describedby={errors.acceptTerms ? 'terms-error' : undefined}
+                        />
                         <label htmlFor="acceptTerms" className="text-sm text-gray-300">
-                            С регистрацията си вие приемате нашите{' '}
-                            <a href="/privacy/PrivacyPolicy" className="text-blue-500 underline">Политика за поверителност</a> и{' '}
-                            <a href="/privacy/TermsOfUse" className="text-blue-500 underline">Общи условия</a>.
+                            {t.rich('legal.termsLine', {
+                                privacy: (chunks) => (
+                                    <a href="/privacy/PrivacyPolicy" className="text-blue-500 underline">
+                                        {chunks}
+                                    </a>
+                                ),
+                                terms: (chunks) => (
+                                    <a href="/privacy/TermsOfUse" className="text-blue-500 underline">
+                                        {chunks}
+                                    </a>
+                                ),
+                            })}
                         </label>
                     </div>
-                    {errors.acceptTerms && <p className="text-red-500 text-sm">{errors.acceptTerms.message}</p>}
+                    {errors.acceptTerms && (
+                        <p id="terms-error" className="text-red-500 text-sm">
+                            {errors.acceptTerms.message}
+                        </p>
+                    )}
 
+                    {/* GDPR */}
                     <div className="flex items-start gap-2">
-                        <input type="checkbox" id="acceptGdpr" {...register("acceptGdpr")} className="mt-1" />
+                        <input
+                            type="checkbox"
+                            id="acceptGdpr"
+                            {...register('acceptGdpr')}
+                            className="mt-1"
+                            aria-invalid={!!errors.acceptGdpr}
+                            aria-describedby={errors.acceptGdpr ? 'gdpr-error' : undefined}
+                        />
                         <label htmlFor="acceptGdpr" className="text-sm text-gray-300">
-                            Съгласен съм личните ми данни да бъдат обработвани за целите на създаване на
-                            NFC визитка съгласно Политиката за поверителност. Заявката ми се подава
-                            доброволно. (Обработката е на основание чл. 6, пар. 1, б. &quot;а&quot; и &quot;б&quot; от GDPR)
+                            {t('legal.gdpr')}
                         </label>
-
                     </div>
-                    {errors.acceptGdpr && <p className="text-red-500 text-sm">{errors.acceptGdpr.message}</p>}
+                    {errors.acceptGdpr && (
+                        <p id="gdpr-error" className="text-red-500 text-sm">
+                            {errors.acceptGdpr.message}
+                        </p>
+                    )}
 
                     <button
                         type="submit"
-                        className="w-full text-white bg-orange hover:bg-orange focus:ring-4 focus:ring-orange font-semibold rounded-lg text-lg px-6 py-3 transition"
+                        className="w-full text-white bg-orange hover:bg-orange focus:ring-4 focus:ring-orange font-semibold rounded-lg text-lg px-6 py-3 transition disabled:opacity-70"
                         disabled={loading}
                     >
-                        {loading ? "Запазване..." : "Запази"}
+                        {loading ? t('actions.saving') : t('actions.save')}
                     </button>
                 </form>
             </div>
