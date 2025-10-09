@@ -1065,5 +1065,38 @@
     "co2": "CO₂ Reduced",
     "reset": "Reset",
     "footer": "Calculations are estimates based on industry averages."
+  },
+  "Register": {
+    "title": "Add email and password",
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "confirm": "Confirm password"
+    },
+    "actions": {
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "success": {
+      "title": "Success",
+      "saved": "Saved successfully!"
+    },
+    "errors": {
+      "title": "Error",
+      "generic": "Registration error",
+      "tryAgain": "Something went wrong. Please try again.",
+      "emailInvalid": "Enter a valid email",
+      "emailRequired": "Email is required",
+      "passwordMin": "Password must be at least 6 characters",
+      "passwordRequired": "Password is required",
+      "passwordsMismatch": "Passwords do not match",
+      "confirmRequired": "Please confirm your password",
+      "acceptTerms": "You must accept the Terms and Privacy Policy",
+      "acceptGdpr": "You must accept GDPR processing"
+    },
+    "legal": {
+      "termsLine": "By registering you accept our <privacy>Privacy Policy</privacy> and <terms>Terms of Use</terms>.",
+      "gdpr": "I consent to processing of my personal data for creating an NFC business card according to the Privacy Policy. My request is voluntary. (Processing is based on Art. 6(1)(a)(b) GDPR)"
+    }
   }
 }
