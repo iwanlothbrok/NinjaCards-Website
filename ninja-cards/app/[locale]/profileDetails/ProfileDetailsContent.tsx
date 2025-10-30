@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from 'framer-motion';
 import { Cropper } from "react-cropper";
-import "cropperjs/dist/cropper.css"; // Import cropper styles
 import { useAuth } from '../context/AuthContext';
 import ActionButtons2 from '../components/profileDetails/ActionButtons2';
 import { BASE_API_URL } from '@/utils/constants';
@@ -419,7 +418,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             >
                 {/* Card Section with White Background */}
                 <motion.div
-                    className={`relative z-0 w-full  p-8 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black `} // Removed shadow
+                    className={`relative z-0 w-full  p-4 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black `} // Removed shadow
                 >
                     {/* Action Buttons */}
                     <motion.div
