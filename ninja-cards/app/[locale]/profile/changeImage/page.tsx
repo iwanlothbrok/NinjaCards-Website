@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import ReactCrop, { Crop, PixelCrop } from "react-image-crop";
-import "react-image-crop/dist/ReactCrop.css";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { BASE_API_URL } from "@/utils/constants";
