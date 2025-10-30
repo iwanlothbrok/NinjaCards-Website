@@ -96,24 +96,60 @@ const ProfileHeader: React.FC<{
                 <div
                     className={`relative w-full max-w-md ${cardStyle.bgClass} z-0 pt-24 -mt-17 mx-auto rounded-none`}
                 >
-                    <div className="text-center mt-8">
-                        <h1 className={`text-4xl font-bold ${cardStyle.highlightClass}`}>
-                            {user?.name || "\u00A0"}
+                    <div className="mt-6 px-4 text-center">
+                        <h1
+                            className={[
+                                "font-bold leading-tight tracking-[-0.01em]",
+                                "mx-auto max-w-[20ch] break-words hyphens-auto [text-wrap:balance]",
+                                // fluid size (≈26–40px)
+                                "text-[clamp(30px,6vw,42px)] sm:text-[clamp(32px,5vw,46px)]",
+                                cardStyle?.highlightClass || "",
+                            ].join(" ")}
+                        >
+                            {user?.name ? (
+                                user.name.split(/\s+/).map((part: string, i: number) => (
+                                    <span key={i} className="block">
+                                        {part}
+                                    </span>
+                                ))
+                            ) : (
+                                "\u00A0"
+                            )}
                         </h1>
-                        {user?.company ? (
-                            <p className={`text-2xl font-semibold mt-1 ${cardStyle.textClass}`}>
-                                {user?.company}
-                            </p>
-                        ) : (
-                            "\u00A0"
+
+                        {user?.company && (
+                            <div className="mt-2 flex justify-center">
+                                <span
+                                    className={[
+                                        "inline-flex items-center gap-1 rounded-full",
+                                        "px-3 py-1",
+                                        "bg-slate-300  ring-1 ring-blue-200/60 ",
+                                        "uppercase tracking-widest",
+                                        // fluid size (≈14–16px)
+                                        "text-[clamp(14px,2.9vw,16px)]",
+                                        "font-semibold text-gray-900",
+                                        // cardStyle?.textClass || "",
+                                    ].join(" ")}
+                                >
+                                    {user?.company}
+                                </span>
+                            </div>
                         )}
-                        {user?.position ? (
-                            <p className={`text-xl font-semibold ${cardStyle.textClass}`}>
+
+                        {user?.position && (
+                            <p
+                                className={[
+                                    "mt-1 font-light italic leading-snug",
+                                    "mx-auto max-w-[28ch] break-words hyphens-auto [text-wrap:pretty]",
+                                    // fluid size (≈14–18px)
+                                    "text-[clamp(16px,3.6vw,18px)] sm:text-[clamp(15px,3vw,19px)]",
+                                    cardStyle?.textClass || "",
+                                ].join(" ")}
+                            >
                                 {user?.position}
                             </p>
-                        ) : (
-                            "\u00A0"
                         )}
+
                     </div>
                 </div>
             </div>
