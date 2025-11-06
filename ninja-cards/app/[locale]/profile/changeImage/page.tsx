@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { BASE_API_URL } from "@/utils/constants";
 import { useTranslations } from "next-intl";
+import "react-image-crop/dist/ReactCrop.css";
+
 
 type AlertColor = "green" | "red";
 interface Alert {
