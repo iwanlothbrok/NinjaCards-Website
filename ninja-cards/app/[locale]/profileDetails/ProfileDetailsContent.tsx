@@ -13,6 +13,7 @@ import ProfileHeader from '../components/profileDetails/ProfileHeader';
 import generateVCF from "@/utils/generateVCF";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import "cropperjs/dist/cropper.css"; // Import cropper styles
 
 interface Alert {
     message: string;
