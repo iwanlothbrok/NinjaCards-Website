@@ -144,9 +144,13 @@ model Subscription {
   status          String   // active | canceled | trialing
   start_date      DateTime
   end_date        DateTime?
+  cancel_date     DateTime? // New field to track when the subscription is canceled
 
   userId          String   @unique
   user            User     @relation("UserSubscription", fields: [userId], references: [id])
+
+  invoices        Invoice[]
+
 }
 
 
@@ -159,7 +163,16 @@ model Invoice {
   hostedInvoiceUrl  String
   createdAt         DateTime @default(now())
 
-  user              User     @relation(fields: [userId], references: [id])
+ // NEW: Stripe subscription id (за лесен дебъг/синк; не е unique – много инвойси към 1 sub)
+  stripeSubscriptionId String?
+  // NEW: FK към локалния Subscription
+  subscriptionId       String?
+  subscription         Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  user                 User     @relation(fields: [userId], references: [id])
+
+  @@index([stripeSubscriptionId])
+  @@index([subscriptionId])
 }
 
 model Contact {
