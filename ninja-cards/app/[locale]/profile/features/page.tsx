@@ -66,9 +66,10 @@ const FeaturesComponent: React.FC = () => {
                 return;
             }
 
-            setMessage(result.message || t("messages.updated"));
+            // setMessage(result.message || t("messages.updated"));
             setIsDirect(newIsDirect);
             if (setUser) setUser(result.user);
+            showAlert(t("messages.updated"), t("keywords.success"), "green");
         } catch (error) {
             setMessage(t("errors.updateFail"));
             console.error(error);
