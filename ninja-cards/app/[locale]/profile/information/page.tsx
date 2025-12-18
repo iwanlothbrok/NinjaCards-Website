@@ -1,16 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { BASE_API_URL } from '@/utils/constants';
-import { useTranslations } from 'next-intl';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useAuth } from "../../context/AuthContext";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { BASE_API_URL } from "@/utils/constants";
+import { useTranslations } from "next-intl";
+import router from "next/router";
 
-// Валидираща схема с помощта на Yup
-const schema = yup.object().shape({
+/* ---------------- schemas ---------------- */
+
+const profileSchema = yup.object({
     firstName: yup.string(),
     lastName: yup.string(),
     name: yup.string(),
@@ -18,250 +20,261 @@ const schema = yup.object().shape({
     position: yup.string(),
     phone1: yup.string(),
     phone2: yup.string(),
-    email: yup.string().email('Невалиден имейл формат'),
-    email2: yup.string().email('Невалиден имейл формат'),
+    bio: yup.string(),
+});
+
+const addressSchema = yup.object({
     street1: yup.string(),
     street2: yup.string(),
     zipCode: yup.string(),
     city: yup.string(),
     state: yup.string(),
     country: yup.string(),
-    bio: yup.string(),
 });
 
-interface FormData {
-    firstName?: string;
-    lastName?: string;
-    name?: string;
-    company?: string;
-    position?: string;
-    phone1?: string;
-    phone2?: string;
-    email?: string;
-    email2?: string;
-    street1?: string;
-    street2?: string;
-    zipCode?: string;
-    city?: string;
-    state?: string;
-    country?: string;
-    bio?: string;
-}
+type ProfileForm = yup.InferType<typeof profileSchema>;
+type AddressForm = yup.InferType<typeof addressSchema>;
 
 interface Alert {
     message: string;
     title: string;
-    color: string;
+    color: "green" | "red";
 }
 
-const ChangeProfileInformation: React.FC = () => {
-    const { user, setUser } = useAuth();
-    const [loading, setLoading] = useState<boolean>(false);
-    const [alert, setAlert] = useState<Alert | null>(null);
-    const router = useRouter();
-    const t = useTranslations('ProfileInformation');
+/* ---------------- component ---------------- */
 
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
-        resolver: yupResolver(schema),
+export default function ProfileInformationPage() {
+    const t = useTranslations("ProfileInformation");
+    const { user, setUser } = useAuth();
+
+    const [profileLoading, setProfileLoading] = useState(false);
+    const [addressLoading, setAddressLoading] = useState(false);
+    const [alert, setAlert] = useState<Alert | null>(null);
+
+    /* -------- profile form -------- */
+
+    const profileForm = useForm<ProfileForm>({
+        resolver: yupResolver(profileSchema),
+    });
+
+    const addressForm = useForm<AddressForm>({
+        resolver: yupResolver(addressSchema),
     });
 
     useEffect(() => {
-        if (user) {
-            setValue('firstName', user?.firstName || '');
-            setValue('lastName', user?.lastName || '');
-            setValue('name', user?.name || '');
-            setValue('company', user?.company || '');
-            setValue('position', user?.position || '');
-            setValue('phone1', user?.phone1 || '');
-            setValue('phone2', user?.phone2 || '');
-            setValue('street1', user?.street1 || '');
-            setValue('street2', user?.street2 || '');
-            setValue('zipCode', user?.zipCode || '');
-            setValue('city', user?.city || '');
-            setValue('state', user?.state || '');
-            setValue('country', user?.country || '');
-            setValue('bio', user?.bio || '');
-        }
-    }, [user, setValue]);
+        if (!user) return;
 
-    const onSubmit = async (data: FormData) => {
-        setLoading(true);
-
-        if (!user) {
-            showAlert(t('alerts.unauthenticated'), t('alerts.warning'), 'red');
-            setLoading(false);
-            return;
-        }
-
-        const updateData = new FormData();
-        updateData.append('id', String(user?.id));
-        Object.entries(data).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
-                updateData.append(key, value);
-            }
+        profileForm.reset({
+            firstName: user.firstName || "",
+            lastName: user.lastName || "",
+            name: user.name || "",
+            company: user.company || "",
+            position: user.position || "",
+            phone1: user.phone1 || "",
+            phone2: user.phone2 || "",
+            bio: user.bio || "",
         });
 
+        addressForm.reset({
+            street1: user.street1 || "",
+            street2: user.street2 || "",
+            zipCode: user.zipCode || "",
+            city: user.city || "",
+            state: user.state || "",
+            country: user.country || "",
+        });
+    }, [user]);
+
+    const showAlert = (message: string, title: string, color: Alert["color"]) => {
+        setAlert({ message, title, color });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        setTimeout(() => setAlert(null), 4000);
+    };
+
+    /* -------- submit handlers -------- */
+
+    const saveProfileInfo = async (data: ProfileForm) => {
+        if (!user) return;
+
+        setProfileLoading(true);
+
+        const fd = new FormData();
+        fd.append("id", String(user.id));
+        Object.entries(data).forEach(([k, v]) => v && fd.append(k, v));
+        
+        // Preserve address data
+        const addressData = addressForm.getValues();
+        Object.entries(addressData).forEach(([k, v]) => v && fd.append(k, v));
+
         try {
-            const response = await fetch(`${BASE_API_URL}/api/profile/updateInformation`, {
-                method: 'PUT',
-                body: updateData,
+            const res = await fetch(`${BASE_API_URL}/api/profile/updateInformation`, {
+                method: "PUT",
+                body: fd,
             });
 
-            const result = await response.json().catch(() => null);
-
-            if (!response.ok || !result) {
-                const errorMessage = result?.error || t('alerts.errorUpdate');
-                showAlert(errorMessage, t('alerts.error'), 'red');
+            const result = await res.json();
+            if (!res.ok) {
+                showAlert(result?.error || t("alerts.errorUpdate"), t("alerts.error"), "red");
                 return;
             }
 
-            localStorage.setItem('user', JSON.stringify(result));
+            localStorage.setItem("user", JSON.stringify(result));
             setUser(result);
-
-            showAlert(t('alerts.successUpdate'), t('alerts.success'), 'green');
-            setTimeout(() => router.push('/profile'), 1500);
-
-        } catch (error: any) {
-            console.error('Грешка:', error);
-            showAlert(error.message || t('alerts.errorUpdate'), t('alerts.error'), 'red');
+            showAlert(t("alerts.successUpdate"), t("alerts.success"), "green");
+        } catch {
+            showAlert(t("alerts.errorUpdate"), t("alerts.error"), "red");
         } finally {
-            setLoading(false);
+            setProfileLoading(false);
         }
     };
 
-    const showAlert = (message: string, title: string, color: string) => {
-        setAlert({ message, title, color });
-        setTimeout(() => {
-            setAlert(null);
-        }, 4000);
+    const saveAddress = async (data: AddressForm) => {
+        if (!user) return;
+
+        setAddressLoading(true);
+
+        const fd = new FormData();
+        fd.append("id", String(user.id));
+        Object.entries(data).forEach(([k, v]) => v && fd.append(k, v));
+
+        try {
+            const res = await fetch(`${BASE_API_URL}/api/profile/changeAddress`, {
+                method: "PUT",
+                body: fd,
+            });
+
+            const result = await res.json();
+            if (!res.ok) {
+                showAlert(result?.error || t("alerts.errorUpdate"), t("alerts.error"), "red");
+                return;
+            }
+
+            localStorage.setItem("user", JSON.stringify(result));
+            setUser(result);
+            showAlert(t("alerts.addressSaved"), t("alerts.success"), "green");
+        } catch {
+            showAlert(t("alerts.errorUpdate"), t("alerts.error"), "red");
+        } finally {
+            setAddressLoading(false);
+        }
     };
 
-    return (
-        <div className='p-4'>
-            <div className="w-full max-w-3xl mx-auto mt-28 p-10 bg-gradient-to-b from-gray-900 to-gray-800 
-        rounded-2xl shadow-xl border border-gray-700 sm:mx-6 md:mx-10 lg:mx-auto">
+    /* ---------------- UI ---------------- */
 
-                <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wide">
-                    📝 {t('title')}
-                </h2>
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200"
+        >
+            <div className="max-w-5xl mx-auto space-y-10">
+                {/* Header */}
+                <div className="text-center">
+                    <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                        {t("title")}
+                    </h1>
+                    <p className="text-gray-400 text-lg">{t("subtitle")}</p>
+                </div>
 
                 {alert && (
-                    <div className={`p-4 rounded-lg mb-6 text-white text-center font-medium transition-all duration-300 
-            ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} animate-fadeIn`}>
+                    <div
+                        className={`rounded-xl p-4 text-center font-medium ${alert.color === "green"
+                            ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                            : "bg-red-500/10 text-red-400 border border-red-500/20"
+                            }`}
+                    >
                         <strong>{alert.title}:</strong> {alert.message}
                     </div>
                 )}
 
-                {loading ? (
-                    <div className="flex justify-center items-center py-40">
-                        <img src="/load.gif" alt={t('loading')} className="w-24 h-24 animate-spin" />
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 animate-fadeIn">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">{t('fields.firstName')}</label>
-                                <input
-                                    type="text"
-                                    {...register('firstName')}
-                                    placeholder={t('placeholders.firstName')}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">{t('fields.lastName')}</label>
-                                <input
-                                    type="text"
-                                    {...register('lastName')}
-                                    placeholder={t('placeholders.lastName')}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white"
-                                />
-                            </div>
-                        </div>
+                {/* -------- Profile info -------- */}
+                <Section title={t("sections.profile")}>
+                    <form
+                        onSubmit={profileForm.handleSubmit(saveProfileInfo)}
+                        className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                    >
+                        <Input field="firstName" form={profileForm} t={t} />
+                        <Input field="lastName" form={profileForm} t={t} />
+                        <Input field="company" form={profileForm} t={t} />
+                        <Input field="position" form={profileForm} t={t} />
 
-                        <div className="mt-6">
-                            <label className="block text-sm font-semibold text-gray-300 mb-2">{t('fields.name')}</label>
-                            <input
-                                type="text"
-                                {...register('name')}
-                                placeholder={t('placeholders.name')}
-                                className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white"
+                        <div className="sm:col-span-2">
+                            <textarea
+                                {...profileForm.register("bio")}
+                                placeholder={t("placeholders.bio")}
+                                rows={4}
+                                className="w-full rounded-lg bg-gray-900/60 border border-gray-700 px-4 py-3"
                             />
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">{t('fields.company')}</label>
-                                <input
-                                    type="text"
-                                    {...register('company')}
-                                    placeholder={t('placeholders.company')}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">{t('fields.position')}</label>
-                                <input
-                                    type="text"
-                                    {...register('position')}
-                                    placeholder={t('placeholders.position')}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">{t('fields.phone1')}</label>
-                                <input
-                                    type="text"
-                                    {...register('phone1')}
-                                    placeholder={t('placeholders.phone1')}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">{t('fields.phone2')}</label>
-                                <input
-                                    type="text"
-                                    {...register('phone2')}
-                                    placeholder={t('placeholders.phone2')}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="mt-6">
-                            <label className="block text-sm font-semibold text-gray-300 mb-2">{t('fields.bio')}</label>
-                            <textarea
-                                {...register('bio')}
-                                rows={5}
-                                placeholder={t('placeholders.bio')}
-                                className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white"
-                            ></textarea>
-                        </div>
-
-                        <div className="flex justify-between items-center mt-6">
-                            <button
-                                type="button"
-                                onClick={() => router.back()}
-                                className="bg-blue-700 text-white py-3 px-6 rounded-lg hover:bg-blue-600"
-                            >
-                                {t('buttons.back')}
-                            </button>
+                        <div className="sm:col-span-2 flex justify-end">
                             <button
                                 type="submit"
-                                className="bg-gradient-to-r from-teal-600 to-orange text-white py-3 px-6 rounded-lg hover:opacity-80"
-                                disabled={loading}
+                                disabled={profileLoading}
+                                className="px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-black font-semibold"
                             >
-                                {loading ? t('buttons.saving') : t('buttons.save')}
+                                {profileLoading ? t("buttons.saving") : t("buttons.saveInfo")}
                             </button>
                         </div>
                     </form>
-                )}
+                </Section>
+
+                {/* -------- Address -------- */}
+                <Section title={t("sections.address")}>
+                    <form
+                        onSubmit={addressForm.handleSubmit(saveAddress)}
+                        className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                    >
+                        <Input field="street1" form={addressForm} t={t} />
+                        <Input field="street2" form={addressForm} t={t} />
+                        <Input field="zipCode" form={addressForm} t={t} />
+                        <Input field="city" form={addressForm} t={t} />
+                        <Input field="state" form={addressForm} t={t} />
+                        <Input field="country" form={addressForm} t={t} />
+
+                        <div className="sm:col-span-2 flex justify-end">
+                            <button
+                                type="submit"
+                                disabled={addressLoading}
+                                className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700"
+                            >
+                                {addressLoading ? t("buttons.saving") : t("buttons.saveAddress")}
+                            </button>
+                        </div>
+                    </form>
+                </Section>
             </div>
+            <div className="flex justify-between gap-4 mt-3">
+                <button
+                    onClick={() => router.back()}
+                    className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700"
+                >
+                    {t("buttons.back")}
+                </button>
+
+
+            </div>
+        </motion.div>
+    );
+}
+
+/* ---------------- helpers ---------------- */
+
+function Section({ title, children }: any) {
+    return (
+        <div className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6 space-y-6">
+            <h2 className="text-lg font-semibold text-amber-400">{title}</h2>
+            {children}
         </div>
     );
-};
+}
 
-export default ChangeProfileInformation;
+function Input({ field, form, t }: any) {
+    return (
+        <input
+            {...form.register(field)}
+            placeholder={t(`placeholders.${field}`)}
+            className="w-full rounded-lg bg-gray-900/60 border border-gray-700 px-4 py-3"
+        />
+    );
+}
