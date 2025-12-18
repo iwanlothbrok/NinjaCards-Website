@@ -61,6 +61,15 @@ export default function ProfileTabs() {
     router.push(href);
   };
 
+  React.useEffect(() => {
+    setIsLoading(true);
+
+    if (!user) {
+      router.push('/');
+    }
+
+    setIsLoading(false);
+  }, [user, router]);
   return (
     <>
       {isLoading && (

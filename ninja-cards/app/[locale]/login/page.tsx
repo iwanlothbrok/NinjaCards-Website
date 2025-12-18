@@ -50,6 +50,7 @@ const Login: React.FC = () => {
 
     const [alert, setAlert] = useState<Alert | null>(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const showAlert = (message: string, title: string, color: "green" | "red") => {
         setAlert({ message, title, color });
@@ -57,6 +58,8 @@ const Login: React.FC = () => {
     };
 
     const onSubmit = async (data: LoginForm) => {
+        setIsLoading(true);
+
         const res = await fetch(`${BASE_API_URL}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -68,18 +71,24 @@ const Login: React.FC = () => {
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(user));
 
-            showAlert(t("alerts.successMessage"), t("alerts.successTitle"), "green");
+            // showAlert(t("alerts.successMessage"), t("alerts.successTitle"), "green");
 
-            setTimeout(() => {
-                window.location.href = "/profile/help";
-            }, 1000);
+            window.location.href = "/profile";
+
         } else {
+            setIsLoading(false);
             showAlert(t("alerts.errorMessage"), t("alerts.errorTitle"), "red");
         }
     };
 
     return (
         <section className="bg-gray-950 min-h-screen flex items-center justify-center">
+            {isLoading && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+                    <img src="/load.gif" className="w-24 h-24 animate-spin" alt="Loading" />
+                </div>
+            )}
+
             <div className="flex flex-col items-center justify-center mx-auto">
                 <a href="/" className="flex items-center mb-6 text-3xl font-semibold text-white">
                     <Image
@@ -160,7 +169,8 @@ const Login: React.FC = () => {
                             {/* Submit */}
                             <button
                                 type="submit"
-                                className="w-full text-white bg-orange hover:bg-opacity-80 focus:ring-4 focus:outline-none focus:ring-orange/40 font-medium rounded-lg text-base px-6 py-3 text-center transition"
+                                disabled={isLoading}
+                                className="w-full text-white bg-orange hover:bg-opacity-80 focus:ring-4 focus:outline-none focus:ring-orange/40 font-medium rounded-lg text-base px-6 py-3 text-center transition disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {t("login.submit")}
                             </button>
