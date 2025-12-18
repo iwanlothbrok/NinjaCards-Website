@@ -59,6 +59,7 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isPhone, setIsPhone] = useState(false);
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const t = useTranslations("Navbar");
 
@@ -108,6 +109,11 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen, isMenuOpen, isProductDropdownOpen]);
 
+  // Watch for pathname changes to hide loading
+  useEffect(() => {
+    setIsLoading(false);
+  }, [pathname]);
+
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
     if (isMenuOpen) {
@@ -132,205 +138,215 @@ const Navbar: React.FC = () => {
   }, [logout, handleDropdownItemClick]);
 
   const handleNavLinkClick = useCallback(() => {
+    setIsLoading(true);
     if (isPhone) setIsMenuOpen(false);
   }, [isPhone]);
 
   // ... (rest of the code)
 
   return (
-    <header
-      className={`fixed ${isOnDetailsPage && isPhone ? "top-16" : "top-0"} left-0 z-40 w-full transition-all duration-500 ${isScrolled ? "bg-gradient-to-b !top-0 from-gray-900 via-gray-950 to-black shadow-md" : "bg-transparent"
-        }`}
-      aria-label={t("aria.header")}
-    >
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="relative flex items-center justify-between py-3 lg:py-5">
-          <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-28">
-              {!isOnDetailsPage ? (
-                <Link href="/" className="block" onClick={handleNavLinkClick}>
-                  <img src="/navlogo.png" alt={t("logoAlt")} className="w-full" />
-                </Link>
-              ) : (
-                <div className="w-28 mb-5" />
+    <>
+      <header
+        className={`fixed ${isOnDetailsPage && isPhone ? "top-16" : "top-0"} left-0 z-40 w-full transition-all duration-500 ${isScrolled ? "bg-gradient-to-b !top-0 from-gray-900 via-gray-950 to-black shadow-md" : "bg-transparent"
+          }`}
+        aria-label={t("aria.header")}
+      >
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="relative flex items-center justify-between py-3 lg:py-5">
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 w-28">
+                {!isOnDetailsPage ? (
+                  <Link href="/" className="block" onClick={handleNavLinkClick}>
+                    <img src="/navlogo.png" alt={t("logoAlt")} className="w-full" />
+                  </Link>
+                ) : (
+                  <div className="w-28 mb-5" />
+                )}
+              </div>
+
+              {/* Language switcher (desktop) */}
+              {!hideLangSwitcher && (
+                <div className="hidden lg:block">
+                  <LangSwitcher setIsMenuOpen={setIsMenuOpen} />
+                </div>
               )}
             </div>
 
-            {/* Language switcher (desktop) */}
-            {!hideLangSwitcher && (
-              <div className="hidden lg:block">
-                <LangSwitcher setIsMenuOpen={setIsMenuOpen} />
-              </div>
-            )}
-          </div>
+            <div className="flex items-center">
+              <button
+                onClick={toggleMenu}
+                id="navbarToggler"
+                aria-label={t("aria.toggleMenu")}
+                className="block lg:hidden px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange"
+                title={t("aria.toggleMenu")}
+              >
+                <span className="block h-1 w-6  bg-white my-1"></span>
+                <span className="block h-1 w-6 bg-white my-1"></span>
+                <span className="block h-1 w-6 bg-white my-1"></span>
+              </button>
 
-          <div className="flex items-center">
-            <button
-              onClick={toggleMenu}
-              id="navbarToggler"
-              aria-label={t("aria.toggleMenu")}
-              className="block lg:hidden px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange"
-              title={t("aria.toggleMenu")}
-            >
-              <span className="block h-1 w-6  bg-white my-1"></span>
-              <span className="block h-1 w-6 bg-white my-1"></span>
-              <span className="block h-1 w-6 bg-white my-1"></span>
-            </button>
-
-            <nav
-              ref={menuRef}
-              className={`fixed top-0 left-0 w-full h-screen bg-darkBg transform transition-transform duration-500 ease-in-out lg:relative lg:h-auto lg:w-auto lg:bg-transparent lg:transform-none ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
-                } lg:translate-x-0`}
-              aria-label={t("aria.mainNav")}
-            >
-              <div className="flex justify-between items-center p-4 lg:hidden">
-                <div>
-                  {/* Language switcher (mobile) */}
-                  {!hideLangSwitcher && <LangSwitcher setIsMenuOpen={setIsMenuOpen} />}
-                </div>
-                <button
-                  onClick={toggleMenu}
-                  aria-label={t("aria.closeMenu")}
-                  className="text-orange font-bold text-3xl"
-                  title={t("aria.closeMenu")}
-                >
-                  ✕
-                </button>
-              </div>
-
-              <ul className="flex flex-col items-center justify-center h-2/3 lg:flex-row lg:space-x-8">
-                <li>
-                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/" onClick={handleNavLinkClick}>
-                    {t("menu.home")}
-                  </Link>
-                </li>
-
-                <li className="relative group">
+              <nav
+                ref={menuRef}
+                className={`fixed top-0 left-0 w-full h-screen bg-darkBg transform transition-transform duration-500 ease-in-out lg:relative lg:h-auto lg:w-auto lg:bg-transparent lg:transform-none ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+                  } lg:translate-x-0`}
+                aria-label={t("aria.mainNav")}
+              >
+                <div className="flex justify-between items-center p-4 lg:hidden">
+                  <div>
+                    {/* Language switcher (mobile) */}
+                    {!hideLangSwitcher && <LangSwitcher setIsMenuOpen={setIsMenuOpen} />}
+                  </div>
                   <button
-                    onClick={toggleProductDropdown}
-                    className="text-white py-2 text-lg font-medium hover:text-orange"
-                    aria-expanded={isProductDropdownOpen}
-                    aria-haspopup="true"
+                    onClick={toggleMenu}
+                    aria-label={t("aria.closeMenu")}
+                    className="text-orange font-bold text-3xl"
+                    title={t("aria.closeMenu")}
                   >
-                    {t("menu.products")}
+                    ✕
                   </button>
-                  {isProductDropdownOpen && (
-                    <div
-                      ref={productDropdownRef}
-                      className="absolute left-0 mt-2 w-44 bg-gray-800 rounded-lg shadow-lg z-50"
-                    >
-                      <ul className="py-2 text-sm text-gray-200">
-                        <NavItem href="/products/cards" onClick={handleNavLinkClick}>
-                          {t("menu.cards")}
-                        </NavItem>
-                        <NavItem href="/products/reviews" onClick={handleNavLinkClick}>
-                          {t("menu.reviews")}
-                        </NavItem>
-                        <NavItem href="/products/all" onClick={handleNavLinkClick}>
-                          {t("menu.all")}
-                        </NavItem>
-                      </ul>
-                    </div>
-                  )}
-                </li>
+                </div>
 
-                <li>
-                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/features" onClick={handleNavLinkClick}>
-                    {t("menu.features")}
-                  </Link>
-                </li>
-                <li>
-                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/askedQuestions" onClick={handleNavLinkClick}>
-                    {t("menu.faq")}
-                  </Link>
-                </li>
-                <li>
-                  <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/contact" onClick={handleNavLinkClick}>
-                    {t("menu.contact")}
-                  </Link>
-                </li>
-
-                {isAuthenticated && (
+                <ul className="flex flex-col items-center justify-center h-2/3 lg:flex-row lg:space-x-8">
                   <li>
-                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/profile" onClick={handleNavLinkClick}>
-                      {t("menu.profile")}
+                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/" onClick={handleNavLinkClick}>
+                      {t("menu.home")}
                     </Link>
                   </li>
-                )}
 
-                {isAuthenticated ? (
-                  <li className="relative flex items-center group mt-5 lg:mt-0">
-                    {user.image ? (
-                      <img
-                        onClick={handleDropdownToggle}
-                        className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md"
-                        src={`data:image/jpeg;base64,${user.image}`}
-                        alt={t("alt.userAvatar")}
-                      />
-                    ) : (
+                  <li className="relative group">
+                    <button
+                      onClick={toggleProductDropdown}
+                      className="text-white py-2 text-lg font-medium hover:text-orange"
+                      aria-expanded={isProductDropdownOpen}
+                      aria-haspopup="true"
+                    >
+                      {t("menu.products")}
+                    </button>
+                    {isProductDropdownOpen && (
                       <div
-                        onClick={handleDropdownToggle}
-                        className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md flex items-center justify-center bg-gray-700 text-white"
-                        aria-label={t("alt.userAvatar")}
-                        title={t("alt.userAvatar")}
-                      />
-                    )}
-
-                    {isDropdownOpen && (
-                      <div
-                        ref={dropdownRef}
-                        className="absolute right-0 mt-80 w-44 bg-gray-800 rounded-lg shadow-lg z-50"
+                        ref={productDropdownRef}
+                        className="absolute left-0 mt-2 w-44 bg-gray-800 rounded-lg shadow-lg z-50"
                       >
-                        <div className="px-4 py-3 text-sm text-white">
-                          <div className="text-orange">{user?.name}</div>
-                          <div className="font-medium truncate text-orange">{user?.email}</div>
-                        </div>
                         <ul className="py-2 text-sm text-gray-200">
-                          <NavItem href="/profile" onClick={handleNavLinkClick}>
-                            {t("menu.profile")}
+                          <NavItem href="/products/cards" onClick={handleNavLinkClick}>
+                            {t("menu.cards")}
                           </NavItem>
-                          <NavItem href="/analyse" onClick={handleNavLinkClick}>
-                            {t("menu.analysis")}
+                          <NavItem href="/products/reviews" onClick={handleNavLinkClick}>
+                            {t("menu.reviews")}
+                          </NavItem>
+                          <NavItem href="/products/all" onClick={handleNavLinkClick}>
+                            {t("menu.all")}
                           </NavItem>
                         </ul>
-                        <div className="py-1">
-                          <button
-                            onClick={handleLogout}
-                            className="block w-full px-4 py-2 text-left text-sm text-gray-200 hover:bg-darkOrange"
-                          >
-                            {t("menu.logout")}
-                          </button>
-                        </div>
                       </div>
                     )}
                   </li>
-                ) : isPhone ? (
-                  <div className="flex flex-col items-center justify-center space-y-4 mt-2 lg:mt-0">
-                    <Link
-                      href="/login"
-                      className="px-6 py-3 text-lg font-semibold text-orange border border-orange rounded-full hover:bg-orange hover:text-white"
-                      onClick={handleNavLinkClick}
-                    >
-                      {t("menu.login")}
+
+                  <li>
+                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/features" onClick={handleNavLinkClick}>
+                      {t("menu.features")}
                     </Link>
-                  </div>
-                ) : (
-                  <div className="hidden lg:flex items-center ml-5 space-x-2 lg:space-x-3">
-                    <Link
-                      href="/login"
-                      className="px-6 py-3 text-lg font-semibold text-orange border border-orange rounded-full hover:bg-orange hover:text-white"
-                      onClick={handleNavLinkClick}
-                    >
-                      {t("menu.login")}
+                  </li>
+                  <li>
+                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/askedQuestions" onClick={handleNavLinkClick}>
+                      {t("menu.faq")}
                     </Link>
-                  </div>
-                )}
-              </ul>
-            </nav>
+                  </li>
+                  <li>
+                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/contact" onClick={handleNavLinkClick}>
+                      {t("menu.contact")}
+                    </Link>
+                  </li>
+
+                  {isAuthenticated && (
+                    <li>
+                      <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/profile" onClick={handleNavLinkClick}>
+                        {t("menu.profile")}
+                      </Link>
+                    </li>
+                  )}
+
+                  {isAuthenticated ? (
+                    <li className="relative flex items-center group mt-5 lg:mt-0">
+                      {user.image ? (
+                        <img
+                          onClick={handleDropdownToggle}
+                          className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md"
+                          src={`data:image/jpeg;base64,${user.image}`}
+                          alt={t("alt.userAvatar")}
+                        />
+                      ) : (
+                        <div
+                          onClick={handleDropdownToggle}
+                          className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md flex items-center justify-center bg-gray-700 text-white"
+                          aria-label={t("alt.userAvatar")}
+                          title={t("alt.userAvatar")}
+                        />
+                      )}
+
+                      {isDropdownOpen && (
+                        <div
+                          ref={dropdownRef}
+                          className="absolute right-0 mt-80 w-44 bg-gray-800 rounded-lg shadow-lg z-50"
+                        >
+                          <div className="px-4 py-3 text-sm text-white">
+                            <div className="text-orange">{user?.name}</div>
+                            <div className="font-medium truncate text-orange">{user?.email}</div>
+                          </div>
+                          <ul className="py-2 text-sm text-gray-200">
+                            <NavItem href="/profile" onClick={handleNavLinkClick}>
+                              {t("menu.profile")}
+                            </NavItem>
+                            <NavItem href="/analyse" onClick={handleNavLinkClick}>
+                              {t("menu.analysis")}
+                            </NavItem>
+                          </ul>
+                          <div className="py-1">
+                            <button
+                              onClick={handleLogout}
+                              className="block w-full px-4 py-2 text-left text-sm text-gray-200 hover:bg-darkOrange"
+                            >
+                              {t("menu.logout")}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </li>
+                  ) : isPhone ? (
+                    <div className="flex flex-col items-center justify-center space-y-4 mt-2 lg:mt-0">
+                      <Link
+                        href="/login"
+                        className="px-6 py-3 text-lg font-semibold text-orange border border-orange rounded-full hover:bg-orange hover:text-white"
+                        onClick={handleNavLinkClick}
+                      >
+                        {t("menu.login")}
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="hidden lg:flex items-center ml-5 space-x-2 lg:space-x-3">
+                      <Link
+                        href="/login"
+                        className="px-6 py-3 text-lg font-semibold text-orange border border-orange rounded-full hover:bg-orange hover:text-white"
+                        onClick={handleNavLinkClick}
+                      >
+                        {t("menu.login")}
+                      </Link>
+                    </div>
+                  )}
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <img src="/load.gif" className="w-24 h-24" alt="Loading" />
+        </div>
+      )}
+    </>
   );
 };
 
