@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
@@ -20,15 +21,15 @@ interface Alert {
     color: "green" | "red";
 }
 
-const ChangePassword: React.FC = () => {
+export default function ChangePassword() {
     const t = useTranslations("ChangePassword");
     const { user, setUser } = useAuth();
-    const [loading, setLoading] = useState<boolean>(false);
-    const [alert, setAlert] = useState<Alert | null>(null);
     const router = useRouter();
 
-    // Build the schema AFTER we have t()
-    const schema = yup.object().shape({
+    const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState<Alert | null>(null);
+
+    const schema = yup.object({
         password: yup
             .string()
             .min(8, t("errors.min"))
@@ -39,7 +40,7 @@ const ChangePassword: React.FC = () => {
             .required(t("errors.required")),
         confirmPassword: yup
             .string()
-            .oneOf([yup.ref("password"), ""], t("errors.match"))
+            .oneOf([yup.ref("password")], t("errors.match"))
             .required(t("errors.confirmRequired")),
     });
 
@@ -54,55 +55,45 @@ const ChangePassword: React.FC = () => {
     });
 
     useEffect(() => {
-        if (user) {
-            setValue("password", "");
-            setValue("confirmPassword", "");
-        }
-    }, [user, setValue]);
+        setValue("password", "");
+        setValue("confirmPassword", "");
+    }, [setValue]);
 
-    const showAlert = (message: string, title: string, color: "green" | "red") => {
+    const showAlert = (message: string, title: string, color: Alert["color"]) => {
         setAlert({ message, title, color });
         setTimeout(() => setAlert(null), 4000);
     };
 
     const onSubmit = async (data: PasswordForm) => {
-        setLoading(true);
-
         if (!user) {
             showAlert(t("alerts.notAuthenticated"), t("alerts.warning"), "red");
-            setLoading(false);
             return;
         }
 
-        const updateData = new FormData();
-        updateData.append("id", String(user.id));
-        updateData.append("password", data.password);
+        setLoading(true);
+
+        const formData = new FormData();
+        formData.append("id", String(user.id));
+        formData.append("password", data.password);
 
         try {
-            const response = await fetch(`${BASE_API_URL}/api/profile/changePassword`, {
+            const res = await fetch(`${BASE_API_URL}/api/profile/changePassword`, {
                 method: "PUT",
-                body: updateData,
+                body: formData,
             });
 
-            const result = await response.json().catch(() => null);
+            const result = await res.json();
 
-            if (!response.ok) {
-                const errorMessage = result?.error || t("alerts.updateFailed");
-                console.error("Update error:", errorMessage, result?.details);
-                showAlert(errorMessage, t("alerts.error"), "red");
+            if (!res.ok) {
+                showAlert(result?.error || t("alerts.updateFailed"), t("alerts.error"), "red");
                 return;
-            }
-
-            if (typeof window !== "undefined") {
-                document.documentElement.scrollTop = 0;
-                document.body.scrollTop = 0;
             }
 
             localStorage.setItem("user", JSON.stringify(result));
             setUser(result);
             showAlert(t("alerts.updateSuccess"), t("alerts.success"), "green");
-        } catch (error) {
-            console.error("Request error:", error);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        } catch {
             showAlert(t("alerts.updateFailed"), t("alerts.error"), "red");
         } finally {
             setLoading(false);
@@ -110,95 +101,110 @@ const ChangePassword: React.FC = () => {
     };
 
     return (
-        <div className="p-4">
-            <div
-                className="w-full max-w-3xl mx-auto mt-36 p-10 bg-gradient-to-b from-gray-900 to-gray-800 
-            rounded-2xl shadow-xl border border-gray-700 sm:mx-6 md:mx-10 lg:mx-auto"
+        <>
+            {loading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                    <img src="/load.gif" className="w-24 h-24 animate-spin" />
+                </div>
+            )}
+
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200"
             >
-                <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wide">
-                    🔒 {t("title")}
-                </h2>
-
-                {/* Alert */}
-                {alert && (
-                    <div
-                        className={`p-4 rounded-lg mb-6 text-white text-center font-medium transition-all duration-300 
-                    ${alert.color === "green" ? "bg-green-500" : "bg-red-500"} animate-fadeIn`}
-                        role="status"
-                        aria-live="polite"
+                <div className="max-w-5xl mx-auto space-y-10">
+                    {/* Header */}
+                    <motion.div
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="text-center"
                     >
-                        <strong>{alert.title}:</strong> {alert.message}
-                    </div>
-                )}
+                        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                            {t("title")}
+                        </h1>
+                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                            {t("subtitle")}
+                        </p>
+                    </motion.div>
 
-                {/* Loading */}
-                {loading ? (
-                    <div className="flex justify-center items-center py-40">
-                        <img src="/load.gif" alt={t("a11y.loading")} className="w-24 h-24 animate-spin" />
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 animate-fadeIn" noValidate>
-                        {/* New Password */}
-                        <div className="relative">
-                            <label htmlFor="password" className="block text-sm font-semibold text-gray-300 mb-2">
-                                {t("labels.password")}
-                            </label>
-                            <input
-                                id="password"
-                                type="password"
-                                {...register("password")}
-                                placeholder={t("placeholders.password")}
-                                className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white 
-                            focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all placeholder-gray-400"
-                                autoComplete="new-password"
-                            />
-                            {errors.password && <div className="text-red-500 mt-2 text-sm">{String(errors.password.message)}</div>}
-                        </div>
+                    {/* Alert */}
+                    {alert && (
+                        <motion.div
+                            initial={{ y: -10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            className={`rounded-xl p-4 text-center font-medium ${alert.color === "green"
+                                    ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                    : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                }`}
+                        >
+                            <strong>{alert.title}:</strong> {alert.message}
+                        </motion.div>
+                    )}
 
-                        {/* Confirm Password */}
-                        <div className="relative">
-                            <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-300 mb-2">
-                                {t("labels.confirmPassword")}
-                            </label>
-                            <input
-                                id="confirmPassword"
-                                type="password"
-                                {...register("confirmPassword")}
-                                placeholder={t("placeholders.confirmPassword")}
-                                className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white 
-                            focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all placeholder-gray-400"
-                                autoComplete="new-password"
-                            />
-                            {errors.confirmPassword && (
-                                <div className="text-red-500 mt-2 text-sm">{String(errors.confirmPassword.message)}</div>
-                            )}
-                        </div>
+                    {/* Form */}
+                    <motion.form
+                        onSubmit={handleSubmit(onSubmit)}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6 space-y-6"
+                    >
+                        <PasswordInput
+                            field="password"
+                            register={register}
+                            errors={errors}
+                            t={t}
+                        />
 
-                        {/* Buttons */}
-                        <div className="flex justify-between items-center mt-6">
+                        <PasswordInput
+                            field="confirmPassword"
+                            register={register}
+                            errors={errors}
+                            t={t}
+                        />
+
+                        <div className="flex justify-between gap-4 pt-4">
                             <button
                                 type="button"
                                 onClick={() => router.back()}
-                                className="bg-blue-700 text-white py-3 md:py-4 px-6 rounded-lg hover:bg-blue-600 
-                            focus:outline-none focus:ring-4 focus:ring-gray-400 transition-transform transform hover:scale-105"
+                                className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition"
                             >
                                 {t("buttons.back")}
                             </button>
+
                             <button
                                 type="submit"
-                                className="bg-gradient-to-r from-teal-600 to-orange text-white py-3 md:py-4 px-6 rounded-lg 
-                            hover:opacity-80 focus:outline-none focus:ring-4 focus:ring-teal-400 transition-transform 
-                            transform hover:scale-105 shadow-lg tracking-wide"
-                                disabled={loading}
+                                className="px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-black font-semibold transition"
                             >
-                                {loading ? t("buttons.saving") : t("buttons.save")}
+                                {t("buttons.save")}
                             </button>
                         </div>
-                    </form>
-                )}
-            </div>
+                    </motion.form>
+                </div>
+            </motion.div>
+        </>
+    );
+}
+
+function PasswordInput({ field, register, errors, t }: any) {
+    return (
+        <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+                {t(`labels.${field}`)}
+            </label>
+            <input
+                type="password"
+                {...register(field)}
+                placeholder={t(`placeholders.${field}`)}
+                autoComplete="new-password"
+                className="w-full rounded-lg bg-gray-900/60 border border-gray-700 px-4 py-3 text-gray-200
+        focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            />
+            {errors[field] && (
+                <p className="text-xs text-red-400 mt-1">
+                    {String(errors[field]?.message)}
+                </p>
+            )}
         </div>
     );
-};
-
-export default ChangePassword;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
 import { AiOutlineDownload } from "react-icons/ai";
 import { FiSend } from "react-icons/fi";
@@ -8,16 +8,16 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-const QRCodeDownload: React.FC = () => {
+export default function QRCodeDownload() {
     const { user } = useAuth();
     const router = useRouter();
     const t = useTranslations("ProfileQR");
 
     if (!user || !user.qrCode) {
         return (
-            <p className="text-center text-gray-400">
-                {t("noQr")}
-            </p>
+            <div className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200">
+                <p className="text-center text-gray-400">{t("noQr")}</p>
+            </div>
         );
     }
 
@@ -44,93 +44,109 @@ const QRCodeDownload: React.FC = () => {
             type: "image/png",
         });
 
-        if (navigator.canShare && navigator.canShare({ files: [qrFile] })) {
-            navigator
-                .share({
-                    files: [qrFile],
-                    title: t("share.title"),
-                    text: t("share.text", { name: user.name }),
-                })
-                .catch((error) => console.log("Error sharing", error));
+        if (navigator.canShare?.({ files: [qrFile] })) {
+            navigator.share({
+                files: [qrFile],
+                title: t("share.title"),
+                text: t("share.text", { name: user.name }),
+            });
         } else {
             alert(t("share.unsupported"));
         }
     };
 
     return (
-        <div className="p-4">
-            <div className="w-full max-w-3xl mx-auto mt-28 p-10 bg-gradient-to-b from-gray-900 to-gray-800 rounded-2xl shadow-xl border border-gray-700 sm:mx-6 md:mx-10 lg:mx-auto">
-                <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wide">
-                    {t("heading")}
-                </h2>
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200"
+        >
+            <div className="max-w-5xl mx-auto space-y-10">
 
-                <div className="flex flex-col items-center mb-6">
-                    {/* Profile Image */}
-                    {user.image && (
-                        <Image
-                            src={`data:image/jpeg;base64,${user.image}`}
-                            alt={t("alt.profileImage", {
-                                name: `${user.firstName} ${user.lastName}`,
-                            })}
-                            width={120}
-                            height={120}
-                            className="w-40 h-40 rounded-full border-4 border-orange-400 shadow-lg mb-4"
-                            loading="lazy"
-                            unoptimized
-                            sizes="(max-width: 1024px) 100vw, 1024px"
-                        />
-                    )}
+                {/* Header */}
+                <motion.div
+                    initial={{ y: -20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="text-center"
+                >
+                    <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                        {t("heading")}
+                    </h1>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                        {t("subtitle")}
+                    </p>
+                </motion.div>
 
-                    {/* User Name + Company */}
-                    <p className="text-xl font-semibold text-white">{user.name}</p>
-                    {user.company && (
-                        <p className="text-lg font-semibold text-white mb-4">
-                            {user.company}
-                        </p>
-                    )}
-
-                    {/* QR Code */}
-                    <div className="bg-orange-500 p-4 rounded-lg shadow-lg mb-4">
-                        <img
-                            src={user.qrCode}
-                            alt={t("alt.qr")}
-                            className="w-40 h-40 rounded-md shadow-md"
-                            loading="lazy"
-                        />
+                {/* QR Card */}
+                <motion.section
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-8 text-center space-y-6"
+                >
+                    {/* Profile */}
+                    <div className="flex flex-col items-center gap-2">
+                        {user.image && (
+                            <Image
+                                src={`data:image/jpeg;base64,${user.image}`}
+                                alt={t("alt.profileImage", {
+                                    name: `${user.firstName} ${user.lastName}`,
+                                })}
+                                width={160}
+                                height={160}
+                                className="w-36 h-36 rounded-full border-4 border-amber-500/40 object-cover"
+                                unoptimized
+                            />
+                        )}
+                        <p className="text-xl font-semibold text-white">{user.name}</p>
+                        {user.position && (
+                            <p className="text-gray-400 -m-1">{user.position}</p>
+                        )}
+                        {user.company && (
+                            <p className="text-gray-400 -m-2">{user.company}</p>
+                        )}
                     </div>
 
-                    {/* Buttons */}
-                    <div className="flex space-x-4">
+                    {/* QR */}
+                    <div className="flex justify-center">
+                        <div className="p-4 rounded-xl bg-gray-900/60 border border-gray-700">
+                            <img
+                                src={user.qrCode}
+                                alt={t("alt.qr")}
+                                className="w-44 h-44 rounded-lg bg-white p-2"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
                         <button
                             onClick={downloadQRCode}
-                            className="flex items-center bg-orange text-white px-6 py-3 rounded-lg hover:bg-opacity-80 transition-transform transform hover:scale-105 focus:ring-4 focus:ring-orange-300"
+                            className="px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-black font-semibold transition flex items-center justify-center gap-2"
                         >
-                            <AiOutlineDownload className="mr-2 text-4xl" />
+                            <AiOutlineDownload className="text-xl" />
                             {t("actions.download")}
                         </button>
+
                         <button
-                            className="flex items-center bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-transform transform hover:scale-105 focus:ring-4 focus:ring-blue-300"
                             onClick={handleShare}
+                            className="px-6 py-3 rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-700 transition flex items-center justify-center gap-2"
                         >
-                            <FiSend className="mr-2 text-4xl" />
+                            <FiSend className="text-lg" />
                             {t("actions.share")}
                         </button>
                     </div>
-                </div>
+                </motion.section>
 
-                {/* Back Button */}
-                <div className="flex justify-center mt-6">
+                {/* Back */}
+                <div className="flex justify-center">
                     <button
-                        type="button"
                         onClick={() => router.back()}
-                        className="bg-blue-700 text-white py-3 md:py-4 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-gray-400 transition-transform transform hover:scale-105"
+                        className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition"
                     >
                         {t("actions.back")}
                     </button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
-};
-
-export default QRCodeDownload;
+}
