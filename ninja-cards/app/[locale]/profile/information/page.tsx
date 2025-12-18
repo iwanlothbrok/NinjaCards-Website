@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { BASE_API_URL } from "@/utils/constants";
 import { useTranslations } from "next-intl";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 /* ---------------- schemas ---------------- */
 
@@ -46,6 +46,7 @@ interface Alert {
 export default function ProfileInformationPage() {
     const t = useTranslations("ProfileInformation");
     const { user, setUser } = useAuth();
+    const router = useRouter();
 
     const [profileLoading, setProfileLoading] = useState(false);
     const [addressLoading, setAddressLoading] = useState(false);
@@ -101,7 +102,7 @@ export default function ProfileInformationPage() {
         const fd = new FormData();
         fd.append("id", String(user.id));
         Object.entries(data).forEach(([k, v]) => v && fd.append(k, v));
-        
+
         // Preserve address data
         const addressData = addressForm.getValues();
         Object.entries(addressData).forEach(([k, v]) => v && fd.append(k, v));
@@ -243,16 +244,16 @@ export default function ProfileInformationPage() {
                         </div>
                     </form>
                 </Section>
-            </div>
-            <div className="flex justify-between gap-4 mt-3">
-                <button
-                    onClick={() => router.back()}
-                    className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700"
-                >
-                    {t("buttons.back")}
-                </button>
+                <div className="flex justify-between gap-4 mt-3">
+                    <button
+                        onClick={() => router.push("/profile")}
+                        className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700"
+                    >
+                        {t("buttons.back")}
+                    </button>
 
 
+                </div>
             </div>
         </motion.div>
     );
