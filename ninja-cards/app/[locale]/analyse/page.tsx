@@ -16,6 +16,7 @@ import {
 import { Doughnut, Bar, Line } from "react-chartjs-2";
 import { BASE_API_URL } from "@/utils/constants";
 import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
 import "chartjs-adapter-date-fns";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
@@ -32,229 +33,201 @@ ChartJS.register(
     PointElement
 );
 
-const DashboardPage = () => {
+export default function DashboardPage() {
     const { user } = useAuth();
+    const t = useTranslations("dashboard");
+
     const [id, setId] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [selectedMonth, setSelectedMonth] = useState("");
+
     const [dashboardData, setDashboardData] = useState({
         profileVisits: 0,
         vcfDownloads: 0,
         profileShares: 0,
         socialLinkClicks: 0,
     });
+
     const [monthlyData, setMonthlyData] = useState<any[]>([]);
     const [filteredData, setFilteredData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [selectedMonth, setSelectedMonth] = useState("");
-
-    const t = useTranslations("dashboard");
 
     useEffect(() => {
-        if (user) setId(user.id);
+        if (user?.id) setId(user.id);
     }, [user]);
 
     useEffect(() => {
-        const fetchDashboardData = async () => {
-            if (!id) return;
+        if (!id) return;
+
+        const fetchData = async () => {
             try {
-                const [dashboardRes, eventsRes] = await Promise.all([
+                const [summaryRes, eventsRes] = await Promise.all([
                     fetch(`${BASE_API_URL}/api/dashboard/${id}`),
                     fetch(`${BASE_API_URL}/api/dashboard/events/${id}`),
                 ]);
 
-                if (!dashboardRes.ok || !eventsRes.ok) throw new Error(t("errors.load"));
+                if (!summaryRes.ok || !eventsRes.ok) throw new Error();
 
-                const dashboard = await dashboardRes.json();
+                const summary = await summaryRes.json();
                 const events = await eventsRes.json();
 
-                setDashboardData(dashboard);
+                setDashboardData(summary);
                 setMonthlyData(events);
                 setFilteredData(events);
-            } catch (error) {
-                console.error("Error loading data:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchDashboardData();
-    }, [id, t]);
+        fetchData();
+    }, [id]);
 
-    const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const month = event.target.value;
+    const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const month = e.target.value;
         setSelectedMonth(month);
 
-        if (month === "") {
+        if (!month) {
             setFilteredData(monthlyData);
         } else {
-            const filtered = monthlyData.filter((e: any) =>
-                format(new Date(e.date), "yyyy-MM") === month
+            setFilteredData(
+                monthlyData.filter(
+                    (e: any) => format(new Date(e.date), "yyyy-MM") === month
+                )
             );
-            setFilteredData(filtered);
         }
-    };
-
-    const doughnutData = {
-        labels: [
-            t("metrics.profileVisits"),
-            t("metrics.vcfDownloads"),
-            t("metrics.profileShares"),
-            t("metrics.socialLinkClicks"),
-        ],
-        datasets: [
-            {
-                data: [
-                    dashboardData.profileVisits,
-                    dashboardData.vcfDownloads,
-                    dashboardData.profileShares,
-                    dashboardData.socialLinkClicks,
-                ],
-                backgroundColor: ["#1E3A8A", "#10B981", "#F59E0B", "#7C3AED"],
-                hoverBackgroundColor: ["#3B82F6", "#22C55E", "#FBBF24", "#A78BFA"],
-                borderWidth: 2,
-            },
-        ],
-    };
-
-    const barData = {
-        labels: [
-            t("metrics.profileVisits"),
-            t("metrics.vcfDownloads"),
-            t("metrics.profileShares"),
-            t("metrics.socialLinkClicks"),
-        ],
-        datasets: [
-            {
-                label: t("overall"),
-                data: [
-                    dashboardData.profileVisits,
-                    dashboardData.vcfDownloads,
-                    dashboardData.profileShares,
-                    dashboardData.socialLinkClicks,
-                ],
-                backgroundColor: "#F59E0B",
-                borderRadius: 6,
-                borderWidth: 1,
-                borderColor: "#FBBF24",
-            },
-        ],
-    };
-
-    const lineData = {
-        labels: filteredData.map((e: any) => e.date),
-        datasets: [
-            {
-                label: t("metrics.profileVisits"),
-                data: filteredData.map((e: any) => e.visit),
-                borderColor: "#1E3A8A",
-                backgroundColor: "rgba(30, 58, 138, 0.2)",
-                fill: true,
-                tension: 0.4,
-            },
-            {
-                label: t("metrics.vcfDownloads"),
-                data: filteredData.map((e: any) => e.download),
-                borderColor: "#10B981",
-                backgroundColor: "rgba(16, 185, 129, 0.2)",
-                fill: true,
-                tension: 0.4,
-            },
-            {
-                label: t("metrics.profileShares"),
-                data: filteredData.map((e: any) => e.share),
-                borderColor: "#F59E0B",
-                backgroundColor: "rgba(245, 158, 11, 0.2)",
-                fill: true,
-                tension: 0.4,
-            },
-            {
-                label: t("metrics.socialLinkClicks"),
-                data: filteredData.map((e: any) => e.socialClick),
-                borderColor: "#7C3AED",
-                backgroundColor: "rgba(124, 58, 237, 0.2)",
-                fill: true,
-                tension: 0.4,
-            },
-        ],
     };
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen bg-black">
-                <div className="flex justify-center items-center py-72">
-                    <img src="/load.gif" alt={t("loading")} className="w-40 h-40" />
-                </div>
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                <img src="/load.gif" className="w-24 h-24 animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-black py-8 px-4 pt-28 sm:px-6 lg:px-8 text-white">
-            <div className="max-w-6xl mx-auto">
-                <h1 className="text-3xl font-bold text-center mb-12">{t("title")}</h1>
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200"
+        >
+            <div className="max-w-6xl mx-auto space-y-10">
 
-                {/* Stats cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                {/* Header */}
+                <motion.div
+                    initial={{ y: -20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="text-center"
+                >
+                    <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                        {t("title")}
+                    </h1>
+                    <p className="text-gray-400 text-lg">
+                        {t("subtitle")}
+                    </p>
+                </motion.div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {Object.entries(dashboardData).map(([key, value]) => (
-                        <div key={key} className="bg-gray-300 shadow-lg rounded-lg p-6 text-center">
-                            <h2 className="text-2xl font-semibold text-black">{value}</h2>
-                            <p className="text-black mt-2">{t(`metrics.${key}`)}</p>
+                        <div
+                            key={key}
+                            className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6 text-center"
+                        >
+                            <p className="text-3xl font-bold text-white">{value}</p>
+                            <p className="text-gray-400 mt-2">
+                                {t(`metrics.${key}`)}
+                            </p>
                         </div>
                     ))}
                 </div>
 
                 {/* Charts */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                    <div className="bg-gray-300 shadow-lg rounded-lg p-8 flex flex-col items-center justify-center">
-                        <h3 className="text-lg font-medium text-gray-700 mb-4 text-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6">
+                        <h3 className="text-lg font-semibold text-white mb-4 text-center">
                             {t("overview")}
                         </h3>
-                        <div className="w-full max-w-xs">
-                            <Doughnut data={doughnutData} />
-                        </div>
+                        <Doughnut
+                            data={{
+                                labels: Object.keys(dashboardData).map((k) =>
+                                    t(`metrics.${k}`)
+                                ),
+                                datasets: [
+                                    {
+                                        data: Object.values(dashboardData),
+                                        backgroundColor: ["#1E3A8A", "#10B981", "#F59E0B", "#7C3AED"],
+                                    },
+                                ],
+                            }}
+                        />
                     </div>
 
-                    <div className="bg-gray-300 shadow-lg rounded-lg p-8 flex flex-col items-center justify-center">
-                        <h3 className="text-lg font-medium text-gray-700 mb-4 text-center">
+                    <div className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6">
+                        <h3 className="text-lg font-semibold text-white mb-4 text-center">
                             {t("breakdown")}
                         </h3>
-                        <div className="w-full max-w-xs">
-                            <Bar data={barData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
-                        </div>
+                        <Bar
+                            data={{
+                                labels: Object.keys(dashboardData).map((k) =>
+                                    t(`metrics.${k}`)
+                                ),
+                                datasets: [
+                                    {
+                                        data: Object.values(dashboardData),
+                                        backgroundColor: "#F59E0B",
+                                    },
+                                ],
+                            }}
+                            options={{ plugins: { legend: { display: false } } }}
+                        />
                     </div>
                 </div>
 
                 {/* Filter */}
-                <div className="mb-8">
-                    <label htmlFor="month-filter" className="block text-lg font-medium text-gray-300 mb-2">
+                <div className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6">
+                    <label className="block text-sm text-gray-400 mb-2">
                         {t("filter")}
                     </label>
                     <select
-                        id="month-filter"
                         value={selectedMonth}
                         onChange={handleMonthChange}
-                        className="bg-gray-700 text-white rounded-lg p-2 w-full"
+                        className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-gray-200"
                     >
                         <option value="">{t("allMonths")}</option>
-                        {Array.from(new Set(monthlyData.map((e: any) => format(new Date(e.date), "yyyy-MM")))).map(
-                            (month) => (
-                                <option key={month} value={month}>
-                                    {month}
-                                </option>
-                            )
-                        )}
+                        {Array.from(
+                            new Set(monthlyData.map((e: any) => format(new Date(e.date), "yyyy-MM")))
+                        ).map((month) => (
+                            <option key={month} value={month}>
+                                {month}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
                 {/* Line chart */}
-                <div className="bg-gray-300 shadow-lg rounded-lg p-4 sm:p-8">
-                    <h3 className="text-lg font-medium text-gray-700 mb-4 text-center">{t("monthlyActivity")}</h3>
-                    <div className="w-full overflow-x-auto">
-                        <Line data={lineData} options={{ responsive: true, maintainAspectRatio: false }} />
+                <div className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4 text-center">
+                        {t("monthlyActivity")}
+                    </h3>
+                    <div className="h-[400px]">
+                        <Line
+                            data={{
+                                labels: filteredData.map((e: any) => format(new Date(e.date), "yyyy-MM-dd")),
+                                datasets: [
+                                    {
+                                        label: t("metrics.profileVisits"),
+                                        data: filteredData.map((e: any) => e.visit),
+                                        borderColor: "#F59E0B",
+                                        tension: 0.4,
+                                    },
+                                ],
+                            }}
+                            options={{ responsive: true, maintainAspectRatio: false }}
+                        />
                     </div>
                 </div>
-            </div>
-        </div>
-    );
-};
 
-export default DashboardPage;
+            </div>
+        </motion.div>
+    );
+}
