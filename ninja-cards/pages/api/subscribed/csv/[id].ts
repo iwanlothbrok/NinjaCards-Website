@@ -1,4 +1,3 @@
-
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { stringify } from 'csv-stringify/sync';
@@ -12,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         method,
     } = req;
     const corsHandled = cors(req, res);
-    if (corsHandled) return; // If it'
+    if (corsHandled) return;
 
     if (method !== 'GET') {
         return res.status(405).json({ error: 'Методът не е разрешен' });
@@ -29,7 +28,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (format === 'csv') {
-            const csv = stringify(leads, {
+            const leadsFormatted = leads.map(lead => ({
+                ...lead,
+                createdAt: lead.createdAt.toISOString().split('T')[0],
+                phone: lead.phone ? `="${lead.phone}"` : '',
+            }));
+
+            const csv = stringify(leadsFormatted, {
                 header: true,
                 columns: [
                     { key: 'name', header: 'Name' },
@@ -51,3 +56,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(500).json({ error: 'Вътрешна грешка на сървъра' });
     }
 }
+
