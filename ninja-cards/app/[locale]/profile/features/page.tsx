@@ -1,196 +1,180 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { BASE_API_URL } from "@/utils/constants";
-import { FaCheckCircle, FaInfoCircle, FaExclamationTriangle } from "react-icons/fa";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslations } from "next-intl";
 
 interface Alert {
     message: string;
     title: string;
-    color: string;
+    color: "green" | "red";
 }
 
-const FeaturesComponent: React.FC = () => {
+export default function FeaturesComponent() {
     const { user, setUser } = useAuth();
-    const [isDirect, setIsDirect] = useState<boolean | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState<Alert | null>(null);
-    const [message, setMessage] = useState("");
     const router = useRouter();
     const t = useTranslations("CardSettings");
 
+    const [isDirect, setIsDirect] = useState<boolean | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState<Alert | null>(null);
+
     useEffect(() => {
-        if (user?.id) {
-            fetchUserDetails(user.id);
-        }
+        if (!user?.id) return;
+        fetchUserDetails(user.id);
     }, [user?.id]);
 
     const fetchUserDetails = async (userId: string) => {
         setLoading(true);
         try {
-            const response = await fetch(`${BASE_API_URL}/api/profile/${userId}`);
-            if (!response.ok) throw new Error(t("errors.loadUser"));
-            const userData = await response.json();
-            setIsDirect(userData.isDirect);
-        } catch (error) {
-            console.error("Error fetching user details:", error);
-            setMessage(t("errors.loadUser"));
+            const res = await fetch(`${BASE_API_URL}/api/profile/${userId}`);
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            setIsDirect(data.isDirect);
+        } catch {
+            showAlert(t("errors.loadUser"), t("alert.errorTitle"), "red");
         } finally {
             setLoading(false);
         }
     };
 
-    const updateIsDirect = async (newIsDirect: boolean) => {
-        if (!user?.id) {
-            setMessage(t("errors.noUser"));
-            return;
-        }
+    const updateIsDirect = async (value: boolean) => {
+        if (!user?.id) return;
 
         setLoading(true);
-        setMessage("");
         try {
-            const response = await fetch(`${BASE_API_URL}/api/profile/updateIsDirect`, {
+            const res = await fetch(`${BASE_API_URL}/api/profile/updateIsDirect`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: user.id, isDirect: newIsDirect }),
+                body: JSON.stringify({ userId: user.id, isDirect: value }),
             });
 
-            const result = await response.json().catch(() => null);
+            const result = await res.json().catch(() => null);
 
-            if (!response.ok) {
-                const errorMessage = result?.error || t("errors.updateFail");
-                showAlert(errorMessage, t("alert.errorTitle"), "red");
+            if (!res.ok) {
+                showAlert(result?.error || t("errors.updateFail"), t("alert.errorTitle"), "red");
                 return;
             }
 
-            // setMessage(result.message || t("messages.updated"));
-            setIsDirect(newIsDirect);
-            if (setUser) setUser(result.user);
+            setIsDirect(value);
+            setUser?.(result.user);
             showAlert(t("messages.updated"), t("keywords.success"), "green");
-        } catch (error) {
-            setMessage(t("errors.updateFail"));
-            console.error(error);
+        } catch {
+            showAlert(t("errors.updateFail"), t("alert.errorTitle"), "red");
         } finally {
             setLoading(false);
         }
     };
 
-    const showAlert = (message: string, title: string, color: string) => {
+    const showAlert = (message: string, title: string, color: Alert["color"]) => {
         setAlert({ message, title, color });
-        setTimeout(() => {
-            setAlert(null);
-        }, 4000);
-    };
-
-    const handleCheckboxChange = (checked: boolean) => {
-        if (checked !== isDirect) {
-            updateIsDirect(checked);
-        }
+        setTimeout(() => setAlert(null), 4000);
     };
 
     if (isDirect === null) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <img src="/load.gif" alt={t("loading.alt")} className="w-24 h-24 animate-spin" />
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                <img src="/load.gif" className="w-24 h-24 animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="p-4">
-            <div className="w-full max-w-3xl mx-auto mt-28 p-10 bg-gradient-to-b from-gray-900 to-gray-800 
-        rounded-2xl shadow-xl border border-gray-700 sm:mx-6 md:mx-10 lg:mx-auto">
-
-                <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wide flex items-center justify-center">
-                    ⚙️ {t("heading")}
-                </h2>
-
-                {alert && (
-                    <div className={`p-4 rounded-lg mb-6 text-white text-center font-medium transition-all duration-300 
-              ${alert.color === "green" ? "bg-green-500" : "bg-red-500"} animate-fadeIn`}>
-                        <strong>{alert.title}:</strong> {alert.message}
-                    </div>
-                )}
-
-                {/* Checkbox */}
-                <div className="mb-6">
-                    <label htmlFor="isDirect" className="flex items-center cursor-pointer">
-                        <input
-                            type="checkbox"
-                            id="isDirect"
-                            checked={isDirect ?? false}
-                            onChange={(e) => handleCheckboxChange(e.target.checked)}
-                            disabled={loading}
-                            className="w-5 h-5 text-teal-500 border-gray-500 rounded focus:ring-teal-400 cursor-pointer"
-                        />
-                        <span className="ml-3 text-lg font-semibold text-gray-200">
-                            {t("options.directDownload")}
-                        </span>
-                    </label>
-                    <p className="text-gray-400 mt-2">
-                        {isDirect ? t("options.directOn") : t("options.directOff")}
-                    </p>
+        <>
+            {loading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                    <img src="/load.gif" className="w-24 h-24 animate-spin" />
                 </div>
+            )}
 
-                {/* Info Box */}
-                <div className="bg-gray-800 text-gray-300 text-sm p-4 rounded-lg mb-6">
-                    <FaInfoCircle className="inline-block text-blue-400 mr-2" />
-                    <strong>ℹ️ {t("info.title")}</strong>
-                    {isDirect ? (
-                        <ul className="mt-2 list-disc list-inside text-gray-400">
-                            <li>{t("info.direct.1")}</li>
-                            <li>{t("info.direct.2")}</li>
-                            <li>{t("info.direct.3")}</li>
-                        </ul>
-                    ) : (
-                        <ul className="mt-2 list-disc list-inside text-gray-400">
-                            <li>{t("info.indirect.1")}</li>
-                            <li>{t("info.indirect.2")}</li>
-                            <li>{t("info.indirect.3")}</li>
-                        </ul>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200"
+            >
+                <div className="max-w-5xl mx-auto space-y-10">
+
+                    {/* Header */}
+                    <motion.div
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="text-center"
+                    >
+                        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                            {t("heading")}
+                        </h1>
+                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                            {t("subtitle")}
+                        </p>
+                    </motion.div>
+
+                    {/* Alert */}
+                    {alert && (
+                        <motion.div
+                            initial={{ y: -10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            className={`rounded-xl p-4 text-center font-medium ${alert.color === "green"
+                                ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                }`}
+                        >
+                            <strong>{alert.title}:</strong> {alert.message}
+                        </motion.div>
                     )}
-                </div>
 
-                {/* Message */}
-                {message && (
-                    <div
-                        className={`text-sm p-3 rounded-lg flex items-center ${message.includes(t("keywords.success"))
-                            ? "bg-green-700 text-green-100"
-                            : "bg-red-700 text-red-100"
-                            }`}
+                    {/* Settings Card */}
+                    <motion.section
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6 space-y-6"
                     >
-                        {message.includes(t("keywords.success")) ? (
-                            <FaCheckCircle className="mr-2 text-green-300" />
-                        ) : (
-                            <FaExclamationTriangle className="mr-2 text-red-300" />
-                        )}
-                        {message}
-                    </div>
-                )}
+                        {/* Toggle */}
+                        <label className="flex items-center gap-4 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={isDirect}
+                                onChange={(e) => updateIsDirect(e.target.checked)}
+                                className="w-5 h-5 accent-amber-500"
+                                disabled={loading}
+                            />
+                            <div>
+                                <p className="text-lg font-semibold text-white">
+                                    {t("options.directDownload")}
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    {isDirect ? t("options.directOn") : t("options.directOff")}
+                                </p>
+                            </div>
+                        </label>
 
-                {loading && (
-                    <div className="text-gray-400 text-sm mt-4 animate-pulse">
-                        ⏳ {t("loading.text")}
-                    </div>
-                )}
+                        {/* Info */}
+                        <div className="rounded-xl bg-gray-900/60 border border-gray-700 p-4 text-sm text-gray-300">
+                            <p className="font-semibold mb-2 text-gray-200">
+                                {t("info.title")}
+                            </p>
+                            <ul className="list-disc list-inside space-y-1 text-gray-400">
+                                <li>{t(isDirect ? "info.direct.1" : "info.indirect.1")}</li>
+                                <li>{t(isDirect ? "info.direct.2" : "info.indirect.2")}</li>
+                                <li>{t(isDirect ? "info.direct.3" : "info.indirect.3")}</li>
+                            </ul>
 
-                {/* Back */}
-                <div className="flex justify-center mt-6">
-                    <button
-                        type="button"
-                        onClick={() => router.back()}
-                        className="bg-blue-700 text-white py-3 md:py-4 px-6 rounded-lg hover:bg-blue-600 
-              focus:outline-none focus:ring-4 focus:ring-gray-400 transition-transform transform hover:scale-105"
-                    >
-                        {t("actions.back")}
-                    </button>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex justify-between pt-4">
+                            <button
+                                onClick={() => router.back()}
+                                className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition"
+                            >
+                                {t("actions.back")}
+                            </button>
+                        </div>
+                    </motion.section>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </>
     );
-};
-
-export default FeaturesComponent;
+}

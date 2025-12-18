@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { motion } from "framer-motion";
 import Modal from "react-modal";
 import { useRouter } from "next/navigation";
 import { Download } from "lucide-react";
@@ -16,19 +16,19 @@ interface Alert {
 
 const documents = [
     {
-        nameKey: "docs.profileFunctions", // translation key
+        nameKey: "docs.profileFunctions",
         url: "/func.pdf",
     },
 ];
 
-const Help: React.FC = () => {
-    const { user } = useAuth();
-    const [alert, setAlert] = useState<Alert | null>(null);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [videoUrl, setVideoUrl] = useState("");
+export default function Help() {
     const router = useRouter();
     const t = useTranslations("Help");
     const v = useTranslations("video");
+
+    const [alert, setAlert] = useState<Alert | null>(null);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [videoUrl, setVideoUrl] = useState("");
 
     const openModal = (url: string) => {
         setVideoUrl(url);
@@ -40,100 +40,133 @@ const Help: React.FC = () => {
         setVideoUrl("");
     };
 
-    const showAlert = (message: string, title: string, color: "green" | "red") => {
-        setAlert({ message, title, color });
-        setTimeout(() => setAlert(null), 4000);
-    };
-
     return (
-        <div className="p-4">
-            <div className="w-full max-w-4xl mx-auto mt-36 p-10 bg-gradient-to-b from-gray-900 to-gray-800 rounded-2xl shadow-xl border border-gray-700">
-                <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wide">
-                    📺 {t("title")}
-                </h2>
+        <>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200"
+            >
+                <div className="max-w-5xl mx-auto space-y-10">
 
-                {alert && (
-                    <div
-                        className={`p-4 rounded-lg mb-6 text-white text-center font-medium transition-all duration-300 ${alert.color === "green" ? "bg-green-500" : "bg-red-500"
-                            } animate-fadeIn`}
+                    {/* Header */}
+                    <motion.div
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="text-center"
                     >
-                        <strong>{alert.title}:</strong> {alert.message}
-                    </div>
-                )}
+                        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                            {t("title")}
+                        </h1>
+                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                            {t("subtitle")}
+                        </p>
+                    </motion.div>
 
-                <FAQVideos
-                    imagePath="/features/setUp.jpg"
-                    headerText={v("header")}
-                    paragraphText={v("paragraph")}
-                    url="https://www.youtube.com/embed/5l5N4Q3xVlY?si=K68i6MfrZb0AzO57"
-                    openModal={openModal}
-                    ctaText={v("cta")}   // ✅ now localized
-                />
-
-                <div className="mt-12">
-                    <h3 className="text-2xl font-semibold text-white mb-4">
-                        📄 {t("documents.title")}
-                    </h3>
-                    <ul className="space-y-3">
-                        {documents.map((doc) => (
-                            <li
-                                key={doc.url}
-                                className="flex items-center justify-between bg-gray-700 px-5 py-3 rounded-lg shadow hover:bg-gray-600 transition"
-                            >
-                                <span className="text-white">{t(doc.nameKey)}</span>
-                                <a
-                                    href={doc.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-orange hover:text-yellow-600 flex items-center gap-2"
-                                    download
-                                >
-                                    <Download className="w-5 h-5" /> {t("buttons.download")}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                <Modal
-                    isOpen={modalIsOpen}
-                    onRequestClose={closeModal}
-                    contentLabel="Video Modal"
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                    overlayClassName="fixed inset-0 bg-black bg-opacity-75 z-40"
-                >
-                    <div className="relative w-full max-w-3xl bg-white rounded-lg overflow-hidden shadow-xl">
-                        <button
-                            onClick={closeModal}
-                            className="absolute top-4 right-4 text-gray-800 bg-gray-100 rounded-full p-2 hover:bg-gray-200 transition-colors"
+                    {/* Alert */}
+                    {alert && (
+                        <motion.div
+                            initial={{ y: -10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            className={`rounded-xl p-4 text-center font-medium ${alert.color === "green"
+                                ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                }`}
                         >
-                            &times;
-                        </button>
-                        <iframe
-                            width="100%"
-                            height="450px"
-                            src={videoUrl}
-                            frameBorder="0"
-                            allow="autoplay; encrypted-media"
-                            allowFullScreen
-                            title="YouTube video player"
-                        />
-                    </div>
-                </Modal>
+                            <strong>{alert.title}:</strong> {alert.message}
+                        </motion.div>
+                    )}
 
-                <div className="flex justify-center mt-6">
-                    <button
-                        type="button"
-                        onClick={() => router.push("/profile")}
-                        className="bg-blue-700 text-white py-3 md:py-4 px-6 rounded-lg hover:bg-blue-600 
-              focus:outline-none focus:ring-4 focus:ring-gray-400 transition-transform transform hover:scale-105"
+                    {/* Videos */}
+                    <motion.section
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6"
                     >
-                        {t("buttons.back")}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
+                        <FAQVideos
+                            imagePath="/features/setUp.jpg"
+                            headerText={v("header")}
+                            paragraphText={v("paragraph")}
+                            url="https://www.youtube.com/embed/5l5N4Q3xVlY?si=K68i6MfrZb0AzO57"
+                            openModal={openModal}
+                            ctaText={v("cta")}
+                        />
+                    </motion.section>
 
-export default Help;
+                    {/* Documents */}
+                    <motion.section
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.15 }}
+                        className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6"
+                    >
+                        <h2 className="text-xl font-semibold text-white mb-4">
+                            📄 {t("documents.title")}
+                        </h2>
+
+                        <ul className="space-y-3">
+                            {documents.map((doc) => (
+                                <li
+                                    key={doc.url}
+                                    className="flex items-center justify-between rounded-xl bg-gray-900/60 border border-gray-700 px-5 py-3 hover:bg-gray-900 transition"
+                                >
+                                    <span className="text-gray-200">
+                                        {t(doc.nameKey)}
+                                    </span>
+
+                                    <a
+                                        href={doc.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        download
+                                        className="flex items-center gap-2 text-amber-500 hover:text-amber-400 font-medium"
+                                    >
+                                        <Download className="w-5 h-5" />
+                                        {t("buttons.download")}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </motion.section>
+
+                    {/* Back */}
+                    <div className="flex justify-center">
+                        <button
+                            type="button"
+                            onClick={() => router.push("/profile")}
+                            className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition"
+                        >
+                            {t("buttons.back")}
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* Video Modal */}
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="Video Modal"
+                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                overlayClassName="fixed inset-0 bg-black/80 backdrop-blur-sm z-40"
+            >
+                <div className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden border border-gray-700 shadow-2xl">
+                    <button
+                        onClick={closeModal}
+                        className="absolute top-4 right-4 text-gray-300 hover:text-white text-2xl"
+                    >
+                        ✕
+                    </button>
+                    <iframe
+                        width="100%"
+                        height="480"
+                        src={videoUrl}
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                        title="Help video"
+                    />
+                </div>
+            </Modal>
+        </>
+    );
+}

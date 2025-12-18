@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
@@ -9,8 +10,7 @@ import * as yup from "yup";
 import { BASE_API_URL } from "@/utils/constants";
 import { useTranslations } from "next-intl";
 
-// Validation schema (all optional as requested)
-const schema = yup.object().shape({
+const schema = yup.object({
     street1: yup.string(),
     street2: yup.string(),
     zipCode: yup.string(),
@@ -19,14 +19,7 @@ const schema = yup.object().shape({
     country: yup.string(),
 });
 
-type AddressForm = {
-    street1?: string;
-    street2?: string;
-    zipCode?: string;
-    city?: string;
-    state?: string;
-    country?: string;
-};
+type AddressForm = yup.InferType<typeof schema>;
 
 interface Alert {
     message: string;
@@ -34,83 +27,65 @@ interface Alert {
     color: "green" | "red";
 }
 
-const ChangeAddress: React.FC = () => {
+export default function ChangeAddress() {
     const t = useTranslations("ChangeAddress");
     const { user, setUser } = useAuth();
-    const [loading, setLoading] = useState<boolean>(false);
-    const [alert, setAlert] = useState<Alert | null>(null);
     const router = useRouter();
+
+    const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState<Alert | null>(null);
 
     const {
         register,
         handleSubmit,
         setValue,
-        formState: { errors }
+        formState: { errors },
     } = useForm<AddressForm>({
-        resolver: yupResolver(schema)
+        resolver: yupResolver(schema),
     });
 
     useEffect(() => {
-        if (user) {
-            setValue("street1", user?.street1 || "");
-            setValue("street2", user?.street2 || "");
-            setValue("zipCode", user?.zipCode || "");
-            setValue("city", user?.city || "");
-            setValue("state", user?.state || "");
-            setValue("country", user?.country || "");
-        }
+        if (!user) return;
+        setValue("street1", user.street1 || "");
+        setValue("street2", user.street2 || "");
+        setValue("zipCode", user.zipCode || "");
+        setValue("city", user.city || "");
+        setValue("state", user.state || "");
+        setValue("country", user.country || "");
     }, [user, setValue]);
 
-    const showAlert = (message: string, title: string, color: "green" | "red") => {
+    const showAlert = (message: string, title: string, color: Alert["color"]) => {
         setAlert({ message, title, color });
         setTimeout(() => setAlert(null), 4000);
     };
 
     const onSubmit = async (data: AddressForm) => {
+        if (!user) return;
+
         setLoading(true);
 
-        if (!user) {
-            showAlert(t("alerts.notAuthenticated"), t("alerts.warning"), "red");
-            setLoading(false);
-            return;
-        }
-
-        const updateData = new FormData();
-        updateData.append("id", String(user.id));
-        updateData.append("street1", data.street1 || "");
-        updateData.append("street2", data.street2 || "");
-        updateData.append("zipCode", data.zipCode || "");
-        updateData.append("city", data.city || "");
-        updateData.append("state", data.state || "");
-        updateData.append("country", data.country || "");
+        const formData = new FormData();
+        Object.entries(data).forEach(([k, v]) => formData.append(k, v || ""));
+        formData.append("id", String(user.id));
 
         try {
-            const response = await fetch(`${BASE_API_URL}/api/profile/changeAddress`, {
+            const res = await fetch(`${BASE_API_URL}/api/profile/changeAddress`, {
                 method: "PUT",
-                body: updateData
+                body: formData,
             });
 
-            const result = await response.json().catch(() => null);
+            const result = await res.json();
 
-            if (!response.ok) {
-                const errorMessage = result?.error || t("alerts.updateFailed");
-                const errorDetails = result?.details;
-                console.error("Update error:", errorMessage, errorDetails);
-                showAlert(errorMessage, t("alerts.error"), "red");
+            if (!res.ok) {
+                showAlert(result?.error || t("alerts.updateFailed"), t("alerts.error"), "red");
                 return;
-            }
-
-            // Scroll to top so the success alert is visible
-            if (typeof window !== "undefined") {
-                document.documentElement.scrollTop = 0;
-                document.body.scrollTop = 0;
             }
 
             localStorage.setItem("user", JSON.stringify(result));
             setUser(result);
             showAlert(t("alerts.updateSuccess"), t("alerts.success"), "green");
-        } catch (error) {
-            console.error("Request error:", error);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        } catch {
             showAlert(t("alerts.updateFailed"), t("alerts.error"), "red");
         } finally {
             setLoading(false);
@@ -118,158 +93,106 @@ const ChangeAddress: React.FC = () => {
     };
 
     return (
-        <div className="p-4">
-            <div
-                className="w-full max-w-3xl mx-auto mt-28 p-10 bg-gradient-to-b from-gray-900 to-gray-800 
-            rounded-2xl shadow-xl border border-gray-700 sm:mx-6 md:mx-10 lg:mx-auto"
+        <>
+            {loading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                    <img src="/load.gif" className="w-24 h-24 animate-spin" />
+                </div>
+            )}
+
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200"
             >
-                <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wide">
-                    🏡 {t("title")}
-                </h2>
-
-                {/* Alert Message */}
-                {alert && (
-                    <div
-                        className={`p-4 rounded-lg mb-6 text-white text-center font-medium transition-all duration-300 
-                    ${alert.color === "green" ? "bg-green-500" : "bg-red-500"} animate-fadeIn`}
-                        role="status"
-                        aria-live="polite"
+                <div className="max-w-5xl mx-auto space-y-10">
+                    {/* Header */}
+                    <motion.div
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="text-center"
                     >
-                        <strong>{alert.title}:</strong> {alert.message}
-                    </div>
-                )}
+                        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                            {t("title")}
+                        </h1>
+                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                            {t("subtitle")}
+                        </p>
+                    </motion.div>
 
-                {/* Loading State */}
-                {loading ? (
-                    <div className="flex justify-center items-center py-40">
-                        <img src="/load.gif" alt={t("a11y.loading")} className="w-24 h-24 animate-spin" />
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 animate-fadeIn" noValidate>
+                    {/* Alert */}
+                    {alert && (
+                        <motion.div
+                            initial={{ y: -10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            className={`rounded-xl p-4 text-center font-medium ${alert.color === "green"
+                                    ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                    : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                }`}
+                        >
+                            <strong>{alert.title}:</strong> {alert.message}
+                        </motion.div>
+                    )}
+
+                    {/* Form */}
+                    <motion.form
+                        onSubmit={handleSubmit(onSubmit)}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6 space-y-6"
+                    >
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">
-                                    {t("labels.street1")}
-                                </label>
-                                <input
-                                    type="text"
-                                    {...register("street1")}
-                                    placeholder={t("placeholders.street1")}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white 
-                                focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all placeholder-gray-400"
-                                />
-                                {errors.street1 && (
-                                    <p className="text-red-500 text-sm mt-1">{String(errors.street1.message)}</p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">
-                                    {t("labels.street2")}
-                                </label>
-                                <input
-                                    type="text"
-                                    {...register("street2")}
-                                    placeholder={t("placeholders.street2")}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white 
-                                focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all placeholder-gray-400"
-                                />
-                                {errors.street2 && (
-                                    <p className="text-red-500 text-sm mt-1">{String(errors.street2.message)}</p>
-                                )}
-                            </div>
+                            {["street1", "street2"].map((field) => (
+                                <Input key={field} field={field} register={register} errors={errors} t={t} />
+                            ))}
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">
-                                    {t("labels.zipCode")}
-                                </label>
-                                <input
-                                    type="text"
-                                    {...register("zipCode")}
-                                    placeholder={t("placeholders.zipCode")}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white 
-                                focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all placeholder-gray-400"
-                                />
-                                {errors.zipCode && (
-                                    <p className="text-red-500 text-sm mt-1">{String(errors.zipCode.message)}</p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">
-                                    {t("labels.city")}
-                                </label>
-                                <input
-                                    type="text"
-                                    {...register("city")}
-                                    placeholder={t("placeholders.city")}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white 
-                                focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all placeholder-gray-400"
-                                />
-                                {errors.city && (
-                                    <p className="text-red-500 text-sm mt-1">{String(errors.city.message)}</p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-300 mb-2">
-                                    {t("labels.state")}
-                                </label>
-                                <input
-                                    type="text"
-                                    {...register("state")}
-                                    placeholder={t("placeholders.state")}
-                                    className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white 
-                                focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all placeholder-gray-400"
-                                />
-                                {errors.state && (
-                                    <p className="text-red-500 text-sm mt-1">{String(errors.state.message)}</p>
-                                )}
-                            </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            {["zipCode", "city", "state"].map((field) => (
+                                <Input key={field} field={field} register={register} errors={errors} t={t} />
+                            ))}
                         </div>
 
-                        <div className="mt-4">
-                            <label className="block text-sm font-semibold text-gray-300 mb-2">
-                                {t("labels.country")}
-                            </label>
-                            <input
-                                type="text"
-                                {...register("country")}
-                                placeholder={t("placeholders.country")}
-                                className="w-full p-4 text-lg border border-gray-600 rounded-lg bg-gray-700 text-white 
-                            focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all placeholder-gray-400"
-                            />
-                            {errors.country && (
-                                <p className="text-red-500 text-sm mt-1">{String(errors.country.message)}</p>
-                            )}
-                        </div>
+                        <Input field="country" register={register} errors={errors} t={t} />
 
-                        <div className="flex justify-between items-center mt-6">
+                        <div className="flex justify-between gap-4 pt-4">
                             <button
                                 type="button"
                                 onClick={() => router.back()}
-                                className="bg-blue-700 text-white py-3 md:py-4 px-6 rounded-lg hover:bg-blue-600 
-                            focus:outline-none focus:ring-4 focus:ring-gray-400 transition-transform transform hover:scale-105"
+                                className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition"
                             >
                                 {t("buttons.back")}
                             </button>
+
                             <button
                                 type="submit"
-                                className="bg-gradient-to-r from-teal-600 to-orange text-white py-3 md:py-4 px-6 rounded-lg 
-                            hover:opacity-80 focus:outline-none focus:ring-4 focus:ring-teal-400 transition-transform 
-                            transform hover:scale-105 shadow-lg tracking-wide"
-                                disabled={loading}
+                                className="px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-black font-semibold transition"
                             >
-                                {loading ? t("buttons.saving") : t("buttons.save")}
+                                {t("buttons.save")}
                             </button>
                         </div>
-                    </form>
-                )}
-            </div>
+                    </motion.form>
+                </div>
+            </motion.div>
+        </>
+    );
+}
+
+function Input({ field, register, errors, t }: any) {
+    return (
+        <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+                {t(`labels.${field}`)}
+            </label>
+            <input
+                {...register(field)}
+                placeholder={t(`placeholders.${field}`)}
+                className="w-full rounded-lg bg-gray-900/60 border border-gray-700 px-4 py-3 text-gray-200
+        focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            />
+            {errors[field] && (
+                <p className="text-xs text-red-400 mt-1">{String(errors[field]?.message)}</p>
+            )}
         </div>
     );
-};
-
-export default ChangeAddress;
+}

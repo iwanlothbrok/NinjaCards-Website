@@ -1,143 +1,166 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { BASE_API_URL } from '@/utils/constants';
-import { useAuth } from '../../context/AuthContext';
-import { useTranslations } from 'next-intl';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { BASE_API_URL } from "@/utils/constants";
+import { useAuth } from "../../context/AuthContext";
+import { useTranslations } from "next-intl";
 
 interface Alert {
     message: string;
     title: string;
-    color: string;
+    color: "green" | "red";
 }
 
-const LanguageSwitcher: React.FC = () => {
+export default function LanguageSwitcher() {
     const { user, setUser } = useAuth();
-    const [language, setLanguage] = useState<string>(user?.language || 'bg');
-    const [loading, setLoading] = useState<boolean>(false);
+    const router = useRouter();
+    const t = useTranslations("LanguageSwitcher");
+
+    const [language, setLanguage] = useState<string>(user?.language || "bg");
+    const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<Alert | null>(null);
 
-    const router = useRouter();
-    const t = useTranslations('LanguageSwitcher');
-
     useEffect(() => {
-        if (user?.id) {
-            fetchUserDetails(user.id);
-        }
+        if (!user?.id) return;
+        setLanguage(user.language || "bg");
     }, [user?.id]);
 
-    const fetchUserDetails = async (userId: string) => {
-        try {
-            setLoading(true);
-            const response = await fetch(`${BASE_API_URL}/api/profile/${userId}`);
-            if (!response.ok) throw new Error(t('errors.fetchFail'));
-
-            const userData = await response.json();
-            setLanguage(userData.language || 'bg');
-        } catch (error) {
-            console.error('Error fetching user details:', error);
-        } finally {
-            setLoading(false);
-        }
+    const showAlert = (message: string, title: string, color: Alert["color"]) => {
+        setAlert({ message, title, color });
+        setTimeout(() => setAlert(null), 4000);
     };
 
     const changeLanguage = async (lng: string) => {
-        setLanguage(lng);
+        if (!user?.id || lng === language) return;
+
         setLoading(true);
+        setLanguage(lng);
 
         try {
-            const response = await fetch(`${BASE_API_URL}/api/profile/updateLanguage`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user?.id, language: lng }),
+            const res = await fetch(`${BASE_API_URL}/api/profile/updateLanguage`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: user.id, language: lng }),
             });
 
-            const result = await response.json().catch(() => null);
+            const result = await res.json().catch(() => null);
 
-            if (!response.ok) {
-                const errorMessage = result?.error || t('errors.updateFail');
-                showAlert(errorMessage, t('alerts.errorTitle'), 'red');
+            if (!res.ok) {
+                showAlert(
+                    result?.error || t("errors.updateFail"),
+                    t("alerts.errorTitle"),
+                    "red"
+                );
                 return;
             }
 
             setUser(result);
-            router.refresh(); // reload page for new language
-        } catch (error) {
-            console.error('Failed to change language', error);
-            showAlert(t('errors.updateFail'), t('alerts.errorTitle'), 'red');
+            router.refresh(); // важно за next-intl
+        } catch {
+            showAlert(t("errors.updateFail"), t("alerts.errorTitle"), "red");
         } finally {
             setLoading(false);
         }
     };
 
-    const showAlert = (message: string, title: string, color: string) => {
-        setAlert({ message, title, color });
-        setTimeout(() => {
-            setAlert(null);
-        }, 4000);
-    };
-
     return (
-        <div className="w-full max-w-3xl mx-auto mt-28 p-10 bg-gradient-to-b from-gray-900 to-gray-800 
-      rounded-2xl shadow-xl border border-gray-700 sm:mx-6 md:mx-10 lg:mx-auto">
-
-            <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wide">
-                🌍 {t('title')}
-            </h2>
-
-            {alert && (
-                <div className={`p-4 rounded-lg mb-6 text-white text-center font-medium transition-all duration-300 
-          ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} animate-fadeIn`}>
-                    <strong>{alert.title}:</strong> {alert.message}
+        <>
+            {loading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                    <img src="/load.gif" className="w-24 h-24 animate-spin" />
                 </div>
             )}
 
-            {loading ? (
-                <div className="flex justify-center items-center py-40">
-                    <img src="/load.gif" alt={t('loading')} className="w-24 h-24 animate-spin" />
-                </div>
-            ) : (
-                <>
-                    {/* Language Buttons */}
-                    <div className="flex justify-center gap-4 mt-4 animate-fadeIn">
-                        <button
-                            onClick={() => changeLanguage('bg')}
-                            className={`py-3 px-8 rounded-lg font-semibold text-lg transition-all duration-300 
-                ${language === 'bg'
-                                    ? 'bg-orange text-white shadow-lg'
-                                    : 'bg-gray-300 text-gray-700 hover:bg-gray-400'} 
-                hover:scale-105 focus:ring-4 focus:ring-orange-400`}
-                        >
-                            🇧🇬 {t('bulgarian')}
-                        </button>
-                        <button
-                            onClick={() => changeLanguage('en')}
-                            className={`py-3 px-8 rounded-lg font-semibold text-lg transition-all duration-300 
-                ${language === 'en'
-                                    ? 'bg-orange text-white shadow-lg'
-                                    : 'bg-gray-300 text-gray-700 hover:bg-gray-400'} 
-                hover:scale-105 focus:ring-4 focus:ring-orange-400`}
-                        >
-                            🇬🇧 {t('english')}
-                        </button>
-                    </div>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200"
+            >
+                <div className="max-w-5xl mx-auto space-y-10">
 
-                    {/* Back Button */}
-                    <div className="flex justify-center mt-6">
-                        <button
-                            type="button"
-                            onClick={() => router.back()}
-                            className="bg-blue-700 text-white py-3 md:py-4 px-6 rounded-lg hover:bg-blue-600 
-                focus:outline-none focus:ring-4 focus:ring-gray-400 transition-transform transform hover:scale-105"
+                    {/* Header */}
+                    <motion.div
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="text-center"
+                    >
+                        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                            {t("title")}
+                        </h1>
+                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                            {t("subtitle")}
+                        </p>
+                    </motion.div>
+
+                    {/* Alert */}
+                    {alert && (
+                        <motion.div
+                            initial={{ y: -10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            className={`rounded-xl p-4 text-center font-medium ${alert.color === "green"
+                                ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                }`}
                         >
-                            {t('buttons.back')}
-                        </button>
-                    </div>
-                </>
-            )}
-        </div>
+                            <strong>{alert.title}:</strong> {alert.message}
+                        </motion.div>
+                    )}
+
+                    {/* Card */}
+                    <motion.section
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6"
+                    >
+                        <div className="flex justify-center gap-6">
+                            <LanguageButton
+                                active={language === "bg"}
+                                onClick={() => changeLanguage("bg")}
+                                label={`🇧🇬 ${t("bulgarian")}`}
+                            />
+                            <LanguageButton
+                                active={language === "en"}
+                                onClick={() => changeLanguage("en")}
+                                label={`🇬🇧 ${t("english")}`}
+                            />
+                        </div>
+
+                        <div className="flex justify-center mt-8">
+                            <button
+                                type="button"
+                                onClick={() => router.back()}
+                                className="px-6 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition"
+                            >
+                                {t("buttons.back")}
+                            </button>
+                        </div>
+                    </motion.section>
+                </div>
+            </motion.div>
+        </>
     );
-};
+}
 
-export default LanguageSwitcher;
+function LanguageButton({
+    active,
+    label,
+    onClick,
+}: {
+    active: boolean;
+    label: string;
+    onClick: () => void;
+}) {
+    return (
+        <button
+            onClick={onClick}
+            className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all ${active
+                ? "bg-amber-600 text-black shadow-lg"
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                }`}
+        >
+            {label}
+        </button>
+    );
+}
