@@ -451,27 +451,75 @@
   },
   "ProfileTabs": {
     "title": "Profile Management",
+    "subtitle": "Manage your profile and settings easily.",
+    "moreOptions": "Additional Options",
     "tabs": {
-      "changePassword": "Change Password",
-      "changeEmail": "Change Email",
-      "changeAddress": "Change Address",
-      "changeImage": "Change Profile Picture",
-      "info": "Personal Information",
-      "links": "Important Links",
-      "preview": "Profile Preview",
-      "businessCard": "Business Card",
-      "qr": "Your QR Code",
-      "features": "Features",
-      "analyse": "Analysis",
-      "video": "Video Clip",
-      "language": "Language of the Card",
-      "help": "Help & Instructions",
-      "clients": "Potential Clients"
+      "changePassword": {
+        "label": "Change Password",
+        "desc": "Update your current password."
+      },
+      "changeEmail": {
+        "label": "Change Email",
+        "desc": "Update your email address."
+      },
+      "changeAddress": {
+        "label": "Change Address",
+        "desc": "Update your home address."
+      },
+      "changeImage": {
+        "label": "Change Profile Picture",
+        "desc": "Change your profile image."
+      },
+      "info": {
+        "label": "Personal Information",
+        "desc": "View and edit your personal information."
+      },
+      "links": {
+        "label": "Important Links",
+        "desc": "Manage your important links."
+      },
+      "preview": {
+        "label": "Profile Preview",
+        "desc": "Preview how your profile looks."
+      },
+      "businessCard": {
+        "label": "Business Profile",
+        "desc": "View and edit your business profile."
+      },
+      "qr": {
+        "label": "Your QR Code",
+        "desc": "Generate and share your QR code."
+      },
+      "features": {
+        "label": "Features",
+        "desc": "Discover the new features."
+      },
+      "analyse": {
+        "label": "Analyse",
+        "desc": "View your profile's analysis."
+      },
+      "video": {
+        "label": "Video Clip",
+        "desc": "Add or view your video clip."
+      },
+      "language": {
+        "label": "Business Profile Language",
+        "desc": "Choose the language for your profile."
+      },
+      "help": {
+        "label": "Help & Instructions",
+        "desc": "Find help and guides."
+      },
+      "clients": {
+        "label": "Potential Clients",
+        "desc": "View your potential clients."
+      }
     },
-    "needId": "Profile ID required"
+    "needId": "Profile ID is required"
   },
   "ChangeAddress": {
     "title": "Change Address",
+    "subtitle": "Update your address for better service.",
     "labels": {
       "street1": "Street 1",
       "street2": "Street 2",
@@ -507,6 +555,7 @@
   },
   "ChangeEmail": {
     "title": "Change Email",
+    "subtitle": "Update your email address for better communication.",
     "labels": {
       "email": "New email",
       "workEmail": "New work email (optional)"
@@ -539,6 +588,7 @@
   },
   "ChangePassword": {
     "title": "Change Password",
+    "subtitle": "Update your password for better security.",
     "labels": {
       "password": "Enter new password",
       "confirmPassword": "Confirm password"
@@ -576,6 +626,7 @@
   },
   "ChangeImage": {
     "title": "Change Profile Picture",
+    "subtitle": "Update your profile picture to personalize your account.",
     "labels": {
       "photo": "Profile photo"
     },
@@ -615,44 +666,45 @@
     }
   },
   "ProfileInformation": {
-    "title": "Update Information",
-    "loading": "Loading...",
-    "fields": {
-      "firstName": "First Name",
-      "lastName": "Last Name",
-      "name": "Card Name *",
+    "title": "Profile Information",
+    "subtitle": "Edit your personal details and address.",
+    "sections": {
+      "profile": "Personal Information",
+      "address": "Address"
+    },
+    "placeholders": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "name": "Full name",
       "company": "Company",
       "position": "Position",
       "phone1": "Phone 1",
       "phone2": "Phone 2",
-      "bio": "Biography"
-    },
-    "placeholders": {
-      "firstName": "Enter first name",
-      "lastName": "Enter last name",
-      "name": "Enter card name",
-      "company": "Enter company",
-      "position": "Enter position",
-      "phone1": "Enter phone 1",
-      "phone2": "Enter phone 2",
-      "bio": "Tell us more about yourself"
+      "bio": "Short bio / Description",
+      "street1": "Street address",
+      "street2": "Address line 2",
+      "zipCode": "ZIP / Postal code",
+      "city": "City",
+      "state": "State / Region",
+      "country": "Country"
     },
     "buttons": {
-      "back": "Back",
-      "save": "Save",
-      "saving": "Saving..."
+      "saveInfo": "Save information",
+      "saveAddress": "Save address",
+      "saving": "Saving...",
+      "back": "Back"
     },
     "alerts": {
-      "unauthenticated": "User is not authenticated",
-      "warning": "Warning",
-      "errorUpdate": "Failed to update profile information",
-      "successUpdate": "Profile updated successfully",
+      "success": "Success",
       "error": "Error",
-      "success": "Success"
+      "successUpdate": "Profile information updated successfully.",
+      "addressSaved": "Address saved successfully.",
+      "errorUpdate": "Something went wrong. Please try again."
     }
   },
   "ImportantLinks": {
-    "title": "Manage Important Links",
+    "title": "Manage Digital Links",
+    "subtitle": "Add or update your social links for easy access.",
     "buttons": {
       "back": "Back",
       "save": "Save",
@@ -670,7 +722,8 @@
   },
   "ProfileQR": {
     "noQr": "No QR code available.",
-    "heading": "📌 Profile QR Code",
+    "heading": "Profile QR Code",
+    "subtitle": "Download or share your QR code to easily access your digital business card.",
     "alt": {
       "profileImage": "{{name}}'s profile image",
       "qr": "QR code"
@@ -688,6 +741,7 @@
   },
   "CardSettings": {
     "heading": "Card Settings",
+    "subtitle": "Choose if your contacts will be downloaded when profile is loaded or manually.",
     "options": {
       "directDownload": "Direct contact download",
       "directOn": "Contacts will be downloaded automatically, then your profile will be displayed.",
@@ -750,6 +804,7 @@
   },
   "LanguageSwitcher": {
     "title": "Choose a language for your card",
+    "subtitle": "Select the language in which your business profile will be displayed.",
     "bulgarian": "Bulgarian",
     "english": "English",
     "buttons": {
@@ -766,6 +821,7 @@
   },
   "Help": {
     "title": "Help & Instructions",
+    "subtitle": "Find guides and resources to help you make the most of your Ninja Card.",
     "video": {
       "header": "How to set up your Ninja Card and activate all features?",
       "paragraph": "A short video that shows how to easily enter your information and use all the features of the smart business card."
@@ -788,6 +844,7 @@
   },
   "leads": {
     "title": "Your Leads",
+    "subtitle": "Manage and export your collected leads easily.",
     "downloadCsv": "Download as CSV",
     "loading": "Loading...",
     "empty": "No leads found.",
@@ -813,6 +870,7 @@
   },
   "dashboard": {
     "title": "Profile Analytics",
+    "subtitle": "Analyze your profile's performance with detailed statistics.",
     "loading": "Loading...",
     "overview": "Overall Data Overview",
     "breakdown": "Statistics Breakdown",
@@ -1097,6 +1155,24 @@
     "legal": {
       "termsLine": "By registering you accept our <privacy>Privacy Policy</privacy> and <terms>Terms of Use</terms>.",
       "gdpr": "I consent to processing of my personal data for creating an NFC business card according to the Privacy Policy. My request is voluntary. (Processing is based on Art. 6(1)(a)(b) GDPR)"
+    }
+  },
+  "Billing": {
+    "title": "Billing",
+    "subtitle": "Manage your subscription and view your invoices.",
+    "subscription": {
+      "noSubscription": "No active subscription",
+      "plan": "Plan",
+      "managePayments": "Manage payments"
+    },
+    "invoices": {
+      "title": "Invoices",
+      "empty": "You don’t have any invoices yet.",
+      "date": "Date",
+      "amount": "Amount",
+      "currency": "Currency",
+      "invoice": "Invoice",
+      "view": "View"
     }
   }
 }
