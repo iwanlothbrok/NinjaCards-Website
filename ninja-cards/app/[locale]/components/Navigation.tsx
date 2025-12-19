@@ -109,10 +109,18 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen, isMenuOpen, isProductDropdownOpen]);
 
-  // Watch for pathname changes to hide loading
   useEffect(() => {
-    setIsLoading(false);
-  }, [pathname]);
+    // Start loading when the pathname changes or when the user clicks the same link
+    setIsLoading(true);
+
+    // Set a timeout to stop the loading spinner after a short delay
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500); // Adjust the duration to match your loading animation duration
+
+    return () => clearTimeout(timer); // Clean up the timer on component unmount or before the next render
+  }, [pathname]); // This useEffect triggers on pathname change (or when clicked on the same path)
+
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
@@ -139,10 +147,15 @@ const Navbar: React.FC = () => {
 
   const handleNavLinkClick = useCallback(() => {
     setIsLoading(true);
+
+    // If you want the spinner to remain for a short time, set a timeout.
+    setTimeout(() => {
+      setIsLoading(false); // Stop loading after a small delay for the animation
+    }, 500); // Adjust the timing if necessary
+
     if (isPhone) setIsMenuOpen(false);
   }, [isPhone]);
 
-  // ... (rest of the code)
 
   return (
     <>
