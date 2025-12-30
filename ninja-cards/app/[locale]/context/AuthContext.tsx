@@ -163,15 +163,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []); // mount only
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
+        <div className="min-h-screen bg-gradient-to-b from-gray-900  to-black"> {/* Ensures full-screen black background */}
+
             <AuthContext.Provider value={{ user, login, logout, setUser }}>
-                {loading ? (
-                    <div className="flex justify-center items-center py-96 ">
-                        <img src="/load.gif" alt="Loading..." className="w-40 h-40" />
-                    </div>
-                ) : (
-                    children
-                )}
+                {children}
             </AuthContext.Provider>
         </div>
     );
