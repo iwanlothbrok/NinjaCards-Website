@@ -198,6 +198,8 @@ export default function ProfileInformationPage() {
                         <Input field="lastName" form={profileForm} t={t} />
                         <Input field="company" form={profileForm} t={t} />
                         <Input field="position" form={profileForm} t={t} />
+                        <Input field="phone1" form={profileForm} t={t} />
+                        <Input field="phone2" form={profileForm} t={t} />
 
                         <div className="sm:col-span-2">
                             <textarea
