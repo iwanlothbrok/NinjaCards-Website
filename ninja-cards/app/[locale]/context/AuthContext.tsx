@@ -9,6 +9,8 @@ import { BASE_API_URL } from '@/utils/constants';
 interface AuthContextType {
     user: User | null;
     login: (token: string, userData: User) => void;
+    loading: boolean; // ✅ add this;
+
     logout: () => Promise<void>;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
@@ -57,6 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             logoutTimerRef.current = null;
         }
     };
+
     const scheduleAutoLogout = (token: string) => {
         clearLogoutTimer();
         const ms = msUntilExpiry(token);
@@ -74,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
         scheduleAutoLogout(token);
-        router.push('/');
+        router.push('/profile');
     };
 
     const logout = async () => {
@@ -85,7 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('user');
         clearLogoutTimer();
         setUser(null);
-        router.push('/login');
+        router.push('/');
     };
 
     // Initial hydration
@@ -165,7 +168,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900  to-black"> {/* Ensures full-screen black background */}
 
-            <AuthContext.Provider value={{ user, login, logout, setUser }}>
+            <AuthContext.Provider value={{ user, loading, login, logout, setUser }}>
                 {children}
             </AuthContext.Provider>
         </div>

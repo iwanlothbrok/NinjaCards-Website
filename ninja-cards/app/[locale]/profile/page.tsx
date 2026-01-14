@@ -49,7 +49,8 @@ const tabs: Array<StaticTab | DynamicTab> = [
 ];
 
 export default function ProfileTabs() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
   const userId = user?.id ? String(user.id) : null;
   const t = useTranslations('ProfileTabs');
 
@@ -62,14 +63,11 @@ export default function ProfileTabs() {
   };
 
   React.useEffect(() => {
-    setIsLoading(true);
+    console.log('user is :', user);
 
-    if (!user) {
-      router.push('/');
-    }
-
-    setIsLoading(false);
-  }, [user, router]);
+    if (loading) return;        // ✅ don’t redirect while auth is hydrating
+    if (!user) router.replace('/'); // or '/login' (your choice)
+  }, [loading, user, router]);
   return (
     <>
       {isLoading && (
