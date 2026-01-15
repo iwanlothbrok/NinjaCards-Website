@@ -25,49 +25,93 @@ const cardBackgroundOptions = [
     {
         name: 'black',
         bgClass: "bg-black",
-        textClass: "text-gray-200",      // Softer white for less harsh contrast
-        borderClass: "border-orange",  // Dark gray to soften the black borders
-        highlightClass: "text-orange", // Yellow for a bright and visible highlight
+        textClass: "text-gray-200",
+        borderClass: "border-orange",
+        highlightClass: "text-orange",
         cardCoverBgClass: "from-black",
         opposite: 'bg-white'
     },
     {
         name: 'white',
-        bgClass: "bg-white",          // Softer off-white to reduce strain on the eyes
-        textClass: "text-gray-900",      // Dark gray for better contrast than black
-        borderClass: "border-blue-600",  // Light gray to keep borders subtle
-        highlightClass: "text-blue-600", // Blue highlight for a clean contrast
+        bgClass: "bg-white",
+        textClass: "text-gray-900",
+        borderClass: "border-blue-600",
+        highlightClass: "text-blue-600",
         cardCoverBgClass: "from-white",
         opposite: 'bg-black'
     },
     {
-        name: 'gray-600',
-        bgClass: "bg-gray-800",          // Darker gray for a sleek modern look
-        textClass: "text-gray-100",      // Light gray text to contrast well
-        borderClass: "border-green-600",  // Slightly lighter border than background
-        highlightClass: "text-green-400", // Bright green for a pop of color
-        cardCoverBgClass: "from-gray-800",
-        opposite: 'bg-black'
-    },
-    {
-        name: 'orange',
-        bgClass: "bg-gray-900",          // Darker gray for a sleek modern look
-        textClass: "text-white",         // White text for clear contrast
-        borderClass: "border-orange",// Slightly darker orange border
-        highlightClass: "text-orange", // Lighter yellow for soft, visible highlight
-        cardCoverBgClass: "from-gray-900",
-        opposite: 'bg-orange'
-    },
-    {
-        name: 'teal-700',
-        bgClass: "bg-teal-900",          // Bold teal background
-        textClass: "text-white",         // White text for contrast
-        borderClass: "border-teal-500",  // Darker teal border
-        highlightClass: "text-orange", // Bright pink highlight for contrast
-        cardCoverBgClass: "from-teal-900",
+        name: 'midnight-blue',
+        bgClass: "bg-slate-900",
+        textClass: "text-slate-100",
+        borderClass: "border-cyan-400",
+        highlightClass: "text-cyan-400",
+        cardCoverBgClass: "from-slate-900",
         opposite: 'bg-white'
     },
-
+    {
+        name: 'royal-purple',
+        bgClass: "bg-purple-900",
+        textClass: "text-purple-50",
+        borderClass: "border-fuchsia-400",
+        highlightClass: "text-fuchsia-400",
+        cardCoverBgClass: "from-purple-900",
+        opposite: 'bg-white'
+    },
+    {
+        name: 'emerald-forest',
+        bgClass: "bg-emerald-950",
+        textClass: "text-emerald-50",
+        borderClass: "border-emerald-400",
+        highlightClass: "text-emerald-300",
+        cardCoverBgClass: "from-emerald-950",
+        opposite: 'bg-white'
+    },
+    {
+        name: 'golden-sunset',
+        bgClass: "bg-amber-900",
+        textClass: "text-amber-50",
+        borderClass: "border-amber-400",
+        highlightClass: "text-yellow-300",
+        cardCoverBgClass: "from-amber-900",
+        opposite: 'bg-white'
+    },
+    {
+        name: 'rose-gold',
+        bgClass: "bg-rose-950",
+        textClass: "text-rose-50",
+        borderClass: "border-rose-400",
+        highlightClass: "text-pink-300",
+        cardCoverBgClass: "from-rose-950",
+        opposite: 'bg-white'
+    },
+    {
+        name: 'ocean-depth',
+        bgClass: "bg-blue-950",
+        textClass: "text-blue-50",
+        borderClass: "border-sky-400",
+        highlightClass: "text-sky-300",
+        cardCoverBgClass: "from-blue-950",
+        opposite: 'bg-white'
+    },
+    {
+        name: 'charcoal-premium',
+        bgClass: "bg-zinc-900",
+        textClass: "text-zinc-100",
+        borderClass: "border-violet-400",
+        highlightClass: "text-violet-300",
+        cardCoverBgClass: "from-zinc-900",
+        opposite: 'bg-white'
+    },
+    {
+        name: 'burgundy-luxury',
+        bgClass: "bg-red-950",
+        textClass: "text-red-50",
+        borderClass: "border-red-400",
+        highlightClass: "text-orange-300",
+        cardCoverBgClass: "from-red-950",
+        opposite: 'bg-white'
+    }
 ];
 
 const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
