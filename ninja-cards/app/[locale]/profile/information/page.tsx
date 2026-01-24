@@ -196,6 +196,8 @@ export default function ProfileInformationPage() {
                     >
                         <Input field="firstName" form={profileForm} t={t} />
                         <Input field="lastName" form={profileForm} t={t} />
+                        <Input field="name" form={profileForm} t={t} />
+
                         <Input field="company" form={profileForm} t={t} />
                         <Input field="position" form={profileForm} t={t} />
                         <Input field="phone1" form={profileForm} t={t} />
