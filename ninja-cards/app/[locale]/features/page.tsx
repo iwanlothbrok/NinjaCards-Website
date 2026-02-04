@@ -35,7 +35,7 @@ const FeatureItemLeftImage: React.FC<FeatureProps> = ({
                     }
                 });
             },
-            { threshold: 0.1 }
+            { threshold: 0.2 }
         );
 
         if (sectionRef.current) {
@@ -56,47 +56,54 @@ const FeatureItemLeftImage: React.FC<FeatureProps> = ({
             animate={controls}
             variants={{
                 visible: { opacity: 1, y: 0 },
-                hidden: { opacity: 0, y: 50 },
+                hidden: { opacity: 0, y: 60 },
             }}
-            transition={{ duration: 0.5 }}
-            className="container mx-auto flex flex-col md:flex-row items-center px-6 md:px-20 mb-14 md:mb-20 space-y-8 md:space-y-0"
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="container mx-auto flex flex-col md:flex-row items-center px-6 md:px-20 py-16 md:py-24 space-y-8 md:space-y-0"
         >
             <motion.div
-                className="w-full md:w-2/5 mb-8 md:mb-0 md:mr-5"
-                whileHover={{ scale: 1.05 }}
+                className="w-full md:w-2/5 mb-8 md:mb-0 md:mr-12"
+                whileHover={{ scale: 1.02, y: -5 }}
+                transition={{ duration: 0.3 }}
             >
-                <img
-                    src={imagePath}
-                    alt={mainHeader}
-                    className="w-full h-auto rounded-lg shadow-lg object-cover"
-                />
+                <div className="relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-orange via-amber-600 to-orange rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition duration-500"></div>
+                    <img
+                        src={imagePath}
+                        alt={mainHeader}
+                        className="relative w-full h-auto rounded-2xl shadow-2xl object-cover border border-gray-800"
+                    />
+                </div>
             </motion.div>
 
             <motion.div
-                className="w-full md:w-3/5 md:px-20 text-center md:text-left"
+                className="w-full md:w-3/5 md:px-12 text-center md:text-left"
                 variants={{
                     visible: { opacity: 1, x: 0 },
                     hidden: { opacity: 0, x: -50 },
                 }}
-                transition={{ duration: 0.7 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
             >
-                <h4 className="text-sm md:text-lg text-gray-400 uppercase mb-2 tracking-wider">
+                <h4 className="text-xs md:text-sm text-orange font-semibold uppercase mb-3 tracking-[0.2em] opacity-90">
                     {header}
                 </h4>
-                <h2 className="text-2xl md:text-4xl font-extrabold text-gray-100 mb-4">
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                     {mainHeader}
                 </h2>
-                <p className="text-sm md:text-lg text-gray-300 leading-relaxed mb-6">
+                <p className="text-base md:text-xl text-gray-400 leading-relaxed mb-8 font-light">
                     {description}
                 </p>
 
                 {buttonText && buttonLink && (
                     <a
                         href={buttonLink}
-                        className="inline-block bg-orange text-white py-2 px-6 rounded-lg shadow-lg transition-all duration-300 focus:ring-4 focus:ring-orange"
+                        className="group inline-flex items-center bg-gradient-to-r from-orange to-amber-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-orange/50 transition-all duration-300 hover:scale-105 focus:ring-4 focus:ring-orange/50 focus:outline-none"
                         aria-label={`Learn more about ${mainHeader}`}
                     >
                         {buttonText}
+                        <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
                     </a>
                 )}
             </motion.div>
@@ -126,7 +133,7 @@ const FeatureItemRightImage: React.FC<FeatureProps> = ({
                     }
                 });
             },
-            { threshold: 0.1 }
+            { threshold: 0.2 }
         );
 
         if (sectionRef.current) {
@@ -147,49 +154,56 @@ const FeatureItemRightImage: React.FC<FeatureProps> = ({
             animate={controls}
             variants={{
                 visible: { opacity: 1, y: 0 },
-                hidden: { opacity: 0, y: 50 },
+                hidden: { opacity: 0, y: 60 },
             }}
-            transition={{ duration: 0.5 }}
-            className="container mx-auto flex flex-col md:flex-row items-center px-6 md:px-20 mb-14 md:mb-20 space-y-8 md:space-y-0"
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="container mx-auto flex flex-col md:flex-row-reverse items-center px-6 md:px-20 py-16 md:py-24 space-y-8 md:space-y-0"
         >
             <motion.div
-                className="w-full md:w-3/5 md:px-20 text-center md:text-left"
+                className="w-full md:w-2/5 mb-8 md:mb-0 md:ml-12"
+                whileHover={{ scale: 1.02, y: -5 }}
+                transition={{ duration: 0.3 }}
+            >
+                <div className="relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-orange via-amber-600 to-orange rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition duration-500"></div>
+                    <img
+                        src={imagePath}
+                        alt={mainHeader}
+                        className="relative w-full h-auto rounded-2xl shadow-2xl object-cover border border-gray-800"
+                    />
+                </div>
+            </motion.div>
+
+            <motion.div
+                className="w-full md:w-3/5 md:px-12 text-center md:text-left"
                 variants={{
                     visible: { opacity: 1, x: 0 },
                     hidden: { opacity: 0, x: 50 },
                 }}
-                transition={{ duration: 0.7 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
             >
-                <h4 className="text-sm md:text-lg text-gray-400 uppercase mb-2 tracking-wider">
+                <h4 className="text-xs md:text-sm text-orange font-semibold uppercase mb-3 tracking-[0.2em] opacity-90">
                     {header}
                 </h4>
-                <h2 className="text-2xl md:text-4xl font-extrabold text-gray-100 mb-4">
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                     {mainHeader}
                 </h2>
-                <p className="text-sm md:text-lg text-gray-300 leading-relaxed mb-6">
+                <p className="text-base md:text-xl text-gray-400 leading-relaxed mb-8 font-light">
                     {description}
                 </p>
 
                 {buttonText && buttonLink && (
                     <a
                         href={buttonLink}
-                        className="inline-block bg-orange text-white py-2 px-6 rounded-lg shadow-lg transition-all duration-300 focus:ring-4 focus:ring-orange"
+                        className="group inline-flex items-center bg-gradient-to-r from-orange to-amber-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-orange/50 transition-all duration-300 hover:scale-105 focus:ring-4 focus:ring-orange/50 focus:outline-none"
                         aria-label={`Learn more about ${mainHeader}`}
                     >
                         {buttonText}
+                        <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
                     </a>
                 )}
-            </motion.div>
-
-            <motion.div
-                className="w-full md:w-2/5 mb-8 md:mb-0 md:ml-12"
-                whileHover={{ scale: 1.05 }}
-            >
-                <img
-                    src={imagePath}
-                    alt={mainHeader}
-                    className="w-full h-auto rounded-lg shadow-lg object-cover"
-                />
             </motion.div>
         </motion.div>
     );
