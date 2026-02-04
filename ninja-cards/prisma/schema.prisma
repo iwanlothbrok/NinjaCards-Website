@@ -140,19 +140,19 @@ model Subscription {
   id              String   @id @default(cuid())
   subscription_id String   @unique
   stripe_user_id  String
-  plan_id         String
-  status          String   // active | canceled | trialing
+  
+  plan            PlanType
+  status SubscriptionStatus
+
   start_date      DateTime
   end_date        DateTime?
   cancel_date     DateTime? // New field to track when the subscription is canceled
 
   userId          String   @unique
   user            User     @relation("UserSubscription", fields: [userId], references: [id])
-
+  
   invoices        Invoice[]
-
 }
-
 
 model Invoice {
   id                String   @id @default(cuid())
@@ -182,4 +182,36 @@ model Contact {
   phone    String?
   subject  String?
   sendedOn DateTime @default(now())
+}
+
+enum PlanType {
+  SHINOBI
+  SAMURAI
+  SHOGUN
+}
+
+enum SubscriptionStatus {
+  active
+  trialing
+  past_due
+  unpaid
+  paused
+  cancelled
+}
+
+enum WebhookEventStatus {
+  processing
+  processed
+  failed
+}
+
+model WebhookEvent {
+  id           String              @id // Stripe event.id
+  type         String
+  status       WebhookEventStatus  @default(processing)
+  attempts     Int                 @default(0)
+  lastError    String?             @db.LongText
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  processedAt  DateTime?
 }
