@@ -9,7 +9,7 @@ const Contact: React.FC = () => {
     const t = useTranslations("Contact");
 
     return (
-        <>
+        <div className="min-h-screen bg-black text-white">
             <Header
                 pageInformation={t("pageInformation")}
                 textOne={t("textOne")}
@@ -19,7 +19,7 @@ const Contact: React.FC = () => {
             <main className="flex flex-col items-center justify-center px-4">
                 <ContactForm />
             </main>
-        </>
+        </ div>
     );
 };
 
