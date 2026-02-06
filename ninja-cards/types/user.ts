@@ -1,3 +1,5 @@
+import { Subscription } from "./subscription";
+
 export interface User {
     id: string;
     name: string;
@@ -49,4 +51,6 @@ export interface User {
     } | null;
     videoUrl: string;
     language: string;
+    subscription: Subscription | null;
 }
+
