@@ -44,42 +44,50 @@ const ActionButtons2: React.FC<{ generateVCF: () => void; user: User | null }> =
 
     return (
         <>
+
+            {showLeadForm && (
+                <div
+                    className="fixed inset-0 z-50 bg-black bg-opacity-30 backdrop-blur-sm transition-all"
+                    aria-hidden="true"
+                />
+            )}
+
             <button
                 onClick={() => window.location.href = `tel:${user.phone1}`}
-                className={`${buttonStyles} focus:ring-teal-500 focus:ring-opacity-50`}
+                className={`${buttonStyles} focus:ring-gray-400 focus:ring-opacity-30 border border-gray-200`}
             >
-                <FaPhoneAlt className="mr-3 text-xl text-teal-600" />
-                <span className="text-xl font-semibold">
+                <FaPhoneAlt className="mr-3 text-xl text-gray-700" />
+                <span className="text-xl font-medium tracking-wide">
                     {user.language === 'bg' ? 'Обади се' : 'Call'}
                 </span>
             </button>
 
             <button
                 onClick={handleContactShare}
-                className={`${buttonStyles} focus:ring-blue-600 focus:ring-opacity-50 mt-4`}
+                className={`${buttonStyles} focus:ring-gray-400 focus:ring-opacity-30 border border-gray-200 mt-4`}
             >
-                <FaShareAlt className="mr-3 text-xl text-blue-600" />
-                <span className="text-xl font-semibold">
+                <FaShareAlt className="mr-3 text-xl text-gray-700" />
+                <span className="text-xl font-medium tracking-wide">
                     {user.language === 'bg' ? 'Сподели Контакт' : 'Share Contact'}
                 </span>
             </button>
 
             <button
                 onClick={handleButtonClick}
-                className={`${buttonStyles} focus:ring-yellow-500 focus:ring-opacity-50 mt-4`}
+                className={`${buttonStyles} focus:ring-gray-400 focus:ring-opacity-30 border border-gray-200 mt-4`}
             >
-                <FaDownload className="mr-3 text-xl text-yellow-500" />
-                <span className="text-xl font-semibold">
+                <FaDownload className="mr-3 text-xl text-gray-700" />
+                <span className="text-xl font-medium tracking-wide">
                     {user.language === 'bg' ? 'Запази Контакт' : 'Save Contact'}
                 </span>
             </button>
 
             <button
                 onClick={() => setShowLeadForm(true)}
-                className={`${buttonStyles} focus:ring-purple-600 focus:ring-opacity-50 mt-4`}
+                className={`${buttonStyles} focus:ring-gray-400 focus:ring-opacity-30 border border-gray-200 mt-4`}
             >
-                <FaRegAddressBook className="mr-3 text-xl text-purple-600" />
-                <span className="text-xl font-semibold">
+                <FaRegAddressBook className="mr-3 text-xl text-gray-700" />
+                <span className="text-xl font-medium tracking-wide">
                     {user.language === 'bg' ? 'Остави контакт' : 'Leave Contact'}
                 </span>
             </button>
