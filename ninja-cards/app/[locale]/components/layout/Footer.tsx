@@ -31,7 +31,7 @@ export default function Footer() {
                     </a>
                 </div>
 
-                {/* Legal Links */}
+                {/* Legal Links
                 <div className="flex justify-center gap-6 mb-6 text-sm">
                     <Link href='/privacy/PrivacyPolicy' className="text-gray-400 hover:text-white transition-colors">
                         {t("privacyPolicy")}
@@ -42,7 +42,7 @@ export default function Footer() {
                     <Link href='/privacy/CookiePolicy' className="text-gray-400 hover:text-white transition-colors">
                         {t("cookiesPolicy")}
                     </Link>
-                </div>
+                </div> */}
 
                 {/* Copyright */}
                 <p className="text-gray-400 text-sm">
