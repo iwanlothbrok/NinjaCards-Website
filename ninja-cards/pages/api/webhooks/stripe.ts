@@ -68,10 +68,13 @@ async function syncLocalSubscriptionFromStripe(stripeSub: Stripe.Subscription) {
     const planEnum = mapPriceToPlan(priceId);
     const localStatus = mapStripeStatus(stripeSub.status);
 
-    const startDate =
-        toDateFromUnix((stripeSub as any).start_date) ??
-        toDateFromUnix(stripeSub.created) ??
-        new Date();
+    const startDate = (() => {
+        const utcDate =
+            toDateFromUnix((stripeSub as any).start_date) ??
+            toDateFromUnix(stripeSub.created) ??
+            new Date();
+        return new Date(utcDate.getTime() + 2 * 60 * 60 * 1000);
+    })();
 
     const periodEnd = toDateFromUnix((stripeSub as any).current_period_end);
     const cancelAt = toDateFromUnix((stripeSub as any).cancel_at);
@@ -214,10 +217,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const planEnum = mapPriceToPlan(priceId);
                 const localStatus = mapStripeStatus(stripeSub.status);
 
-                const startDate =
-                    toDateFromUnix((stripeSub as any).start_date) ??
-                    toDateFromUnix(stripeSub.created) ??
-                    new Date();
+
+                const startDate = (() => {
+                    const utcDate =
+                        toDateFromUnix((stripeSub as any).start_date) ??
+                        toDateFromUnix(stripeSub.created) ??
+                        new Date();
+                    return new Date(utcDate.getTime() + 2 * 60 * 60 * 1000);
+                })();
+
 
 
                 const endDate = toDateFromUnix((stripeSub as any).current_period_end);
