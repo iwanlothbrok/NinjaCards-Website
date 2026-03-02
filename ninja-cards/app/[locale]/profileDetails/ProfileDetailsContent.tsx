@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion } from 'framer-motion';
 import { Cropper } from "react-cropper";
 import { useAuth } from '../context/AuthContext';
@@ -366,8 +367,8 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
         }, 4000);
     };
 
-    if (!currentUser) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
-    if (loading) return <div className="flex justify-center items-center py-72"><img src="/load.gif" alt="Loading..." className="w-40 h-40" /></div>;
+    if (!currentUser) return <div className="flex justify-center items-center py-72"><Image src="/load.gif" alt="Loading..." width={160} height={160} className="w-40 h-40" /></div>;
+    if (loading) return <div className="flex justify-center items-center py-72"><Image src="/load.gif" alt="Loading..." width={160} height={160} className="w-40 h-40" /></div>;
     return (
         <div className={`relative ${cardStyle.name} min-h-screen`}>
 
@@ -386,69 +387,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 saveCover={saveCover}
                 cancelCover={cancelCover}
             />
-            {coverPreview && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-auto">
-                    <div className="bg-white p-4 rounded w-11/12 max-w-3xl mx-auto">
-                        <h2 className="text-lg text-orange font-bold mb-4">
-                            {t("title")}
-                        </h2>
-                        <Cropper
-                            style={{ height: "auto", width: "100%" }}
-                            initialAspectRatio={16 / 9}
-                            aspectRatio={16 / 9}
-                            src={coverPreview}
-                            viewMode={1}
-                            guides={true}
-                            zoomable={true}
-                            background={false}
-                            responsive={true}
-                            autoCropArea={1}
-                            checkOrientation={false}
-                            onInitialized={(instance) => setCropper(instance)}
-                        />
 
-                        <div className="mt-4">
-                            {/* Zoom Controls */}
-                            <div className="flex justify-center space-x-2 mb-2">
-                                <button
-                                    onClick={zoomOut}
-                                    className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 transition-colors duration-300"
-                                >
-                                    {t("zoomOut")}
-                                </button>
-                                <button
-                                    onClick={zoomIn}
-                                    className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 transition-colors duration-300"
-                                >
-                                    {t("zoomIn")}
-                                </button>
-                                <button
-                                    onClick={resetZoom}
-                                    className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 transition-colors duration-300"
-                                >
-                                    {t("reset")}
-                                </button>
-                            </div>
-
-                            {/* Save and Cancel */}
-                            <div className="flex justify-center space-x-2">
-                                <button
-                                    onClick={() => setCoverPreview(null)}
-                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-300"
-                                >
-                                    {t("cancel")}
-                                </button>
-                                <button
-                                    onClick={cropImage}
-                                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors duration-300"
-                                >
-                                    {t("crop")}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Content Section with Background */}
             <div
