@@ -1,27 +1,43 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { getPathname, type Href } from '@/navigation';
 import { BASE_API_URL } from '@/utils/constants';
 import type { Locale } from '@/config';
 
-// Lazy load ProfileDetailsContent
-const ProfileDetailsContent = dynamic(() => import('../ProfileDetailsContent'), { suspense: true });
+export const dynamic = 'force-dynamic';
 
-type User = {
-    id: string;
-};
-
-// ✅ This is the new function
+const ProfileDetailsContent = dynamicImport(() => import('../ProfileDetailsContent'), { suspense: true });
 
 export async function generateMetadata(
     { params: { id, locale } }: { params: { id: string; locale: Locale } }
 ): Promise<Metadata> {
     const href: Href = { pathname: '/profileDetails/[id]' as const, params: { id } };
 
+    let user: any = null;
+    try {
+        const res = await fetch(`${BASE_API_URL}/api/profile/${id}`, { cache: 'no-store' });
+        if (res.ok) user = await res.json();
+    } catch { }
+
+    const name = user?.name ?? 'Ninja Cards NFC';
+    const title = user?.name ? `${user.name} | Ninja Cards NFC` : 'Ninja Cards NFC';
+    const description = user?.jobTitle
+        ? `${user.name} - ${user.jobTitle}`
+        : 'Смарт NFC визитки – дигитално споделяне на контакти';
+    const image = user?.image ?? 'https://www.ninjacardsnfc.com/navlogo.png';
+
     return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            images: [{ url: image, width: 1200, height: 630, alt: name }],
+            type: 'profile',
+        },
         alternates: {
             canonical: getPathname({ locale, href }),
             languages: {
@@ -31,31 +47,8 @@ export async function generateMetadata(
         }
     };
 }
-export async function generateStaticParams(): Promise<{ id: string }[]> {
-    try {
-        const res = await fetch(`${BASE_API_URL}/api/profile/allUsers`);
-
-        if (!res.ok) {
-            throw new Error(`Failed to fetch users: ${res.statusText}`);
-        }
-
-        const users: User[] = await res.json();
-
-        if (!Array.isArray(users)) {
-            throw new Error('Expected an array of users, but got something else.');
-        }
-
-        return users.map((user) => ({
-            id: user.id.toString()
-        }));
-    } catch (error) {
-        console.error('Error in generateStaticParams:', error);
-        return [];
-    }
-}
 
 const ProfileDetailsPage = ({ params }: { params: { locale: string; id: string } }) => {
-    console.log('id is ' + params.id);
     if (!params.id) return notFound();
 
     return (
