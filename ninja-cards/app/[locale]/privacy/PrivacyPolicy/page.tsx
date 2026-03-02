@@ -21,7 +21,7 @@ export default function PrivacyPolicyPage() {
                 <li>
                     <strong>{t('sections.dataCollected.title')}</strong>
                     <ul className="list-disc list-inside mt-2">
-                        {t.raw('sections.dataCollected.items').map((item: string, idx: number) => (
+                        {(Array.isArray(t.raw('sections.dataCollected.items')) ? t.raw('sections.dataCollected.items') as string[] : []).map((item: string, idx: number) => (
                             <li key={idx}>{item}</li>
                         ))}
                     </ul>
@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
                 <li>
                     <strong>{t('sections.purpose.title')}</strong>
                     <ul className="list-disc list-inside mt-2">
-                        {t.raw('sections.purpose.items').map((item: string, idx: number) => (
+                        {(Array.isArray(t.raw('sections.purpose.items')) ? t.raw('sections.purpose.items') as string[] : []).map((item: string, idx: number) => (
                             <li key={idx}>{item}</li>
                         ))}
                     </ul>
@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
                 <li>
                     <strong>{t('sections.rights.title')}</strong>
                     <ul className="list-disc list-inside mt-2">
-                        {t.raw('sections.rights.items').map((item: string, idx: number) => (
+                        {(Array.isArray(t.raw('sections.rights.items')) ? t.raw('sections.rights.items') as string[] : []).map((item: string, idx: number) => (
                             <li key={idx}>{item}</li>
                         ))}
                     </ul>
