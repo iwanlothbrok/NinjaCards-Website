@@ -1,82 +1,103 @@
+// pages/api/payments/create-checkout-session.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-03-31.basil" });
 
 type Body = {
     userId?: string;
     email?: string;
-
-    // subscription plan price (monthly)
-    subscriptionPriceId?: string;
-
-    // one-time design price
-    designPriceId?: string;
-
-    // optional quantities
-    subscriptionQty?: number;
-    designQty?: number;
+    trialDays?: number;
+    items: Array<{ type: string; priceId: string; quantity?: number }>;
 };
+
+function cleanOptionalString(v: unknown): string | undefined {
+    if (typeof v !== "string") return undefined;
+    const s = v.trim();
+    return s.length ? s : undefined;
+}
+
+function isValidEmail(v: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-    const {
-        userId,
-        email,
-        subscriptionPriceId,
-        designPriceId,
-        subscriptionQty = 1,
-        designQty = 1,
-    } = (req.body || {}) as Body;
+    const body = (req.body || {}) as Body;
 
-    if (!userId) return res.status(400).json({ error: "Missing userId" });
-    if (!subscriptionPriceId) return res.status(400).json({ error: "Missing subscriptionPriceId" });
+    const userId = cleanOptionalString(body.userId);
+    const emailRaw = cleanOptionalString(body.email);
+    const email = emailRaw && isValidEmail(emailRaw) ? emailRaw : undefined;
 
-    // basic validation to avoid passing product ids etc.
-    if (!subscriptionPriceId.startsWith("price_")) {
-        return res.status(400).json({ error: "subscriptionPriceId must be a price_..." });
+    if (!Array.isArray(body.items) || body.items.length === 0) {
+        return res.status(400).json({ error: "Missing items" });
     }
-    if (designPriceId && !designPriceId.startsWith("price_")) {
-        return res.status(400).json({ error: "designPriceId must be a price_..." });
+
+    // Validate + normalize
+    const items = body.items.map((i) => {
+        const type = cleanOptionalString(i.type) ?? "";
+        const priceId = cleanOptionalString(i.priceId);
+        const quantity = typeof i.quantity === "number" && i.quantity > 0 ? i.quantity : 1;
+
+        if (!priceId || !priceId.startsWith("price_")) throw new Error(`Invalid priceId: ${i.priceId}`);
+        if (!type) throw new Error("Missing item.type");
+
+        return { type, priceId, quantity };
+    });
+
+    // 1) subscription (recurring)
+    const subItems = items.filter((i) => i.type === "subscription");
+    if (subItems.length !== 1) {
+        return res.status(400).json({ error: "Cart must contain exactly 1 subscription item" });
     }
+    const subscriptionPriceId = subItems[0].priceId;
+
+    // 2) one-time items → add_invoice_items (design, nfc_card, etc.)
+    const oneTimeItems = items.filter((i) => i.type !== "subscription");
+
+    // Optional: merge duplicates by priceId
+    const mergedOneTime = oneTimeItems.reduce((acc: Array<{ price: string; quantity: number }>, cur) => {
+        const found = acc.find((x) => x.price === cur.priceId);
+        if (found) found.quantity += cur.quantity;
+        else acc.push({ price: cur.priceId, quantity: cur.quantity });
+        return acc;
+    }, []);
+
+    const isLoggedIn = !!userId;
+
+    const metadata: Record<string, string> = {
+        userId: userId ?? "",
+        isLoggedIn: isLoggedIn ? "1" : "0",
+    };
 
     try {
-        const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
-            { price: subscriptionPriceId, quantity: subscriptionQty },
-        ];
-
-        // add one-time design to the same subscription checkout
-        if (designPriceId) {
-            line_items.push({ price: designPriceId, quantity: designQty });
-        }
-
-        const metadata = {
-            userId,
-            subscriptionPriceId,
-            designPriceId: designPriceId ?? "",
-        };
-
         const session = await stripe.checkout.sessions.create({
             mode: "subscription",
+            allow_promotion_codes: true,
+            customer_email: email,
+
+            // ✅ recurring + one-time items in line_items
             line_items: [
                 { price: subscriptionPriceId, quantity: 1 },
-                { price: designPriceId, quantity: 1 }, // €20 ще е due today
+                ...mergedOneTime,
             ],
+
+            // ✅ subscription metadata and trial
             subscription_data: {
-                trial_period_days: 30, // ✅ първият месец free (ориентировъчно 30 дни)
-                metadata: { userId },
+                ...(isLoggedIn ? {} : { trial_period_days: typeof body.trialDays === "number" ? body.trialDays : 30 }),
+                metadata,
             },
 
-            metadata: { userId },
-            customer_email: email ?? undefined,
+            metadata,
+
             success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.FRONTEND_URL}/cancel`,
         });
 
-
         return res.status(200).json({ id: session.id, url: session.url });
     } catch (err: any) {
-        console.error("Stripe session error:", err);
-        return res.status(400).json({ error: err.message ?? "Failed to create checkout session" });
+        console.error("Stripe session error:", err?.message || err);
+        return res.status(500).json({ error: err?.message ?? "Failed to create checkout session" });
     }
 }
