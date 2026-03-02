@@ -108,43 +108,65 @@ export default function DashboardPage() {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-200"
+            className="min-h-screen pt-32 sm:pt-36 px-4 bg-gradient-to-b from-slate-950 via-slate-900 to-black text-gray-100"
         >
-            <div className="max-w-6xl mx-auto space-y-10">
+            {/* Animated background elements */}
+            <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+                <div className="absolute top-20 left-10 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-20 right-10 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl"></div>
+            </div>
+
+            <div className="max-w-7xl mx-auto space-y-12">
 
                 {/* Header */}
                 <motion.div
-                    initial={{ y: -20, opacity: 0 }}
+                    initial={{ y: -30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="text-center"
+                    transition={{ delay: 0.1 }}
+                    className="text-center space-y-3"
                 >
-                    <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                    <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-amber-300 via-orange-400 to-amber-500 bg-clip-text text-transparent drop-shadow-lg">
                         {t("title")}
                     </h1>
-                    <p className="text-gray-400 text-lg">
+                    <p className="text-gray-400 text-lg font-light tracking-wide">
                         {t("subtitle")}
                     </p>
                 </motion.div>
 
-                {/* Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {Object.entries(dashboardData).map(([key, value]) => (
-                        <div
+                {/* Stats Grid */}
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                >
+                    {Object.entries(dashboardData).map(([key, value], idx) => (
+                        <motion.div
                             key={key}
-                            className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6 text-center"
+                            whileHover={{ translateY: -5 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                            className="group relative rounded-2xl bg-gradient-to-br from-gray-800/80 to-gray-900/50 border border-amber-500/20 hover:border-amber-400/40 p-6 backdrop-blur-xl overflow-hidden transition-all duration-300"
                         >
-                            <p className="text-3xl font-bold text-white">{value}</p>
-                            <p className="text-gray-400 mt-2">
-                                {t(`metrics.${key}`)}
-                            </p>
-                        </div>
+                            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="relative z-10">
+                                <p className="text-4xl font-bold text-white">{value}</p>
+                                <p className="text-gray-400 mt-2 text-sm font-medium">
+                                    {t(`metrics.${key}`)}
+                                </p>
+                            </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
 
-                {/* Charts */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6">
-                        <h3 className="text-lg font-semibold text-white mb-4 text-center">
+                {/* Charts Grid */}
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+                >
+                    <div className="group rounded-3xl bg-gradient-to-br from-gray-800/60 to-gray-900/40 border border-amber-500/20 hover:border-amber-400/40 p-8 backdrop-blur-xl transition-all duration-300">
+                        <h3 className="text-lg font-semibold text-white mb-6 text-center">
                             {t("overview")}
                         </h3>
                         <Doughnut
@@ -155,15 +177,18 @@ export default function DashboardPage() {
                                 datasets: [
                                     {
                                         data: Object.values(dashboardData),
-                                        backgroundColor: ["#1E3A8A", "#10B981", "#F59E0B", "#7C3AED"],
+                                        backgroundColor: ["#1E40AF", "#059669", "#F59E0B", "#8B5CF6"],
+                                        borderColor: "#0F172A",
+                                        borderWidth: 2,
                                     },
                                 ],
                             }}
+                            options={{ responsive: true }}
                         />
                     </div>
 
-                    <div className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6">
-                        <h3 className="text-lg font-semibold text-white mb-4 text-center">
+                    <div className="group rounded-3xl bg-gradient-to-br from-gray-800/60 to-gray-900/40 border border-amber-500/20 hover:border-amber-400/40 p-8 backdrop-blur-xl transition-all duration-300">
+                        <h3 className="text-lg font-semibold text-white mb-6 text-center">
                             {t("breakdown")}
                         </h3>
                         <Bar
@@ -175,23 +200,30 @@ export default function DashboardPage() {
                                     {
                                         data: Object.values(dashboardData),
                                         backgroundColor: "#F59E0B",
+                                        borderRadius: 12,
+                                        borderSkipped: false,
                                     },
                                 ],
                             }}
-                            options={{ plugins: { legend: { display: false } } }}
+                            options={{ responsive: true, plugins: { legend: { display: false } } }}
                         />
                     </div>
-                </div>
+                </motion.div>
 
-                {/* Filter */}
-                <div className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6">
-                    <label className="block text-sm text-gray-400 mb-2">
+                {/* Filter Section */}
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="rounded-3xl bg-gradient-to-br from-gray-800/60 to-gray-900/40 border border-amber-500/20 p-8 backdrop-blur-xl"
+                >
+                    <label className="block text-sm font-medium text-amber-300 mb-3">
                         {t("filter")}
                     </label>
                     <select
                         value={selectedMonth}
                         onChange={handleMonthChange}
-                        className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-gray-200"
+                        className="w-full bg-gray-900/80 border border-amber-500/30 hover:border-amber-400/50 rounded-xl px-4 py-3 text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all duration-300"
                     >
                         <option value="">{t("allMonths")}</option>
                         {Array.from(
@@ -202,30 +234,46 @@ export default function DashboardPage() {
                             </option>
                         ))}
                     </select>
-                </div>
+                </motion.div>
 
-                {/* Line chart */}
-                <div className="rounded-2xl bg-gray-800/50 border border-gray-700/50 p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4 text-center">
+                {/* Line Chart */}
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="rounded-3xl bg-gradient-to-br from-gray-800/60 to-gray-900/40 border border-amber-500/20 p-8 backdrop-blur-xl"
+                >
+                    <h3 className="text-lg font-semibold text-white mb-6 text-center">
                         {t("monthlyActivity")}
                     </h3>
                     <div className="h-[400px]">
                         <Line
                             data={{
-                                labels: filteredData.map((e: any) => format(new Date(e.date), "yyyy-MM-dd")),
+                                labels: filteredData.map((e: any) => format(new Date(e.date), "MMM dd")),
                                 datasets: [
                                     {
                                         label: t("metrics.profileVisits"),
                                         data: filteredData.map((e: any) => e.visit),
                                         borderColor: "#F59E0B",
+                                        backgroundColor: "rgba(245, 158, 11, 0.1)",
+                                        borderWidth: 3,
+                                        fill: true,
                                         tension: 0.4,
+                                        pointRadius: 6,
+                                        pointBackgroundColor: "#F59E0B",
+                                        pointBorderColor: "#0F172A",
+                                        pointBorderWidth: 2,
                                     },
                                 ],
                             }}
-                            options={{ responsive: true, maintainAspectRatio: false }}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: true, labels: { color: "#D1D5DB" } } },
+                            }}
                         />
                     </div>
-                </div>
+                </motion.div>
 
             </div>
         </motion.div>
