@@ -62,7 +62,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
 
     const [alert, setAlert] = useState<Alert | null>(null);
     const [loading, setLoading] = useState(false);
-    const [isUpdating, setIsUpdating] = useState(false);
+    const [, setIsUpdating] = useState(false);
 
     useEffect(() => {
         const checkUserData = async () => {
