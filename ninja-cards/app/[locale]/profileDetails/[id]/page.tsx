@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { getPathname, type Href } from '@/navigation';
 import { BASE_API_URL } from '@/utils/constants';
@@ -61,7 +62,7 @@ const ProfileDetailsPage = ({ params }: { params: { locale: string; id: string }
         <Suspense
             fallback={
                 <div className="flex justify-center items-center py-72">
-                    <img src="/load.gif" alt="Loading..." className="w-40 h-40" />
+                    <Image src="/load.gif" alt="Loading..." className="w-40 h-40" />
                 </div>
             }
         >
