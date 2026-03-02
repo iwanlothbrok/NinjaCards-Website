@@ -109,7 +109,7 @@ export default function QRCodeDownload() {
                     {/* QR */}
                     <div className="flex justify-center">
                         <div className="p-4 rounded-xl bg-gray-900/60 border border-gray-700">
-                            <img
+                            <Image
                                 src={user.qrCode}
                                 alt={t("alt.qr")}
                                 className="w-44 h-44 rounded-lg bg-white p-2"
