@@ -1,11 +1,12 @@
 'use client';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import axios from 'axios';
 import { BASE_API_URL } from '@/utils/constants';
 import { useTranslations } from 'next-intl';
 import { clearCart } from '@/lib/cart';
-export default function SuccessPage() {
+
+function SuccessContent() {
     const router = useRouter();
     const params = useSearchParams();
     const sessionId = params?.get('session_id');
@@ -13,10 +14,10 @@ export default function SuccessPage() {
     const [userId, setUserId] = useState<string | null>(null);
     const t = useTranslations("SuccessPage");
 
-
     useEffect(() => {
-        clearCart(); // Clear the cart on successful payment
+        clearCart();
     }, []);
+
     useEffect(() => {
         if (!sessionId) return;
 
@@ -28,7 +29,6 @@ export default function SuccessPage() {
                 setUserId(id);
             } catch (e: any) {
                 setError(e?.message ?? t('failedToContinue'));
-                // setTimeout(() => router.replace('/'), 5000);
             }
         })();
     }, [sessionId, router, t]);
@@ -49,20 +49,17 @@ export default function SuccessPage() {
             </div>
 
             <div className="max-w-4xl mx-auto">
-                {/* Header Section */}
                 <div className="text-center mb-12 space-y-6">
                     <div className="inline-block">
                         <div className="text-5xl md:text-7xl font-black bg-gradient-to-r from-amber-200 via-amber-400 to-orange bg-clip-text text-transparent mb-6 tracking-tighter leading-tight">
                             {t('title')}
                         </div>
                     </div>
-
                     <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
                         {t('description')}
                     </p>
                 </div>
 
-                {/* Information Section */}
                 <div className="mb-12 relative">
                     <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 to-orange/20 rounded-2xl blur-2xl opacity-50" />
                     <div className="relative bg-gradient-to-br from-gray-900/60 to-black/60 backdrop-blur-2xl border border-amber-500/30 rounded-2xl p-8 space-y-4">
@@ -72,7 +69,6 @@ export default function SuccessPage() {
                     </div>
                 </div>
 
-                {/* Content Section */}
                 <div className="relative">
                     <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/30 via-orange/20 to-amber-600/30 rounded-2xl blur-3xl opacity-60" />
                     <div className="relative bg-gradient-to-br from-gray-900/70 to-black/70 backdrop-blur-2xl border border-amber-500/40 rounded-2xl p-10 text-center space-y-8">
@@ -109,5 +105,13 @@ export default function SuccessPage() {
                 {userId && <div className="md:hidden h-20" />}
             </div>
         </div>
+    );
+}
+
+export default function SuccessPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-black" />}>
+            <SuccessContent />
+        </Suspense>
     );
 }
