@@ -205,11 +205,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 if (session.mode !== "subscription") break;
 
-                const userId = session.metadata?.userId;
+                // const userId = session.metadata?.userId;
                 const customerId = session.customer as string | null;
                 const stripeSubId = session.subscription as string | null;
 
-                if (!userId || !customerId || !stripeSubId) break;
+
+                const emailFromStripe =
+                    session.customer_email ??
+                    (session.customer_details as any)?.email ??
+                    null;
+
+                let userId = session.metadata?.userId?.trim() || null;
+
+                if (!customerId || !stripeSubId) break;
+
+                if (!userId) {
+                    if (!emailFromStripe) break; // без email няма как да вържем user
+
+                    const existingByEmail = await prisma.user.findUnique({ where: { email: emailFromStripe } });
+                    const user = existingByEmail ?? await prisma.user.create({
+                        data: { email: emailFromStripe, password: undefined },
+                    });
+
+                    userId = user.id;
+                }
 
                 const stripeSub = await stripe.subscriptions.retrieve(stripeSubId);
 
