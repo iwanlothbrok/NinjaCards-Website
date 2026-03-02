@@ -30,58 +30,72 @@ export const Hero: React.FC = () => {
             if (sectionRef.current) observer.unobserve(sectionRef.current);
         };
     }, []);
-
     return (
         <section
             ref={sectionRef}
-            className="relative w-full h-screen bg-cover bg-center"
-            style={{
-                backgroundImage: isImageLoaded ? "url(/Metal-Hybrid-Silver.png)" : "none",
-                transition: "background-image 0.5s ease-in-out",
-            }}
+            className="relative w-full h-screen bg-cover bg-center overflow-hidden"
         >
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black bg-opacity-80" />
+            {/* Background Image with Blur */}
+            <div
+                className="absolute inset-0 bg-cover bg-center transition-opacity duration-500"
+                style={{
+                    backgroundImage: isImageLoaded ? "url(/Metal-Hybrid-Silver.png)" : "none",
+                    filter: "blur(2px)",
+                }}
+            />
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/90" />
+
+            {/* Subtle Animated Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-orange/10 via-transparent to-yellow-600/10 animate-pulse" />
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
                 {/* Animated Title */}
                 <motion.h1
-                    className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight"
+                    className="text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tight"
                     initial={{ opacity: 0, y: -50 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1 }}
+                    transition={{ duration: 1, ease: "easeOut" }}
                 >
-                    {t("hero.titlePrefix")}{" "}
-                    <span className="text-orange">{t("hero.titleHighlight")}</span>
+                    <span className="bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent">
+                        {t("hero.titlePrefix")}{" "}
+                    </span>
+                    <span className="bg-gradient-to-r from-orange via-yellow-500 to-orange bg-clip-text text-transparent animate-pulse">
+                        {t("hero.titleHighlight")}
+                    </span>
                 </motion.h1>
 
                 {/* Subtitle */}
                 <motion.p
-                    className="text-xl md:text-2xl mb-8 max-w-2xl leading-relaxed"
+                    className="text-xl md:text-2xl lg:text-3xl mb-12 max-w-3xl leading-relaxed font-light tracking-wide"
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: 0.5 }}
+                    transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
                 >
                     {t("hero.subtitlePrefix")}
-                    <span className="text-orange"> {t("hero.subtitleHighlight")}</span>
+                    <span className="font-semibold bg-gradient-to-r from-orange to-yellow-500 bg-clip-text text-transparent">
+                        {" "}{t("hero.subtitleHighlight")}
+                    </span>
                     {t("hero.subtitleSuffix")}
                 </motion.p>
 
                 {/* CTA Buttons */}
                 <motion.div
-                    className="flex flex-col md:flex-row gap-4"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 1 }}
+                    className="flex flex-col md:flex-row gap-6"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
                 >
-                    <Link href="/contact">
-                        <button className="bg-orange text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-gradient-to-r from-orange to-yellow-600 transition-transform transform hover:scale-105 focus:outline-none">
-                            {t("hero.buyNow")}
+                    <Link href="/plans">
+                        <button className="relative bg-gradient-to-r from-orange to-yellow-600 text-white px-10 py-5 rounded-full text-lg font-bold shadow-2xl hover:shadow-orange/50 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-orange/50 backdrop-blur-sm">
+                            <span className="relative z-10">{t("hero.buyNow")}</span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-orange opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-full blur-sm" />
                         </button>
                     </Link>
                     <Link href="/features">
-                        <button className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-gradient-to-r from-white to-gray-200 hover:text-black transition-transform transform hover:scale-105 focus:outline-none">
+                        <button className="relative bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-10 py-5 rounded-full text-lg font-bold shadow-2xl hover:bg-white/20 hover:border-white/50 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-white/30">
                             {t("hero.learnMore")}
                         </button>
                     </Link>
