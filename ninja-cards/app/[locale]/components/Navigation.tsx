@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { locales } from "@/config";
 import { useTranslations } from "next-intl";
 import { LangSwitcher } from "./layout/LangSwitcher";
+import { loadCartFromLocalStorage, useCart } from "@/lib/cart"; // Импортираме функцията от либ-а
 
 type LinkHref = React.ComponentProps<typeof Link>["href"];
 
@@ -46,11 +47,7 @@ function isProfileDetailsPath(pathname: string | null | undefined): boolean {
   return /^\/profileDetails\/[^\/?#]+(?:[\/?#]|$)/.test(path);
 }
 
-// True if on /products/[type]/[id]
-function isProductsDetailsPath(pathname: string | null | undefined): boolean {
-  const path = stripLocale(pathname);
-  return /^\/products\/[^\/?#]+\/[^\/?#]+(?:[\/?#]|$)/.test(path);
-}
+
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -60,6 +57,7 @@ const Navbar: React.FC = () => {
   const [isPhone, setIsPhone] = useState(false);
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
 
   const t = useTranslations("Navbar");
 
@@ -71,14 +69,10 @@ const Navbar: React.FC = () => {
 
   // Hide switcher on dynamic detail pages
   const hideLangSwitcher =
-    isProfileDetailsPath(pathname) || isProductsDetailsPath(pathname);
+    isProfileDetailsPath(pathname);
 
   // If you still need special header offset for details page on phones:
   const isOnDetailsPage = isProfileDetailsPath(pathname);
-
-  const toggleProductDropdown = useCallback(() => {
-    setIsProductDropdownOpen((prev) => !prev);
-  }, []);
 
   useEffect(() => {
     const checkScreenSize = () => setIsPhone(window.innerWidth <= 768);
@@ -160,12 +154,12 @@ const Navbar: React.FC = () => {
   return (
     <>
       <header
-        className={`fixed ${isOnDetailsPage && isPhone ? "top-16" : "top-0"} left-0 z-40 w-full transition-all duration-500 ${isScrolled ? "bg-gradient-to-b !top-0 from-gray-900 via-gray-950 to-black shadow-md" : "bg-transparent"
+        className={`fixed ${isOnDetailsPage && isPhone ? "top-16" : "top-0"} left-0 z-40 w-full transition-all duration-500 ${isScrolled ? " !top-0  shadow-md backdrop-blur-lg bg-opacity-60" : `${isOnDetailsPage ?? ""}`
           }`}
         aria-label={t("aria.header")}
       >
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="relative flex items-center justify-between py-3 lg:py-5">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="relative flex items-center justify-between py-3 lg:py-3">
             <div className="flex items-center gap-4">
               <div className="flex-shrink-0 w-28">
                 {!isOnDetailsPage ? (
@@ -226,35 +220,17 @@ const Navbar: React.FC = () => {
                     </Link>
                   </li>
 
-                  <li className="relative group">
-                    <button
-                      onClick={toggleProductDropdown}
-                      className="text-white py-2 text-lg font-medium hover:text-orange"
-                      aria-expanded={isProductDropdownOpen}
-                      aria-haspopup="true"
-                    >
-                      {t("menu.products")}
-                    </button>
-                    {isProductDropdownOpen && (
-                      <div
-                        ref={productDropdownRef}
-                        className="absolute left-0 mt-2 w-44 bg-gray-800 rounded-lg shadow-lg z-50"
-                      >
-                        <ul className="py-2 text-sm text-gray-200">
-                          <NavItem href="/products/cards" onClick={handleNavLinkClick}>
-                            {t("menu.cards")}
-                          </NavItem>
-                          <NavItem href="/products/reviews" onClick={handleNavLinkClick}>
-                            {t("menu.reviews")}
-                          </NavItem>
-                          <NavItem href="/products/all" onClick={handleNavLinkClick}>
-                            {t("menu.all")}
-                          </NavItem>
-                        </ul>
-                      </div>
-                    )}
-                  </li>
 
+                  <li>
+                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/plans" onClick={handleNavLinkClick}>
+                      {t("menu.plans")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/cards" onClick={handleNavLinkClick}>
+                      {t("menu.cards")}
+                    </Link>
+                  </li>
                   <li>
                     <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/features" onClick={handleNavLinkClick}>
                       {t("menu.features")}
@@ -346,6 +322,35 @@ const Navbar: React.FC = () => {
                       </Link>
                     </div>
                   )}
+                  <li className="relative flex items-center group mt-5 lg:mt-0">
+                    <Link href="/cart" className="flex items-center space-x-2 relative group" aria-label={t("menu.cart")}>
+                      <span className="relative flex items-center justify-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 32 32"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          className="h-8 w-8 text-orange group-hover:scale-110 group-hover:drop-shadow-lg transition-transform duration-200"
+                        >
+                          <rect x="6" y="10" width="20" height="12" rx="4" fill="#1a1a1a" stroke="#FFA500" />
+                          <path
+                            d="M10 22a2 2 0 1 0 4 0M18 22a2 2 0 1 0 4 0"
+                            stroke="#FFA500"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M8 10l-2-5h-2"
+                            stroke="#FFA500"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </span>
+
+                    </Link>
+                  </li>
                 </ul>
               </nav>
             </div>
