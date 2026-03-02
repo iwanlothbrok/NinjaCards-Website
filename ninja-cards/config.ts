@@ -33,6 +33,8 @@ export const routing = defineRouting({
         '/profile/help': '/profile/help',
         '/profile/subscribed': '/profile/subscribed',
         '/profile/features': '/profile/features',
+        '/profile/cover': '/profile/cover',
+        '/profile/billing': '/profile/billing',
         // '/profileDetails/[id]': '/profileDetails/[id]',
 
         '/products/cards': '/products/cards',
@@ -44,5 +46,7 @@ export const routing = defineRouting({
         // '/products/[type]/[id]': '/products/[type]/[id]',
         '/products/[type]/[id]': '/products/[type]/[id]',
         '/profileDetails/[id]': '/profileDetails/[id]',
+        '/plans': '/plans',
+
     }
 });
