@@ -30,7 +30,7 @@ const ProfileHeader: React.FC<{
                 {/* Cover Section */}
                 <CoverImage
                     coverPreview={coverPreview}
-                    userCoverImage={user.coverImage || ""}
+                    userCoverImage={user?.coverImage || ""}
                     height="270px"
                 />
 
@@ -56,41 +56,6 @@ const ProfileHeader: React.FC<{
                         )}
                     </motion.div>
                 </div>
-
-                {/* Cover edit buttons (only if current user) */}
-                {user?.id === currentUser?.id && (
-                    <div className="absolute top-5 left-5 right-5 z-40 md:z-50 flex space-x-2">
-                        <label
-                            htmlFor="cover-upload"
-                            className="bg-gray-900 text-white px-4 py-2 rounded-full cursor-pointer hover:bg-gray-700 transition-all"
-                        >
-                            {t("changeCover")}
-                        </label>
-                        <input
-                            id="cover-upload"
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleCoverChange}
-                        />
-                        {coverPreview && (
-                            <>
-                                <button
-                                    onClick={saveCover}
-                                    className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-all"
-                                >
-                                    {t("save")}
-                                </button>
-                                <button
-                                    onClick={cancelCover}
-                                    className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-all"
-                                >
-                                    {t("cancel")}
-                                </button>
-                            </>
-                        )}
-                    </div>
-                )}
 
                 {/* Profile info */}
                 <div
@@ -139,7 +104,7 @@ const ProfileHeader: React.FC<{
                         {user?.position && (
                             <p
                                 className={[
-                                    "mt-1 font-light italic leading-snug",
+                                    "mt-2 font-light italic leading-snug",
                                     "mx-auto max-w-[28ch] break-words hyphens-auto [text-wrap:pretty]",
                                     // fluid size (≈14–18px)
                                     "text-[clamp(16px,3.6vw,18px)] sm:text-[clamp(15px,3vw,19px)]",
