@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
@@ -104,7 +105,7 @@ export default function ChangePassword() {
         <>
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-                    <img src="/load.gif" className="w-24 h-24 animate-spin" />
+                    <Image src="/load.gif" alt="Loading..." width={96} height={96} className="animate-spin" />
                 </div>
             )}
 
