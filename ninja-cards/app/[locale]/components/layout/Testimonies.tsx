@@ -16,7 +16,7 @@ export const Showcase: React.FC = () => {
       className="relative flex items-center justify-center py-10 px-6 bg-gray-950"
     >
       {/* Animated Background Effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-600 opacity-10 animate-pulse blur-3xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-orange to-pink-600 opacity-10 animate-pulse blur-3xl"></div>
 
       {/* Container */}
       <div className="relative max-w-6xl w-full flex flex-col items-center text-center">
