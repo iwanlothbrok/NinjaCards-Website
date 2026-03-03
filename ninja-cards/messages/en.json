@@ -808,8 +808,15 @@
       "text": "Actions",
       "view": "View",
       "delete": "Delete",
-      "deleting": "Deleting..."
-    }
+      "deleting": "Deleting...",
+      "noMessage": "No message"
+    },
+    "search": "Searching for potential customers...",
+    "allLeadsLoaded": "All leads are loaded.",
+    "totalLeads": "Total number of leads",
+    "withMessage": "With message",
+    "withEmail": "With email",
+    "withPhone": "With phone"
   },
   "dashboard": {
     "title": "Profile Analytics",
