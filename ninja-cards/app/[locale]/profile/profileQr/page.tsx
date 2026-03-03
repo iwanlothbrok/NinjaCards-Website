@@ -112,7 +112,10 @@ export default function QRCodeDownload() {
                             <Image
                                 src={user.qrCode}
                                 alt={t("alt.qr")}
+                                width={176}
+                                height={176}
                                 className="w-44 h-44 rounded-lg bg-white p-2"
+                                unoptimized
                             />
                         </div>
                     </div>
