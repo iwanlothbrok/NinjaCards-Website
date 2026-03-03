@@ -96,7 +96,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         stripe_user_id: true,
                         start_date: true,
                         end_date: true,
-                        createdAt: true,
                     },
                 });
                 if (sub) {
