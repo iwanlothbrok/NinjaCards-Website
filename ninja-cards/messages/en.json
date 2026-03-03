@@ -1767,8 +1767,8 @@
       "title": "Choose Your Designs"
     },
     "pricing": {
-      "subtitlePersonalizedFirst": "First selected is Personalized → no free card. €{price} each.",
-      "subtitleFreeFirst": "First selected is a gift from our team (except Personalized). Then €{price} each."
+      "subtitlePersonalizedFirst": "First selected is Personalized → no free card. €20 each.",
+      "subtitleFreeFirst": "First selected is a gift from our team (except Personalized). Then €20 each."
     },
     "preview": {
       "label": "Currently Previewing"
