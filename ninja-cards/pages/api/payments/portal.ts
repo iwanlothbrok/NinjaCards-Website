@@ -1,8 +1,11 @@
 // POST /api/payments/portal
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createBillingPortalSession } from "@/lib/billing";
+import cors from "@/utils/cors";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    await cors(req, res); // Call it without returning prematurely
+    
     try {
         if (req.method !== "POST") {
             return res.status(405).json({ error: "Method Not Allowed" });

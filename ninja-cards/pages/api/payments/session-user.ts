@@ -2,11 +2,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import { PrismaClient } from "@prisma/client";
+import cors from "@/utils/cors";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-03-31.basil" });
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+       await cors(req, res); // Call it without returning prematurely
+   
     if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
 
     const sessionId = typeof req.query.session_id === "string" ? req.query.session_id : "";
