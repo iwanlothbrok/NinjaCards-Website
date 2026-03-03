@@ -827,6 +827,38 @@
       "profileShares": "Profile shares",
       "socialLinkClicks": "Social link clicks"
     },
+    "insights": {
+      "peakDay": "Peak month",
+      "peakHour": "Peak hour",
+      "mostPopularLink": "Most popular link",
+      "avgDaily": "Average daily",
+      "monthlyGrowth": "Monthly growth",
+      "bestMonth": "Best month",
+      "visitsPerDay": "Visits per day",
+      "periodTrend": "Trend for the selected period",
+      "vsFirstHalf": "Comparison with the first half of the year",
+      "allMonthsBreakdown": "Breakdown for all months",
+      "bestMonthHighlighted": "Best month!",
+      "dataPoints": "Scans for the selected period",
+      "title": "Profile Analytics"
+    },
+    "filters": {
+      "all": "All months",
+      "today": "Today",
+      "last7": "This week",
+      "last30": "This month",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "lastMonth": "Last month",
+      "custom": "Select period",
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "from": "From",
+      "to": "To",
+      "label": "Filter by date",
+      "groupBy": "Group by"
+    },
     "errors": {
       "load": "Error loading data"
     }
