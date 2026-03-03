@@ -9,13 +9,13 @@ import FAQSection from '../components/layout/FAQSection'
 export default function page() {
     return (
         <div>
-            <HeroJoin />
+            {/* <HeroJoin />
             <ChooseMembership />
             <Bonuses />
             <ExploreFeatures />
             <ComparePlans />
             <FreeTrial />
-            <FAQSection />
+            <FAQSection /> */}
         </div >
     )
 }
