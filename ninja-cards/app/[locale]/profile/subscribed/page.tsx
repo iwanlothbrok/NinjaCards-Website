@@ -1,11 +1,10 @@
 'use client'
 
 import { BASE_API_URL } from '@/utils/constants'
-import React, { useEffect, useState, useMemo, useRef } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from "../../context/AuthContext"
 import { useTranslations } from "next-intl"
-import Image from 'next/image'
 
 interface Lead {
     id: string
@@ -594,7 +593,7 @@ export default function UserLeadsTable() {
                                     <svg className="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
                                     </svg>
-                                    <p className="text-gray-600 text-sm">No leads match <span className="text-gray-400 font-medium">"{search}"</span></p>
+                                    <p className="text-gray-600 text-sm">No leads match <span className="text-gray-400 font-medium">&quot;{search}&quot;</span></p>
                                 </div>
                             )}
                         </motion.div>
