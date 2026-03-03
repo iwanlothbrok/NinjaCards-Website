@@ -675,7 +675,8 @@
     "actions": {
       "download": "Изтегли QR код",
       "share": "Изпрати QR код",
-      "back": "Назад"
+      "back": "Назад",
+      "generate": "Генерирай QR код"
     },
     "share": {
       "title": "QR код",

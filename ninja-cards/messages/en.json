@@ -668,7 +668,8 @@
     "actions": {
       "download": "Download QR code",
       "share": "Share QR code",
-      "back": "Back"
+      "back": "Back",
+      "generate": "Generate QR code"
     },
     "share": {
       "title": "QR Code",
