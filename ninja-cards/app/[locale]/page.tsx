@@ -20,7 +20,6 @@ export default function Home() {
   useEffect(() => {
     if (!BASE_API_URL) return;
 
-    console.log('🚨 check added');
 
     const lastRun = localStorage.getItem('lastSubscriptionCheck');
     const currentTime = Date.now();
