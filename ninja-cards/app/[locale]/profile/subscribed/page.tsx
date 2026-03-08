@@ -1,11 +1,12 @@
 'use client'
 
 import { BASE_API_URL } from '@/utils/constants'
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from "../../context/AuthContext"
 import { useTranslations } from "next-intl"
 
+// ─── Types ────────────────────────────────────────────────────────────────────
 interface Lead {
     id: string
     name: string
@@ -15,33 +16,47 @@ interface Lead {
     createdAt: string
 }
 
-// ── Delete Confirmation Modal ─────────────────────────────────────────────────
-function DeleteModal({
-    lead,
-    onConfirm,
-    onCancel,
-    loading,
-}: {
-    lead: Lead
-    onConfirm: () => void
-    onCancel: () => void
-    loading: boolean
+type SyncStatus = 'idle' | 'synced' | 'duplicate' | 'failed' | 'syncing'
+type HubSpotPanelState = 'closed' | 'setup' | 'open'
+
+// ─── HubSpot token storage key ────────────────────────────────────────────────
+const HS_TOKEN_KEY = 'ninja_hs_token'
+
+// ─── Icons ────────────────────────────────────────────────────────────────────
+const HubSpotIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M22.221 12.002c0-.933-.185-1.82-.512-2.633a7.065 7.065 0 0 0-2.734-3.354V4.008a2.005 2.005 0 1 0-2.223 0v2.007a7.052 7.052 0 0 0-2.195.96A6.945 6.945 0 0 0 9.34 5.99H8.01a2.96 2.96 0 0 0-2.959 2.96v.5c-.972.528-1.635 1.563-1.635 2.75 0 1.187.663 2.222 1.635 2.75v.498A2.96 2.96 0 0 0 8.01 18.41h1.33a6.996 6.996 0 0 0 4.848 1.931 7 7 0 0 0 7-7c0-.112-.003-.225-.008-.337zM17.188 7.1a1.116 1.116 0 1 1 1.117-1.116A1.117 1.117 0 0 1 17.188 7.1zm-3 10.353a5.11 5.11 0 1 1 5.11-5.11 5.116 5.116 0 0 1-5.11 5.11z" />
+        <circle cx="14.188" cy="12.343" r="2.223" />
+    </svg>
+)
+
+const CheckIcon = () => (
+    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+)
+
+const SpinnerIcon = ({ className }: { className?: string }) => (
+    <div className={`rounded-full border border-current border-t-transparent animate-spin ${className ?? 'w-3.5 h-3.5'}`} />
+)
+
+// ─── Delete Confirmation Modal ────────────────────────────────────────────────
+function DeleteModal({ lead, onConfirm, onCancel, loading }: {
+    lead: Lead; onConfirm: () => void; onCancel: () => void; loading: boolean
 }) {
-    // Close on Escape
+    const t = useTranslations('leads')
     useEffect(() => {
-        const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onCancel() }
-        window.addEventListener("keydown", handler)
-        return () => window.removeEventListener("keydown", handler)
+        const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onCancel() }
+        window.addEventListener('keydown', h)
+        return () => window.removeEventListener('keydown', h)
     }, [onCancel])
 
     return (
         <AnimatePresence>
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                style={{ backdropFilter: "blur(12px)", background: "rgba(5,7,12,0.75)" }}
+                style={{ backdropFilter: 'blur(12px)', background: 'rgba(5,7,12,0.75)' }}
                 onClick={onCancel}
             >
                 <motion.div
@@ -51,16 +66,11 @@ function DeleteModal({
                     transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                     onClick={e => e.stopPropagation()}
                     className="relative w-full max-w-md rounded-2xl border border-white/[0.08] overflow-hidden"
-                    style={{ background: "linear-gradient(135deg, #0E1117 0%, #080A0F 100%)" }}
+                    style={{ background: 'linear-gradient(135deg, #0E1117 0%, #080A0F 100%)' }}
                 >
-                    {/* Red glow at top */}
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-red-500/20 rounded-full blur-2xl pointer-events-none" />
-
-                    {/* Top border accent */}
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent" />
-
                     <div className="p-8 space-y-6">
-                        {/* Icon */}
                         <div className="flex justify-center">
                             <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
                                 <svg className="w-6 h-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -68,16 +78,10 @@ function DeleteModal({
                                 </svg>
                             </div>
                         </div>
-
-                        {/* Title + lead info */}
                         <div className="text-center space-y-2">
-                            <h3 className="text-xl font-semibold text-white tracking-tight">Delete Lead</h3>
-                            <p className="text-gray-400 text-sm leading-relaxed">
-                                This action cannot be undone. The following lead will be permanently removed.
-                            </p>
+                            <h3 className="text-xl font-semibold text-white tracking-tight">{t('deleteModal.confirm')}</h3>
+                            <p className="text-gray-400 text-sm leading-relaxed">{t('deleteModal.description')}</p>
                         </div>
-
-                        {/* Lead preview card */}
                         <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 space-y-2">
                             <div className="flex items-center justify-between">
                                 <span className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-gray-500">Name</span>
@@ -89,34 +93,15 @@ function DeleteModal({
                                     <span className="text-sm text-gray-300">{lead.email}</span>
                                 </div>
                             )}
-                            {lead.phone && (
-                                <div className="flex items-center justify-between">
-                                    <span className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-gray-500">Phone</span>
-                                    <span className="text-sm text-gray-300">{lead.phone}</span>
-                                </div>
-                            )}
                         </div>
-
-                        {/* Buttons */}
                         <div className="flex gap-3">
-                            <button
-                                onClick={onCancel}
-                                disabled={loading}
-                                className="flex-1 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.07] text-gray-300 text-sm font-semibold transition-all duration-200 disabled:opacity-50"
-                            >
-                                Cancel
+                            <button onClick={onCancel} disabled={loading}
+                                className="flex-1 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.07] text-gray-300 text-sm font-semibold transition-all disabled:opacity-50">
+                                {t('deleteModal.cancel')}
                             </button>
-                            <button
-                                onClick={onConfirm}
-                                disabled={loading}
-                                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500/90 hover:bg-red-500 text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-red-500/20 disabled:opacity-60 flex items-center justify-center gap-2"
-                            >
-                                {loading ? (
-                                    <>
-                                        <div className="w-3.5 h-3.5 rounded-full border border-white/30 border-t-white animate-spin" />
-                                        Deleting...
-                                    </>
-                                ) : "Delete Lead"}
+                            <button onClick={onConfirm} disabled={loading}
+                                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500/90 hover:bg-red-500 text-white text-sm font-semibold transition-all shadow-lg shadow-red-500/20 disabled:opacity-60 flex items-center justify-center gap-2">
+                                {loading ? <><SpinnerIcon /> {t('deleteModal.deleting')}</> : t('deleteModal.confirm')}
                             </button>
                         </div>
                     </div>
@@ -126,22 +111,21 @@ function DeleteModal({
     )
 }
 
-// ── Message Modal ─────────────────────────────────────────────────────────────
+// ─── Message Modal ─────────────────────────────────────────────────────────────
 function MessageModal({ lead, onClose }: { lead: Lead; onClose: () => void }) {
+    const t = useTranslations('leads')
     useEffect(() => {
-        const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose() }
-        window.addEventListener("keydown", handler)
-        return () => window.removeEventListener("keydown", handler)
+        const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+        window.addEventListener('keydown', h)
+        return () => window.removeEventListener('keydown', h)
     }, [onClose])
 
     return (
         <AnimatePresence>
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                style={{ backdropFilter: "blur(12px)", background: "rgba(5,7,12,0.75)" }}
+                style={{ backdropFilter: 'blur(12px)', background: 'rgba(5,7,12,0.75)' }}
                 onClick={onClose}
             >
                 <motion.div
@@ -151,47 +135,37 @@ function MessageModal({ lead, onClose }: { lead: Lead; onClose: () => void }) {
                     transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                     onClick={e => e.stopPropagation()}
                     className="relative w-full max-w-lg rounded-2xl border border-white/[0.08] overflow-hidden"
-                    style={{ background: "linear-gradient(135deg, #0E1117 0%, #080A0F 100%)" }}
+                    style={{ background: 'linear-gradient(135deg, #0E1117 0%, #080A0F 100%)' }}
                 >
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
-
                     <div className="p-7 space-y-5">
                         <div className="flex items-start justify-between gap-4">
                             <div>
-                                <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-amber-500/70 mb-1">Message</p>
+                                <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-amber-500/70 mb-1">{t('messageModal.label')}</p>
                                 <h3 className="text-lg font-semibold text-white">{lead.name}</h3>
                                 {lead.email && <p className="text-sm text-gray-500 mt-0.5">{lead.email}</p>}
                             </div>
-                            <button
-                                onClick={onClose}
-                                className="w-8 h-8 rounded-lg border border-white/[0.07] bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-gray-400 hover:text-white transition-all flex-shrink-0"
-                            >
+                            <button onClick={onClose}
+                                className="w-8 h-8 rounded-lg border border-white/[0.07] bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-gray-400 hover:text-white transition-all flex-shrink-0">
                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
-
                         <div className="h-px bg-white/[0.05]" />
-
                         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 max-h-60 overflow-y-auto">
                             <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line break-words">{lead.message}</p>
                         </div>
-
                         <div className="flex gap-3">
                             {lead.email && (
-                                <a
-                                    href={`mailto:${lead.email}`}
-                                    className="flex-1 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-sm font-semibold text-center transition-all shadow-lg shadow-amber-500/20"
-                                >
-                                    Reply via Email
+                                <a href={`mailto:${lead.email}`}
+                                    className="flex-1 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-sm font-semibold text-center transition-all shadow-lg shadow-amber-500/20">
+                                    {t('messageModal.replyEmail')}
                                 </a>
                             )}
-                            <button
-                                onClick={onClose}
-                                className="flex-1 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.07] text-gray-300 text-sm font-semibold transition-all"
-                            >
-                                Close
+                            <button onClick={onClose}
+                                className="flex-1 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.07] text-gray-300 text-sm font-semibold transition-all">
+                                {t('messageModal.close')}
                             </button>
                         </div>
                     </div>
@@ -201,12 +175,264 @@ function MessageModal({ lead, onClose }: { lead: Lead; onClose: () => void }) {
     )
 }
 
-// ── Stat chip ─────────────────────────────────────────────────────────────────
-function StatChip({ label, value, color = "amber" }: { label: string; value: string | number; color?: "amber" | "blue" | "emerald" }) {
+// ─── HubSpot Setup / Panel Modal ──────────────────────────────────────────────
+function HubSpotPanel({
+    onClose,
+    onSync,
+    leads,
+    syncStatuses,
+    isBulkSyncing,
+    tokenSaved,
+    onSaveToken,
+    onClearToken,
+}: {
+    onClose: () => void
+    onSync: (leads: Lead[]) => void
+    leads: Lead[]
+    syncStatuses: Record<string, SyncStatus>
+    isBulkSyncing: boolean
+    tokenSaved: boolean
+    onSaveToken: (token: string) => void
+    onClearToken: () => void
+}) {
+    const [tokenInput, setTokenInput] = useState('')
+    const [showToken, setShowToken] = useState(false)
+    const inputRef = useRef<HTMLInputElement>(null)
+    const t = useTranslations('leads')
+
+    useEffect(() => {
+        const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+        window.addEventListener('keydown', h)
+        return () => window.removeEventListener('keydown', h)
+    }, [onClose])
+
+    const syncedCount = Object.values(syncStatuses).filter(s => s === 'synced' || s === 'duplicate').length
+    const failedCount = Object.values(syncStatuses).filter(s => s === 'failed').length
+    const unsyncedLeads = leads.filter(l => !syncStatuses[l.id] || syncStatuses[l.id] === 'failed')
+
+    return (
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                style={{ backdropFilter: 'blur(16px)', background: 'rgba(4,6,10,0.82)' }}
+                onClick={onClose}
+            >
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.93, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.93, y: 20 }}
+                    transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
+                    onClick={e => e.stopPropagation()}
+                    className="relative w-full max-w-xl rounded-2xl border border-white/[0.08] overflow-hidden flex flex-col max-h-[90vh]"
+                    style={{ background: 'linear-gradient(160deg, #0F1318 0%, #080B10 100%)' }}
+                >
+                    {/* HubSpot orange glow */}
+                    <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-28 bg-orange-500/15 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent" />
+
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-7 pt-6 pb-5 border-b border-white/[0.05] flex-shrink-0">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+                                <HubSpotIcon className="w-5 h-5 text-orange-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-base font-bold text-white tracking-tight">{t('hubspot.panelTitle')}</h2>
+                                <p className="text-[11px] text-gray-500">{t('hubspot.panelSubtitle')}</p>
+                            </div>
+                        </div>
+                        <button onClick={onClose}
+                            className="w-8 h-8 rounded-lg border border-white/[0.07] bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-gray-400 hover:text-white transition-all">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="overflow-y-auto flex-1">
+                        <div className="p-7 space-y-6">
+
+                            {/* ── Token setup ── */}
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <p className="text-[10.5px] font-bold uppercase tracking-[0.15em] text-gray-500">{t('hubspot.tokenLabel')}</p>
+                                    {tokenSaved && (
+                                        <span className="flex items-center gap-1.5 text-[10.5px] font-semibold text-emerald-400">
+                                            <CheckIcon /> {t('hubspot.tokenConnected')}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {!tokenSaved ? (
+                                    <div className="space-y-3">
+                                        <div className="relative">
+                                            <input
+                                                ref={inputRef}
+                                                type={showToken ? 'text' : 'password'}
+                                                value={tokenInput}
+                                                onChange={e => setTokenInput(e.target.value)}
+                                                placeholder={t('hubspot.tokenPlaceholder')}
+                                                className="w-full px-4 py-3 pr-10 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-orange-500/40 focus:ring-1 focus:ring-orange-500/20 transition-all font-mono"
+                                            />
+                                            <button
+                                                onClick={() => setShowToken(s => !s)}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors"
+                                            >
+                                                {showToken ? (
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22" />
+                                                    </svg>
+                                                ) : (
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                                        <circle cx="12" cy="12" r="3" />
+                                                    </svg>
+                                                )}
+                                            </button>
+                                        </div>
+
+                                        <button
+                                            onClick={() => tokenInput.trim() && onSaveToken(tokenInput.trim())}
+                                            disabled={!tokenInput.trim()}
+                                            className="w-full py-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-lg shadow-orange-500/20"
+                                        >
+                                            {t('hubspot.saveConnect')}
+                                        </button>
+
+                                        {/* How to get token */}
+                                        <details className="group">
+                                            <summary className="text-[11px] text-gray-600 hover:text-gray-400 cursor-pointer transition-colors select-none">
+                                                {t('hubspot.howToTitle')}
+                                            </summary>
+                                            <ol className="mt-2 space-y-1.5 pl-1">
+                                                {(t.raw('hubspot.howToSteps') as string[]).map((step: string, i: number) => (
+                                                    <li key={i} className="text-[11px] text-gray-600 flex gap-2">
+                                                        <span className="text-orange-500/50 font-mono flex-shrink-0">{i + 1}.</span>
+                                                        {step}
+                                                    </li>
+                                                ))}
+                                            </ol>
+                                        </details>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center justify-between p-3.5 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.06]">
+                                        <div className="flex items-center gap-2.5">
+                                            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                            <span className="text-sm text-emerald-300 font-medium">{t('hubspot.tokenSaved')}</span>
+                                        </div>
+                                        <button onClick={onClearToken}
+                                            className="text-[11px] text-gray-600 hover:text-red-400 transition-colors font-semibold">
+                                            {t('hubspot.disconnect')}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* ── Sync stats ── */}
+                            {Object.keys(syncStatuses).length > 0 && (
+                                <div className="grid grid-cols-3 gap-2">
+                                    {[
+                                        { label: t('hubspot.statSynced'), count: syncedCount, color: 'text-emerald-400 border-emerald-500/15 bg-emerald-500/[0.05]' },
+                                        { label: t('hubspot.statFailed'), count: failedCount, color: 'text-red-400 border-red-500/15 bg-red-500/[0.05]' },
+                                        { label: t('hubspot.statPending'), count: unsyncedLeads.length, color: 'text-gray-400 border-white/[0.07] bg-white/[0.03]' },
+                                    ].map(({ label, count, color }) => (
+                                        <div key={label} className={`rounded-xl border p-3 text-center ${color}`}>
+                                            <div className="text-xl font-bold tabular-nums">{count}</div>
+                                            <div className="text-[10px] font-semibold uppercase tracking-wider mt-0.5 opacity-70">{label}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* ── Bulk sync button ── */}
+                            {tokenSaved && (
+                                <button
+                                    onClick={() => onSync(unsyncedLeads)}
+                                    disabled={isBulkSyncing || unsyncedLeads.length === 0}
+                                    className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-400 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2.5"
+                                >
+                                    {isBulkSyncing ? (
+                                        <><SpinnerIcon /> {t('hubspot.syncingButton', { count: unsyncedLeads.length })}</>
+                                    ) : unsyncedLeads.length === 0 ? (
+                                        <><CheckIcon /> {t('hubspot.allSynced')}</>
+                                    ) : (
+                                        <><HubSpotIcon className="w-4 h-4" /> {t('hubspot.syncButton', { count: unsyncedLeads.length })}</>
+                                    )}
+                                </button>
+                            )}
+
+                            {/* ── Lead list with sync status ── */}
+                            {tokenSaved && leads.length > 0 && (
+                                <div className="space-y-2">
+                                    <p className="text-[10.5px] font-bold uppercase tracking-[0.15em] text-gray-500">{t('hubspot.leadStatusTitle')}</p>
+                                    <div className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
+                                        {leads.map(lead => {
+                                            const status = syncStatuses[lead.id] ?? 'idle'
+                                            return (
+                                                <div key={lead.id}
+                                                    className="flex items-center justify-between px-4 py-2.5 rounded-xl border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-semibold text-white truncate">{lead.name}</p>
+                                                        {lead.email && <p className="text-[11px] text-gray-600 truncate">{lead.email}</p>}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                                                        {status === 'syncing' && (
+                                                            <span className="flex items-center gap-1.5 text-[11px] text-orange-400 font-semibold">
+                                                                <SpinnerIcon className="w-3 h-3" /> {t('hubspot.statusSyncing')}
+                                                            </span>
+                                                        )}
+                                                        {status === 'synced' && (
+                                                            <span className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold">
+                                                                <CheckIcon /> {t('hubspot.statusSynced')}
+                                                            </span>
+                                                        )}
+                                                        {status === 'duplicate' && (
+                                                            <span className="flex items-center gap-1.5 text-[11px] text-blue-400 font-semibold">
+                                                                <CheckIcon /> {t('hubspot.statusUpdated')}
+                                                            </span>
+                                                        )}
+                                                        {status === 'failed' && (
+                                                            <button
+                                                                onClick={() => onSync([lead])}
+                                                                className="flex items-center gap-1.5 text-[11px] text-red-400 font-semibold hover:text-red-300 transition-colors"
+                                                            >
+                                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                                </svg>
+                                                                {t('hubspot.statusRetry')}
+                                                            </button>
+                                                        )}
+                                                        {status === 'idle' && (
+                                                            <button
+                                                                onClick={() => onSync([lead])}
+                                                                className="text-[11px] text-gray-600 hover:text-orange-400 font-semibold transition-colors"
+                                                            >
+                                                                Sync
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
+    )
+}
+
+// ─── Stat chip ────────────────────────────────────────────────────────────────
+function StatChip({ label, value, color = 'amber' }: { label: string; value: string | number; color?: 'amber' | 'blue' | 'emerald' }) {
     const colors = {
-        amber: "border-amber-500/20 text-amber-400",
-        blue: "border-blue-500/20 text-blue-400",
-        emerald: "border-emerald-500/20 text-emerald-400",
+        amber: 'border-amber-500/20 text-amber-400',
+        blue: 'border-blue-500/20 text-blue-400',
+        emerald: 'border-emerald-500/20 text-emerald-400',
     }
     return (
         <div className={`flex flex-col items-center px-5 py-3 rounded-xl border bg-white/[0.03] ${colors[color]}`}>
@@ -216,10 +442,10 @@ function StatChip({ label, value, color = "amber" }: { label: string; value: str
     )
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function UserLeadsTable() {
     const { user } = useAuth()
-    const t = useTranslations("leads")
+    const t = useTranslations('leads')
 
     const [leads, setLeads] = useState<Lead[]>([])
     const [loading, setLoading] = useState(true)
@@ -232,6 +458,30 @@ export default function UserLeadsTable() {
     const [search, setSearch] = useState('')
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest')
 
+    // ── HubSpot state ──────────────────────────────────────────────────────────
+    const [hsPanel, setHsPanel] = useState<HubSpotPanelState>('closed')
+    const [hsToken, setHsToken] = useState<string>('')               // loaded from localStorage
+    const [syncStatuses, setSyncStatuses] = useState<Record<string, SyncStatus>>({})
+    const [isBulkSyncing, setIsBulkSyncing] = useState(false)
+
+    // Load saved token on mount
+    useEffect(() => {
+        const saved = typeof window !== 'undefined' ? localStorage.getItem(HS_TOKEN_KEY) : null
+        if (saved) setHsToken(saved)
+    }, [])
+
+    const handleSaveToken = (token: string) => {
+        localStorage.setItem(HS_TOKEN_KEY, token)
+        setHsToken(token)
+    }
+
+    const handleClearToken = () => {
+        localStorage.removeItem(HS_TOKEN_KEY)
+        setHsToken('')
+        setSyncStatuses({})
+    }
+
+    // ── Fetch leads ────────────────────────────────────────────────────────────
     useEffect(() => {
         if (!user?.id) return
             ; (async () => {
@@ -241,13 +491,14 @@ export default function UserLeadsTable() {
                     const data = await res.json()
                     setLeads(data.leads || [])
                 } catch {
-                    setError(t("errors.generic"))
+                    setError(t('errors.generic'))
                 } finally {
                     setLoading(false)
                 }
             })()
     }, [user?.id, t])
 
+    // ── Delete ─────────────────────────────────────────────────────────────────
     const handleDelete = async () => {
         if (!confirmLead) return
         try {
@@ -255,13 +506,65 @@ export default function UserLeadsTable() {
             const res = await fetch(`${BASE_API_URL}/api/subscribed/delete/${confirmLead.id}`, { method: 'DELETE' })
             if (!res.ok) throw new Error()
             setLeads(prev => prev.filter(l => l.id !== confirmLead.id))
-            setSuccessMsg(t("success.delete"))
+            setSuccessMsg(t('success.delete'))
             setTimeout(() => setSuccessMsg(''), 3500)
         } catch {
-            setError(t("errors.deleteFail"))
+            setError(t('errors.deleteFail'))
         } finally {
             setDeletingId(null)
             setConfirmLead(null)
+        }
+    }
+
+    // ── HubSpot sync ───────────────────────────────────────────────────────────
+    const handleHubSpotSync = async (leadsToSync: Lead[]) => {
+        if (!hsToken || leadsToSync.length === 0) return
+
+        const isBulk = leadsToSync.length > 1
+        if (isBulk) setIsBulkSyncing(true)
+
+        // Mark all as syncing
+        setSyncStatuses(prev => {
+            const next = { ...prev }
+            leadsToSync.forEach(l => { next[l.id] = 'syncing' })
+            return next
+        })
+
+        try {
+            const res = await fetch('/api/hubspot/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ apiToken: hsToken, leads: leadsToSync }),
+            })
+            const data = await res.json()
+
+            if (!res.ok) throw new Error(data.error || 'Sync failed')
+
+            // Apply per-lead results
+            setSyncStatuses(prev => {
+                const next = { ...prev }
+                for (const result of data.results) {
+                    next[result.id] = result.status
+                }
+                return next
+            })
+
+            const { synced, duplicate, failed } = data.summary
+            if (failed === 0) {
+                setSuccessMsg(synced + duplicate === 1 ? t('hubspot.successSynced', { count: 1 }) : t('hubspot.successSyncedPlural', { count: synced + duplicate }))
+            } else {
+                setSuccessMsg(t('hubspot.successPartial', { synced: synced + duplicate, failed }))
+            }
+            setTimeout(() => setSuccessMsg(''), 5000)
+        } catch (err) {
+            setSyncStatuses(prev => {
+                const next = { ...prev }
+                leadsToSync.forEach(l => { next[l.id] = 'failed' })
+                return next
+            })
+            setError(String(err))
+        } finally {
+            if (isBulk) setIsBulkSyncing(false)
         }
     }
 
@@ -269,7 +572,7 @@ export default function UserLeadsTable() {
         window.location.href = `${BASE_API_URL}/api/subscribed/csv/${user?.id}?format=csv`
     }
 
-    // Derived: filtered + sorted
+    // ── Derived ────────────────────────────────────────────────────────────────
     const processed = useMemo(() => {
         let result = leads
         if (search.trim()) {
@@ -286,11 +589,12 @@ export default function UserLeadsTable() {
         })
     }, [leads, search, sortOrder])
 
-    // Stats
     const withEmail = leads.filter(l => l.email).length
     const withPhone = leads.filter(l => l.phone).length
     const withMessage = leads.filter(l => l.message).length
+    const syncedTotal = Object.values(syncStatuses).filter(s => s === 'synced' || s === 'duplicate').length
 
+    // ── Loading / Error states ─────────────────────────────────────────────────
     if (loading) {
         return (
             <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#080A0F] gap-5">
@@ -298,7 +602,7 @@ export default function UserLeadsTable() {
                     <div className="absolute inset-0 rounded-full border border-amber-500/15" />
                     <div className="absolute inset-0 rounded-full border border-transparent border-t-amber-500 animate-spin" />
                 </div>
-                <p className="text-[10.5px] uppercase tracking-[0.2em] text-gray-600 font-semibold">Loading leads</p>
+                <p className="text-[10.5px] uppercase tracking-[0.2em] text-gray-600 font-semibold">{t('loading')}</p>
             </div>
         )
     }
@@ -318,6 +622,7 @@ export default function UserLeadsTable() {
         )
     }
 
+    // ── Render ─────────────────────────────────────────────────────────────────
     return (
         <>
             {/* Modals */}
@@ -329,8 +634,18 @@ export default function UserLeadsTable() {
                     loading={deletingId === confirmLead.id}
                 />
             )}
-            {messageLead && (
-                <MessageModal lead={messageLead} onClose={() => setMessageLead(null)} />
+            {messageLead && <MessageModal lead={messageLead} onClose={() => setMessageLead(null)} />}
+            {hsPanel !== 'closed' && (
+                <HubSpotPanel
+                    onClose={() => setHsPanel('closed')}
+                    onSync={handleHubSpotSync}
+                    leads={leads}
+                    syncStatuses={syncStatuses}
+                    isBulkSyncing={isBulkSyncing}
+                    tokenSaved={!!hsToken}
+                    onSaveToken={handleSaveToken}
+                    onClearToken={handleClearToken}
+                />
             )}
 
             <motion.div
@@ -339,19 +654,15 @@ export default function UserLeadsTable() {
                 transition={{ duration: 0.6 }}
                 className="min-h-screen pt-32 sm:pt-36 pb-28 px-4 sm:px-6 lg:px-8 text-gray-200"
                 style={{
-                    background: "radial-gradient(ellipse 90% 60% at 50% -5%, rgba(245,158,11,0.06) 0%, transparent 55%), #080A0F",
+                    background: 'radial-gradient(ellipse 90% 60% at 50% -5%, rgba(245,158,11,0.06) 0%, transparent 55%), #080A0F',
                 }}
             >
                 {/* Grid texture */}
-                <div
-                    className="fixed inset-0 -z-10 pointer-events-none"
-                    style={{
-                        opacity: 0.018,
-                        backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
-                        backgroundSize: "52px 52px",
-                    }}
-                />
-                {/* Ambient glow */}
+                <div className="fixed inset-0 -z-10 pointer-events-none" style={{
+                    opacity: 0.018,
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
+                    backgroundSize: '52px 52px',
+                }} />
                 <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[700px] h-[180px] bg-amber-500/5 rounded-full blur-[80px] pointer-events-none -z-10" />
 
                 <div className="max-w-7xl mx-auto space-y-14">
@@ -365,24 +676,50 @@ export default function UserLeadsTable() {
                     >
                         <div className="space-y-1">
                             <p className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-amber-500/65">
-                                {t("subtitle")}
+                                {t('subtitle')}
                             </p>
                             <h1 className="text-4xl md:text-[2.8rem] font-bold text-white tracking-tight leading-none">
-                                {t("title")}
+                                {t('title')}
                             </h1>
                         </div>
-                        <button
-                            onClick={downloadCSV}
-                            className="self-start sm:self-auto inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-sm font-semibold transition-all duration-200 shadow-lg shadow-amber-500/20 flex-shrink-0"
-                        >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                            {t("downloadCsv")}
-                        </button>
+
+                        {/* Action buttons */}
+                        <div className="flex flex-wrap gap-2 self-start sm:self-auto">
+                            {/* HubSpot CTA */}
+                            <button
+                                onClick={() => setHsPanel('open')}
+                                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border ${hsToken
+                                    ? 'bg-orange-500/10 border-orange-500/25 text-orange-400 hover:bg-orange-500/15'
+                                    : 'bg-white/[0.04] border-white/[0.08] text-gray-400 hover:text-white hover:bg-white/[0.07]'
+                                    }`}
+                            >
+                                <HubSpotIcon className="w-4 h-4" />
+                                {hsToken ? (
+                                    <span className="flex items-center gap-1.5">
+                                        HubSpot
+                                        {syncedTotal > 0 && (
+                                            <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 text-[10px] font-bold">
+                                                {syncedTotal}
+                                            </span>
+                                        )}
+                                    </span>
+                                ) : t('hubspot.buttonConnect')}
+                            </button>
+
+                            {/* CSV download */}
+                            <button
+                                onClick={downloadCSV}
+                                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-sm font-semibold transition-all duration-200 shadow-lg shadow-amber-500/20"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                {t('downloadCsv')}
+                            </button>
+                        </div>
                     </motion.header>
 
-                    {/* ── Stats Row ──────────────────────────────────────────── */}
+                    {/* ── Stats Row ── */}
                     {leads.length > 0 && (
                         <motion.div
                             initial={{ opacity: 0, y: 12 }}
@@ -390,14 +727,17 @@ export default function UserLeadsTable() {
                             transition={{ delay: 0.15 }}
                             className="flex flex-wrap gap-3"
                         >
-                            <StatChip label={t("totalLeads")} value={leads.length} color="amber" />
-                            <StatChip label={t("withEmail")} value={withEmail} color="blue" />
-                            <StatChip label={t("withPhone")} value={withPhone} color="emerald" />
-                            <StatChip label={t("withMessage")} value={withMessage} color="amber" />
+                            <StatChip label={t('totalLeads')} value={leads.length} color="amber" />
+                            <StatChip label={t('withEmail')} value={withEmail} color="blue" />
+                            <StatChip label={t('withPhone')} value={withPhone} color="emerald" />
+                            <StatChip label={t('withMessage')} value={withMessage} color="amber" />
+                            {syncedTotal > 0 && (
+                                <StatChip {...{ label: t('hubspot.inHubSpot') }} value={syncedTotal} color="emerald" />
+                            )}
                         </motion.div>
                     )}
 
-                    {/* ── Success toast ───────────────────────────────────────── */}
+                    {/* ── Success toast ── */}
                     <AnimatePresence>
                         {successMsg && (
                             <motion.div
@@ -414,66 +754,46 @@ export default function UserLeadsTable() {
                         )}
                     </AnimatePresence>
 
-                    {/* ── Empty state ──────────────────────────────────────────── */}
+                    {/* ── Empty state ── */}
                     {!leads.length && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex flex-col items-center justify-center py-32 gap-4"
-                        >
+                        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                            className="flex flex-col items-center justify-center py-32 gap-4">
                             <div className="w-16 h-16 rounded-2xl border border-white/[0.07] bg-white/[0.03] flex items-center justify-center">
                                 <svg className="w-7 h-7 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0H4" />
                                 </svg>
                             </div>
-                            <p className="text-gray-500 text-sm font-medium">{t("empty")}</p>
+                            <p className="text-gray-500 text-sm font-medium">{t('empty')}</p>
                         </motion.div>
                     )}
 
-                    {/* ── Search + Sort Controls ───────────────────────────────── */}
+                    {/* ── Search + Sort ── */}
                     {leads.length > 0 && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="flex flex-col sm:flex-row gap-3"
-                        >
-                            {/* Search */}
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                            className="flex flex-col sm:flex-row gap-3">
                             <div className="relative flex-1">
                                 <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
                                 </svg>
                                 <input
-                                    type="text"
-                                    value={search}
-                                    onChange={e => setSearch(e.target.value)}
-                                    placeholder={t("search") || "Search by name, email or phone…"}
+                                    type="text" value={search} onChange={e => setSearch(e.target.value)}
+                                    placeholder={t('search') || 'Search by name, email or phone…'}
                                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/[0.07] bg-white/[0.03] text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/20 transition-all"
                                 />
                                 {search && (
-                                    <button
-                                        onClick={() => setSearch('')}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
-                                    >
+                                    <button onClick={() => setSearch('')}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition">
                                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </button>
                                 )}
                             </div>
-
-                            {/* Sort toggle */}
                             <div className="flex p-1 gap-1 rounded-xl bg-black/30 border border-white/[0.055] w-fit">
                                 {(['newest', 'oldest'] as const).map(o => (
-                                    <button
-                                        key={o}
-                                        onClick={() => setSortOrder(o)}
-                                        className={`px-4 py-1.5 rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-200 capitalize
-                                            ${sortOrder === o
-                                                ? "bg-amber-500 text-black shadow-md shadow-amber-500/15"
-                                                : "text-gray-500 hover:text-gray-300"
-                                            }`}
-                                    >
+                                    <button key={o} onClick={() => setSortOrder(o)}
+                                        className={`px-4 py-1.5 rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-200 capitalize ${sortOrder === o ? 'bg-amber-500 text-black shadow-md shadow-amber-500/15' : 'text-gray-500 hover:text-gray-300'
+                                            }`}>
                                         {o}
                                     </button>
                                 ))}
@@ -481,22 +801,19 @@ export default function UserLeadsTable() {
                         </motion.div>
                     )}
 
-                    {/* ── Table ────────────────────────────────────────────────── */}
+                    {/* ── Table ── */}
                     {leads.length > 0 && (
                         <motion.div
                             initial={{ opacity: 0, y: 16 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.25 }}
                             className="rounded-2xl border border-white/[0.055] overflow-hidden"
-                            style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)" }}
+                            style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)' }}
                         >
                             {/* Table Header */}
-                            <div className="hidden md:grid grid-cols-[1fr_1.2fr_1fr_auto] gap-6 px-7 py-4 border-b border-white/[0.05] bg-white/[0.025]">
-                                {[t("fields.name"), t("fields.email"), t("fields.phone"), t("actions.text")].map((h, i) => (
-                                    <div
-                                        key={h}
-                                        className={`text-[10.5px] font-semibold uppercase tracking-[0.13em] text-gray-500 ${i === 3 ? "text-right" : ""}`}
-                                    >
+                            <div className="hidden md:grid grid-cols-[1fr_1.2fr_1fr_auto_auto] gap-5 px-7 py-4 border-b border-white/[0.05] bg-white/[0.025]">
+                                {[t('fields.name'), t('fields.email'), t('fields.phone'), 'HubSpot', t('actions.text')].map((h, i) => (
+                                    <div key={h} className={`text-[10.5px] font-semibold uppercase tracking-[0.13em] text-gray-500 ${i >= 3 ? 'text-right' : ''}`}>
                                         {h}
                                     </div>
                                 ))}
@@ -505,85 +822,128 @@ export default function UserLeadsTable() {
                             {/* Rows */}
                             <div className="divide-y divide-white/[0.04]">
                                 <AnimatePresence>
-                                    {processed.slice(0, visibleCount).map((lead, idx) => (
-                                        <motion.div
-                                            key={lead.id}
-                                            initial={{ opacity: 0, y: 8 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, x: -16 }}
-                                            transition={{ delay: idx * 0.03, duration: 0.25 }}
-                                            className="px-6 py-5 hover:bg-white/[0.025] transition-colors duration-200 group"
-                                        >
-                                            {/* Desktop */}
-                                            <div className="hidden md:grid grid-cols-[1fr_1.2fr_1fr_auto] gap-6 items-center">
-                                                <div>
-                                                    <p className="text-white font-semibold text-sm">{lead.name}</p>
-                                                    <p className="text-[11px] text-gray-600 mt-0.5 tabular-nums">
-                                                        {new Date(lead.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
-                                                    </p>
-                                                </div>
-                                                <p className="text-gray-400 text-sm truncate">{lead.email || <span className="text-gray-700">—</span>}</p>
-                                                <p className="text-gray-400 text-sm">{lead.phone || <span className="text-gray-700">—</span>}</p>
-                                                <div className="flex gap-2 justify-end">
-                                                    <button
-                                                        onClick={() => lead.message && setMessageLead(lead)}
-                                                        disabled={!lead.message}
-                                                        className="px-3.5 py-1.5 rounded-lg border border-blue-500/20 bg-blue-500/[0.07] hover:bg-blue-500/[0.15] text-blue-400 text-[11.5px] font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                                                    >
-                                                        {t("actions.view")}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setConfirmLead(lead)}
-                                                        className="px-3.5 py-1.5 rounded-lg border border-red-500/20 bg-red-500/[0.07] hover:bg-red-500/[0.15] text-red-400 text-[11.5px] font-semibold transition-all"
-                                                    >
-                                                        {t("actions.delete")}
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            {/* Mobile */}
-                                            <div className="md:hidden space-y-4">
-                                                <div className="flex justify-between items-start">
+                                    {processed.slice(0, visibleCount).map((lead, idx) => {
+                                        const status = syncStatuses[lead.id] ?? 'idle'
+                                        return (
+                                            <motion.div
+                                                key={lead.id}
+                                                initial={{ opacity: 0, y: 8 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, x: -16 }}
+                                                transition={{ delay: idx * 0.03, duration: 0.25 }}
+                                                className="px-6 py-5 hover:bg-white/[0.025] transition-colors duration-200"
+                                            >
+                                                {/* Desktop */}
+                                                <div className="hidden md:grid grid-cols-[1fr_1.2fr_1fr_auto_auto] gap-5 items-center">
                                                     <div>
-                                                        <p className="text-white font-semibold">{lead.name}</p>
-                                                        <p className="text-[11px] text-gray-600 mt-0.5">
-                                                            {new Date(lead.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}
+                                                        <p className="text-white font-semibold text-sm">{lead.name}</p>
+                                                        <p className="text-[11px] text-gray-600 mt-0.5 tabular-nums">
+                                                            {new Date(lead.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                                                         </p>
                                                     </div>
-                                                    {lead.message && (
-                                                        <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[10px] font-semibold uppercase tracking-wide text-amber-500/70">
-                                                            {t("fields.message")}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-3 text-sm">
-                                                    <div>
-                                                        <p className="text-[10px] uppercase tracking-[0.1em] text-gray-600 mb-0.5">{t("fields.email")}</p>
-                                                        <p className="text-gray-300 truncate">{lead.email || "—"}</p>
+                                                    <p className="text-gray-400 text-sm truncate">{lead.email || <span className="text-gray-700">—</span>}</p>
+                                                    <p className="text-gray-400 text-sm">{lead.phone || <span className="text-gray-700">—</span>}</p>
+
+                                                    {/* HubSpot status cell */}
+                                                    <div className="flex justify-end">
+                                                        {status === 'idle' && hsToken && (
+                                                            <button onClick={() => handleHubSpotSync([lead])}
+                                                                className="px-3 py-1.5 rounded-lg border border-orange-500/20 bg-orange-500/[0.06] hover:bg-orange-500/[0.14] text-orange-400 text-[11px] font-semibold transition-all flex items-center gap-1.5">
+                                                                <HubSpotIcon className="w-3 h-3" /> Sync
+                                                            </button>
+                                                        )}
+                                                        {status === 'idle' && !hsToken && (
+                                                            <span className="text-gray-700 text-[11px]">—</span>
+                                                        )}
+                                                        {status === 'syncing' && (
+                                                            <span className="flex items-center gap-1.5 text-[11px] text-orange-400 font-semibold">
+                                                                <SpinnerIcon className="w-3 h-3" />
+                                                            </span>
+                                                        )}
+                                                        {(status === 'synced' || status === 'duplicate') && (
+                                                            <span className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold">
+                                                                <CheckIcon />
+                                                                <span>{status === 'duplicate' ? t('hubspot.statusUpdated') : t('hubspot.statusSynced')}</span>
+                                                            </span>
+                                                        )}
+                                                        {status === 'failed' && (
+                                                            <button onClick={() => handleHubSpotSync([lead])}
+                                                                className="px-3 py-1.5 rounded-lg border border-red-500/20 bg-red-500/[0.06] hover:bg-red-500/[0.14] text-red-400 text-[11px] font-semibold transition-all">
+                                                                {t('hubspot.statusRetry')}
+                                                            </button>
+                                                        )}
                                                     </div>
-                                                    <div>
-                                                        <p className="text-[10px] uppercase tracking-[0.1em] text-gray-600 mb-0.5">{t("fields.phone")}</p>
-                                                        <p className="text-gray-300">{lead.phone || "—"}</p>
+
+                                                    {/* Actions */}
+                                                    <div className="flex gap-2 justify-end">
+                                                        <button onClick={() => lead.message && setMessageLead(lead)} disabled={!lead.message}
+                                                            className="px-3.5 py-1.5 rounded-lg border border-blue-500/20 bg-blue-500/[0.07] hover:bg-blue-500/[0.15] text-blue-400 text-[11.5px] font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                                                            {t('actions.view')}
+                                                        </button>
+                                                        <button onClick={() => setConfirmLead(lead)}
+                                                            className="px-3.5 py-1.5 rounded-lg border border-red-500/20 bg-red-500/[0.07] hover:bg-red-500/[0.15] text-red-400 text-[11.5px] font-semibold transition-all">
+                                                            {t('actions.delete')}
+                                                        </button>
                                                     </div>
                                                 </div>
-                                                <div className="flex gap-2 pt-1">
-                                                    <button
-                                                        onClick={() => lead.message && setMessageLead(lead)}
-                                                        disabled={!lead.message}
-                                                        className="flex-1 py-2 rounded-lg border border-blue-500/20 bg-blue-500/[0.07] hover:bg-blue-500/[0.15] text-blue-400 text-xs font-semibold transition-all disabled:opacity-30"
-                                                    >
-                                                        {lead.message ? t("actions.view") : t("actions.noMessage")}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setConfirmLead(lead)}
-                                                        className="flex-1 py-2 rounded-lg border border-red-500/20 bg-red-500/[0.07] hover:bg-red-500/[0.15] text-red-400 text-xs font-semibold transition-all"
-                                                    >
-                                                        {t("actions.delete")}
-                                                    </button>
+
+                                                {/* Mobile */}
+                                                <div className="md:hidden space-y-4">
+                                                    <div className="flex justify-between items-start">
+                                                        <div>
+                                                            <p className="text-white font-semibold">{lead.name}</p>
+                                                            <p className="text-[11px] text-gray-600 mt-0.5">
+                                                                {new Date(lead.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            {/* HubSpot status badge — mobile */}
+                                                            {status === 'synced' || status === 'duplicate' ? (
+                                                                <span className="px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-400">
+                                                                    HS ✓
+                                                                </span>
+                                                            ) : status === 'failed' ? (
+                                                                <span className="px-2 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-[10px] font-bold text-red-400">
+                                                                    Failed
+                                                                </span>
+                                                            ) : null}
+                                                            {lead.message && (
+                                                                <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[10px] font-semibold uppercase tracking-wide text-amber-500/70">
+                                                                    {t('fields.message')}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-3 text-sm">
+                                                        <div>
+                                                            <p className="text-[10px] uppercase tracking-[0.1em] text-gray-600 mb-0.5">{t('fields.email')}</p>
+                                                            <p className="text-gray-300 truncate">{lead.email || '—'}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] uppercase tracking-[0.1em] text-gray-600 mb-0.5">{t('fields.phone')}</p>
+                                                            <p className="text-gray-300">{lead.phone || '—'}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2 pt-1">
+                                                        {hsToken && status === 'idle' && (
+                                                            <button onClick={() => handleHubSpotSync([lead])}
+                                                                className="flex-1 py-2 rounded-lg border border-orange-500/20 bg-orange-500/[0.07] hover:bg-orange-500/[0.15] text-orange-400 text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                                                <HubSpotIcon className="w-3.5 h-3.5" /> Sync
+                                                            </button>
+                                                        )}
+                                                        <button onClick={() => lead.message && setMessageLead(lead)} disabled={!lead.message}
+                                                            className="flex-1 py-2 rounded-lg border border-blue-500/20 bg-blue-500/[0.07] hover:bg-blue-500/[0.15] text-blue-400 text-xs font-semibold transition-all disabled:opacity-30">
+                                                            {lead.message ? t('actions.view') : t('actions.noMessage')}
+                                                        </button>
+                                                        <button onClick={() => setConfirmLead(lead)}
+                                                            className="flex-1 py-2 rounded-lg border border-red-500/20 bg-red-500/[0.07] hover:bg-red-500/[0.15] text-red-400 text-xs font-semibold transition-all">
+                                                            {t('actions.delete')}
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </motion.div>
-                                    ))}
+                                            </motion.div>
+                                        )
+                                    })}
                                 </AnimatePresence>
                             </div>
 
@@ -593,25 +953,23 @@ export default function UserLeadsTable() {
                                     <svg className="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
                                     </svg>
-                                    <p className="text-gray-600 text-sm">No leads match <span className="text-gray-400 font-medium">&quot;{search}&quot;</span></p>
+                                    <p className="text-gray-600 text-sm">{t('noResults')} <span className="text-gray-400 font-medium">&quot;{search}&quot;</span></p>
                                 </div>
                             )}
                         </motion.div>
                     )}
 
-                    {/* ── Load more / all loaded ───────────────────────────────── */}
+                    {/* ── Load more ── */}
                     {leads.length > 0 && (
                         <div className="flex flex-col items-center gap-3">
                             {visibleCount < processed.length ? (
-                                <button
-                                    onClick={() => setVisibleCount(p => p + 10)}
-                                    className="px-8 py-2.5 rounded-xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.06] text-gray-400 hover:text-white text-sm font-semibold transition-all duration-200"
-                                >
-                                    {t("loadMore")}
+                                <button onClick={() => setVisibleCount(p => p + 10)}
+                                    className="px-8 py-2.5 rounded-xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.06] text-gray-400 hover:text-white text-sm font-semibold transition-all duration-200">
+                                    {t('loadMore')}
                                 </button>
                             ) : (
                                 <p className="text-[11px] uppercase tracking-[0.14em] text-gray-700 font-semibold">
-                                    {t("allLeadsLoaded", { count: processed.length })}
+                                    {t('allLeadsLoaded', { count: processed.length })}
                                 </p>
                             )}
                         </div>
