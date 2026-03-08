@@ -784,7 +784,7 @@
     "title": "Your Leads",
     "subtitle": "Manage and export your collected leads easily.",
     "downloadCsv": "Download as CSV",
-    "loading": "Loading...",
+    "loading": "Loading leads",
     "empty": "No leads found.",
     "fields": {
       "name": "Name",
@@ -795,7 +795,7 @@
     "delete": "Delete",
     "deleting": "Deleting...",
     "loadMore": "Load more",
-    "allLoaded": "All leads have been loaded.",
+    "allLeadsLoaded": "All {count} leads loaded",
     "success": {
       "delete": "Deleted successfully"
     },
@@ -812,12 +812,66 @@
       "deleting": "Deleting...",
       "noMessage": "No message"
     },
-    "search": "Searching for potential customers...",
-    "allLeadsLoaded": "All leads are loaded.",
-    "totalLeads": "Total number of leads",
+    "search": "Search by name, email or phone…",
+    "totalLeads": "Total leads",
     "withMessage": "With message",
     "withEmail": "With email",
-    "withPhone": "With phone"
+    "withPhone": "With phone",
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest"
+    },
+    "noResults": "No leads match",
+    "deleteModal": {
+      "title": "Delete Lead",
+      "description": "This action cannot be undone. The following lead will be permanently removed.",
+      "cancel": "Cancel",
+      "confirm": "Delete Lead",
+      "deleting": "Deleting..."
+    },
+    "messageModal": {
+      "label": "Message",
+      "replyEmail": "Reply via Email",
+      "close": "Close"
+    },
+    "hubspot": {
+      "buttonConnect": "Connect HubSpot",
+      "buttonConnected": "HubSpot",
+      "panelTitle": "HubSpot CRM",
+      "panelSubtitle": "Sync your leads automatically",
+      "tokenLabel": "Private App Token",
+      "tokenConnected": "Connected",
+      "tokenPlaceholder": "pat-na1-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "tokenSaved": "Token saved in browser",
+      "saveConnect": "Save & Connect",
+      "disconnect": "Disconnect",
+      "howToTitle": "How to get your Private App token?",
+      "howToSteps": [
+        "Go to HubSpot → Settings → Integrations → Private Apps",
+        "Click \"Create a private app\"",
+        "Give it a name (e.g. \"Ninja Cards\")",
+        "Under Scopes → add: crm.objects.contacts.write",
+        "Click \"Create app\" → copy the token"
+      ],
+      "statSynced": "Synced",
+      "statFailed": "Failed",
+      "statPending": "Pending",
+      "leadStatusTitle": "Lead Status",
+      "syncButton": "Sync {count} leads to HubSpot",
+      "syncingButton": "Syncing {count} leads...",
+      "allSynced": "All leads synced",
+      "inHubSpot": "In HubSpot",
+      "statusSyncing": "Syncing",
+      "statusSynced": "Synced",
+      "statusUpdated": "Updated",
+      "statusRetry": "Retry",
+      "statusSync": "Sync",
+      "statusFailed": "Failed",
+      "mobileStatusSynced": "HS ✓",
+      "successSynced": "✓ {count} lead synced to HubSpot",
+      "successSyncedPlural": "✓ {count} leads synced to HubSpot",
+      "successPartial": "Synced {synced}, {failed} failed — click Retry on failed leads"
+    }
   },
   "dashboard": {
     "title": "Profile Analytics",
@@ -900,8 +954,14 @@
     }
   },
   "backgroundSelector": {
-    "title": "Change background color",
-    "ariaSelect": "Select {name} background"
+    "title": "Card theme",
+    "ariaSelect": "Select {name} theme",
+    "customise": "Customise colours",
+    "hideCustomise": "Hide colours",
+    "accent": "Accent colour",
+    "textPrimary": "Name colour",
+    "textSecondary": "Position colour",
+    "resetDefaults": "Reset to defaults"
   },
   "howToUse": {
     "title": "How to use our NFC Ninja Card?",
@@ -973,6 +1033,7 @@
   },
   "LeadForm": {
     "title": "Leave your contact details for {name}",
+    "subtitle": "So they can have your contact information to reach out to you.",
     "placeholders": {
       "name": "Name*",
       "phone": "Phone*",

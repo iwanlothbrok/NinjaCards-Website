@@ -788,11 +788,11 @@
     "cta": "Гледай видеото"
   },
   "leads": {
-    "title": "Вашите Потенциални клиенти",
-    "subtitle": "Преглед и управление на потенциалните клиенти, които сте събрали.",
+    "title": "Вашите лийдове",
+    "subtitle": "Управлявайте и експортирайте събраните лийдове лесно.",
     "downloadCsv": "Изтегли като CSV",
-    "loading": "Зареждане...",
-    "empty": "Няма записани потенциални клиенти.",
+    "loading": "Зареждане на лийдове",
+    "empty": "Няма намерени лийдове.",
     "fields": {
       "name": "Име",
       "phone": "Телефон",
@@ -800,31 +800,85 @@
       "message": "Съобщение"
     },
     "delete": "Изтрий",
-    "deleting": "Изтрива се...",
+    "deleting": "Изтриване...",
     "loadMore": "Зареди още",
-    "allLoaded": "Всички потенциални клиенти са заредени.",
+    "allLeadsLoaded": "Всички {count} лийда са заредени",
     "success": {
-      "delete": "Успешно изтрито ✅"
+      "delete": "Изтрито успешно"
     },
     "errors": {
-      "load": "Грешка при зареждане на лийдове",
+      "load": "Грешка при зареждане на лийдовете",
       "generic": "Неуспешно зареждане на данните.",
       "delete": "Грешка при изтриване на лийда",
-      "deleteFail": "Неуспешно изтриване на лийда."
+      "deleteFail": "Изтриването на лийда е неуспешно."
     },
     "actions": {
-      "text": "Функции",
+      "text": "Действия",
       "view": "Преглед",
       "delete": "Изтрий",
-      "deleting": "Изтрива се...",
+      "deleting": "Изтриване...",
       "noMessage": "Няма съобщение"
     },
-    "search": "Търси потенциални клиенти...",
-    "allLeadsLoaded": "Всички потенциални клиенти са заредени.",
-    "totalLeads": "Общ брой потенциални клиенти",
+    "search": "Търси по име, имейл или телефон…",
+    "totalLeads": "Общо лийдове",
     "withMessage": "Със съобщение",
     "withEmail": "С имейл",
-    "withPhone": "С телефон"
+    "withPhone": "С телефон",
+    "sort": {
+      "newest": "Най-нови",
+      "oldest": "Най-стари"
+    },
+    "noResults": "Няма лийдове за",
+    "deleteModal": {
+      "title": "Изтриване на лийд",
+      "description": "Това действие е необратимо. Следният лийд ще бъде премахнат завинаги.",
+      "cancel": "Отказ",
+      "confirm": "Изтрий лийда",
+      "deleting": "Изтриване..."
+    },
+    "messageModal": {
+      "label": "Съобщение",
+      "replyEmail": "Отговори по имейл",
+      "close": "Затвори"
+    },
+    "hubspot": {
+      "buttonConnect": "Свържи HubSpot",
+      "buttonConnected": "HubSpot",
+      "panelTitle": "HubSpot CRM",
+      "panelSubtitle": "Синхронизирай лийдовете автоматично",
+      "tokenLabel": "Токен за частно приложение",
+      "tokenConnected": "Свързан",
+      "tokenPlaceholder": "pat-na1-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "tokenSaved": "Токенът е запазен в браузъра",
+      "saveConnect": "Запази и свържи",
+      "disconnect": "Прекъсни връзката",
+      "howToTitle": "Как да получите токен за частно приложение?",
+      "howToSteps": [
+        "Отидете в HubSpot → Настройки → Интеграции → Частни приложения",
+        "Кликнете „Създай частно приложение\"",
+        "Дайте му име (напр. „Ninja Card\")",
+        "В Обхвати → добавете: crm.objects.contacts.write",
+        "Кликнете „Създай приложение\" → копирайте токена"
+      ],
+      "statSynced": "Синхронизирани",
+      "statFailed": "Неуспешни",
+      "statPending": "Чакащи",
+      "leadStatusTitle": "Статус на лийда",
+      "syncButton": "Синхронизирай {count} лийда в HubSpot",
+      "syncingButton": "Синхронизиране на {count} лийда...",
+      "allSynced": "Всички лийдове са синхронизирани",
+      "inHubSpot": "В HubSpot",
+      "statusSyncing": "Синхронизира се",
+      "statusSynced": "Синхронизиран",
+      "statusUpdated": "Обновен",
+      "statusRetry": "Опитай отново",
+      "statusSync": "Синхронизирай",
+      "statusFailed": "Неуспешно",
+      "mobileStatusSynced": "HS ✓",
+      "successSynced": "✓ {count} лийд е синхронизиран в HubSpot",
+      "successSyncedPlural": "✓ {count} лийда са синхронизирани в HubSpot",
+      "successPartial": "Синхронизирани {synced}, {failed} неуспешни — кликнете Опитай отново"
+    }
   },
   "dashboard": {
     "title": "Анализ на профила",
@@ -907,8 +961,14 @@
     }
   },
   "backgroundSelector": {
-    "title": "Смяна на цвета на фона",
-    "ariaSelect": "Избери {name} фон"
+    "title": "Тема на картата",
+    "ariaSelect": "Избери тема {name}",
+    "customise": "Персонализирай цветове",
+    "hideCustomise": "Скрий цветове",
+    "accent": "Акцентен цвят",
+    "textPrimary": "Цвят на името",
+    "textSecondary": "Цвят на позицията",
+    "resetDefaults": "Върни по подразбиране"
   },
   "howToUse": {
     "title": "Как да използвате нашите NFC Ninja Карти?",
@@ -980,6 +1040,7 @@
   },
   "LeadForm": {
     "title": "Оставете контактите си на {name}",
+    "subtitle": "Така той ще има вашите контакти за да се свързи с вас.",
     "placeholders": {
       "name": "Име*",
       "phone": "Телефон*",
