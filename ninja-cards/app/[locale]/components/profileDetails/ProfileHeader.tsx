@@ -4,121 +4,140 @@ import React from "react";
 import CoverImage from "./CoverImage";
 import { FaUserCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { useAuth } from "../../context/AuthContext";
-import { useTranslations } from "next-intl";
+import { ResolvedCardStyle } from "@/utils/cardTheme";
 
 const ProfileHeader: React.FC<{
-    user: any;
-    cardStyle: any;
-    coverPreview: string | null;
-    handleCoverChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    saveCover: () => void;
-    cancelCover: () => void;
-}> = ({
-    user,
-    cardStyle,
-    coverPreview,
-    handleCoverChange,
-    saveCover,
-    cancelCover,
-}) => {
-        const { user: currentUser } = useAuth();
-        const t = useTranslations("profileHeader");
+    user: any
+    cardStyle: ResolvedCardStyle
+    coverPreview: string | null
+    handleCoverChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    saveCover: () => void
+    cancelCover: () => void
+}> = ({ user, cardStyle }) => {
 
-        return (
-            <div id="profile-content" className={`relative ${cardStyle.bgClass}`}>
-                {/* Cover Section */}
+    return (
+        <div id="profile-content" className={`relative ${cardStyle.bgClass}`}>
+
+            {/* ── Cover ── */}
+            <div className="relative overflow-hidden" style={{ height: 230 }}>
                 <CoverImage
-                    coverPreview={coverPreview}
+                    coverPreview={null}
                     userCoverImage={user?.coverImage || ""}
-                    height="270px"
+                    height="230px"
                 />
-
-                {/* Circular Profile Image */}
                 <div
-                    className={`absolute mt-10 top-40 left-1/2 transform -translate-x-1/2 z-10 ${cardStyle.bgClass} rounded-full shadow-lg`}
+                    className="absolute inset-x-0 bottom-0 h-28 pointer-events-none"
+                    style={{
+                        background: `linear-gradient(to bottom, transparent 0%, ${cardStyle.cssVar} 100%)`,
+                    }}
+                />
+            </div>
+
+            {/* ── Avatar ── */}
+            <div className="relative flex justify-center" style={{ marginTop: -56 }}>
+                <motion.div
+                    initial={{ scale: 0.72, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.12, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative z-10"
                 >
-                    <motion.div
-                        className={`w-44 h-44 rounded-full overflow-hidden border-4 ${cardStyle.borderClass}`}
-                        initial={{ scale: 0.9 }}
-                        animate={{ scale: 1 }}
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.5 }}
+                    {/* Accent ring — uses theme accent color */}
+                    <div
+                        className="absolute -inset-[3px] rounded-full pointer-events-none"
+                        style={{
+                            background: `conic-gradient(from 0deg, ${cardStyle.accent} 0%, ${cardStyle.accent}cc 30%, ${cardStyle.accent} 60%, ${cardStyle.accent}99 85%, ${cardStyle.accent} 100%)`,
+                        }}
+                    />
+                    {/* Gap ring */}
+                    <div
+                        className={`absolute -inset-[1.5px] rounded-full ${cardStyle.bgClass}`}
+                        style={{ zIndex: 1 }}
+                    />
+                    {/* Photo */}
+                    <div
+                        className="relative rounded-full overflow-hidden"
+                        style={{ width: 136, height: 136, zIndex: 2, background: '#1a1a1a' }}
                     >
                         {user?.image ? (
                             <img
                                 className="w-full h-full object-cover"
                                 src={`data:image/jpeg;base64,${user.image}`}
-                                alt="Profile"
+                                alt={user?.name ?? "Profile"}
                             />
                         ) : (
-                            <FaUserCircle className="w-full h-full text-gray-300" />
+                            <FaUserCircle className="w-full h-full text-gray-600" />
                         )}
-                    </motion.div>
-                </div>
-
-                {/* Profile info */}
-                <div
-                    className={`relative w-full max-w-md ${cardStyle.bgClass} z-0 pt-24 -mt-17 mx-auto rounded-none`}
-                >
-                    <div className="mt-6 px-4 text-center">
-                        <h1
-                            className={[
-                                "font-bold leading-tight tracking-[-0.01em]",
-                                "mx-auto max-w-[20ch] break-words hyphens-auto [text-wrap:balance]",
-                                // fluid size (≈26–40px)
-                                "text-[clamp(30px,6vw,42px)] sm:text-[clamp(32px,5vw,46px)]",
-                                cardStyle?.highlightClass || "",
-                            ].join(" ")}
-                        >
-                            {user?.name ? (
-                                user.name.split(/\s+/).map((part: string, i: number) => (
-                                    <span key={i} className="block">
-                                        {part}
-                                    </span>
-                                ))
-                            ) : (
-                                "\u00A0"
-                            )}
-                        </h1>
-
-                        {user?.company && (
-                            <div className="mt-2 flex justify-center">
-                                <span
-                                    className={[
-                                        "inline-flex items-center gap-1 rounded-full",
-                                        "px-3 py-1",
-                                        "bg-slate-300  ring-1 ring-blue-200/60 ",
-                                        "uppercase tracking-widest",
-                                        // fluid size (≈14–16px)
-                                        "text-[clamp(14px,2.9vw,16px)]",
-                                        "font-semibold text-gray-900",
-                                        // cardStyle?.textClass || "",
-                                    ].join(" ")}
-                                >
-                                    {user?.company}
-                                </span>
-                            </div>
-                        )}
-
-                        {user?.position && (
-                            <p
-                                className={[
-                                    "mt-2 font-light italic leading-snug",
-                                    "mx-auto max-w-[28ch] break-words hyphens-auto [text-wrap:pretty]",
-                                    // fluid size (≈14–18px)
-                                    "text-[clamp(16px,3.6vw,18px)] sm:text-[clamp(15px,3vw,19px)]",
-                                    cardStyle?.textClass || "",
-                                ].join(" ")}
-                            >
-                                {user?.position}
-                            </p>
-                        )}
-
                     </div>
-                </div>
+                </motion.div>
             </div>
-        );
-    };
 
-export default ProfileHeader;
+            {/* ── Name / Company / Position ── */}
+            <div className="flex flex-col items-center text-center px-6 pt-5 pb-8 gap-3">
+
+                {/* Name — uses textPrimary + accent for last word */}
+                <motion.h1
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25, duration: 0.52 }}
+                    className="font-black leading-[1.05] tracking-[-0.02em]"
+                    style={{ fontSize: 'clamp(30px, 8.5vw, 46px)' }}
+                >
+                    {user?.name
+                        ? user.name.split(/\s+/).map((part: string, i: number, arr: string[]) => (
+                            <span
+                                key={i}
+                                className="block"
+                                style={{
+                                    color: i === arr.length - 1
+                                        ? cardStyle.accent
+                                        : cardStyle.textPrimary,
+                                }}
+                            >
+                                {part}
+                            </span>
+                        ))
+                        : '\u00A0'}
+                </motion.h1>
+
+                {/* Company */}
+                {user?.company && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.82 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.35, duration: 0.42 }}
+                    >
+                        <span
+                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.2em] uppercase"
+                            style={{
+                                color: cardStyle.textPrimary,
+                                border: `1px solid ${cardStyle.textPrimary}18`,
+                                background: `${cardStyle.textPrimary}08`,
+                            }}
+                        >
+                            {user.company}
+                        </span>
+                    </motion.div>
+                )}
+
+                {/* Position */}
+                {user?.position && (
+                    <motion.p
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.43, duration: 0.42 }}
+                        className="italic font-light leading-snug max-w-[28ch]"
+                        style={{
+                            fontSize: 'clamp(15px, 4vw, 20px)',
+                            color: cardStyle.textSecondary,
+                        }}
+                    >
+                        {user.position}
+                    </motion.p>
+                )}
+
+            </div>
+        </div>
+    )
+}
+
+export default ProfileHeader
