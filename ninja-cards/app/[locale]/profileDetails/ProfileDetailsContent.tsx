@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion } from 'framer-motion';
-import { Cropper } from "react-cropper";
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import ActionButtons2 from '../components/profileDetails/ActionButtons2';
 import { BASE_API_URL } from '@/utils/constants';
@@ -14,371 +13,212 @@ import ProfileHeader from '../components/profileDetails/ProfileHeader';
 import generateVCF from "@/utils/generateVCF";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import "cropperjs/dist/cropper.css"; // Import cropper styles
+import {
+    CardTheme,
+    ResolvedCardStyle,
+    parseCardTheme,
+    serializeCardTheme,
+    resolveCardStyle,
+} from "../../../utils/cardTheme";
+import "cropperjs/dist/cropper.css";
 
-interface Alert {
-    message: string;
-    title: string;
-    color: string;
+interface Alert { message: string; title: string; color: string }
+
+// ─── API helpers ──────────────────────────────────────────────────────────────
+const saveTheme = async (
+    userId: string,
+    theme: CardTheme,
+    showAlert: (msg: string, title: string, color: string) => void
+) => {
+    try {
+        const res = await fetch(`${BASE_API_URL}/api/profile/saveColor`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, selectedColor: serializeCardTheme(theme) }),
+        })
+        if (!res.ok) throw new Error()
+    } catch {
+        showAlert('Failed to save theme', 'Error', 'red')
+    }
 }
 
-const cardBackgroundOptions = [
-    {
-        name: 'black',
-        bgClass: "bg-black",
-        textClass: "text-gray-200",
-        borderClass: "border-orange",
-        highlightClass: "text-orange",
-        cardCoverBgClass: "from-black",
-        opposite: 'bg-white'
-    },
-    {
-        name: 'white',
-        bgClass: "bg-white",
-        textClass: "text-gray-900",
-        borderClass: "border-blue-600",
-        highlightClass: "text-blue-600",
-        cardCoverBgClass: "from-white",
-        opposite: 'bg-black'
-    },
-    {
-        name: 'midnight-blue',
-        bgClass: "bg-slate-900",
-        textClass: "text-slate-100",
-        borderClass: "border-cyan-400",
-        highlightClass: "text-cyan-400",
-        cardCoverBgClass: "from-slate-900",
-        opposite: 'bg-white'
-    },
-    {
-        name: 'royal-purple',
-        bgClass: "bg-purple-900",
-        textClass: "text-purple-50",
-        borderClass: "border-fuchsia-400",
-        highlightClass: "text-fuchsia-400",
-        cardCoverBgClass: "from-purple-900",
-        opposite: 'bg-white'
-    },
-    {
-        name: 'emerald-forest',
-        bgClass: "bg-emerald-950",
-        textClass: "text-emerald-50",
-        borderClass: "border-emerald-400",
-        highlightClass: "text-emerald-300",
-        cardCoverBgClass: "from-emerald-950",
-        opposite: 'bg-white'
-    },
-    {
-        name: 'golden-sunset',
-        bgClass: "bg-amber-900",
-        textClass: "text-amber-50",
-        borderClass: "border-amber-400",
-        highlightClass: "text-yellow-300",
-        cardCoverBgClass: "from-amber-900",
-        opposite: 'bg-white'
-    },
-    {
-        name: 'rose-gold',
-        bgClass: "bg-rose-950",
-        textClass: "text-rose-50",
-        borderClass: "border-rose-400",
-        highlightClass: "text-pink-300",
-        cardCoverBgClass: "from-rose-950",
-        opposite: 'bg-white'
-    },
-    {
-        name: 'ocean-depth',
-        bgClass: "bg-blue-950",
-        textClass: "text-blue-50",
-        borderClass: "border-sky-400",
-        highlightClass: "text-sky-300",
-        cardCoverBgClass: "from-blue-950",
-        opposite: 'bg-white'
-    },
-    {
-        name: 'charcoal-premium',
-        bgClass: "bg-zinc-900",
-        textClass: "text-zinc-100",
-        borderClass: "border-violet-400",
-        highlightClass: "text-violet-300",
-        cardCoverBgClass: "from-zinc-900",
-        opposite: 'bg-white'
-    },
-    {
-        name: 'burgundy-luxury',
-        bgClass: "bg-red-950",
-        textClass: "text-red-50",
-        borderClass: "border-red-400",
-        highlightClass: "text-orange-300",
-        cardCoverBgClass: "from-red-950",
-        opposite: 'bg-white'
-    }
-];
-
-const saveSelectedColor = async (userId: string, color: string, showAlert: (message: string, title: string, color: string) => void) => {
+const fetchUser = async (
+    userId: string,
+    setUser: React.Dispatch<React.SetStateAction<User | null>>,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    showAlert: (msg: string, title: string, color: string) => void
+) => {
+    setLoading(true)
     try {
-        const response = await fetch(`${BASE_API_URL}/api/profile/saveColor`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ userId, selectedColor: color }),
-        });
-        if (!response.ok) throw new Error('Failed to save selected color');
-        showAlert('Color saved successfully', 'Success', 'green');
-    } catch (error) {
-        console.error(error);
-        showAlert('Failed to save color', 'Error', 'red');
-    }
-};
-
-const fetchUser = async (userId: string, setUser: React.Dispatch<React.SetStateAction<User | null>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, showAlert: (message: string, title: string, color: string) => void) => {
-    setLoading(true);
-    try {
-        const response = await fetch(`${BASE_API_URL}/api/profile/${userId}`);
-        if (!response.ok) throw new Error('Failed to fetch user data');
-        const userData: User = await response.json();
-        setUser(userData);
-    } catch (error) {
-        console.error(error);
-        showAlert('Failed to load profile', 'Error', 'red');
+        const res = await fetch(`${BASE_API_URL}/api/profile/${userId}`)
+        if (!res.ok) throw new Error()
+        setUser(await res.json())
+    } catch {
+        showAlert('Failed to load profile', 'Error', 'red')
     } finally {
-        setLoading(false);
+        setLoading(false)
     }
-};
+}
 
+// ─── Loading screen ───────────────────────────────────────────────────────────
+function LoadingScreen() {
+    return (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5" style={{ background: '#080808' }}>
+            <div className="relative w-12 h-12">
+                <div className="absolute inset-0 rounded-full border border-amber-500/15" />
+                <div className="absolute inset-0 rounded-full border border-transparent border-t-amber-500 animate-spin" />
+            </div>
+            <p className="text-[10px] uppercase tracking-[0.22em] font-bold text-gray-700">Loading</p>
+        </div>
+    )
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
-    const { user } = useAuth();
+    const { user } = useAuth()
+    const t = useTranslations("cropModal")
+    const router = useRouter()
 
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState<Alert | null>(null);
-    const [cardStyle, setCardStyle] = useState(cardBackgroundOptions[0]);
-    const [, setIsPhone] = useState(false);
-    const [coverPreview, setCoverPreview] = useState<string | null>(null);
-    const [fileForUpload, setFileForUpload] = useState<File | null>(null);
-    const [cropper, setCropper] = useState<any>(null);
-    const [croppedImage, setCroppedImage] = useState<string | null>(null);
-    const [hasIncrementedVisit, setHasIncrementedVisit] = useState(false); // Guard state
-    const [hasDownoadedVCF, sethasDownoadedVCF] = useState(false); // Guard state
-    const router = useRouter();
+    const [currentUser, setCurrentUser] = useState<User | null>(null)
+    const [loading, setLoading] = useState(false)
+    const [alert, setAlert] = useState<Alert | null>(null)
 
-    const t = useTranslations("cropModal");
+    // ── Theme state — single source of truth ──────────────────────────────────
+    const [cardTheme, setCardTheme] = useState<CardTheme>({
+        base: 'black',
+        accent: '#f59e0b',
+        textPrimary: '#ffffff',
+        textSecondary: 'rgba(255,255,255,0.45)',
+    })
+    const cardStyle: ResolvedCardStyle = resolveCardStyle(cardTheme)
+
+    const [, setIsPhone] = useState(false)
+    const [coverPreview, setCoverPreview] = useState<string | null>(null)
+    const [fileForUpload, setFileForUpload] = useState<File | null>(null)
+    const [cropper, setCropper] = useState<any>(null)
+    const [croppedImage, setCroppedImage] = useState<string | null>(null)
+    const [hasIncrementedVisit, setHasIncrementedVisit] = useState(false)
+    const [hasDownloadedVCF, setHasDownloadedVCF] = useState(false)
+    const [isDesktop, setIsDesktop] = useState(false)
+
+    // Detect desktop
+    useEffect(() => {
+        const check = () => setIsDesktop(window.innerWidth >= 768)
+        check()
+        window.addEventListener('resize', check)
+        return () => window.removeEventListener('resize', check)
+    }, [])
+
+    // Detect mobile
+    useEffect(() => {
+        const check = () => setIsPhone(window.innerWidth <= 768)
+        check()
+        window.addEventListener('resize', check)
+        return () => window.removeEventListener('resize', check)
+    }, [])
 
     const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-
-        if (file) {
-            const validFileTypes = ["image/jpeg", "image/png", "image/gif"];
-            const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
-
-            if (!validFileTypes.includes(file.type)) {
-                console.log("Invalid file type. Please upload an image.");
-                return;
-            }
-
-            if (file.size > maxSizeInBytes) {
-                console.log("File size exceeds 5MB. Please upload a smaller image.");
-                return;
-            }
-
-            // Set the file for cropping
-            setCoverPreview(URL.createObjectURL(file));
-            setFileForUpload(file);
-
-            console.log("File uploaded successfully. Proceed to cropping.");
-        }
-    };
-
-    const cropImage = () => {
-        if (!cropper) {
-            showAlert("Не е избрана снимка за изрязване.", "Грешка", "red");
-            return;
-        }
-
-        const croppedCanvas = cropper.getCroppedCanvas();
-        if (!croppedCanvas) {
-            showAlert("Изрязването на изображението не бе успешно.", "Грешка", "red");
-            return;
-        }
-
-        croppedCanvas.toBlob((blob: any) => {
-            if (!blob) {
-                showAlert("Неуспешно генериране на изображение от изрязания участък.", "Грешка", "red");
-                return;
-            }
-
-            const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
-
-            if (blob.size > maxSizeInBytes) {
-                showAlert("Изрязаното изображение надвишава 5MB. Моля, изрежете по-малка област.", "Грешка", "red");
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setCroppedImage(reader.result as string);
-                setCoverPreview(null);
-            };
-            reader.readAsDataURL(blob);
-        }, "image/jpeg");
-    };
-
-    const zoomIn = () => {
-        if (cropper) cropper.zoom(0.1); // Zoom in by 10%
-    };
-
-    const zoomOut = () => {
-        if (cropper) cropper.zoom(-0.1); // Zoom out by 10%
-    };
-
-    const resetZoom = () => {
-        if (cropper) cropper.reset();
-    };
+        const file = event.target.files?.[0]
+        if (!file) return
+        const validTypes = ["image/jpeg", "image/png", "image/gif"]
+        if (!validTypes.includes(file.type) || file.size > 5 * 1024 * 1024) return
+        setCoverPreview(URL.createObjectURL(file))
+        setFileForUpload(file)
+    }
 
     const saveCover = async () => {
-        if (!croppedImage) {
-            showAlert("Моля, изрежете изображение преди запазване.", "Грешка", "red");
-            return;
-        }
-
-        if (!currentUser) {
-            showAlert("Потребителят не е удостоверен.", "Грешка", "red");
-            return;
-        }
-
+        if (!croppedImage || !currentUser) return
         try {
-            const response = await fetch(`${BASE_API_URL}/api/profile/uploadCover`, {
+            const res = await fetch(`${BASE_API_URL}/api/profile/uploadCover`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id: currentUser.id, coverImage: croppedImage }),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || "Неуспешно запазване на корицата.");
-            }
-
-            const result = await response.json();
-            setCurrentUser({ ...currentUser, coverImage: result.coverImage });
-
-            showAlert("Изображението на корицата бе успешно запазено.", "Успех", "green");
-            cancelCover();
-        } catch (error) {
-            console.error("Грешка при запазване на корицата:", error);
-            showAlert("Възникна грешка при запазване на корицата.", "Грешка", "red");
+            })
+            if (!res.ok) throw new Error()
+            const result = await res.json()
+            setCurrentUser({ ...currentUser, coverImage: result.coverImage })
+            showAlert("Cover image saved.", "Success", "green")
+            cancelCover()
+        } catch {
+            showAlert("Failed to save cover.", "Error", "red")
         }
-    };
+    }
 
     const cancelCover = () => {
-        setCoverPreview(null);
-        setFileForUpload(null);
-        setCroppedImage(null);
-    };
+        setCoverPreview(null)
+        setFileForUpload(null)
+        setCroppedImage(null)
+    }
 
-    const incrementProfileVisits = async (userId: string) => {
+    const incrementProfileVisits = async (uid: string) => {
         try {
             await fetch(`${BASE_API_URL}/api/dashboard/increaseProfileVisits`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId }),
-            });
-        } catch (error) {
-            console.error('Error incrementing profile visits:', error);
-        }
-    };
+                body: JSON.stringify({ userId: uid }),
+            })
+        } catch { /* silent */ }
+    }
 
+    // Load user
     useEffect(() => {
-        if (userId) {
-            fetchUser(userId, setCurrentUser, setLoading, showAlert);
-        }
-    }, [userId]);
+        if (userId) fetchUser(userId, setCurrentUser, setLoading, showAlert)
+    }, [userId])
 
+    // Once user loaded — resolve theme + side effects
     useEffect(() => {
-        const checkUserData = async () => {
+        if (!currentUser) return
+
+        // ── Redirect if needs setup ──
+        const checkSetup = async () => {
             try {
-                const res = await fetch(`${BASE_API_URL}/api/profile/check?userId=${userId}`);
-                if (!res.ok) throw new Error("Неуспешна проверка");
+                const res = await fetch(`${BASE_API_URL}/api/profile/check?userId=${userId}`)
+                if (!res.ok) return
+                const data = await res.json()
+                if (data.needsSetup) router.push(`/finishProfile/${userId}`)
+            } catch { /* silent */ }
+        }
+        checkSetup()
 
-                const data = await res.json();
-
-                console.log(data);
-
-                if (data.needsSetup) {
-                    router.push(`/finishProfile/${userId}`);
-                }
-            } catch (error) {
-                console.error("Грешка при проверка на акаунт:", error);
-            }
-        };
-
-        checkUserData();
-
-        if (currentUser && currentUser.selectedColor) {
-            const selectedCardStyle = cardBackgroundOptions.find(option => option.name === currentUser.selectedColor);
-            if (selectedCardStyle) {
-                setCardStyle(selectedCardStyle);
-            }
+        // ── Restore saved theme (JSON or legacy string) ──
+        if (currentUser.selectedColor) {
+            setCardTheme(parseCardTheme(currentUser.selectedColor))
         }
 
-        if (!hasIncrementedVisit && currentUser) {
-            incrementProfileVisits(currentUser?.id); // Increment visits when the profile is visualized
-            setHasIncrementedVisit(true); // Ensure this runs only once
+        // ── Increment visits once ──
+        if (!hasIncrementedVisit) {
+            incrementProfileVisits(currentUser.id)
+            setHasIncrementedVisit(true)
         }
 
-        if (!hasDownoadedVCF && currentUser?.isDirect) {
-            console.log('isDirect ' + currentUser?.isDirect);
-            sethasDownoadedVCF(true);
-            // If isDirect is true, generate the VCF and then show the profile
-            generateVCF(currentUser);
+        // ── isDirect VCF download ──
+        if (!hasDownloadedVCF && currentUser.isDirect) {
+            setHasDownloadedVCF(true)
+            generateVCF(currentUser)
         }
-    }, [currentUser]);
+    }, [currentUser])
 
-    useEffect(() => {
-        const checkIfPhone = () => {
-            setIsPhone(window.innerWidth <= 768);
-        };
-
-        // Initial check
-        checkIfPhone();
-
-        // Listen for window resize
-        window.addEventListener('resize', checkIfPhone);
-        // Cleanup the event listener on component unmount
-        return () => {
-            window.removeEventListener('resize', checkIfPhone);
-        };
-    }, []);
-
-    const handleColorSelection = (colorName: string) => {
-        if (currentUser && currentUser.id) {
-            saveSelectedColor(currentUser.id, colorName, showAlert);
-            const selectedCardStyle = cardBackgroundOptions.find(option => option.name === colorName);
-            if (selectedCardStyle) {
-                setCardStyle(selectedCardStyle);
-            }
+    // ── Theme change handler (called by BackgroundSelector) ──────────────────
+    const handleThemeChange = (theme: CardTheme) => {
+        setCardTheme(theme)
+        if (currentUser?.id) {
+            saveTheme(currentUser.id, theme, showAlert)
         }
-    };
+    }
 
     const showAlert = (message: string, title: string, color: string) => {
-        setAlert({ message, title, color });
-        setTimeout(() => {
-            setAlert(null);
-        }, 4000);
-    };
+        setAlert({ message, title, color })
+        setTimeout(() => setAlert(null), 4000)
+    }
 
-    if (!currentUser) return <div className="flex justify-center items-center py-72"><Image src="/load.gif" alt="Loading..." width={160} height={160} className="w-40 h-40" /></div>;
-    if (loading) return <div className="flex justify-center items-center py-72"><Image src="/load.gif" alt="Loading..." width={160} height={160} className="w-40 h-40" /></div>;
-    return (
-        <div className={`relative ${cardStyle.name} min-h-screen`}>
+    if (!currentUser || loading) return <LoadingScreen />
 
-            {alert && (
-                <div className={`p-4  text-white text-center font-medium transition-all duration-300 
-                    ${alert.color === 'green' ? 'bg-green-500' : 'bg-red-500'} animate-fadeIn`}>
-                    <strong>{alert.title}:</strong> {alert.message}
-                </div>
-            )}
-            {/* /* Profile Header Section */}
+    // ── Card content (shared between mobile & desktop layouts) ───────────────
+    const cardContent = (
+        <div
+            className={`relative ${cardStyle.name}`}
+            style={{ '--card-bg': cardStyle.cssVar } as React.CSSProperties}
+        >
             <ProfileHeader
                 user={currentUser}
                 cardStyle={cardStyle}
@@ -388,58 +228,123 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 cancelCover={cancelCover}
             />
 
+            {/* Divider */}
+            <div className="mx-5 h-px" style={{ background: `${cardStyle.textPrimary}0f` }} />
 
-            {/* Content Section with Background */}
-            <div
-                className={`relative z-0 flex items-center justify-center ${cardStyle.textClass}`}
-                style={{
-                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    // boxShadow: '0px 20px 0px rgba(0, 0, 0, 0.8)',
-                }}
-            >
-                {/* Card Section with White Background */}
+            {/* Action Buttons */}
+            <div className="relative z-10 px-4 pt-5 pb-2">
                 <motion.div
-                    className={`relative z-0 w-full  p-4 max-w-md bg-gradient-to-b ${cardStyle.cardCoverBgClass} to-black `} // Removed shadow
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.50, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                 >
-                    {/* Action Buttons */}
-                    <motion.div
-                        className={`mt-2 z-50`}
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                    >
-                        <div className="flex flex-col space-y-4 mb-4 ">
-
-                            <ActionButtons2 generateVCF={() => generateVCF(currentUser)} user={currentUser} />
-                        </div>
-                    </motion.div>
-
-                    {/* Social Media Links */}
-                    <motion.div
-                        className="mt-6 z-50"
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                    >
-                        <SocialMediaLinks user={currentUser} />
-
-                    </motion.div>
-
-                    {/* Background Selector (visible only for the current user) */}
-                    {user?.id === currentUser?.id && (
-                        <BackgroundSelector
-                            cardBackgroundOptions={cardBackgroundOptions}
-                            handleColorSelection={handleColorSelection}
-                            cardStyle={cardStyle}
-                        />
-                    )}
+                    <ActionButtons2
+                        generateVCF={() => generateVCF(currentUser)}
+                        user={currentUser}
+                        cardStyle={cardStyle}
+                    />
                 </motion.div>
             </div>
-        </div >
-    );
+
+            {/* Social Links */}
+            <div className="relative z-10 px-4 pt-3 pb-4">
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.62, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                >
+                    <SocialMediaLinks user={currentUser} cardStyle={cardStyle} />
+                </motion.div>
+            </div>
+
+            {/* Background / Theme Selector (owner only) */}
+            {user?.id === currentUser?.id && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.75, duration: 0.4 }}
+                >
+                    <BackgroundSelector
+                        cardStyle={cardStyle}
+                        onThemeChange={handleThemeChange}
+                    />
+                </motion.div>
+            )}
+
+            {/* Branding footer */}
+            <div className="flex flex-col items-center pb-8 pt-2 gap-1">
+                <div className="w-6 h-px" style={{ background: `${cardStyle.textPrimary}15` }} />
+                <p className="text-[8px] tracking-[0.24em] uppercase font-bold pt-2"
+                    style={{ color: `${cardStyle.textPrimary}18` }}>
+                    Powered by Ninja Card
+                </p>
+            </div>
+        </div>
+    )
+
+    return (
+        <>
+            {/* Toast */}
+            <AnimatePresence>
+                {alert && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -16 }}
+                        transition={{ duration: 0.3 }}
+                        className={`fixed top-0 inset-x-0 z-[100] px-5 py-3.5 text-sm font-semibold text-center text-white ${alert.color === 'green' ? 'bg-emerald-500' : 'bg-red-500'}`}
+                        style={{ boxShadow: alert.color === 'green' ? '0 4px 24px rgba(16,185,129,0.4)' : '0 4px 24px rgba(239,68,68,0.4)' }}
+                    >
+                        <strong>{alert.title}:</strong> {alert.message}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Mobile */}
+            {!isDesktop && (
+                <div className={`min-h-screen ${cardStyle.bgClass}`}>
+                    {cardContent}
+                </div>
+            )}
+
+            {/* Desktop — floating card */}
+            {isDesktop && (
+                <div
+                    className="min-h-screen flex items-start justify-center py-16 px-4"
+                    style={{
+                        background: `radial-gradient(ellipse 70% 55% at 50% 30%, ${cardStyle.accent}0d 0%, #060606 60%)`,
+                    }}
+                >
+                    <div className="fixed inset-0 pointer-events-none -z-10" style={{
+                        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px)',
+                        backgroundSize: '36px 36px',
+                    }} />
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 28, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                        className="relative w-full overflow-hidden"
+                        style={{
+                            maxWidth: 420,
+                            borderRadius: 32,
+                            boxShadow: `0 0 0 1px rgba(255,255,255,0.07), 0 32px 80px rgba(0,0,0,0.75), 0 0 40px ${cardStyle.accent}10`,
+                        }}
+                    >
+                        {/* Accent top line */}
+                        <div className="absolute top-0 inset-x-0 h-px z-20 pointer-events-none"
+                            style={{ background: `linear-gradient(90deg, transparent, ${cardStyle.accent}80, transparent)` }} />
+
+                        {cardContent}
+
+                        {/* Reflection glow */}
+                        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-64 h-16 pointer-events-none -z-10"
+                            style={{ background: `radial-gradient(ellipse, ${cardStyle.accent}22 0%, transparent 70%)` }} />
+                    </motion.div>
+                </div>
+            )}
+        </>
+    )
 }
 
-export default ProfileDetailsContent;
+export default ProfileDetailsContent
