@@ -1034,6 +1034,8 @@
   "LeadForm": {
     "title": "Leave your contact details for {name}",
     "subtitle": "So they can have your contact information to reach out to you.",
+    "successMessage": "Your information has been submitted successfully!",
+    "successTitle": "Success",
     "placeholders": {
       "name": "Name*",
       "phone": "Phone*",
