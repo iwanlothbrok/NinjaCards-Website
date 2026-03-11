@@ -380,6 +380,10 @@
     "subtitle": "Manage your profile and settings easily.",
     "moreOptions": "Set up your profile and explore more options",
     "tabs": {
+      "delete": {
+        "label": "Delete Profile",
+        "desc": "Permanently delete your profile and all associated data."
+      },
       "changePassword": {
         "label": "Change Password",
         "desc": "Update your current password."
@@ -2175,5 +2179,41 @@
       }
     },
     "loading": "Loading..."
+  },
+  "deleteAccount": {
+    "subtitle": "Account Settings",
+    "title": "Delete Account",
+    "accountLabel": "Signed in as",
+    "whatGetsDeleted": {
+      "title": "What will be permanently deleted",
+      "items": [
+        "Your profile and all personal information",
+        "Your digital business card and QR code",
+        "All leads and contact requests you received",
+        "Your analytics and performance history",
+        "All uploaded images and media files"
+      ]
+    },
+    "warning": "This action is irreversible. Once deleted, your account and all associated data cannot be recovered. Make sure you have exported any data you need before proceeding.",
+    "deleteButton": "Delete my account",
+    "modal": {
+      "title": "Are you absolutely sure?",
+      "description": "This will permanently delete your account and all associated data. This action cannot be undone.",
+      "account": "Account",
+      "typeToConfirm": "Type",
+      "confirmWord": "delete",
+      "consequences": [
+        "All your data will be permanently erased",
+        "Your business card link will stop working",
+        "You will be logged out immediately",
+        "You cannot recover this account"
+      ],
+      "cancel": "Cancel",
+      "confirm": "Yes, delete my account",
+      "deleting": "Deleting..."
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    }
   }
 }

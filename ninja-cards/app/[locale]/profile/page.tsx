@@ -6,7 +6,8 @@ import { Link, useRouter, type Href } from '@/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faLock, faEnvelope, faMapMarkerAlt, faImage, faChartLine, faUser, faLink,
-  faEye, faIdCard, faQrcode, faCogs, faChartBar, faVideo, faGlobe, faCircleQuestion
+  faEye, faIdCard, faQrcode, faCogs, faChartBar, faVideo, faGlobe, faCircleQuestion,
+  faDeleteLeft
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useTranslations } from 'next-intl';
@@ -46,6 +47,7 @@ const tabs: Array<StaticTab | DynamicTab> = [
   { kind: 'static', href: '/profile/help', labelKey: 'help', icon: faMapMarkerAlt },
   { kind: 'static', href: '/profile/cover', labelKey: 'cover', icon: faVideo },
   { kind: 'static', href: '/profile/billing', labelKey: 'billing', icon: faChartLine },
+  { kind: 'static', href: '/profile/delete', labelKey: 'delete', icon: faDeleteLeft }
 ];
 
 export default function ProfileTabs() {
