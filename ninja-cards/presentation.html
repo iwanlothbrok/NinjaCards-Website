@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NinjaCard — Дигиталната Визитка на Бъдещето</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --orange: #FFA500;
+    --orange-glow: rgba(255,165,0,0.25);
+    --orange-border: rgba(255,165,0,0.2);
+    --bg: #0e1014;
+    --card: #161b22;
+    --card2: #1c2230;
+    --text: #e2e8f0;
+    --muted: #7a8599;
+    --teal: #00a896;
+    --border: rgba(255,255,255,0.06);
+    --slide-w: 100vw;
+    --slide-h: 100vh;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── DECK ─────────────────────────────── */
+  .deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.55s cubic-bezier(.4,0,.2,1), transform 0.55s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+  .slide.exit-left {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* ── BACKGROUNDS ──────────────────────── */
+  .bg-hero {
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(255,165,0,0.09) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 20% 80%, rgba(0,168,150,0.05) 0%, transparent 60%),
+                linear-gradient(160deg, #0e1014 0%, #121820 100%);
+  }
+  .bg-dark {
+    background: linear-gradient(160deg, #0e1014 0%, #111620 100%);
+  }
+  .bg-orange-accent {
+    background: radial-gradient(ellipse 60% 60% at 80% 40%, rgba(255,165,0,0.07) 0%, transparent 70%),
+                linear-gradient(160deg, #0e1014 0%, #131820 100%);
+  }
+  .bg-teal-accent {
+    background: radial-gradient(ellipse 60% 60% at 20% 60%, rgba(0,168,150,0.07) 0%, transparent 70%),
+                linear-gradient(160deg, #0e1014 0%, #131820 100%);
+  }
+
+  /* ── GRID NOISE OVERLAY ───────────────── */
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .slide-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 60px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ── TYPOGRAPHY ───────────────────────── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,165,0,0.12);
+    border: 1px solid var(--orange-border);
+    color: var(--orange);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  h1.hero-title {
+    font-size: clamp(42px, 6vw, 80px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  h1.hero-title .hl { color: var(--orange); }
+
+  h2.slide-title {
+    font-size: clamp(28px, 3.5vw, 48px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  h2.slide-title .hl { color: var(--orange); }
+
+  h3.card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .subtitle {
+    font-size: clamp(15px, 1.5vw, 18px);
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 520px;
+    margin-bottom: 36px;
+  }
+
+  /* ── BUTTONS ──────────────────────────── */
+  .btn-orange {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #FFA500, #ff7a00);
+    color: #000;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(255,165,0,0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-orange:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(255,165,0,0.5);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid var(--orange-border);
+    color: var(--orange);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 13px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .btn-ghost:hover { background: rgba(255,165,0,0.08); }
+
+  /* ── CARDS / FEATURE BOXES ────────────── */
+  .feat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feat-card:hover {
+    border-color: var(--orange-border);
+    transform: translateY(-2px);
+  }
+  .feat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--orange), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .feat-card:hover::before { opacity: 1; }
+
+  .icon-wrap {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: rgba(255,165,0,0.1);
+    border: 1px solid var(--orange-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+  }
+
+  .icon-wrap.teal {
+    background: rgba(0,168,150,0.1);
+    border-color: rgba(0,168,150,0.2);
+  }
+
+  /* ── HERO LAYOUT ──────────────────────── */
+  .hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    width: 100%;
+  }
+  .hero-left { display: flex; flex-direction: column; }
+  .hero-right { display: flex; justify-content: center; align-items: center; }
+
+  .hero-img {
+    width: 100%;
+    max-width: 480px;
+    border-radius: 20px;
+    object-fit: cover;
+    filter: drop-shadow(0 30px 60px rgba(255,165,0,0.2));
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  /* ── TWO-COL LAYOUT ───────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    width: 100%;
+  }
+  .col-content { display: flex; flex-direction: column; }
+  .col-img { display: flex; justify-content: center; }
+  .col-img img {
+    max-width: 420px;
+    width: 100%;
+    border-radius: 16px;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.4));
+  }
+
+  /* ── GRID LAYOUTS ─────────────────────── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+
+  /* ── STEPS ────────────────────────────── */
+  .step {
+    display: flex;
+    gap: 20px;
+    padding: 20px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .step:hover { border-color: var(--orange-border); }
+  .step-num {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--orange);
+    opacity: 0.8;
+    line-height: 1;
+    min-width: 40px;
+  }
+  .step p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-top: 4px; }
+
+  /* ── SOCIAL LOGOS ─────────────────────── */
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+  .social-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 8px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .social-item:hover {
+    border-color: var(--orange-border);
+    transform: translateY(-3px);
+  }
+  .social-item img { width: 32px; height: 32px; object-fit: contain; }
+  .social-item span { font-size: 10px; color: var(--muted); font-weight: 600; text-align: center; }
+
+  /* ── STAT BOXES ───────────────────────── */
+  .stat-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--orange);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* ── PLAN CARDS ───────────────────────── */
+  .plan-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 30px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .plan-card:hover { transform: translateY(-4px); }
+  .plan-card.featured {
+    border-color: var(--orange);
+    background: linear-gradient(160deg, #1e2230, #181d24);
+    box-shadow: 0 0 40px rgba(255,165,0,0.12);
+  }
+  .plan-badge-top {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #FFA500, #ff7a00);
+    color: #000;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 100px;
+  }
+  .plan-name {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+  .plan-name.shinobi { color: #94a3b8; }
+  .plan-name.samurai { color: var(--orange); }
+  .plan-name.shogun { color: #a78bfa; }
+
+  .plan-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .plan-check::before {
+    content: '✓';
+    color: var(--orange);
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .plan-check.dim { color: var(--muted); }
+  .plan-check.dim::before { color: #3a3f4b; content: '—'; }
+
+  /* ── CHART VISUAL ─────────────────────── */
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 120px;
+    padding: 0 8px;
+  }
+  .bar {
+    flex: 1;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, var(--orange), rgba(255,165,0,0.3));
+    animation: growBar 0.8s ease forwards;
+    transform-origin: bottom;
+    opacity: 0.85;
+  }
+  @keyframes growBar {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+
+  /* ── LEAD PILL ────────────────────────── */
+  .lead-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .pill-hot { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+  .pill-warm { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.25); }
+  .pill-cold { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.25); }
+  .pill-partner { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+  .pill-job { background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.25); }
+
+  /* ── LOGO BAR ─────────────────────────── */
+  .logo-bar {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+  .logo-bar img {
+    height: 28px;
+    opacity: 0.4;
+    filter: brightness(10);
+    transition: opacity 0.2s;
+  }
+  .logo-bar img:hover { opacity: 0.8; }
+
+  /* ── DIVIDER ──────────────────────────── */
+  .divider {
+    width: 48px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--orange), transparent);
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  /* ── NAV CONTROLS ─────────────────────── */
+  .nav {
+    position: fixed;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+    background: rgba(14,16,20,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 12px 24px;
+  }
+  .nav-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--orange-border);
+    background: rgba(255,165,0,0.05);
+    color: var(--orange);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-btn:hover {
+    background: rgba(255,165,0,0.15);
+    transform: scale(1.1);
+  }
+  .dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: 0.4;
+  }
+  .dot.active {
+    background: var(--orange);
+    width: 20px;
+    border-radius: 3px;
+    opacity: 1;
+  }
+  .slide-counter {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 48px;
+    text-align: center;
+  }
+
+  /* ── LANG SWITCHER ────────────────────── */
+  .lang-switcher {
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    z-index: 200;
+    display: flex;
+    gap: 2px;
+    background: rgba(14,16,20,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .lang-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .lang-btn.active {
+    background: rgba(255,165,0,0.15);
+    color: var(--orange);
+  }
+
+  /* ── LOGO TOP LEFT ────────────────────── */
+  .logo-corner {
+    position: fixed;
+    top: 24px;
+    left: 32px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-corner img {
+    height: 32px;
+    object-fit: contain;
+  }
+
+  /* ── PROGRESS BAR ─────────────────────── */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #FFA500, #ff7a00);
+    border-radius: 0 2px 2px 0;
+    transition: width 0.4s ease;
+    z-index: 300;
+    box-shadow: 0 0 10px rgba(255,165,0,0.5);
+  }
+
+  /* ── FULL SLIDE CONTENT ───────────────── */
+  .full-slide { width: 100%; }
+
+  /* ── AI CARD ──────────────────────────── */
+  .ai-card {
+    background: linear-gradient(135deg, rgba(255,165,0,0.08), rgba(255,165,0,0.03));
+    border: 1px solid rgba(255,165,0,0.2);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(255,165,0,0.15), transparent 70%);
+    border-radius: 50%;
+  }
+
+  /* ── WALLET BADGE ─────────────────────── */
+  .wallet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ── CTA SLIDE ────────────────────────── */
+  .cta-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,165,0,0.08), transparent 70%);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  /* ── SLIDE-SPECIFIC PADDING ───────────── */
+  .s-hero .slide-inner { padding-top: 0; }
+
+  /* ── PROFILE PREVIEW ──────────────────── */
+  .profile-preview {
+    background: #1a1f2a;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    max-width: 260px;
+    width: 100%;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+  }
+  .profile-cover {
+    height: 80px;
+    background: linear-gradient(135deg, #FFA500, #ff7a00);
+    position: relative;
+  }
+  .profile-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 3px solid #1a1f2a;
+    background: var(--card2);
+    position: absolute;
+    bottom: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  .profile-body {
+    padding: 44px 20px 20px;
+    text-align: center;
+  }
+  .profile-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .profile-pos { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+  .profile-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .profile-btn {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(255,165,0,0.12);
+    color: var(--orange);
+    border: 1px solid var(--orange-border);
+  }
+  .profile-links {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .profile-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--text);
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+  .profile-link span { font-size: 15px; }
+
+  /* ── RESPONSIVE SMALL SCREEN ──────────── */
+  @media (max-width: 768px) {
+    .hero-layout, .two-col { grid-template-columns: 1fr; gap: 30px; }
+    .hero-right, .col-img { display: none; }
+    .slide-inner { padding: 0 24px; }
+    .social-grid { grid-template-columns: repeat(4, 1fr); }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progress"></div>
+
+<!-- Logo corner -->
+<div class="logo-corner">
+  <img src="public/navlogo.png" alt="NinjaCard" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+  <div style="display:none; align-items:center; gap:6px;">
+    <div style="width:28px;height:28px;background:linear-gradient(135deg,#FFA500,#ff7a00);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#000;">N</div>
+    <span style="font-weight:800;font-size:15px;letter-spacing:-0.02em;">NinjaCard</span>
+  </div>
+</div>
+
+<!-- Language switcher -->
+<div class="lang-switcher">
+  <button class="lang-btn active" onclick="setLang('bg')">BG</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDES
+═══════════════════════════════════════════════════════════════ -->
+<div class="deck" id="deck">
+
+  <!-- ─── SLIDE 1 · HERO ─────────────────────────────── -->
+  <div class="slide active bg-hero s-hero">
+    <div class="slide-inner">
+      <div class="hero-layout">
+        <div class="hero-left">
+          <div class="badge">
+            <span>★</span>
+            <span data-bg="Дигиталната визитка на бъдещето" data-en="The Digital Business Card of the Future"></span>
+          </div>
+          <h1 class="hero-title">
+            <span data-bg="ЕДИН<br><span class='hl'>ДИГИТАЛЕН</span><br>ПРОФИЛ" data-en="ONE<br><span class='hl'>DIGITAL</span><br>PROFILE"></span>
+          </h1>
+          <p class="subtitle">
+            <span data-bg="Спри да губиш контакти. Споделяй профила си чрез NFC карта, QR код, бутон за споделяне или Google Wallet — за секунди." data-en="Stop losing contacts. Share your profile via NFC card, QR code, share button or Google Wallet — in seconds."></span>
+          </p>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="https://www.ninjacardsnfc.com/" class="btn-orange" target="_blank">
+              <span data-bg="ЗАПОЧНИ БЕЗПЛАТНО" data-en="START FOR FREE"></span> →
+            </a>
+            <button class="btn-ghost" onclick="goTo(2)">
+              <span data-bg="КАК РАБОТИ" data-en="HOW IT WORKS"></span>
+            </button>
+          </div>
+          <div class="logo-bar">
+            <img src="public/clients/postbank.svg" alt="PostBank" onerror="this.style.display='none'">
+            <img src="public/clients/home2you.svg" alt="Home2You" onerror="this.style.display='none'">
+            <img src="public/clients/winners.svg" alt="Winners" onerror="this.style.display='none'">
+            <img src="public/clients/night-out.svg" alt="Night Out" onerror="this.style.display='none'">
+            <img src="public/clients/veliko-tarnovo.svg" alt="Велико Търново" onerror="this.style.display='none'">
+          </div>
+        </div>
+        <div class="hero-right">
+          <img src="public/realMockup.png" alt="NinjaCard Mockup" class="hero-img"
+               onerror="this.src='public/realMockup-01.png'; this.onerror=()=>this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 2 · КАКВО Е NINJACARD? ──────────────── -->
+  <div class="slide bg-dark">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div class="col-content">
+          <div class="badge">
+            <span data-bg="За продукта" data-en="About the product"></span>
+          </div>
+          <div class="divider"></div>
+          <h2 class="slide-title">
+            <span data-bg="Какво е <span class='hl'>NinjaCard?</span>" data-en="What is <span class='hl'>NinjaCard?</span>"></span>
+          </h2>
+          <p class="subtitle" style="margin-bottom:28px;">
+            <span data-bg="NinjaCard ти дава един дигитален профил, в който събираш всичките си контакти и социални мрежи. Без повторно печатане, без ръчно изпращане на линкове." data-en="NinjaCard gives you one digital profile that combines all your contacts and social networks. No reprinting, no manually sharing links."></span>
+          </p>
+
+          <div class="grid-2" style="gap:12px;">
+            <div class="feat-card">
+              <div class="icon-wrap">📇</div>
+              <h3 class="card-title" data-bg="Дигитален профил" data-en="Digital Profile"></h3>
+              <p style="font-size:13px;color:var(--muted);" data-bg="Всички твои данни на едно място, достъпни по всяко време." data-en="All your info in one place, accessible at any time."></p>
+            </div>
+            <div class="feat-card">
+              <div class="icon-wrap">📡</div>
+              <h3 class="card-title" data-bg="NFC технология" data-en="NFC Technology"></h3>
+              <p style="font-size:13px;color:var(--muted);" data-bg="Едно докосване и контактът се запазва веднага." data-en="One tap and the contact is saved instantly."></p>
+            </div>
+            <div class="feat-card">
+              <div class="icon-wrap">🔗</div>
+              <h3 class="card-title" data-bg="Всичко на едно място" data-en="All in One Place"></h3>
+              <p style="font-size:13px;color:var(--muted);" data-bg="Социални мрежи, телефони, имейли, линкове — едно място." data-en="Social networks, phones, emails, links — one place."></p>
+            </div>
+            <div class="feat-card">
+              <div class="icon-wrap">⚡</div>
+              <h3 class="card-title" data-bg="Винаги актуален" data-en="Always Up to Date"></h3>
+              <p style="font-size:13px;color:var(--muted);" data-bg="Промяна в реално време — без нови карти." data-en="Real-time updates — no new cards needed."></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-img">
+          <img src="public/features/01-digital.png" alt="Digital Profile"
+               onerror="this.src='public/front.png'; this.onerror=()=>this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 3 · КАК РАБОТИ ───────────────────────── -->
+  <div class="slide bg-orange-accent">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div class="col-content">
+          <div class="badge">
+            <span data-bg="Стъпки" data-en="Steps"></span>
+          </div>
+          <div class="divider"></div>
+          <h2 class="slide-title">
+            <span data-bg="Как <span class='hl'>работи?</span>" data-en="How does it <span class='hl'>work?</span>"></span>
+          </h2>
+          <div style="margin-top:12px;">
+            <div class="step">
+              <div class="step-num">01</div>
+              <div>
+                <h3 class="card-title" data-bg="Създай профила си" data-en="Create Your Profile"></h3>
+                <p data-bg="Попълни контактите си, добави снимка, биография, социални мрежи и всичко за теб — за минути." data-en="Fill in your contacts, add a photo, bio, social networks and everything about you — in minutes."></p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">02</div>
+              <div>
+                <h3 class="card-title" data-bg="Получи твоята NFC карта" data-en="Get Your NFC Card"></h3>
+                <p data-bg="Поръчай персонализирана NFC смарт карта с твоя дизайн, директно свързана с профила ти." data-en="Order a personalized NFC smart card with your design, directly linked to your profile."></p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">03</div>
+              <div>
+                <h3 class="card-title" data-bg="Споделяй с едно докосване" data-en="Share with One Tap"></h3>
+                <p data-bg="Допри картата до всеки телефон или сканирай QR кода. Контактът се запазва мигновено." data-en="Touch the card to any phone or scan the QR code. The contact is saved instantly."></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-img">
+          <img src="public/features/05-nfc.png" alt="NFC Card"
+               onerror="this.src='public/cards/nfc-card.png'; this.onerror=()=>this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 4 · ТВОЯТ ПРОФИЛ ─────────────────────── -->
+  <div class="slide bg-dark">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div class="col-content" style="gap:0">
+          <div class="badge">
+            <span data-bg="Профил" data-en="Profile"></span>
+          </div>
+          <div class="divider"></div>
+          <h2 class="slide-title" style="margin-bottom:8px;">
+            <span data-bg="Твоят <span class='hl'>дигитален профил</span>" data-en="Your <span class='hl'>Digital Profile</span>"></span>
+          </h2>
+          <p class="subtitle" style="margin-bottom:20px; font-size:14px;">
+            <span data-bg="Всичко, което представлява теб — на едно красиво място." data-en="Everything that represents you — in one beautiful place."></span>
+          </p>
+          <div class="grid-2" style="gap:10px;">
+            <div class="feat-card" style="padding:16px;">
+              <div style="font-size:18px;margin-bottom:8px;">🖼️</div>
+              <h3 class="card-title" style="font-size:13px;" data-bg="Профилна снимка & Cover" data-en="Profile Photo & Cover"></h3>
+            </div>
+            <div class="feat-card" style="padding:16px;">
+              <div style="font-size:18px;margin-bottom:8px;">📋</div>
+              <h3 class="card-title" style="font-size:13px;" data-bg="Позиция & Компания" data-en="Position & Company"></h3>
+            </div>
+            <div class="feat-card" style="padding:16px;">
+              <div style="font-size:18px;margin-bottom:8px;">📞</div>
+              <h3 class="card-title" style="font-size:13px;" data-bg="Телефони & Имейли" data-en="Phones & Emails"></h3>
+            </div>
+            <div class="feat-card" style="padding:16px;">
+              <div style="font-size:18px;margin-bottom:8px;">📍</div>
+              <h3 class="card-title" style="font-size:13px;" data-bg="Адрес" data-en="Address"></h3>
+            </div>
+            <div class="feat-card" style="padding:16px;">
+              <div style="font-size:18px;margin-bottom:8px;">✍️</div>
+              <h3 class="card-title" style="font-size:13px;" data-bg="Биография (AI генерирана)" data-en="Biography (AI Generated)"></h3>
+            </div>
+            <div class="feat-card" style="padding:16px;">
+              <div style="font-size:18px;margin-bottom:8px;">🎨</div>
+              <h3 class="card-title" style="font-size:13px;" data-bg="Цветова схема" data-en="Color Scheme"></h3>
+            </div>
+            <div class="feat-card" style="padding:16px;">
+              <div style="font-size:18px;margin-bottom:8px;">🎬</div>
+              <h3 class="card-title" style="font-size:13px;" data-bg="Видео" data-en="Video"></h3>
+            </div>
+            <div class="feat-card" style="padding:16px;">
+              <div style="font-size:18px;margin-bottom:8px;">💾</div>
+              <h3 class="card-title" style="font-size:13px;" data-bg="Изтегляне на vCard" data-en="Download vCard"></h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-img" style="flex-direction:column; gap:20px; align-items:center;">
+          <img src="public/realMockup.png" alt="NinjaCard Profile Mockup"
+               style="max-width:440px; width:100%; border-radius:16px; filter:drop-shadow(0 20px 40px rgba(255,165,0,0.18));"
+               onerror="this.src='public/realMockup-01.png'; this.onerror=()=>this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 5 · NFC & QR ─────────────────────────── -->
+  <div class="slide bg-teal-accent">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div class="col-content">
+          <div class="badge">
+            <span data-bg="Споделяне" data-en="Sharing"></span>
+          </div>
+          <div class="divider"></div>
+          <h2 class="slide-title">
+            <span data-bg="4 начина за <span class='hl'>споделяне</span>" data-en="4 Ways to <span class='hl'>Share</span>"></span>
+          </h2>
+          <p class="subtitle" style="margin-bottom:24px; font-size:14px;">
+            <span data-bg="Независимо от ситуацията — ти си готов." data-en="No matter the situation — you're ready."></span>
+          </p>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="feat-card" style="padding:16px 20px; flex-direction:row; align-items:center; gap:16px;">
+              <div class="icon-wrap" style="margin:0; min-width:44px;">📡</div>
+              <div>
+                <h3 class="card-title" style="margin-bottom:2px;" data-bg="NFC карта" data-en="NFC Card"></h3>
+                <p style="font-size:12px;color:var(--muted);" data-bg="Едно докосване — контактът се запазва мигновено" data-en="One tap — the contact is saved instantly"></p>
+              </div>
+            </div>
+            <div class="feat-card" style="padding:16px 20px; flex-direction:row; align-items:center; gap:16px;">
+              <div class="icon-wrap" style="margin:0; min-width:44px;">⬛</div>
+              <div>
+                <h3 class="card-title" style="margin-bottom:2px;" data-bg="QR код" data-en="QR Code"></h3>
+                <p style="font-size:12px;color:var(--muted);" data-bg="Сканирай с всеки смартфон, без приложение" data-en="Scan with any smartphone, no app needed"></p>
+              </div>
+            </div>
+            <div class="feat-card" style="padding:16px 20px; flex-direction:row; align-items:center; gap:16px;">
+              <div class="icon-wrap" style="margin:0; min-width:44px;">📤</div>
+              <div>
+                <h3 class="card-title" style="margin-bottom:2px;" data-bg="Бутон за споделяне" data-en="Share Button"></h3>
+                <p style="font-size:12px;color:var(--muted);" data-bg="Изпрати профила си чрез Viber, WhatsApp, имейл" data-en="Send your profile via Viber, WhatsApp, email"></p>
+              </div>
+            </div>
+            <div class="feat-card" style="padding:16px 20px; flex-direction:row; align-items:center; gap:16px;">
+              <div class="icon-wrap" style="margin:0; min-width:44px; background:rgba(0,168,150,0.1); border-color:rgba(0,168,150,0.2);">🟢</div>
+              <div>
+                <h3 class="card-title" style="margin-bottom:2px;" data-bg="Google Wallet" data-en="Google Wallet"></h3>
+                <p style="font-size:12px;color:var(--muted);" data-bg="Добави профила директно в Google Wallet" data-en="Add your profile directly to Google Wallet"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-img">
+          <img src="public/features/05-nfc.png" alt="NFC Sharing"
+               onerror="this.src='public/cards/nfc-card.png'; this.onerror=()=>this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 6 · СОЦИАЛНИ МРЕЖИ ──────────────────── -->
+  <div class="slide bg-dark">
+    <div class="slide-inner" style="align-items:center; flex-direction:column; justify-content:center; text-align:center;">
+      <div class="badge" style="margin:0 auto 16px;">
+        <span data-bg="Интеграции" data-en="Integrations"></span>
+      </div>
+      <div class="divider" style="margin:0 auto 16px;"></div>
+      <h2 class="slide-title" style="margin-bottom:8px; text-align:center;">
+        <span data-bg="20+ Социални мрежи & <span class='hl'>линкове</span>" data-en="20+ Social Networks & <span class='hl'>Links</span>"></span>
+      </h2>
+      <p class="subtitle" style="text-align:center; margin:0 auto 28px; font-size:14px;">
+        <span data-bg="Всички твои платформи — на един профил." data-en="All your platforms — on one profile."></span>
+      </p>
+
+      <div style="width:100%; max-width:900px;">
+        <div class="social-grid">
+          <div class="social-item"><img src="public/logos/ig.png" alt="Instagram" onerror="this.replaceWith(document.createTextNode('📸'))"><span>Instagram</span></div>
+          <div class="social-item"><img src="public/logos/fb.png" alt="Facebook" onerror="this.replaceWith(document.createTextNode('👥'))"><span>Facebook</span></div>
+          <div class="social-item"><img src="public/logos/lk.png" alt="LinkedIn" onerror="this.replaceWith(document.createTextNode('💼'))"><span>LinkedIn</span></div>
+          <div class="social-item"><img src="public/logos/tiktok.png" alt="TikTok" onerror="this.replaceWith(document.createTextNode('🎵'))"><span>TikTok</span></div>
+          <div class="social-item"><img src="public/logos/youtube.png" alt="YouTube" onerror="this.replaceWith(document.createTextNode('▶️'))"><span>YouTube</span></div>
+          <div class="social-item"><img src="public/logos/x.png" alt="X/Twitter" onerror="this.replaceWith(document.createTextNode('🐦'))"><span>X / Twitter</span></div>
+          <div class="social-item"><img src="public/logos/wa.png" alt="WhatsApp" onerror="this.replaceWith(document.createTextNode('💬'))"><span>WhatsApp</span></div>
+          <div class="social-item"><img src="public/logos/viber.png" alt="Viber" onerror="this.replaceWith(document.createTextNode('📲'))"><span>Viber</span></div>
+          <div class="social-item"><img src="public/logos/telegram.png" alt="Telegram" onerror="this.replaceWith(document.createTextNode('✈️'))"><span>Telegram</span></div>
+          <div class="social-item"><img src="public/logos/discord.png" alt="Discord" onerror="this.replaceWith(document.createTextNode('🎮'))"><span>Discord</span></div>
+          <div class="social-item"><img src="public/logos/gr.png" alt="Google Reviews" onerror="this.replaceWith(document.createTextNode('⭐'))"><span>Google Reviews</span></div>
+          <div class="social-item"><img src="public/logos/tp.png" alt="Trustpilot" onerror="this.replaceWith(document.createTextNode('🔵'))"><span>Trustpilot</span></div>
+          <div class="social-item"><img src="public/logos/tripadvisor.png" alt="TripAdvisor" onerror="this.replaceWith(document.createTextNode('🌍'))"><span>TripAdvisor</span></div>
+          <div class="social-item"><img src="public/logos/icons8-paypal-48.png" alt="PayPal" onerror="this.replaceWith(document.createTextNode('💳'))"><span>PayPal</span></div>
+          <div class="social-item"><img src="public/logos/rev.png" alt="Revolut" onerror="this.replaceWith(document.createTextNode('💰'))"><span>Revolut</span></div>
+          <div class="social-item"><img src="public/logos/calendly.png" alt="Calendly" onerror="this.replaceWith(document.createTextNode('📅'))"><span>Calendly</span></div>
+          <div class="social-item"><img src="public/logos/git.png" alt="GitHub" onerror="this.replaceWith(document.createTextNode('💻'))"><span>GitHub</span></div>
+          <div class="social-item"><img src="public/logos/be.png" alt="Behance" onerror="this.replaceWith(document.createTextNode('🎨'))"><span>Behance</span></div>
+          <div class="social-item"><img src="public/logos/website.png" alt="Website" onerror="this.replaceWith(document.createTextNode('🌐'))"><span>Website</span></div>
+          <div class="social-item"><img src="public/logos/pdf.png" alt="PDF" onerror="this.replaceWith(document.createTextNode('📄'))"><span>PDF / Меню</span></div>
+          <div class="social-item" style="background: linear-gradient(135deg,rgba(255,165,0,0.1),rgba(255,165,0,0.05)); border-color:var(--orange-border);"><span style="font-size:18px;">+</span><span style="color:var(--orange);" data-bg="Още" data-en="More"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 7 · АНАЛИТИКИ ───────────────────────── -->
+  <div class="slide bg-orange-accent">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div class="col-content">
+          <div class="badge">
+            <span data-bg="Статистики" data-en="Analytics"></span>
+          </div>
+          <div class="divider"></div>
+          <h2 class="slide-title">
+            <span data-bg="Следи твоите <span class='hl'>резултати</span>" data-en="Track Your <span class='hl'>Results</span>"></span>
+          </h2>
+          <p class="subtitle" style="margin-bottom:24px; font-size:14px;">
+            <span data-bg="Виж в реално време колко хора посещават профила ти, теглят контакта ти и кликат на линковете ти." data-en="See in real time how many people visit your profile, download your contact and click your links."></span>
+          </p>
+
+          <div class="grid-2" style="gap:12px; margin-bottom:20px;">
+            <div class="stat-box">
+              <span class="stat-num">1,247</span>
+              <span class="stat-label" data-bg="Посещения" data-en="Profile Visits"></span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num">386</span>
+              <span class="stat-label" data-bg="Изтегляния vCard" data-en="vCard Downloads"></span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num">218</span>
+              <span class="stat-label" data-bg="Споделяния" data-en="Profile Shares"></span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num">534</span>
+              <span class="stat-label" data-bg="Кликове социални" data-en="Social Clicks"></span>
+            </div>
+          </div>
+
+          <!-- Chart bars -->
+          <div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px;">
+            <p style="font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:16px;" data-bg="Посещения тази седмица" data-en="Visits this week"></p>
+            <div class="chart-bars">
+              <div class="bar" style="height:45%; animation-delay:0.0s;"></div>
+              <div class="bar" style="height:62%; animation-delay:0.1s;"></div>
+              <div class="bar" style="height:38%; animation-delay:0.2s;"></div>
+              <div class="bar" style="height:85%; animation-delay:0.3s;"></div>
+              <div class="bar" style="height:70%; animation-delay:0.4s;"></div>
+              <div class="bar" style="height:95%; animation-delay:0.5s;"></div>
+              <div class="bar" style="height:80%; animation-delay:0.6s;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:8px;">
+              <span style="font-size:10px;color:var(--muted);" data-bg="Пон" data-en="Mon"></span>
+              <span style="font-size:10px;color:var(--muted);" data-bg="Вт" data-en="Tue"></span>
+              <span style="font-size:10px;color:var(--muted);" data-bg="Ср" data-en="Wed"></span>
+              <span style="font-size:10px;color:var(--muted);" data-bg="Чет" data-en="Thu"></span>
+              <span style="font-size:10px;color:var(--muted);" data-bg="Пет" data-en="Fri"></span>
+              <span style="font-size:10px;color:var(--muted);" data-bg="Съб" data-en="Sat"></span>
+              <span style="font-size:10px;color:var(--muted);" data-bg="Нед" data-en="Sun"></span>
+            </div>
+          </div>
+        </div>
+        <div class="col-img">
+          <img src="public/features/02-analyse.png" alt="Analytics"
+               onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 8 · ЛИЙДОВЕ ──────────────────────────── -->
+  <div class="slide bg-dark">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div class="col-content">
+          <div class="badge">
+            <span data-bg="Лийд мениджмънт" data-en="Lead Management"></span>
+          </div>
+          <div class="divider"></div>
+          <h2 class="slide-title">
+            <span data-bg="Управлявай своите <span class='hl'>лийдове</span>" data-en="Manage Your <span class='hl'>Leads</span>"></span>
+          </h2>
+          <p class="subtitle" style="margin-bottom:24px; font-size:14px;">
+            <span data-bg="Хората, които посещават профила ти, могат да ти оставят контактите си. AI категоризира всеки лийд автоматично." data-en="People who visit your profile can leave their contacts. AI automatically categorizes every lead."></span>
+          </p>
+
+          <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+            <!-- Lead items -->
+            <div style="background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; align-items:center; gap:12px;">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">👩</div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:600;">Мария Петрова</div>
+                <div style="font-size:12px;color:var(--muted);">maria@company.bg</div>
+              </div>
+              <div class="lead-pill pill-hot">🔥 <span data-bg="Горещ" data-en="Hot"></span></div>
+            </div>
+            <div style="background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; align-items:center; gap:12px;">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">👨</div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:600;">Георги Стоянов</div>
+                <div style="font-size:12px;color:var(--muted);">g.stoyanov@firma.bg</div>
+              </div>
+              <div class="lead-pill pill-partner">🤝 <span data-bg="Партньор" data-en="Partner"></span></div>
+            </div>
+            <div style="background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; align-items:center; gap:12px;">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">👩</div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:600;">Елена Димитрова</div>
+                <div style="font-size:12px;color:var(--muted);">elena.d@gmail.com</div>
+              </div>
+              <div class="lead-pill pill-warm">🌡️ <span data-bg="Топъл" data-en="Warm"></span></div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <div class="feat-card" style="flex:1; min-width:140px; padding:14px;">
+              <div style="font-size:18px; margin-bottom:6px;">📊</div>
+              <h3 class="card-title" style="font-size:12px;" data-bg="CSV Експорт" data-en="CSV Export"></h3>
+              <p style="font-size:11px;color:var(--muted);" data-bg="Изтегли всички лийдове" data-en="Export all leads"></p>
+            </div>
+            <div class="feat-card" style="flex:1; min-width:140px; padding:14px;">
+              <div style="font-size:18px; margin-bottom:6px;">📧</div>
+              <h3 class="card-title" style="font-size:12px;" data-bg="Авто Follow-up" data-en="Auto Follow-up"></h3>
+              <p style="font-size:11px;color:var(--muted);" data-bg="Имейл след 1 час автоматично" data-en="Email sent automatically after 1 hour"></p>
+            </div>
+            <div class="feat-card" style="flex:1; min-width:140px; padding:14px; border-color:rgba(255,130,0,0.25);">
+              <div style="font-size:18px; margin-bottom:6px;">🔗</div>
+              <h3 class="card-title" style="font-size:12px;" data-bg="HubSpot CRM" data-en="HubSpot CRM"></h3>
+              <p style="font-size:11px;color:var(--muted);" data-bg="Синхронизация на лийдове директно в HubSpot" data-en="Sync leads directly into HubSpot automatically"></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-img">
+          <img src="public/features/06-leads.png" alt="Leads"
+               onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 9 · AI ФУНКЦИИ ───────────────────────── -->
+  <div class="slide bg-orange-accent">
+    <div class="slide-inner">
+      <div class="full-slide">
+        <div style="text-align:center; margin-bottom:32px;">
+          <div class="badge" style="margin:0 auto 16px;">
+            <span>🤖</span>
+            <span data-bg="Изкуствен интелект" data-en="Artificial Intelligence"></span>
+          </div>
+          <div class="divider" style="margin:0 auto 16px;"></div>
+          <h2 class="slide-title" style="text-align:center;">
+            <span data-bg="AI на твоя <span class='hl'>страна</span>" data-en="AI on your <span class='hl'>side</span>"></span>
+          </h2>
+          <p class="subtitle" style="text-align:center; margin:0 auto; font-size:14px;">
+            <span data-bg="NinjaCard използва Claude AI (Anthropic) за автоматизация." data-en="NinjaCard uses Claude AI (Anthropic) for automation."></span>
+          </p>
+        </div>
+
+        <div class="grid-3" style="gap:20px; max-width:900px; margin:0 auto;">
+          <div class="ai-card">
+            <div class="icon-wrap" style="margin-bottom:16px;">✍️</div>
+            <h3 class="card-title" style="margin-bottom:8px;" data-bg="AI Биография" data-en="AI Biography"></h3>
+            <p style="font-size:13px;color:var(--muted);line-height:1.6;" data-bg="Генерира 3 варианта на биография на Български и 3 на Английски — в различни тонове: формален, приятелски, динамичен." data-en="Generates 3 biography variants in Bulgarian and 3 in English — in different tones: formal, friendly, dynamic."></p>
+          </div>
+          <div class="ai-card">
+            <div class="icon-wrap" style="margin-bottom:16px;">🎯</div>
+            <h3 class="card-title" style="margin-bottom:8px;" data-bg="AI Категоризация" data-en="AI Categorization"></h3>
+            <p style="font-size:13px;color:var(--muted);line-height:1.6;" data-bg="Всеки нов лийд се анализира автоматично: горещ, топъл, студен, партньорство, работа или друго." data-en="Every new lead is automatically analyzed: hot, warm, cold, partnership, job or other."></p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;">
+              <span class="lead-pill pill-hot" style="font-size:10px;">🔥 <span data-bg="Горещ" data-en="Hot"></span></span>
+              <span class="lead-pill pill-warm" style="font-size:10px;">🌡️ <span data-bg="Топъл" data-en="Warm"></span></span>
+              <span class="lead-pill pill-cold" style="font-size:10px;">❄️ <span data-bg="Студен" data-en="Cold"></span></span>
+              <span class="lead-pill pill-partner" style="font-size:10px;">🤝 <span data-bg="Партньор" data-en="Partner"></span></span>
+              <span class="lead-pill pill-job" style="font-size:10px;">💼 <span data-bg="Работа" data-en="Job"></span></span>
+            </div>
+          </div>
+          <div class="ai-card">
+            <div class="icon-wrap" style="margin-bottom:16px;">📨</div>
+            <h3 class="card-title" style="margin-bottom:8px;" data-bg="AI Follow-up Имейл" data-en="AI Follow-up Email"></h3>
+            <p style="font-size:13px;color:var(--muted);line-height:1.6;" data-bg="~1 час след получаване на лийд, AI генерира и изпраща персонализиран follow-up имейл автоматично." data-en="~1 hour after receiving a lead, AI generates and sends a personalized follow-up email automatically."></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 10 · ДИЗАЙН & ПРОДУКТИ ──────────────── -->
+  <div class="slide bg-dark">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div class="col-content">
+          <div class="badge">
+            <span data-bg="Дизайн & Продукти" data-en="Design & Products"></span>
+          </div>
+          <div class="divider"></div>
+          <h2 class="slide-title">
+            <span data-bg="Физически <span class='hl'>NFC визитки</span>" data-en="Physical <span class='hl'>NFC Cards</span>"></span>
+          </h2>
+          <p class="subtitle" style="margin-bottom:24px; font-size:14px;">
+            <span data-bg="Персонализирани смарт визитки — свързани с твоя дигитален профил." data-en="Personalized smart business cards — connected to your digital profile."></span>
+          </p>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="feat-card" style="padding:16px 20px; flex-direction:row; align-items:center; gap:16px;">
+              <div class="icon-wrap" style="margin:0; min-width:44px;">💳</div>
+              <div>
+                <h3 class="card-title" style="margin-bottom:2px;" data-bg="Смарт Визитки" data-en="Smart Business Cards"></h3>
+                <p style="font-size:12px;color:var(--muted);" data-bg="PVC, метал, хибридни — напълно персонализирани" data-en="PVC, metal, hybrid — fully personalized"></p>
+              </div>
+            </div>
+            <div class="feat-card" style="padding:16px 20px; flex-direction:row; align-items:center; gap:16px;">
+              <div class="icon-wrap" style="margin:0; min-width:44px;">🎨</div>
+              <div>
+                <h3 class="card-title" style="margin-bottom:2px;" data-bg="Персонализиран дизайн" data-en="Custom Design"></h3>
+                <p style="font-size:12px;color:var(--muted);" data-bg="Твое лого, цветове и визия — фирмено брандиране" data-en="Your logo, colors and vision — corporate branding"></p>
+              </div>
+            </div>
+            <div class="feat-card" style="padding:16px 20px; flex-direction:row; align-items:center; gap:16px;">
+              <div class="icon-wrap" style="margin:0; min-width:44px;">🔄</div>
+              <div>
+                <h3 class="card-title" style="margin-bottom:2px;" data-bg="Профилът се обновява в реално време" data-en="Profile updates in real time"></h3>
+                <p style="font-size:12px;color:var(--muted);" data-bg="Картата остава същата — само профилът се променя" data-en="The card stays the same — only the profile changes"></p>
+              </div>
+            </div>
+            <div class="feat-card" style="padding:16px 20px; flex-direction:row; align-items:center; gap:16px;">
+              <div class="icon-wrap" style="margin:0; min-width:44px;">♻️</div>
+              <div>
+                <h3 class="card-title" style="margin-bottom:2px;" data-bg="Без повторно печатане" data-en="No Reprinting Ever"></h3>
+                <p style="font-size:12px;color:var(--muted);" data-bg="Смени работа, телефон, имейл — картата продължава да работи" data-en="Change job, phone, email — the card keeps working"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-img" style="flex-direction:column; gap:16px; align-items:center;">
+          <img src="public/cards/bp-front-back-01.png" alt="Business Card" style="max-width:400px; width:100%; border-radius:12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);"
+               onerror="this.src='public/realMockup.png'; this.onerror=()=>this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 11 · ПЛАНОВЕ ─────────────────────────── -->
+  <div class="slide bg-dark">
+    <div class="slide-inner" style="align-items:center; flex-direction:column; justify-content:center;">
+      <div style="text-align:center; margin-bottom:28px;">
+        <div class="badge" style="margin:0 auto 16px;">
+          <span data-bg="Абонаменти" data-en="Subscription Plans"></span>
+        </div>
+        <div class="divider" style="margin:0 auto 16px;"></div>
+        <h2 class="slide-title" style="text-align:center;">
+          <span data-bg="Изберете своя <span class='hl'>план</span>" data-en="Choose Your <span class='hl'>Plan</span>"></span>
+        </h2>
+      </div>
+
+      <div class="grid-3" style="gap:20px; width:100%; max-width:860px;">
+        <!-- SHINOBI -->
+        <div class="plan-card">
+          <div class="plan-name shinobi">⚔️ SHINOBI</div>
+          <p style="font-size:12px;color:var(--muted);" data-bg="Перфектен за начало" data-en="Perfect for getting started"></p>
+          <div style="border-top:1px solid var(--border); margin:8px 0; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
+            <div class="plan-check" data-bg="3 социални линка" data-en="3 social links"></div>
+            <div class="plan-check" data-bg="Дигитален профил" data-en="Digital profile"></div>
+            <div class="plan-check" data-bg="QR код" data-en="QR code"></div>
+            <div class="plan-check" data-bg="NFC карта" data-en="NFC card"></div>
+            <div class="plan-check dim" data-bg="Аналитики" data-en="Analytics"></div>
+            <div class="plan-check dim" data-bg="Лийд форма" data-en="Lead form"></div>
+            <div class="plan-check dim" data-bg="Брандиране" data-en="Branding"></div>
+            <div class="plan-check dim" data-bg="Екипен достъп" data-en="Team access"></div>
+          </div>
+        </div>
+
+        <!-- SAMURAI -->
+        <div class="plan-card featured">
+          <div class="plan-badge-top" data-bg="ПРЕПОРЪЧАН" data-en="RECOMMENDED"></div>
+          <div class="plan-name samurai">🥷 SAMURAI</div>
+          <p style="font-size:12px;color:var(--muted);" data-bg="За активни бизнеси" data-en="For active businesses"></p>
+          <div style="border-top:1px solid rgba(255,165,0,0.15); margin:8px 0; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
+            <div class="plan-check" data-bg="20 социални линка" data-en="20 social links"></div>
+            <div class="plan-check" data-bg="Дигитален профил" data-en="Digital profile"></div>
+            <div class="plan-check" data-bg="QR код" data-en="QR code"></div>
+            <div class="plan-check" data-bg="NFC карта" data-en="NFC card"></div>
+            <div class="plan-check" data-bg="Аналитики" data-en="Analytics"></div>
+            <div class="plan-check" data-bg="Лийд форма" data-en="Lead form"></div>
+            <div class="plan-check" data-bg="Брандиране" data-en="Branding"></div>
+            <div class="plan-check dim" data-bg="Екипен достъп" data-en="Team access"></div>
+          </div>
+        </div>
+
+        <!-- SHOGUN -->
+        <div class="plan-card">
+          <div class="plan-name shogun">👑 SHOGUN</div>
+          <p style="font-size:12px;color:var(--muted);" data-bg="За екипи и корпорации" data-en="For teams and corporations"></p>
+          <div style="border-top:1px solid var(--border); margin:8px 0; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
+            <div class="plan-check" data-bg="Неограничени линкове" data-en="Unlimited links"></div>
+            <div class="plan-check" data-bg="Дигитален профил" data-en="Digital profile"></div>
+            <div class="plan-check" data-bg="QR код" data-en="QR code"></div>
+            <div class="plan-check" data-bg="NFC карта" data-en="NFC card"></div>
+            <div class="plan-check" data-bg="Аналитики" data-en="Analytics"></div>
+            <div class="plan-check" data-bg="Лийд форма" data-en="Lead form"></div>
+            <div class="plan-check" data-bg="Брандиране" data-en="Branding"></div>
+            <div class="plan-check" data-bg="Екипен достъп" data-en="Team access"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 12 · B2B ROI ─────────────────────────── -->
+  <div class="slide bg-teal-accent">
+    <div class="slide-inner">
+      <div class="full-slide">
+        <div style="text-align:center; margin-bottom:28px;">
+          <div class="badge" style="margin:0 auto 16px;">
+            <span data-bg="Бизнес стойност" data-en="Business Value"></span>
+          </div>
+          <div class="divider" style="margin:0 auto 16px;"></div>
+          <h2 class="slide-title" style="text-align:center;">
+            <span data-bg="Как NinjaCard <span class='hl'>носи приходи</span> за бизнеса?" data-en="How does NinjaCard <span class='hl'>generate revenue</span> for your business?"></span>
+          </h2>
+          <p class="subtitle" style="text-align:center; margin:0 auto 0; font-size:14px; max-width:640px;">
+            <span data-bg="NFC визитката не е разход — тя е инвестиция, която се връща при всяка нова среща." data-en="An NFC card is not an expense — it's an investment that pays back with every new meeting."></span>
+          </p>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; max-width:920px; margin:0 auto;">
+          <!-- Left column - ROI boxes -->
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="feat-card" style="padding:20px 22px; border-color:rgba(255,165,0,0.2);">
+              <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+                <div class="icon-wrap" style="margin:0; min-width:44px;">🎯</div>
+                <h3 class="card-title" style="margin:0;" data-bg="Повече затворени сделки" data-en="More Closed Deals"></h3>
+              </div>
+              <p style="font-size:13px;color:var(--muted);line-height:1.6;" data-bg="Търговският ти представител споделя профила с едно докосване. Контактът се запазва веднага — без изгубени визитки, без забравен имейл." data-en="Your sales rep shares their profile with one tap. The contact is saved instantly — no lost cards, no forgotten email."></p>
+            </div>
+            <div class="feat-card" style="padding:20px 22px; border-color:rgba(255,165,0,0.2);">
+              <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+                <div class="icon-wrap" style="margin:0; min-width:44px;">📥</div>
+                <h3 class="card-title" style="margin:0;" data-bg="Автоматично събиране на лийдове" data-en="Automatic Lead Capture"></h3>
+              </div>
+              <p style="font-size:13px;color:var(--muted);line-height:1.6;" data-bg="Всеки посетител на профила може да остави контакт. AI го категоризира и изпраща follow-up имейл автоматично — без ръчна работа." data-en="Every profile visitor can leave their contact. AI categorizes it and sends a follow-up email automatically — no manual work."></p>
+            </div>
+            <div class="feat-card" style="padding:20px 22px; border-color:rgba(255,165,0,0.2);">
+              <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+                <div class="icon-wrap" style="margin:0; min-width:44px;">🔗</div>
+                <h3 class="card-title" style="margin:0;" data-bg="Директна връзка с HubSpot CRM" data-en="Direct HubSpot CRM Sync"></h3>
+              </div>
+              <p style="font-size:13px;color:var(--muted);line-height:1.6;" data-bg="Лийдовете влизат директно в HubSpot. Нула ръчно въвеждане на данни. Екипът работи веднага." data-en="Leads flow directly into HubSpot. Zero manual data entry. Your team works immediately."></p>
+            </div>
+          </div>
+
+          <!-- Right column - ROI metrics + sectors -->
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="background:linear-gradient(135deg,rgba(255,165,0,0.1),rgba(255,165,0,0.04)); border:1px solid rgba(255,165,0,0.25); border-radius:14px; padding:20px 22px;">
+              <p style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--orange); text-transform:uppercase; margin-bottom:16px;" data-bg="Какво спестявате" data-en="What you save"></p>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+                  <span style="color:var(--muted);" data-bg="Печат на хартиени визитки" data-en="Paper card printing"></span>
+                  <span style="color:#f87171; font-weight:700;" data-bg="— 100%" data-en="— 100%"></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+                  <span style="color:var(--muted);" data-bg="Ръчно въвеждане в CRM" data-en="Manual CRM entry"></span>
+                  <span style="color:#f87171; font-weight:700;" data-bg="— 100%" data-en="— 100%"></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+                  <span style="color:var(--muted);" data-bg="Изгубени контакти след срещи" data-en="Lost contacts after meetings"></span>
+                  <span style="color:#f87171; font-weight:700;" data-bg="— 90%" data-en="— 90%"></span>
+                </div>
+                <div style="border-top:1px solid var(--border); margin-top:4px; padding-top:10px; display:flex; justify-content:space-between; align-items:center; font-size:14px;">
+                  <span style="color:var(--text); font-weight:600;" data-bg="Конверсия на лийдове" data-en="Lead conversion rate"></span>
+                  <span style="color:#6ee7b7; font-weight:800;" data-bg="↑ значително" data-en="↑ significantly"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="feat-card" style="padding:20px 22px;">
+              <p style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--orange); text-transform:uppercase; margin-bottom:14px;" data-bg="Подходящо за" data-en="Ideal for"></p>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                  <span style="color:var(--orange);">▸</span>
+                  <span data-bg="Търговски екипи & B2B продажби" data-en="Sales teams & B2B sales"></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                  <span style="color:var(--orange);">▸</span>
+                  <span data-bg="Финансови консултанти & брокери" data-en="Financial advisors & brokers"></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                  <span style="color:var(--orange);">▸</span>
+                  <span data-bg="Агенции & маркетинг екипи" data-en="Agencies & marketing teams"></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                  <span style="color:var(--orange);">▸</span>
+                  <span data-bg="Недвижими имоти & застраховане" data-en="Real estate & insurance"></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                  <span style="color:var(--orange);">▸</span>
+                  <span data-bg="Корпоративни екипи 5–500+ души" data-en="Corporate teams 5–500+ people"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 13 · CTA ─────────────────────────────── -->
+  <div class="slide bg-hero">
+    <div class="cta-glow"></div>
+    <div class="slide-inner" style="align-items:center; flex-direction:column; justify-content:center; text-align:center;">
+      <div style="position:relative; z-index:2; display:flex; flex-direction:column; align-items:center;">
+        <img src="public/navlogo.png" alt="NinjaCard" style="height:60px; margin-bottom:32px; filter:drop-shadow(0 4px 16px rgba(255,165,0,0.4));"
+             onerror="this.style.display='none'">
+
+        <div class="badge" style="margin:0 auto 20px;">
+          <span>🥷</span>
+          <span data-bg="Следваща стъпка" data-en="Next Step"></span>
+        </div>
+        <div class="divider" style="margin:0 auto 20px; width:80px;"></div>
+
+        <h2 class="slide-title" style="font-size:clamp(32px, 5vw, 64px); margin-bottom:16px;">
+          <span data-bg="Готов ли си да<br><span class='hl'>се присъединиш?</span>" data-en="Ready to<br><span class='hl'>Join Us?</span>"></span>
+        </h2>
+        <p class="subtitle" style="text-align:center; margin:0 auto 40px; font-size:16px; max-width:480px;">
+          <span data-bg="Създай профила си безплатно и получи своята NFC карта." data-en="Create your profile for free and get your NFC card."></span>
+        </p>
+
+        <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin-bottom:48px;">
+          <a href="https://www.ninjacardsnfc.com/" class="btn-orange" target="_blank" style="font-size:14px; padding:16px 40px;">
+            <span data-bg="ЗАПОЧНИ БЕЗПЛАТНО" data-en="START FOR FREE"></span> →
+          </a>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+          <p style="font-size:13px; color:var(--muted);" data-bg="Свържи се с нас" data-en="Contact us"></p>
+          <a href="mailto:ninjacardnfc@gmail.com" style="color:var(--orange); font-size:16px; font-weight:700; text-decoration:none; letter-spacing:0.02em;">
+            ninjacardnfc@gmail.com
+          </a>
+        </div>
+
+        <div style="margin-top:48px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:center;">
+          <img src="public/clients/postbank.svg" style="height:24px; opacity:0.3; filter:brightness(10);" onerror="this.style.display='none'">
+          <img src="public/clients/home2you.svg" style="height:24px; opacity:0.3; filter:brightness(10);" onerror="this.style.display='none'">
+          <img src="public/clients/winners.svg" style="height:24px; opacity:0.3; filter:brightness(10);" onerror="this.style.display='none'">
+          <img src="public/clients/night-out.svg" style="height:24px; opacity:0.3; filter:brightness(10);" onerror="this.style.display='none'">
+          <img src="public/clients/veliko-tarnovo.svg" style="height:24px; opacity:0.3; filter:brightness(10);" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- Navigation -->
+<nav class="nav">
+  <button class="nav-btn" onclick="prevSlide()">←</button>
+  <div class="dots" id="dots"></div>
+  <span class="slide-counter" id="counter">1 / 13</span>
+  <button class="nav-btn" onclick="nextSlide()">→</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  const counterEl = document.getElementById('counter');
+  const progressEl = document.getElementById('progress');
+  const total = slides.length;
+  let current = 0;
+  let lang = 'bg';
+
+  /* ── BUILD DOTS ─────────────────────────── */
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  /* ── LANGUAGE ───────────────────────────── */
+  function setLang(l) {
+    lang = l;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+    document.querySelectorAll('[data-bg]').forEach(el => {
+      const val = el.getAttribute('data-' + l);
+      if (val !== null) el.innerHTML = val;
+    });
+  }
+
+  /* ── NAVIGATION ─────────────────────────── */
+  function goTo(idx) {
+    if (idx < 0 || idx >= total) return;
+    const prev = current;
+    slides[prev].classList.remove('active');
+    slides[prev].classList.add('exit-left');
+    setTimeout(() => slides[prev].classList.remove('exit-left'), 550);
+
+    current = idx;
+    slides[current].classList.add('active');
+
+    // dots
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+
+    // counter
+    counterEl.textContent = `${current + 1} / ${total}`;
+
+    // progress
+    progressEl.style.width = ((current + 1) / total * 100) + '%';
+
+    // re-apply lang
+    setLang(lang);
+  }
+
+  function nextSlide() { goTo(current + 1); }
+  function prevSlide() { goTo(current - 1); }
+
+  /* ── KEYBOARD ───────────────────────────── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prevSlide(); }
+    if (e.key === 'Home') goTo(0);
+    if (e.key === 'End') goTo(total - 1);
+  });
+
+  /* ── TOUCH / SWIPE ──────────────────────── */
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) { dx < 0 ? nextSlide() : prevSlide(); }
+  });
+
+  /* ── INIT ───────────────────────────────── */
+  setLang('bg');
+  progressEl.style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>
