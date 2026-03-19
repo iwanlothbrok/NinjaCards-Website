@@ -35,6 +35,7 @@ export const routing = defineRouting({
         '/profile/features': '/profile/features',
         '/profile/cover': '/profile/cover',
         '/profile/billing': '/profile/billing',
+        '/profile/delete': '/profile/delete',
         // '/profileDetails/[id]': '/profileDetails/[id]',
 
         '/products/cards': '/products/cards',
