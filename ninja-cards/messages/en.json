@@ -725,24 +725,26 @@
     }
   },
   "VideoUpload": {
-    "title": "Upload Video",
+    "subtitle": "Profile Settings",
+    "title": "Video Bio",
+    "description": "A short video that plays on your digital card. 15-30 seconds is ideal.",
+    "currentVideo": "Current video",
+    "hint": "MP4, MOV or WebM · Max 100MB · 15-30 sec recommended",
+    "buttons": {
+      "upload": "Upload video",
+      "replace": "Replace video",
+      "uploading": "Uploading...",
+      "remove": "Remove video",
+      "removing": "Removing..."
+    },
     "alerts": {
       "uploadSuccess": "Video uploaded successfully!",
       "uploadFail": "Failed to save video.",
-      "uploadError": "Video upload failed.",
-      "removeSuccess": "Video removed successfully!",
+      "uploadError": "Upload error. Please try again.",
+      "removeSuccess": "Video removed successfully.",
       "removeFail": "Failed to remove video.",
-      "unexpected": "An unexpected error occurred."
-    },
-    "buttons": {
-      "upload": "Upload Video",
-      "uploading": "Uploading...",
-      "remove": "Remove Video",
-      "removing": "Removing...",
-      "back": "Back"
-    },
-    "uploadedVideo": "Uploaded video:",
-    "noSupport": "Your browser does not support video."
+      "unexpected": "Something went wrong. Please try again."
+    }
   },
   "LanguageSwitcher": {
     "title": "Choose a language for your card",
@@ -814,7 +816,19 @@
       "view": "View",
       "delete": "Delete",
       "deleting": "Deleting...",
-      "noMessage": "No message"
+      "noMessage": "No message",
+      "followUp": "Follow up"
+    },
+    "followUp": {
+      "title": "AI Follow-up Email",
+      "leadMessage": "Their message",
+      "generating": "Generating email...",
+      "subject": "Subject",
+      "body": "Email body",
+      "copy": "Copy",
+      "copied": "Copied",
+      "regenerate": "Regenerate",
+      "openEmail": "Open in Email"
     },
     "search": "Search by name, email or phone…",
     "totalLeads": "Total leads",
@@ -1040,6 +1054,16 @@
     "subtitle": "So they can have your contact information to reach out to you.",
     "successMessage": "Your information has been submitted successfully!",
     "successTitle": "Success",
+    "smartSubtitle": "2 quick questions — 30 seconds",
+    "question1": "What is your name?",
+    "question2": "What are you looking for?",
+    "question2Optional": "(optional)",
+    "question2Placeholder": "Briefly describe how I can help you...",
+    "analyzingTitle": "Analyzing...",
+    "analyzingSubtitle": "AI is categorizing your request",
+    "successLead": "Thank you, {name}!",
+    "successLeadSub": "Your contact has been saved.",
+    "successOwnerWill": "will be in touch soon.",
     "placeholders": {
       "name": "Name*",
       "phone": "Phone*",
@@ -1048,7 +1072,7 @@
     },
     "gdpr": "I agree to the processing of my personal data.",
     "skip": "Skip",
-    "submit": "Send",
+    "submit": "Save contact",
     "submitting": "Sending...",
     "errors": {
       "name": "Please enter your name.",
@@ -1056,6 +1080,14 @@
       "gdpr": "Please agree to the processing of personal data.",
       "submit": "Error while sending.",
       "failed": "Form submission failed."
+    },
+    "categories": {
+      "hot": "Hot lead",
+      "warm": "Warm lead",
+      "cold": "Cold lead",
+      "partnership": "Partnership",
+      "job": "Job / Career",
+      "other": "Other"
     }
   },
   "CookiePolicy": {
@@ -2211,6 +2243,116 @@
       "cancel": "Cancel",
       "confirm": "Yes, delete my account",
       "deleting": "Deleting..."
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "dataExport": {
+    "subtitle": "Privacy & GDPR",
+    "title": "Download My Data",
+    "accountLabel": "Signed in as",
+    "included": {
+      "title": "What's included in your export",
+      "items": {
+        "profile": {
+          "label": "Profile information",
+          "desc": "Name, email, phone, bio, address and all contact details"
+        },
+        "card": {
+          "label": "Social links",
+          "desc": "All linked social media profiles and external links"
+        },
+        "analytics": {
+          "label": "Analytics",
+          "desc": "Profile visits, downloads, shares and social clicks"
+        },
+        "leads": {
+          "label": "Leads",
+          "desc": "All contact requests you have received"
+        },
+        "subscription": {
+          "label": "Subscription",
+          "desc": "Your current plan, status and billing dates"
+        },
+        "invoices": {
+          "label": "Invoices",
+          "desc": "Full payment history with invoice links"
+        }
+      }
+    },
+    "gdprNote": "Under GDPR Article 20, you have the right to receive your personal data in a portable format. Your data will be exported as a JSON file and downloaded directly to your device. We do not store a copy of this export.",
+    "downloadButton": "Download My Data (.json)",
+    "downloadingButton": "Preparing your data...",
+    "downloadedButton": "Downloaded!",
+    "success": "Your data has been downloaded successfully.",
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "bioGenerator": {
+    "subtitle": "Profile Settings",
+    "title": "AI Bio Generator",
+    "dataTitle": "Data used for analysis",
+    "generateButton": "Generate Bio",
+    "generating": "Generating...",
+    "analysisTitle": "AI Analysis",
+    "savedSuccess": "Bio saved to your profile!",
+    "copy": "Copy",
+    "copied": "Copied",
+    "use": "Use",
+    "fields": {
+      "name": "Name",
+      "position": "Position",
+      "company": "Company",
+      "links": "Links",
+      "linksFound": "found"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "saveFail": "Failed to save bio."
+    }
+  },
+  "profileOptimizer": {
+    "subtitle": "Profile Settings",
+    "title": "Profile Optimizer",
+    "description": "AI analysis of your profile with specific recommendations to get more leads.",
+    "snapshotTitle": "Your profile data",
+    "analyzeButton": "Analyze my profile",
+    "analyzing": "Analyzing...",
+    "reAnalyze": "Re-analyze",
+    "verdict": "AI Verdict",
+    "highPriority": "high priority",
+    "mediumPriority": "medium priority",
+    "recommendationsTitle": "Recommendations",
+    "fields": {
+      "name": "Name",
+      "position": "Position",
+      "company": "Company",
+      "bio": "Bio",
+      "photo": "Profile photo",
+      "links": "Social links",
+      "set": "Set",
+      "missing": "Missing",
+      "linksFound": "found"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "abTester": {
+    "subtitle": "Profile Settings",
+    "title": "A/B Tester",
+    "description": "AI-generated variants for your profile. See the before/after preview and apply with one click.",
+    "currentStats": "Current performance",
+    "analyzeButton": "Generate A/B Tests",
+    "analyzing": "Analyzing...",
+    "overallInsight": "AI Insight",
+    "reAnalyze": "Generate new variants",
+    "stats": {
+      "visits": "Visits",
+      "leads": "Leads",
+      "convRate": "Conv. Rate"
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
