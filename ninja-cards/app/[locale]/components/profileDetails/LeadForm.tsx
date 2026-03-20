@@ -83,7 +83,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ userId, name, isVisible, onClose, c
 
     return (
         <Transition appear show={isVisible} as={Fragment}>
-            <Dialog as="div" className="fixed inset-0 z-50 overflow-y-auto" onClose={onClose}>
+            <Dialog as="div" className="fixed inset-0 z-50 scroll pb overflow-y-auto" onClose={onClose}>
                 <div className="flex min-h-screen items-end sm:items-center justify-center p-4">
 
                     {/* Backdrop */}
@@ -102,7 +102,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ userId, name, isVisible, onClose, c
                         leave="ease-in duration-200" leaveFrom="opacity-100 translate-y-0 scale-100" leaveTo="opacity-0 translate-y-4 scale-95"
                     >
                         <DialogPanel
-                            className="relative w-full max-w-md rounded-3xl overflow-hidden border border-white/[0.08]"
+                            className="relative w-full max-w-md rounded-3xl overflow-hidden border border-white/[0.08] sm:mb-0 mb-20"
                             style={{
                                 background: '#0e0e0e',
                                 boxShadow: `0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05), 0 -1px 0 0 ${accent}40`,
