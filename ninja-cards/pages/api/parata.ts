@@ -1,15 +1,13 @@
+// pages/api/parata.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { generateGoogleWalletJwt } from "@/utils/googleWallet";
-import formidable, { IncomingForm, Fields } from "formidable";
+import { IncomingForm, Fields } from "formidable";
 import cors from "@/utils/cors";
 
 export const config = {
-    api: {
-        bodyParser: false, // Disable Next.js default body parser for FormData handling
-    },
+    api: { bodyParser: false },
 };
 
-// ✅ Function to parse FormData
 const parseForm = (req: NextApiRequest): Promise<{ fields: Fields }> => {
     const form = new IncomingForm();
     return new Promise((resolve, reject) => {
@@ -21,36 +19,66 @@ const parseForm = (req: NextApiRequest): Promise<{ fields: Fields }> => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log("🔵 Incoming request to API");
-
     const corsHandled = cors(req, res);
-    if (corsHandled) return; // Stop execution for preflight requests
+    if (corsHandled) return;
 
     if (req.method !== "POST") {
-        console.log("❌ Invalid request method:", req.method);
         return res.status(405).json({ error: "Method Not Allowed" });
     }
 
     try {
-        // ✅ Parse FormData from request
         const { fields } = await parseForm(req);
-        const userId = fields.userId ? fields.userId[0] : undefined;
 
-        if (!userId) {
-            console.error("❌ Missing userId in request");
-            return res.status(400).json({ error: "Missing userId" });
+        const get = (key: string) => fields[key]?.[0];
+
+        const userId      = get("userId");
+        const userName    = get("userName")    || "Ninja User";
+        const userEmail   = get("userEmail");
+        const userPhone   = get("userPhone");
+        const userCompany = get("userCompany");
+        const userPosition= get("userPosition");
+        const userLogoUrl = get("userLogoUrl");
+        const bgColor     = get("bgColor");
+
+        // ✅ Log everything received from the frontend
+        console.log("📦 Received fields from frontend:", {
+            userId,
+            userName,
+            userEmail,
+            userPhone,
+            userCompany,
+            userPosition,
+            bgColor,
+            userLogoUrl: userLogoUrl ? userLogoUrl.slice(0, 60) + "..." : undefined,
+        });
+
+        if (!userId) return res.status(400).json({ error: "Missing userId" });
+
+        if (!process.env.GOOGLE_WALLET_CREDENTIALS) {
+            return res.status(500).json({ error: "GOOGLE_WALLET_CREDENTIALS env var is missing" });
         }
 
-        console.log("✅ Generating Google Wallet JWT for user:", userId);
-        const jwtToken = await generateGoogleWalletJwt(userId);
+        const jwtToken = await generateGoogleWalletJwt({
+            userId,
+            userName,
+            userEmail,
+            userPhone,
+            userCompany,
+            userPosition,
+            userLogoUrl,
+            bgColor,
+        });
 
-        console.log("✅ JWT generated successfully:", jwtToken);
-
-        // ✅ Send the JWT token as the response (fixing the API handler issue)
         return res.status(200).json({ token: jwtToken });
 
-    } catch (error) {
-        console.error("❌ Google Wallet JWT Generation Failed:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        const stack   = error instanceof Error ? error.stack   : undefined;
+        console.error("❌ Google Wallet JWT Generation Failed:", message);
+        return res.status(500).json({
+            error: "Internal Server Error",
+            details: message,
+            stack: process.env.NODE_ENV === "development" ? stack : undefined,
+        });
     }
 }
