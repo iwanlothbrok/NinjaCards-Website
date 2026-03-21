@@ -38,6 +38,35 @@ const CheckIcon = () => (
         <polyline points="20 6 9 17 4 12" />
     </svg>
 )
+const EmailIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] flex-shrink-0">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+        <polyline points="22,6 12,13 2,6" />
+    </svg>
+)
+
+// ─── Build mailto link ────────────────────────────────────────────────────────
+function buildMailto(user: User, isBg: boolean): string {
+    const to = user.email ?? '';
+
+    const name = user.name
+        || [user.firstName, user.lastName].filter(Boolean).join(' ')
+        || (isBg ? 'вас' : 'you');
+
+    const position = user.position
+        ? (isBg ? ` (${user.position})` : ` (${user.position})`)
+        : '';
+
+    const subject = isBg
+        ? `Здравейте, ${name}${position}`
+        : `Hello, ${name}${position}`;
+
+    const body = isBg
+        ? `Здравейте, ${name},\n\nВидях вашата дигитална визитка и исках да се свържа с вас.\n\nС уважение,`
+        : `Hi ${name},\n\nI came across your digital business card and wanted to get in touch.\n\nBest regards,`;
+
+    return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const ActionButtons2: React.FC<{
@@ -53,9 +82,8 @@ const ActionButtons2: React.FC<{
 
     const isBg = user.language === 'bg'
     const isLight = isLightTheme(cardStyle)
-    const accent = cardStyle.accent   // e.g. '#f59e0b' or user-customised
+    const accent = cardStyle.accent
 
-    // ── Ghost buttons (Share / Save) ──────────────────────────────────────────
     const ghostClass = isLight
         ? 'border border-black/[0.1] bg-black/[0.04] hover:bg-black/[0.08] text-gray-700 hover:text-gray-900'
         : 'border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.09] text-gray-200'
@@ -87,6 +115,8 @@ const ActionButtons2: React.FC<{
         }
     }
 
+    const hasEmail = !!user.email
+
     return (
         <>
             <AnimatePresence>
@@ -102,7 +132,7 @@ const ActionButtons2: React.FC<{
 
             <div className="flex flex-col gap-3 px-1">
 
-                {/* ── Call — solid accent gradient ── */}
+                {/* ── Call — solid accent ── */}
                 <motion.a
                     href={`tel:${user.phone1}`}
                     initial={{ opacity: 0, y: 12 }}
@@ -156,12 +186,27 @@ const ActionButtons2: React.FC<{
                     </motion.button>
                 </div>
 
-                {/* ── Leave Contact — DOMINANT, accent outline + glow ── */}
+                {/* ── Send Email — ghost, само ако има email ── */}
+                {hasEmail && (
+                    <motion.a
+                        href={buildMailto(user, isBg)}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.67, duration: 0.42 }}
+                        whileTap={{ scale: 0.97 }}
+                        className={`flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 select-none ${ghostClass}`}
+                    >
+                        <EmailIcon />
+                        {isBg ? 'Изпрати имейл' : 'Send Email'}
+                    </motion.a>
+                )}
+
+                {/* ── Leave Contact — dominant accent outline ── */}
                 <motion.button
                     onClick={() => setShowLeadForm(true)}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.69, duration: 0.42 }}
+                    transition={{ delay: hasEmail ? 0.73 : 0.69, duration: 0.42 }}
                     whileTap={{ scale: 0.97 }}
                     className="flex items-center justify-center gap-3 w-full py-5 rounded-2xl font-bold text-base transition-all duration-200 select-none"
                     style={{
@@ -171,12 +216,12 @@ const ActionButtons2: React.FC<{
                         boxShadow: `0 0 0 0 ${accent}00`,
                     }}
                     onMouseEnter={e => {
-                        (e.currentTarget as HTMLButtonElement).style.background = `${accent}18`
-                            ; (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 0 24px ${accent}28`
+                        (e.currentTarget as HTMLButtonElement).style.background = `${accent}18`;
+                        (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 0 24px ${accent}28`;
                     }}
                     onMouseLeave={e => {
-                        (e.currentTarget as HTMLButtonElement).style.background = `${accent}0d`
-                            ; (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 0 0 0 ${accent}00`
+                        (e.currentTarget as HTMLButtonElement).style.background = `${accent}0d`;
+                        (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 0 0 0 ${accent}00`;
                     }}
                 >
                     <ContactIcon />
