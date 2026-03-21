@@ -13,10 +13,10 @@ interface BioPreviewProps {
 }
 
 const BioPreview: React.FC<BioPreviewProps> = ({ user, cardStyle }) => {
+    const [expanded, setExpanded] = useState(false);
+
     const bio = user.bio?.trim();
     if (!bio) return null;
-
-    const [expanded, setExpanded] = useState(false);
 
     const accentHex = cardStyle.accent;
     const textPrimary = cardStyle.textPrimary;

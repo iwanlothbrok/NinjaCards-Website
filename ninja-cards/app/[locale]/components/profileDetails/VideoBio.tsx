@@ -11,6 +11,10 @@ interface VideoBioProps {
 }
 
 export default function VideoBio({ user, cardStyle }: VideoBioProps) {
+    const videoRef = useRef<HTMLVideoElement>(null)
+    const [playing, setPlaying] = useState(false)
+    const [expanded, setExpanded] = useState(false)
+
     const videoUrl = (user as any).videoUrl
     if (!videoUrl) return null
 
@@ -19,10 +23,6 @@ export default function VideoBio({ user, cardStyle }: VideoBioProps) {
     const isDark = cardStyle.bgClass.includes('black') || cardStyle.bgClass.includes('gray-9') || cardStyle.bgClass.includes('zinc-9') || cardStyle.name.includes('dark')
     const headerBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'
     const borderColor = `${accent}22`
-
-    const videoRef = useRef<HTMLVideoElement>(null)
-    const [playing, setPlaying] = useState(false)
-    const [expanded, setExpanded] = useState(false)
 
     const togglePlay = () => {
         if (!videoRef.current) return
