@@ -160,68 +160,10 @@ const SocialMediaLinks: React.FC<SocialMediaLinksProps> = ({ user, cardStyle }) 
                     )
                 })}
 
-                {/* Video */}
-                {user?.videoUrl && (
-                    <motion.button
-                        onClick={() => setModalOpen(true)}
-                        aria-label="Watch Video"
-                        initial={{ opacity: 0, scale: 0.65 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.72 + socialLinks.length * 0.04, duration: 0.32 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="group flex flex-col items-center gap-1.5"
-                    >
-                        <div className={`w-full aspect-square rounded-2xl border flex items-center justify-center transition-all duration-200 ${cardBg}`}
-                            style={{ padding: '22%' }}>
-                            <FaPlayCircle className="w-full h-full text-amber-500/70 group-hover:text-amber-400 transition-colors" />
-                        </div>
-                        <span className={`text-[9px] font-medium transition-colors ${labelColor}`}>Video</span>
-                    </motion.button>
-                )}
+
             </div>
 
-            {/* ── Video Modal ── */}
-            <AnimatePresence>
-                {isModalOpen && createPortal(
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 flex items-center justify-center z-[9999] p-4"
-                        style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}
-                        onClick={() => setModalOpen(false)}
-                    >
-                        <motion.div
-                            initial={{ scale: 0.88, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.88, opacity: 0, y: 20 }}
-                            transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
-                            className="relative w-full max-w-xl rounded-3xl overflow-hidden border border-white/[0.08]"
-                            style={{ background: '#0f0f0f', boxShadow: '0 32px 80px rgba(0,0,0,0.85)' }}
-                            onClick={e => e.stopPropagation()}
-                        >
-                            <div className="absolute top-0 inset-x-0 h-px pointer-events-none"
-                                style={{ background: 'linear-gradient(90deg, transparent, rgba(245,158,11,0.5), transparent)' }} />
 
-                            <button
-                                onClick={() => setModalOpen(false)}
-                                className="absolute top-4 right-4 z-10 w-9 h-9 rounded-xl border border-white/[0.08] bg-white/[0.06] hover:bg-white/[0.1] flex items-center justify-center text-gray-400 hover:text-white transition-all"
-                            >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-
-                            <div className="p-5">
-                                <video controls autoPlay className="w-full rounded-2xl max-h-[75vh]">
-                                    <source src={user?.videoUrl} type="video/mp4" />
-                                </video>
-                            </div>
-                        </motion.div>
-                    </motion.div>,
-                    document.body
-                )}
-            </AnimatePresence>
         </div>
     )
 }
