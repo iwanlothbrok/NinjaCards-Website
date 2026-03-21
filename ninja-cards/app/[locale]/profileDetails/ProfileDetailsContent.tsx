@@ -21,6 +21,9 @@ import {
     resolveCardStyle,
 } from "../../../utils/cardTheme";
 import "cropperjs/dist/cropper.css";
+import MapPreview from "../components/profileDetails/MapPreview";
+import BioPreview from "../components/profileDetails/BioPreview";
+import VideoBio from "../components/profileDetails/VideoBio";
 
 interface Alert { message: string; title: string; color: string }
 
@@ -257,6 +260,32 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
                 </motion.div>
             </div>
 
+
+            {currentUser.bio && (
+                <motion.div className="mt-5"
+                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.66, duration: 0.45 }}>
+                    <BioPreview user={currentUser} cardStyle={cardStyle} />
+                </motion.div>
+            )}
+
+            {(currentUser as any).videoUrl && (
+                <motion.div className="mt-5"
+                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.60, duration: 0.45 }}>
+                    <VideoBio user={currentUser} cardStyle={cardStyle} />
+                </motion.div>
+            )}
+
+            {((user as any)?.street1 || (user as any)?.city) && (
+                <motion.div className="mt-5"
+                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.62, duration: 0.45 }}>
+                    <MapPreview user={currentUser} cardStyle={cardStyle} />
+                </motion.div>
+            )}
+
+
             {/* Background / Theme Selector (owner only) */}
             {user?.id === currentUser?.id && (
                 <motion.div
@@ -274,7 +303,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             {/* Branding footer */}
             <div className="flex flex-col items-center pb-8 pt-2 gap-1">
                 <div className="w-6 h-px" style={{ background: `${cardStyle.textPrimary}15` }} />
-                <p className="text-[8px] tracking-[0.24em] uppercase font-bold pt-2"
+                <p className="text-[14px] tracking-[0.24em] uppercase font-bold pt-2"
                     style={{ color: `${cardStyle.textPrimary}18` }}>
                     Powered by Ninja Card
                 </p>
