@@ -36,6 +36,8 @@ export const routing = defineRouting({
         '/profile/cover': '/profile/cover',
         '/profile/billing': '/profile/billing',
         '/profile/delete': '/profile/delete',
+        '/profile/optimizeProfile': '/profile/optimizeProfile',
+        '/profile/googleWallet': '/profile/googleWallet',
         // '/profileDetails/[id]': '/profileDetails/[id]',
 
         '/products/cards': '/products/cards',

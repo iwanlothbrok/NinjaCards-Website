@@ -386,6 +386,7 @@
     "title": "Управление на профила",
     "subtitle": "Управлявайте профила и настройките си лесно.",
     "moreOptions": "Настройте профила си и разгледайте още опции",
+    "greeting": "Здравей",
     "tabs": {
       "changePassword": {
         "label": "Смяна на парола",
@@ -458,6 +459,14 @@
       "billing": {
         "label": "Плащане и фактуриране",
         "desc": "Управлявайте вашите плащания и фактури."
+      },
+      "optimize": {
+        "label": "AI - Оптимизация на профила",
+        "desc": "Получете препоръки за оптимизация на профила си."
+      },
+      "googleWallet": {
+        "label": "Google Wallet",
+        "desc": "Добави профила си към вашия Google Wallet."
       }
     },
     "needId": "Изисква се ID на профила"
@@ -671,6 +680,9 @@
   "ProfileQR": {
     "noQr": "Няма наличен QR код.",
     "heading": "QR код на профила",
+    "scanHint": "Сканирай за да отвориш профила",
+    "downloaded": "Изтеглено!",
+    "shared": "Споделено!",
     "subtitle": "Изтеглете или споделете своя QR код, за да улесните достъпа до вашата дигитална визитка.",
     "alt": {
       "profileImage": "Профилна снимка на {{name}}",
@@ -2362,6 +2374,100 @@
     },
     "errors": {
       "generic": "Нещо се обърка. Опитай отново."
+    }
+  },
+  "changelog": {
+    "badge": "Changelog",
+    "title": "Нови функции",
+    "titleAccent": "& Промени",
+    "description": "Всичко ново в Ninja Card — функции, подобрения и AI интеграции.",
+    "stats": {
+      "versions": "версии",
+      "changes": "промени",
+      "aiFeatures": "AI функции"
+    },
+    "changes": "промени",
+    "latest": "Последна",
+    "footer": "Ninja Card",
+    "tags": {
+      "AI": "AI",
+      "newFeature": "Нова функция",
+      "improvement": "Подобрение",
+      "card": "Визитка",
+      "dashboard": "Dashboard"
+    },
+    "releases": {
+      "v25": {
+        "label": "AI Edition",
+        "highlight": "Изкуственият интелект влиза в Ninja Card",
+        "date": "Март 2026",
+        "changes": [
+          "AI Bio Generator — генерира 3 варианта на bio на BG и EN с анализ на профила",
+          "AI Profile Optimizer — анализира профила и дава конкретни препоръки с score 0-100",
+          "AI Follow-up Generator — генерира персонализиран имейл след получен лийд с 1 клик",
+          "AI Lead Qualifier — категоризира лийдове автоматично (🔥 Горещ / 🟡 Топъл / ❄️ Студен)",
+          "AI Weekly Digest — персонализиран седмичен отчет на имейл с AI анализ",
+          "AI A/B Tester — генерира варианти за позиция и bio с визуален preview преди/след",
+          "Video Bio — видео представяне директно на визитката с play/pause overlay",
+          "Bio секция — текстово представяне с \"Прочети повече\" на визитката",
+          "Карта с местоположение — автоматично показва адреса на клона",
+          "Send Email бутон — отваря имейл клиента с pre-filled съобщение",
+          "Google Wallet — персонализиране на фон с готови теми и custom цвят",
+          "Changelog страница — история на всички версии и промени",
+          "Нов дизайн на Video Upload страницата",
+          "Нов дизайн на Google Wallet страницата с live preview",
+          "BG/EN локализация на Google Wallet картата"
+        ]
+      },
+      "v24": {
+        "label": "HubSpot & Analytics",
+        "highlight": "Интеграция с HubSpot и подобрен export",
+        "date": "Февруари 2026",
+        "changes": [
+          "HubSpot интеграция — синхронизирай лийдове директно в HubSpot CRM",
+          "Bulk sync — синхронизирай всички лийдове с един клик",
+          "Premium Excel export — .xlsx с Summary BI sheet, KPI карти и conversion rate",
+          "Месечен филтър — анализ на лийдове и посещения по период",
+          "Server-side pagination — 1700+ служители без забавяне",
+          "Admin users panel — нов дизайн с търсене, сортиране и action бутони"
+        ]
+      },
+      "v23": {
+        "label": "Profile & Leads",
+        "highlight": "Нов дизайн на профила и управление на лийдове",
+        "date": "Януари 2026",
+        "changes": [
+          "Нов дизайн на leads страницата — тъмен, amber акцент, search и sort",
+          "Delete акаунт — пълно изтриване с каскаден cleanup на всички данни",
+          "Card theme system — персонализирани цветове с JSON theme engine",
+          "Cover image — качване и crop на корица на визитката",
+          "isDirect mode — автоматично изтегляне на VCF при сканиране",
+          "CSV export на лийдове"
+        ]
+      },
+      "v22": {
+        "label": "Dashboard",
+        "highlight": "Аналитичен dashboard за всички потребители",
+        "date": "Декември 2025",
+        "changes": [
+          "Dashboard с посещения, изтегляния, споделяния и кликове",
+          "DashboardEvent model — event-based tracking за точна аналитика",
+          "Admin overview — анализ на всички 1700+ потребители",
+          "Conversion rate calculator — лийдове / посещения",
+          "Регионална аналитика в Excel export"
+        ]
+      },
+      "v21": {
+        "label": "Leads System",
+        "highlight": "Система за събиране и управление на лийдове",
+        "date": "Ноември 2025",
+        "changes": [
+          "Lead форма на визитката — събира контактни данни от посетители",
+          "Subscribed model — база данни за лийдове с GDPR съгласие",
+          "Нотификации при нов лийд",
+          "Message modal — преглед на съобщения от лийдове"
+        ]
+      }
     }
   }
 }

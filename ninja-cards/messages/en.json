@@ -379,6 +379,7 @@
     "title": "Profile Management",
     "subtitle": "Manage your profile and settings easily.",
     "moreOptions": "Set up your profile and explore more options",
+    "greeting": "Hello",
     "tabs": {
       "delete": {
         "label": "Delete Profile",
@@ -451,6 +452,14 @@
       "billing": {
         "label": "Billing & Payments",
         "desc": "Manage your billing and payments."
+      },
+      "optimize": {
+        "label": "AI - Profile Optimization",
+        "desc": "Get recommendations to optimize your profile."
+      },
+      "googleWallet": {
+        "label": "Google Wallet",
+        "desc": "Add your profile to your Google Wallet."
       }
     },
     "needId": "Profile ID is required"
@@ -665,6 +674,9 @@
     "noQr": "No QR code available.",
     "heading": "Profile QR Code",
     "subtitle": "Download or share your QR code to easily access your digital business card.",
+    "shared": "Shared!",
+    "downloaded": "Downloaded!",
+    "scanHint": "Scan to open profile",
     "alt": {
       "profileImage": "{{name}}'s profile image",
       "qr": "QR code"
@@ -2356,6 +2368,100 @@
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
+    }
+  },
+  "changelog": {
+    "badge": "Changelog",
+    "title": "New Features",
+    "titleAccent": "& Updates",
+    "description": "Everything new in Ninja Card — features, improvements and AI integrations.",
+    "stats": {
+      "versions": "versions",
+      "changes": "updates",
+      "aiFeatures": "AI features"
+    },
+    "changes": "updates",
+    "latest": "Latest",
+    "footer": "Ninja Card",
+    "tags": {
+      "AI": "AI",
+      "newFeature": "New Feature",
+      "improvement": "Improvement",
+      "card": "Card",
+      "dashboard": "Dashboard"
+    },
+    "releases": {
+      "v25": {
+        "label": "AI Edition",
+        "highlight": "Artificial intelligence comes to Ninja Card",
+        "date": "March 2026",
+        "changes": [
+          "AI Bio Generator — generates 3 bio variants in BG and EN with profile analysis",
+          "AI Profile Optimizer — analyzes the profile and gives specific recommendations with a 0-100 score",
+          "AI Follow-up Generator — generates a personalized email after receiving a lead with 1 click",
+          "AI Lead Qualifier — automatically categorizes leads (🔥 Hot / 🟡 Warm / ❄️ Cold)",
+          "AI Weekly Digest — personalized weekly email report with AI analysis",
+          "AI A/B Tester — generates variants for position and bio with visual before/after preview",
+          "Video Bio — video presentation directly on the card with play/pause overlay",
+          "Bio section — text presentation with 'Read more' on the card",
+          "Location map — automatically shows the branch address",
+          "Send Email button — opens the email client with a pre-filled message",
+          "Google Wallet — customize background with preset themes and custom color",
+          "Changelog page — history of all versions and changes",
+          "Redesigned Video Upload page",
+          "Redesigned Google Wallet page with live preview",
+          "BG/EN localization of the Google Wallet card"
+        ]
+      },
+      "v24": {
+        "label": "HubSpot & Analytics",
+        "highlight": "HubSpot integration and improved export",
+        "date": "February 2026",
+        "changes": [
+          "HubSpot integration — sync leads directly to HubSpot CRM",
+          "Bulk sync — sync all leads with one click",
+          "Premium Excel export — .xlsx with Summary BI sheet, KPI cards and conversion rate",
+          "Monthly filter — analyze leads and visits by period",
+          "Server-side pagination — 1700+ employees without lag",
+          "Admin users panel — new design with search, sort and action buttons"
+        ]
+      },
+      "v23": {
+        "label": "Profile & Leads",
+        "highlight": "New profile design and lead management",
+        "date": "January 2026",
+        "changes": [
+          "New leads page design — dark, amber accent, search and sort",
+          "Delete account — full deletion with cascading cleanup of all data",
+          "Card theme system — customizable colors with JSON theme engine",
+          "Cover image — upload and crop a card cover image",
+          "isDirect mode — automatic VCF download on scan",
+          "CSV export of leads"
+        ]
+      },
+      "v22": {
+        "label": "Dashboard",
+        "highlight": "Analytics dashboard for all users",
+        "date": "December 2025",
+        "changes": [
+          "Dashboard with visits, downloads, shares and clicks",
+          "DashboardEvent model — event-based tracking for accurate analytics",
+          "Admin overview — analysis of all 1700+ users",
+          "Conversion rate calculator — leads / visits",
+          "Regional analytics in Excel export"
+        ]
+      },
+      "v21": {
+        "label": "Leads System",
+        "highlight": "System for collecting and managing leads",
+        "date": "November 2025",
+        "changes": [
+          "Lead form on the card — collects contact data from visitors",
+          "Subscribed model — lead database with GDPR consent",
+          "Notifications for new leads",
+          "Message modal — view messages from leads"
+        ]
+      }
     }
   }
 }
