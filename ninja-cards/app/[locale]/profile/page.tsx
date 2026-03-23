@@ -48,10 +48,10 @@ const Icons: Record<string, React.FC<{ className?: string; style?: React.CSSProp
   arrow: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>,
 }
 
-type TabDef = { labelKey: string; icon: string; accent: string; href?: Href; buildHref?: (id: string) => Href }
+type TabDef = { labelKey: string; icon: string; accent: string; href?: Href; buildHref?: (id: string, slug?: string) => Href | string }
 
 const BIG_TABS: TabDef[] = [
-  { labelKey: 'businessCard', icon: 'idCard', accent: '#f59e0b', buildHref: (id) => ({ pathname: '/profileDetails/[id]', params: { id } } as const) },
+  { labelKey: 'businessCard', icon: 'idCard', accent: '#f59e0b', buildHref: (id, slug) => slug ? `/p/${slug}` : ({ pathname: '/profileDetails/[id]', params: { id } } as const) },
   { labelKey: 'clients', icon: 'user', accent: '#60a5fa', href: '/profile/subscribed' },
   { labelKey: 'analyse', icon: 'chart', accent: '#4ade80', href: '/analyse' },
   { labelKey: 'links', icon: 'link', accent: '#a78bfa', href: '/profile/links' },
@@ -90,7 +90,7 @@ export default function ProfileTabs() {
   }, [loading, user, router])
 
   const go = (tab: TabDef) => {
-    const href = tab.href ?? (userId && tab.buildHref ? tab.buildHref(userId) : null)
+    const href = tab.href ?? (userId && tab.buildHref ? tab.buildHref(userId, user?.slug) : null)
     if (!href) return
     setNavigating(true)
     router.push(href)

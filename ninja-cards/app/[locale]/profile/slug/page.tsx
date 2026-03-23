@@ -70,7 +70,7 @@ export default function SlugPage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify({ slug: slug.trim().toLowerCase() }),
+                body: JSON.stringify({ userId: user!.id, slug: slug.trim().toLowerCase() }),
             });
 
             const result = await res.json();
