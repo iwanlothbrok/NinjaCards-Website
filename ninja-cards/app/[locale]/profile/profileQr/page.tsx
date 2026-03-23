@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import { BASE_API_URL } from "@/utils/constants";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -39,6 +39,67 @@ export default function QRCodeDownload() {
     const [loading, setLoading] = useState(false);
     const [downloaded, setDownloaded] = useState(false);
     const [shared, setShared] = useState(false);
+    const [slug, setSlug] = useState(user?.slug ?? "");
+    const [slugStatus, setSlugStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+    const [slugSaving, setSlugSaving] = useState(false);
+    const [slugAlert, setSlugAlert] = useState<string | null>(null);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    React.useEffect(() => {
+        if (user?.slug) setSlug(user.slug);
+    }, [user?.slug]);
+
+    React.useEffect(() => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+
+        if (slug.length < 3) { setSlugStatus("idle"); return; }
+        if (slug === user?.slug) { setSlugStatus("available"); return; }
+
+        setSlugStatus("checking");
+        debounceRef.current = setTimeout(async () => {
+            try {
+                const params = new URLSearchParams({ slug });
+                if (user?.id) params.set("excludeId", user.id);
+                const res = await fetch(`${BASE_API_URL}/api/profile/checkSlug?${params}`);
+                const data = await res.json();
+                setSlugStatus(data.available ? "available" : "taken");
+            } catch { setSlugStatus("idle"); }
+        }, 450);
+
+        return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+    }, [slug, user?.id, user?.slug]);
+
+    const saveSlugAndRegenerate = async () => {
+        if (!user) return;
+        setSlugSaving(true);
+        setSlugAlert(null);
+        try {
+            // 1. Save slug
+            const slugRes = await fetch(`${BASE_API_URL}/api/profile/updateSlug`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ slug: slug.trim().toLowerCase() }),
+            });
+            const slugData = await slugRes.json();
+            if (!slugRes.ok) {
+                setSlugAlert(slugData?.message ?? "Грешка при запис на slug");
+                return;
+            }
+
+            // 2. Regenerate QR with new slug URL
+            await generateQRCode();
+
+            const updated = { ...user, slug: slugData.slug ?? null };
+            localStorage.setItem("user", JSON.stringify(updated));
+            setUser(updated as any);
+            setSlugAlert("✓ Slug и QR кодът са обновени!");
+        } catch {
+            setSlugAlert("Грешка при запис");
+        } finally {
+            setSlugSaving(false);
+        }
+    };
 
     const generateQRCode = async () => {
         if (!user) return;
@@ -278,6 +339,40 @@ export default function QRCodeDownload() {
                             }
                         </AnimatePresence>
                         {shared ? (t("shared") ?? "Shared!") : t("actions.share")}
+                    </button>
+                </motion.div>
+
+                {/* ── Slug field ── */}
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+                    className="rounded-2xl border border-white/[0.055] p-5 space-y-3"
+                    style={{ background: 'rgba(255,255,255,0.03)' }}>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-600">Персонален линк</p>
+                    <div className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 transition-colors ${slugStatus === "available" ? "border-green-500/40 bg-green-500/5" : slugStatus === "taken" ? "border-red-500/40 bg-red-500/5" : "border-white/[0.07] bg-black/30"}`}>
+                        <span className="text-gray-600 text-xs whitespace-nowrap">ninjacardsnfc.com/bg/p/</span>
+                        <input
+                            type="text"
+                            value={slug}
+                            onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                            placeholder="ivan-petrov"
+                            className="flex-1 bg-transparent text-white text-sm focus:outline-none min-w-0"
+                        />
+                        {slugStatus === "checking" && <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-500 border-t-amber-400 animate-spin flex-shrink-0" />}
+                        {slugStatus === "available" && <span className="text-green-400 text-xs flex-shrink-0">✓</span>}
+                        {slugStatus === "taken" && <span className="text-red-400 text-xs flex-shrink-0">✗</span>}
+                    </div>
+                    {slugStatus === "taken" && <p className="text-xs text-red-400">Вече се използва. Избери друг.</p>}
+                    {slugStatus === "available" && slug !== user?.slug && <p className="text-xs text-green-500">Свободен!</p>}
+                    {slugAlert && (
+                        <p className={`text-xs ${slugAlert.startsWith("✓") ? "text-emerald-400" : "text-red-400"}`}>
+                            {slugAlert}
+                        </p>
+                    )}
+                    <button
+                        onClick={saveSlugAndRegenerate}
+                        disabled={slugSaving || slugStatus !== "available"}
+                        className="w-full py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                        style={{ background: 'rgba(245,158,11,0.15)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.25)' }}>
+                        {slugSaving ? "Запазване..." : "Запази slug и обнови QR"}
                     </button>
                 </motion.div>
 
