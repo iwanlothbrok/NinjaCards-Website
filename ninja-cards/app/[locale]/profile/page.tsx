@@ -38,6 +38,12 @@ const Icons: Record<string, React.FC<{ className?: string; style?: React.CSSProp
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 14h3" />
     </svg>
   ),
+  at: (p) => (
+    <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <circle cx="12" cy="12" r="4" />
+      <path strokeLinecap="round" d="M16 12a4 4 0 10-4 4c1 0 2-.5 2-1.5V12m2 0c0 4-8 4-8 0a8 8 0 1116 0v1.5c0 1.5-1 2.5-2.5 2.5" />
+    </svg>
+  ),
 
   arrow: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>,
 }
@@ -65,6 +71,7 @@ const SETTINGS_TABS: TabDef[] = [
   { labelKey: "video", icon: "video", accent: "#9ca3af", href: "/profile/video" },
   { labelKey: "optimize", icon: "optimize", accent: "#9ca3af", href: "/profile/optimizeProfile" },
   { labelKey: "googleWallet", icon: "googleWallet", accent: "#9ca3af", href: "/profile/googleWallet" },
+  { labelKey: "slug", icon: "at", accent: "#9ca3af", href: "/profile/slug" },
   // { labelKey: 'changelog', icon: 'changelog', accent: '#9ca3af', href: '/changelog' },
 ]
 
