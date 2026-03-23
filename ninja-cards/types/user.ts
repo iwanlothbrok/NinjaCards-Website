@@ -43,12 +43,13 @@ export interface User {
     website: string;
     pdf: string;
     coverImage: string;
+    slug?: string;
     isDirect: boolean;
-    video: {
-        data: {
-            data: ArrayBuffer | Uint8Array;
-        }; type?: string; // Optional MIME type
-    } | null;
+    // video: {
+    //     data: {
+    //         data: ArrayBuffer | Uint8Array;
+    //     }; type?: string; // Optional MIME type
+    // } | null;
     videoUrl: string;
     language: string;
     subscription: Subscription | null;

@@ -460,6 +460,10 @@
       "googleWallet": {
         "label": "Google Wallet",
         "desc": "Add your profile to your Google Wallet."
+      },
+      "slug": {
+        "label": "Personal link",
+        "desc": "Set a short URL for your digital card."
       }
     },
     "needId": "Profile ID is required"

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -21,6 +21,9 @@ const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD; // ✅ Read from 
 const schema = yup.object().shape({
   name: yup.string().required("Името е задължително"),
   email: yup.string().email("Невалиден имейл").required("Имейлът е задължителен"),
+  slug: yup.string()
+    .matches(/^[a-z0-9-]{3,40}$/, "Само малки букви, цифри и тирета (3-40 символа)")
+    .optional(),
   password: yup.string().min(6, "Паролата трябва да е поне 6 символа").required("Паролата е задължителна"),
   confirmPassword: yup.string()
     .oneOf([yup.ref("password"), ""], "Паролите трябва да съвпадат")
@@ -33,13 +36,35 @@ const Register: React.FC = () => {
   const [adminPassword, setAdminPassword] = useState("");
 
   // ✅ react-hook-form setup
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
   const [alert, setAlert] = useState<Alert | null>(null);
+  const [slugStatus, setSlugStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const router = useRouter();
   const { login } = useAuth();
+
+  const watchedSlug = watch("slug") ?? "";
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    const s = watchedSlug.trim().toLowerCase();
+    if (s.length < 3 || !/^[a-z0-9-]+$/.test(s)) { setSlugStatus("idle"); return; }
+
+    setSlugStatus("checking");
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`${BASE_API_URL}/api/profile/checkSlug?slug=${s}`);
+        const data = await res.json();
+        setSlugStatus(data.available ? "available" : "taken");
+      } catch { setSlugStatus("idle"); }
+    }, 450);
+
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [watchedSlug]);
 
   // ✅ Handle Admin Authentication
   const handleAuthSubmit = (e: React.FormEvent) => {
@@ -172,6 +197,31 @@ const Register: React.FC = () => {
                   placeholder="name@company.com"
                   {...register("email")}
                 />
+              </div>
+
+              <div>
+                <label htmlFor="slug" className="block mb-3 text-base font-medium text-white">
+                  Персонален линк (slug) <span className="text-gray-400 font-normal text-sm">— незадължително</span>
+                </label>
+                <div className={`flex items-center gap-2 border rounded-lg px-3 transition-colors ${slugStatus === "available" ? "bg-gray-700 border-green-500/50" : slugStatus === "taken" ? "bg-gray-700 border-red-500/50" : "bg-gray-700 border-gray-600"}`}>
+                  <span className="text-gray-400 text-sm whitespace-nowrap">ninjacardsnfc.com/bg/p/</span>
+                  <input
+                    type="text"
+                    id="slug"
+                    className="flex-1 bg-transparent text-white text-base py-3 focus:outline-none"
+                    placeholder="ivan-petrov"
+                    {...register("slug")}
+                    onInput={(e) => {
+                      (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+                    }}
+                  />
+                  {slugStatus === "checking" && <div className="w-4 h-4 rounded-full border-2 border-gray-500 border-t-white animate-spin flex-shrink-0" />}
+                  {slugStatus === "available" && <span className="text-green-400 flex-shrink-0">✓</span>}
+                  {slugStatus === "taken" && <span className="text-red-400 flex-shrink-0">✗</span>}
+                </div>
+                {slugStatus === "taken" && <p className="text-red-400 text-sm mt-1">Вече се използва. Избери друг.</p>}
+                {slugStatus === "available" && <p className="text-green-400 text-sm mt-1">Свободен!</p>}
+                {errors.slug && slugStatus === "idle" && <p className="text-red-400 text-sm mt-1">{errors.slug.message}</p>}
               </div>
 
               <div>

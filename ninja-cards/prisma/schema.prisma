@@ -52,6 +52,7 @@ model User {
   tripadvisor   String?
   pdf           String?  @db.LongText
   coverImage    String?  @db.LongText
+  slug          String?  @unique
   isDirect      Boolean  @default(false)
   dashboard     Dashboard?
   videoUrl String?  @db.LongText 

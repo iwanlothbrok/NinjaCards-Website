@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         if (req.method === 'POST') {
-            const { name, email, password } = req.body;
+            const { name, email, password, slug } = req.body;
 
             console.log('Request body:', req.body);
 
@@ -30,6 +30,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(400).json({ error: 'User already exists' });
             }
 
+            // Validate slug if provided
+            const normalizedSlug = slug?.trim().toLowerCase() || null;
+            if (normalizedSlug) {
+                if (!/^[a-z0-9-]{3,40}$/.test(normalizedSlug)) {
+                    return res.status(400).json({ error: 'Невалиден slug формат' });
+                }
+                const slugTaken = await prisma.user.findUnique({ where: { slug: normalizedSlug } });
+                if (slugTaken) {
+                    return res.status(400).json({ error: 'Slug вече се използва' });
+                }
+            }
+
             // Hash the password
             const hashedPassword = await hash(password, 10);
 
@@ -39,10 +51,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     name,
                     email,
                     password: hashedPassword,
+                    ...(normalizedSlug ? { slug: normalizedSlug } : {}),
                 },
             });
 
-            const qrCodeUrl = `https://www.ninjacardsnfc.com/profileDetails/${user.id}`;
+            const qrCodeUrl = normalizedSlug
+                ? `https://www.ninjacardsnfc.com/bg/p/${normalizedSlug}`
+                : `https://www.ninjacardsnfc.com/bg/profileDetails/${user.id}`;
 
             // Generate the QR code from the URL
             const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);

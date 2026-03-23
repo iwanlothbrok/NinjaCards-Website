@@ -467,6 +467,10 @@
       "googleWallet": {
         "label": "Google Wallet",
         "desc": "Добави профила си към вашия Google Wallet."
+      },
+      "slug": {
+        "label": "Персонален линк",
+        "desc": "Задай кратък URL към своята визитка."
       }
     },
     "needId": "Изисква се ID на профила"
