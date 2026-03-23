@@ -1,11 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
 const SLUG_REGEX = /^[a-z0-9-]{3,40}$/;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (cors(req, res)) return;
+
     if (req.method !== 'GET') {
         return res.status(405).end();
     }
