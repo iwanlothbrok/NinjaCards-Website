@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useRouter, type Href } from '@/navigation';
+import { useRouter, type Href, usePathname } from '@/navigation';
+import { useRouter as useNextRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { useAuth } from '../context/AuthContext';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
@@ -81,6 +83,8 @@ export default function ProfileTabs() {
   const { user, loading } = useAuth()
   const t = useTranslations('ProfileTabs')
   const router = useRouter()
+  const nextRouter = useNextRouter()
+  const locale = useLocale()
   const userId = user?.id ? String(user.id) : null
   const [navigating, setNavigating] = React.useState(false)
 
@@ -93,7 +97,11 @@ export default function ProfileTabs() {
     const href = tab.href ?? (userId && tab.buildHref ? tab.buildHref(userId, user?.slug) : null)
     if (!href) return
     setNavigating(true)
-    router.push(href)
+    if (typeof href === 'string' && href.startsWith('/p/')) {
+      nextRouter.push(`/${locale}${href}`)
+    } else {
+      router.push(href as Href)
+    }
   }
 
   const firstName = user
