@@ -17,10 +17,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
             where: { id: userId },
             select: { email: true, password: true }
         });
+
+        if (!user) {
+            user = await prisma.user.findUnique({
+                where: { slug: userId },
+                select: { email: true, password: true }
+            });
+        }
 
         if (!user) return res.status(404).json({ error: "Потребителят не съществува" });
 
