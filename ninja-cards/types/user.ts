@@ -45,7 +45,11 @@ export interface User {
     coverImage: string;
     slug?: string;
     isDirect: boolean;
-    video?: string;
+    video: {
+        data: {
+            data: ArrayBuffer | Uint8Array;
+        }; type?: string; // Optional MIME type
+    } | null;
     videoUrl: string;
     language: string;
     subscription: Subscription | null;
