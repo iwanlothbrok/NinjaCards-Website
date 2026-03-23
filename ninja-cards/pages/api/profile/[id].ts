@@ -22,12 +22,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        // Query the user by UUID
-        const user = await prisma.user.findUnique({
-            where: {
-                id: userId, // Now `userId` is safely a string
-            }
-        });
+        let user = await prisma.user.findUnique({ where: { id: userId } });
+
+        if (!user) {
+            user = await prisma.user.findUnique({ where: { slug: userId } });
+        }
 
         if (!user) {
             return res.status(404).json({ message: 'Потребителят не е намерен' });
