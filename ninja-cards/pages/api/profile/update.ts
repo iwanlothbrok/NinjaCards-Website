@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method !== "PUT") return res.status(405).json({ error: "Методът не е разрешен" });
 
     try {
-        const { userId, email, password, confirmPassword } = req.body;
+        const { userId, email, password, confirmPassword, slug } = req.body;
 
         if (!userId || !email || !password || !confirmPassword) {
             return res.status(400).json({ error: "Всички полета са задължителни" });
@@ -31,15 +31,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(404).json({ error: "Потребителят не съществува" });
         }
 
-        // if (existingUser.email || existingUser.password) {
-        //     return res.status(403).json({ error: "Акаунтът вече има зададени имейл и парола" });
-        // }
+        // Validate and check slug if provided
+        const normalizedSlug = slug?.trim().toLowerCase() || null;
+        if (normalizedSlug) {
+            if (!/^[a-z0-9-]{3,40}$/.test(normalizedSlug)) {
+                return res.status(400).json({ error: "Невалиден slug формат" });
+            }
+            const slugTaken = await prisma.user.findUnique({
+                where: { slug: normalizedSlug },
+                select: { id: true },
+            });
+            if (slugTaken && slugTaken.id !== userId) {
+                return res.status(409).json({ error: "Slug вече се използва" });
+            }
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const updatedUser = await prisma.user.update({
             where: { id: userId },
-            data: { email, password: hashedPassword },
+            data: {
+                email,
+                password: hashedPassword,
+                ...(normalizedSlug ? { slug: normalizedSlug } : {}),
+            },
         });
 
         return res.status(200).json({ success: true, user: updatedUser });

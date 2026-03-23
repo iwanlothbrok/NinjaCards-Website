@@ -1247,6 +1247,7 @@
   },
   "Register": {
     "title": "Add email and password",
+    "subtitle": "Set your email, password and personal link",
     "fields": {
       "email": "Email",
       "password": "Password",
