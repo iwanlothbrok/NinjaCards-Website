@@ -22,14 +22,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ error: "Паролите не съвпадат" });
         }
 
-        const existingUser = await prisma.user.findUnique({
+        let existingUser = await prisma.user.findUnique({
             where: { id: userId },
-            select: { email: true, password: true },
+            select: { id: true, email: true, password: true },
         });
+
+        if (!existingUser) {
+            existingUser = await prisma.user.findUnique({
+                where: { slug: userId },
+                select: { id: true, email: true, password: true },
+            });
+        }
 
         if (!existingUser) {
             return res.status(404).json({ error: "Потребителят не съществува" });
         }
+
+        // Use the real DB id for subsequent operations
+        const resolvedId = existingUser.id;
 
         // Validate and check slug if provided
         const normalizedSlug = slug?.trim().toLowerCase() || null;
@@ -41,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 where: { slug: normalizedSlug },
                 select: { id: true },
             });
-            if (slugTaken && slugTaken.id !== userId) {
+            if (slugTaken && slugTaken.id !== resolvedId) {
                 return res.status(409).json({ error: "Slug вече се използва" });
             }
         }
@@ -49,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const updatedUser = await prisma.user.update({
-            where: { id: userId },
+            where: { id: resolvedId },
             data: {
                 email,
                 password: hashedPassword,
