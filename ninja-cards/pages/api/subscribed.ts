@@ -3,6 +3,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client';
 import cors from '@/utils/cors';
+import { getNextFollowUpAt } from '@/lib/leadFollowUp';
 
 const prisma = new PrismaClient();
 
@@ -24,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || ''
         const userAgent = req.headers['user-agent'] || ''
+        const createdAt = new Date();
 
         try {
             const lead = await prisma.subscribed.create({
@@ -34,8 +36,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     phone,
                     message,
                     isAccepted,
+                    createdAt,
                     ipAddress: Array.isArray(ip) ? ip[0] : ip,
                     userAgent,
+                    followUpStage: 0,
+                    nextFollowUpAt: getNextFollowUpAt(createdAt, 0),
                 },
             });
             return res.status(200).json({ success: true, lead });
