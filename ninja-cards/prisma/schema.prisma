@@ -132,9 +132,15 @@ model Subscribed {
 
   createdAt   DateTime  @default(now())
   isAccepted  Boolean   @default(true)
+  followUpStage     Int       @default(0)
+  lastFollowUpSentAt DateTime?
+  nextFollowUpAt     DateTime?
+  followUpStopped    Boolean   @default(false)
 
   ipAddress   String?
   userAgent   String?
+
+  @@index([nextFollowUpAt, followUpStage, followUpStopped])
 }
 
 model Subscription {
