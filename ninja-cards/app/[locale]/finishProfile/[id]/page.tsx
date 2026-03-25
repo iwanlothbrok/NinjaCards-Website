@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -9,8 +9,6 @@ import * as yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { BASE_API_URL } from '@/utils/constants';
-
-type SlugStatus = 'idle' | 'checking' | 'available' | 'taken';
 
 type FormValues = {
     email: string;
@@ -53,11 +51,6 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
     const [showConfirm, setShowConfirm] = useState(false);
     const [step, setStep] = useState<'form' | 'done'>('form');
 
-    // Slug state
-    const [slug, setSlug] = useState('');
-    const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
-    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
     useEffect(() => {
         const checkUserData = async () => {
             if (!userId) return;
@@ -70,22 +63,6 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
         };
         checkUserData();
     }, [userId, router]);
-
-    useEffect(() => {
-        if (debounceRef.current) clearTimeout(debounceRef.current);
-        if (slug.length < 3) { setSlugStatus('idle'); return; }
-
-        setSlugStatus('checking');
-        debounceRef.current = setTimeout(async () => {
-            try {
-                const res = await fetch(`${BASE_API_URL}/api/profile/checkSlug?slug=${slug}`);
-                const data = await res.json();
-                setSlugStatus(data.available ? 'available' : 'taken');
-            } catch { setSlugStatus('idle'); }
-        }, 450);
-
-        return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-    }, [slug]);
 
     const showAlert = (message: string, title: string, color: Alert['color']) => {
         setAlert({ message, title, color });
@@ -104,7 +81,6 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
                     email: data.email,
                     password: data.password,
                     confirmPassword: data.confirmPassword,
-                    ...(slug && slugStatus === 'available' ? { slug } : {}),
                 }),
             });
 
@@ -127,7 +103,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
         background: 'radial-gradient(ellipse 100% 60% at 50% -10%, rgba(245,158,11,0.1) 0%, transparent 60%), #080A0F',
     };
 
-    // ── Success state ─────────────────────────────────────────────────────────
+    // Success state
     if (step === 'done') {
         return (
             <div className="min-h-screen flex items-center justify-center px-4" style={bgStyle}>
@@ -153,7 +129,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
         );
     }
 
-    // ── Main form ─────────────────────────────────────────────────────────────
+    // Main form
     return (
         <div className="min-h-screen flex items-center justify-center px-4 py-20" style={bgStyle}>
 
@@ -235,7 +211,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
                                     <input
                                         id="password"
                                         type={showPassword ? 'text' : 'password'}
-                                        placeholder="••••••••"
+                                        placeholder="********"
                                         {...register('password')}
                                         className={inputCls(!!errors.password) + ' pr-10'}
                                     />
@@ -252,7 +228,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
                                     <input
                                         id="confirmPassword"
                                         type={showConfirm ? 'text' : 'password'}
-                                        placeholder="••••••••"
+                                        placeholder="********"
                                         {...register('confirmPassword')}
                                         className={inputCls(!!errors.confirmPassword) + ' pr-10'}
                                     />
@@ -263,28 +239,6 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
                                 </div>
                             </Field>
 
-                            {/* Slug */}
-                            <div>
-                                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                                    Персонален линк <span className="text-gray-600 normal-case font-normal">— незадължително</span>
-                                </label>
-                                <div className={`flex items-center gap-1.5 rounded-xl border px-3 py-3 transition-colors ${slugStatus === 'available' ? 'border-green-500/40 bg-green-500/5' : slugStatus === 'taken' ? 'border-red-500/40 bg-red-500/5' : 'border-white/[0.08] bg-white/[0.03]'}`}>
-                                    <span className="text-gray-600 text-xs whitespace-nowrap">ninjacardsnfc.com/bg/p/</span>
-                                    <input
-                                        type="text"
-                                        value={slug}
-                                        onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                                        placeholder="ivan-petrov"
-                                        className="flex-1 bg-transparent text-white text-sm focus:outline-none min-w-0"
-                                    />
-                                    {slugStatus === 'checking' && <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-600 border-t-amber-400 animate-spin flex-shrink-0" />}
-                                    {slugStatus === 'available' && <span className="text-green-400 text-xs flex-shrink-0">✓</span>}
-                                    {slugStatus === 'taken' && <span className="text-red-400 text-xs flex-shrink-0">✗</span>}
-                                </div>
-                                {slugStatus === 'taken' && <p className="text-red-400 text-xs mt-1">Вече се използва. Избери друг.</p>}
-                                {slugStatus === 'available' && <p className="text-green-500 text-xs mt-1">Свободен!</p>}
-                                {slug.length > 0 && slug.length < 3 && <p className="text-gray-600 text-xs mt-1">Минимум 3 символа.</p>}
-                            </div>
 
                             {/* Divider */}
                             <div className="h-px bg-white/[0.05]" />
@@ -340,7 +294,7 @@ const RegisterPage = ({ params }: { params?: { id?: string } }) => {
 
 export default RegisterPage;
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// Helpers
 
 const inputCls = (hasError: boolean) =>
     `w-full rounded-xl bg-white/[0.04] border ${hasError ? 'border-red-500/50' : 'border-white/[0.08]'} text-white text-sm px-4 py-3 placeholder-gray-600 focus:outline-none focus:border-amber-500/40 focus:bg-white/[0.06] transition-all`;

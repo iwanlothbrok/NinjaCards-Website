@@ -73,7 +73,6 @@ const SETTINGS_TABS: TabDef[] = [
   { labelKey: "video", icon: "video", accent: "#9ca3af", href: "/profile/video" },
   { labelKey: "optimize", icon: "optimize", accent: "#9ca3af", href: "/profile/optimizeProfile" },
   { labelKey: "googleWallet", icon: "googleWallet", accent: "#9ca3af", href: "/profile/googleWallet" },
-  { labelKey: "slug", icon: "at", accent: "#9ca3af", href: "/profile/slug" },
   // { labelKey: 'changelog', icon: 'changelog', accent: '#9ca3af', href: '/changelog' },
 ]
 
