@@ -152,7 +152,7 @@ export default function QRCodeDownload() {
                 <div className="flex justify-center">
                     <button onClick={() => router.back()}
                         className="text-sm text-gray-600 hover:text-gray-400 transition-colors font-medium">
-                        <- {t("actions.back")}
+                        Back
                     </button>
                 </div>
             </div>
@@ -287,7 +287,7 @@ export default function QRCodeDownload() {
                     className="flex items-center justify-between">
                     <button onClick={() => router.back()}
                         className="text-sm text-gray-600 hover:text-gray-400 transition-colors font-medium">
-                        <- {t("actions.back")}
+                        Back
                     </button>
                     <button onClick={generateQRCode} disabled={loading}
                         className="text-sm text-amber-500/60 hover:text-amber-500 transition-colors font-semibold disabled:opacity-40 flex items-center gap-1.5">
