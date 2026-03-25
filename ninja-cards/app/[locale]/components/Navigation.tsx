@@ -41,10 +41,13 @@ function stripLocale(pathname: string | null | undefined): string {
   return p;
 }
 
-// True if on /profileDetails/[id]
+// True if on /profileDetails/[id] or /p/[slug]
 function isProfileDetailsPath(pathname: string | null | undefined): boolean {
   const path = stripLocale(pathname);
-  return /^\/profileDetails\/[^\/?#]+(?:[\/?#]|$)/.test(path);
+  return (
+    /^\/profileDetails\/[^\/?#]+(?:[\/?#]|$)/.test(path) ||
+    /^\/p\/[^\/?#]+(?:[\/?#]|$)/.test(path)
+  );
 }
 
 
