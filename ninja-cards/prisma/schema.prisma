@@ -58,6 +58,7 @@ model User {
   videoUrl String?  @db.LongText 
   language  String   @default("bg") 
   leads Subscribed[]  // one-to-many relation: user -> leads
+  crmDeals CRMDeal[]
   subscriptionId   String?        @unique
   subscription     Subscription?  @relation("UserSubscription")
   invoices         Invoice[]
@@ -136,11 +137,70 @@ model Subscribed {
   lastFollowUpSentAt DateTime?
   nextFollowUpAt     DateTime?
   followUpStopped    Boolean   @default(false)
+  source             String?   @default("profile")
+  sourceDetail       String?
+  tapsBeforeLead     Int       @default(1)
 
   ipAddress   String?
   userAgent   String?
+  crmDeal     CRMDeal?
 
   @@index([nextFollowUpAt, followUpStage, followUpStopped])
+}
+
+model CRMDeal {
+  id             String      @id @default(cuid())
+  userId         String
+  leadId         String?     @unique
+  title          String
+  stage          CRMStage    @default(NEW)
+  value          Float?
+  source         String?
+  sourceDetail   String?
+  taps           Int         @default(0)
+  leadCapturedAt DateTime?
+  contactedAt    DateTime?
+  meetingAt      DateTime?
+  closedAt       DateTime?
+  nextReminderAt DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  user           User        @relation(fields: [userId], references: [id])
+  lead           Subscribed? @relation(fields: [leadId], references: [id])
+  notes          CRMNote[]
+  tasks          CRMTask[]
+
+  @@index([userId, stage])
+  @@index([nextReminderAt])
+}
+
+model CRMNote {
+  id        String   @id @default(cuid())
+  dealId     String
+  body      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deal      CRMDeal  @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([dealId, createdAt])
+}
+
+model CRMTask {
+  id          String   @id @default(cuid())
+  dealId       String
+  title       String
+  completed   Boolean  @default(false)
+  dueAt       DateTime?
+  reminderAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  deal        CRMDeal  @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([dealId, completed])
+  @@index([reminderAt])
 }
 
 model Subscription {
@@ -210,6 +270,15 @@ enum WebhookEventStatus {
   processing
   processed
   failed
+}
+
+enum CRMStage {
+  NEW
+  CONTACTED
+  QUALIFIED
+  MEETING
+  WON
+  LOST
 }
 
 model WebhookEvent {

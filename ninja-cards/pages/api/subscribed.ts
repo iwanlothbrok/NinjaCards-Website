@@ -16,7 +16,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).json({ error: 'Method not allowed' })
     }
 
-    const { userId, name, email, phone, message, isAccepted = true } = req.body
+    const {
+        userId,
+        name,
+        email,
+        phone,
+        message,
+        isAccepted = true,
+        source,
+        sourceDetail,
+        tapsBeforeLead,
+    } = req.body
 
     if (!userId || !name) {
         return res.status(400).json({ error: 'Missing required fields: userId and name' })
@@ -37,6 +47,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     message,
                     isAccepted,
                     createdAt,
+                    source: typeof source === 'string' ? source : 'profile',
+                    sourceDetail: typeof sourceDetail === 'string' ? sourceDetail : null,
+                    tapsBeforeLead: typeof tapsBeforeLead === 'number' && tapsBeforeLead > 0 ? tapsBeforeLead : 1,
                     ipAddress: Array.isArray(ip) ? ip[0] : ip,
                     userAgent,
                     followUpStage: 0,

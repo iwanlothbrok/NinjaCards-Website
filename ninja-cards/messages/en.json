@@ -2468,5 +2468,175 @@
         ]
       }
     }
+  },
+  "conversionFoundation": {
+    "hero": {
+      "badge": "Sprint 1 Prototype",
+      "title": "Conversion Foundation",
+      "descriptionPrefix": "A separate internal concept page for the new profile flow with less noise, 3 strong CTAs, event tracking, lead source tracking and a follow-up cadence of",
+      "descriptionHighlightOne": "2 hours",
+      "descriptionHighlightTwo": "24 hours and 7 days",
+      "descriptionSuffix": ".",
+      "stats": {
+        "profile": {
+          "label": "The profile becomes",
+          "value": "A revenue surface"
+        },
+        "source": {
+          "label": "Lead source",
+          "value": "Clearly visible"
+        },
+        "followUp": {
+          "label": "Follow-up",
+          "value": "Automated"
+        }
+      }
+    },
+    "layout": {
+      "eyebrow": "Recommended Profile Layout",
+      "title": "Hero-first, CTA-first, trust-first",
+      "pill": "New structure",
+      "blocks": {
+        "hero": "Hero with 1 headline, 1 proof point and 3 clear CTAs",
+        "trustBar": "Trust bar: license, certificates, reviews, brands",
+        "solutions": "2-3 solutions instead of 12 chaotic links",
+        "booking": "Booking block with specific meeting types",
+        "magnet": "Lead magnet section with gated resource",
+        "proof": "Soft proof: recent wins, case snippets, social proof"
+      }
+    },
+    "ctaSection": {
+      "eyebrow": "3 Main CTA",
+      "title": "Every visit should lead to action",
+      "cardLabel": "CTA {number}",
+      "trackingTitle": "Tracking events",
+      "trackingDetail": "`cta_view`, `cta_click`, `cta_started`, `cta_completed`"
+    },
+    "ctas": {
+      "booking": {
+        "title": "Book a meeting",
+        "subtitle": "The fastest path from tap to conversation",
+        "stat": "31%",
+        "detail": "of clicks lead to a booked consultation"
+      },
+      "inquiry": {
+        "title": "Send an inquiry",
+        "subtitle": "For people who are not ready for a call yet",
+        "stat": "18%",
+        "detail": "leave a question or a specific need"
+      },
+      "resource": {
+        "title": "Get a resource",
+        "subtitle": "Gated checklist, calculator or guide",
+        "stat": "42%",
+        "detail": "enter the funnel through a lead magnet"
+      }
+    },
+    "tracking": {
+      "eyebrow": "Click Tracking",
+      "title": "What we measure from day one",
+      "northStarLabel": "North Star",
+      "northStarValue": "Visit -> Lead -> Meeting",
+      "frameworkTitle": "Minimum analytics framework",
+      "framework": {
+        "ctaCtr": "CTR by CTA and by source",
+        "scrollDepth": "Scroll depth to the booking section",
+        "touchpoints": "First touchpoint and last touchpoint",
+        "magnetConversion": "Conversion by lead magnet type",
+        "replyTime": "Time to first reply",
+        "meetingConversion": "Meeting conversion by profile variant"
+      },
+      "events": {
+        "profileView": { "label": "profile_view", "value": "1,284" },
+        "bookingClick": { "label": "cta_booking_click", "value": "312" },
+        "leadFormClick": { "label": "cta_lead_form_click", "value": "177" },
+        "resourceUnlock": { "label": "resource_unlock", "value": "96" },
+        "leadCreated": { "label": "lead_created", "value": "71" },
+        "meetingBooked": { "label": "meeting_booked", "value": "29" }
+      }
+    },
+    "sources": {
+      "eyebrow": "Lead Source Tracking",
+      "title": "Every lead must have an origin",
+      "rateLabel": "lead rate",
+      "visitsLabel": "Visits",
+      "leadsLabel": "Leads",
+      "items": {
+        "nfcDirect": {
+          "source": "nfc_card_direct",
+          "note": "The main high-intent channel",
+          "visits": "522",
+          "leads": "39",
+          "rate": "7.5%"
+        },
+        "qrBackside": {
+          "source": "qr_backside",
+          "note": "A strong fallback for mobile friction",
+          "visits": "204",
+          "leads": "11",
+          "rate": "5.4%"
+        },
+        "linkedinProfile": {
+          "source": "linkedin_profile",
+          "note": "Useful for warm social traffic",
+          "visits": "171",
+          "leads": "8",
+          "rate": "4.7%"
+        },
+        "expoEvent": {
+          "source": "expo_event_sofia",
+          "note": "This deserves a dedicated campaign mode",
+          "visits": "143",
+          "leads": "9",
+          "rate": "6.3%"
+        },
+        "referralPartner": {
+          "source": "utm_referral_partner",
+          "note": "A good base for a referral engine",
+          "visits": "88",
+          "leads": "4",
+          "rate": "4.5%"
+        }
+      }
+    },
+    "followUp": {
+      "eyebrow": "Follow-up Engine",
+      "title": "Automated cadence: 2 hours -> 24 hours -> 7 days",
+      "description": "This builds on the AI follow-up pieces that already exist in the project and evolves them from a single follow-up into a full conversion flow.",
+      "baseLabel": "Existing base",
+      "baseValue": "`generate-followup.ts` + `cron/follow-up.ts`",
+      "stepLabel": "Step {number}",
+      "messageLogicLabel": "Message logic",
+      "backendTitle": "How the backend flow should work",
+      "backend": {
+        "createdAt": "lead_created_at + last_followup_stage",
+        "skipRules": "skip if there is a reply or a booked meeting",
+        "promptPerStage": "different prompt per stage",
+        "sourceTone": "per-source tone: NFC / event / referral / LinkedIn"
+      },
+      "steps": {
+        "twoHours": {
+          "delay": "2 hours",
+          "title": "Fresh memory follow-up",
+          "purpose": "While the person still remembers the interaction and the conversation.",
+          "message": "A short, warm follow-up with context from the meeting and a soft CTA for a quick call or reply.",
+          "status": "Highest chance of reply"
+        },
+        "twentyFourHours": {
+          "delay": "24 hours",
+          "title": "Value follow-up",
+          "purpose": "If there is no reaction yet, we send value instead of just another reminder.",
+          "message": "Send a useful resource: checklist, mini guide, calculator or case-driven explanation based on the lead's need.",
+          "status": "Turns interest into intent"
+        },
+        "sevenDays": {
+          "delay": "7 days",
+          "title": "Reactivation follow-up",
+          "purpose": "Brings colder leads back into the conversation without sounding desperate.",
+          "message": "A short re-open message with one concrete offer: a meeting, second opinion or a new resource.",
+          "status": "Rescues missed opportunities"
+        }
+      }
+    }
   }
 }

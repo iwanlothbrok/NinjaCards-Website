@@ -2474,5 +2474,175 @@
         ]
       }
     }
+  },
+  "conversionFoundation": {
+    "hero": {
+      "badge": "Спринт 1 Прототип",
+      "title": "Conversion Foundation",
+      "descriptionPrefix": "Отделна вътрешна концептуална страница за новия профилен flow с по-малко шум, 3 силни CTA, event tracking, lead source tracking и follow-up cadence от",
+      "descriptionHighlightOne": "2 часа",
+      "descriptionHighlightTwo": "24 часа и 7 дни",
+      "descriptionSuffix": ".",
+      "stats": {
+        "profile": {
+          "label": "Профилът става",
+          "value": "Revenue surface"
+        },
+        "source": {
+          "label": "Lead source",
+          "value": "Ясно видим"
+        },
+        "followUp": {
+          "label": "Follow-up",
+          "value": "Автоматизиран"
+        }
+      }
+    },
+    "layout": {
+      "eyebrow": "Препоръчителна структура на профила",
+      "title": "Hero-first, CTA-first, trust-first",
+      "pill": "Нова структура",
+      "blocks": {
+        "hero": "Hero с 1 headline, 1 доказателство и 3 ясни CTA",
+        "trustBar": "Trust bar: лиценз, сертификати, ревюта, брандове",
+        "solutions": "2-3 решения вместо 12 хаотични линка",
+        "booking": "Booking блок с конкретни видове срещи",
+        "magnet": "Lead magnet секция с ресурс за отключване",
+        "proof": "Soft proof: recent wins, case snippets, social proof"
+      }
+    },
+    "ctaSection": {
+      "eyebrow": "3 Главни CTA",
+      "title": "Всяка визита трябва да води към действие",
+      "cardLabel": "CTA {number}",
+      "trackingTitle": "Tracking събития",
+      "trackingDetail": "`cta_view`, `cta_click`, `cta_started`, `cta_completed`"
+    },
+    "ctas": {
+      "booking": {
+        "title": "Запази среща",
+        "subtitle": "Най-бързият път от tap до разговор",
+        "stat": "31%",
+        "detail": "от кликванията водят до booked consultation"
+      },
+      "inquiry": {
+        "title": "Изпрати запитване",
+        "subtitle": "За хора, които още не са готови за call",
+        "stat": "18%",
+        "detail": "оставят въпрос или конкретна нужда"
+      },
+      "resource": {
+        "title": "Вземи ресурс",
+        "subtitle": "Гейтнат checklist, calculator или guide",
+        "stat": "42%",
+        "detail": "влизат във funnel чрез lead magnet"
+      }
+    },
+    "tracking": {
+      "eyebrow": "Click Tracking",
+      "title": "Какво мерим от първия ден",
+      "northStarLabel": "North Star",
+      "northStarValue": "Visit -> Lead -> Meeting",
+      "frameworkTitle": "Минимална аналитична рамка",
+      "framework": {
+        "ctaCtr": "CTR по CTA и по source",
+        "scrollDepth": "Scroll depth до booking секцията",
+        "touchpoints": "First touchpoint и last touchpoint",
+        "magnetConversion": "Конверсия по тип lead magnet",
+        "replyTime": "Time to first reply",
+        "meetingConversion": "Meeting conversion по profile variant"
+      },
+      "events": {
+        "profileView": { "label": "profile_view", "value": "1,284" },
+        "bookingClick": { "label": "cta_booking_click", "value": "312" },
+        "leadFormClick": { "label": "cta_lead_form_click", "value": "177" },
+        "resourceUnlock": { "label": "resource_unlock", "value": "96" },
+        "leadCreated": { "label": "lead_created", "value": "71" },
+        "meetingBooked": { "label": "meeting_booked", "value": "29" }
+      }
+    },
+    "sources": {
+      "eyebrow": "Lead Source Tracking",
+      "title": "Всеки lead трябва да има произход",
+      "rateLabel": "lead rate",
+      "visitsLabel": "Visits",
+      "leadsLabel": "Leads",
+      "items": {
+        "nfcDirect": {
+          "source": "nfc_card_direct",
+          "note": "Основният high-intent канал",
+          "visits": "522",
+          "leads": "39",
+          "rate": "7.5%"
+        },
+        "qrBackside": {
+          "source": "qr_backside",
+          "note": "Добър fallback при mobile friction",
+          "visits": "204",
+          "leads": "11",
+          "rate": "5.4%"
+        },
+        "linkedinProfile": {
+          "source": "linkedin_profile",
+          "note": "Полезен за warm social traffic",
+          "visits": "171",
+          "leads": "8",
+          "rate": "4.7%"
+        },
+        "expoEvent": {
+          "source": "expo_event_sofia",
+          "note": "Това си иска отделен campaign mode",
+          "visits": "143",
+          "leads": "9",
+          "rate": "6.3%"
+        },
+        "referralPartner": {
+          "source": "utm_referral_partner",
+          "note": "Добра основа за referral engine",
+          "visits": "88",
+          "leads": "4",
+          "rate": "4.5%"
+        }
+      }
+    },
+    "followUp": {
+      "eyebrow": "Follow-up Engine",
+      "title": "Автоматичен cadence: 2 часа -> 24 часа -> 7 дни",
+      "description": "Това стъпва върху вече започнатите AI follow-up части в проекта и ги развива от единичен follow-up в пълен conversion flow.",
+      "baseLabel": "Съществуваща основа",
+      "baseValue": "`generate-followup.ts` + `cron/follow-up.ts`",
+      "stepLabel": "Стъпка {number}",
+      "messageLogicLabel": "Message logic",
+      "backendTitle": "Как да се мисли backend flow-ът",
+      "backend": {
+        "createdAt": "lead_created_at + last_followup_stage",
+        "skipRules": "skip ако има reply или booked meeting",
+        "promptPerStage": "различен prompt за всяка стъпка",
+        "sourceTone": "tone по source: NFC / event / referral / LinkedIn"
+      },
+      "steps": {
+        "twoHours": {
+          "delay": "2 часа",
+          "title": "Fresh memory follow-up",
+          "purpose": "Докато човекът още помни контакта и разговора.",
+          "message": "Кратък, топъл follow-up с контекст от срещата и мек CTA за кратък разговор или отговор.",
+          "status": "Най-висок шанс за отговор"
+        },
+        "twentyFourHours": {
+          "delay": "24 часа",
+          "title": "Value follow-up",
+          "purpose": "Ако няма реакция, даваме стойност, а не просто поредно напомняне.",
+          "message": "Изпраща се полезен ресурс: checklist, mini guide, calculator или case-driven explanation според нуждата.",
+          "status": "Превръща интереса в intent"
+        },
+        "sevenDays": {
+          "delay": "7 дни",
+          "title": "Reactivation follow-up",
+          "purpose": "Връща по-студените leads в разговора без да звучи desperate.",
+          "message": "Кратък re-open message с едно конкретно предложение: среща, второ мнение или нов ресурс.",
+          "status": "Спасява изпуснати възможности"
+        }
+      }
+    }
   }
 }
