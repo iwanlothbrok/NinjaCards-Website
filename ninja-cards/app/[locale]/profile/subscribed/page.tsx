@@ -1,7 +1,7 @@
 'use client'
 
 import { BASE_API_URL } from '@/utils/constants'
-import React, { useEffect, useState, useMemo, useRef } from 'react'
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from "../../context/AuthContext"
 import { useTranslations } from "next-intl"
@@ -54,15 +54,7 @@ function FollowUpModal({ lead, owner, onClose }: {
     const [error, setError] = useState('')
     const [copied, setCopied] = useState<'subject' | 'body' | 'all' | null>(null)
 
-    useEffect(() => {
-        const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-        window.addEventListener('keydown', h)
-        // Auto-generate on open
-        generate()
-        return () => window.removeEventListener('keydown', h)
-    }, [])
-
-    const generate = async () => {
+    const generate = useCallback(async () => {
         setLoading(true)
         setError('')
         setResult(null)
@@ -86,7 +78,14 @@ function FollowUpModal({ lead, owner, onClose }: {
         } finally {
             setLoading(false)
         }
-    }
+    }, [lead.email, lead.message, lead.name, owner.company, owner.name, owner.position])
+
+    useEffect(() => {
+        const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+        window.addEventListener('keydown', h)
+        generate()
+        return () => window.removeEventListener('keydown', h)
+    }, [generate, onClose])
 
     const handleCopy = (type: 'subject' | 'body' | 'all') => {
         if (!result) return
@@ -154,7 +153,7 @@ function FollowUpModal({ lead, owner, onClose }: {
                                     {t('followUp.leadMessage')}
                                 </p>
                                 <p className="text-[12px] text-gray-400 leading-relaxed line-clamp-2 italic">
-                                    "{lead.message}"
+                                    &quot;{lead.message}&quot;
                                 </p>
                             </div>
                         )}
