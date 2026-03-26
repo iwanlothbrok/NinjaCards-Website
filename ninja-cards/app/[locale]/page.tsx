@@ -1,10 +1,8 @@
 'use client';
 
 import About from './components/layout/About';
-import { BASE_API_URL } from '@/utils/constants';
 import Pricing from './components/Pricings';
 import { useEffect, useState } from 'react';
-import { checkExpiredSubscriptions } from '@/lib/subscriptionScheduler';
 import ProductGallery from './components/layout/ProductGallery';
 import RealUseCases from './components/layout/RealCases';
 import SocialProof from './components/layout/SocialProof';
@@ -18,21 +16,6 @@ export default function Home() {
   const [showJoinButton, setShowJoinButton] = useState(true);
 
   useEffect(() => {
-    if (!BASE_API_URL) return;
-
-
-    const lastRun = localStorage.getItem('lastSubscriptionCheck');
-    const currentTime = Date.now();
-
-    if (!lastRun || currentTime - parseInt(lastRun, 10) > 24 * 60 * 60 * 1000) {
-      checkExpiredSubscriptions();
-      localStorage.setItem('lastSubscriptionCheck', currentTime.toString());
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!BASE_API_URL) return;
-
     const handleScroll = () => {
       const pricingSection = document.querySelector('#pricing');
       const ctaSection = document.querySelector('#cta');
@@ -68,11 +51,8 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // render guard AFTER hooks
-  if (!BASE_API_URL) return null;
-
   return (
-    <main>
+    <>
       <div data-section="hero" id="hero">
         <Hero />
       </div>
@@ -97,6 +77,6 @@ export default function Home() {
           <JoinNowButton />
         </motion.div>
       )}
-    </main>
+    </>
   );
 }
