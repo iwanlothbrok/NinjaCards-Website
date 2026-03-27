@@ -7,6 +7,7 @@ export async function sendWelcomeEmail(opts: {
     name: string;
     slug?: string;
 }) {
+    console.log('[sendWelcomeEmail] key present:', !!process.env.RESEND_API_KEY, '| to:', opts.to);
     if (!process.env.RESEND_API_KEY) return;
 
     const from = process.env.BILLING_FROM_EMAIL ?? "noreply@ninjacardsnfc.com";
