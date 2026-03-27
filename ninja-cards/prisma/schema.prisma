@@ -25,7 +25,7 @@ model User {
   city          String?
   state         String?
   country       String?
-  bio           String?
+  bio           String?  @db.Text
   image         String?  @db.LongText
   facebook      String?  @db.Text
   instagram     String?  @db.Text
