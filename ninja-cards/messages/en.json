@@ -2149,18 +2149,16 @@
   },
   "EmailSignature": {
     "header": {
-      "title": "Email Signature Designer",
-      "subtitle": "Create a professional email signature in minutes — with your style, colors, and links."
+      "badge": "Premium Signature",
+      "title": "Email signature builder",
+      "subtitle": "Create a polished signature with your real contact details, active social links, and a working profile photo."
     },
     "sections": {
       "customization": "Customization",
+      "quickSetup": "Quick setup",
       "theme": "Theme",
       "accentColor": "Accent Color",
-      "contactInfo": "Contact Information",
-      "socialMedia": "Social Media",
-      "displayOptions": "Display Options",
-      "livePreview": "Live Preview",
-      "howToAdd": "How to add your signature"
+      "socialMedia": "Social links"
     },
     "themes": {
       "modern": "Modern",
@@ -2179,31 +2177,51 @@
       "website": "Website",
       "linkedin": "LinkedIn Profile"
     },
+    "placeholders": {
+      "name": "John Carter",
+      "position": "Managing Partner",
+      "company": "Ninja Cards",
+      "email": "john@example.com",
+      "phone1": "+359 88 000 0000",
+      "address": "Sofia, Bulgaria",
+      "website": "ninjacardsnfc.com"
+    },
     "toggles": {
       "showImage": "Show profile image",
       "showQR": "Show QR code",
       "showSocial": "Show social links"
     },
     "social": {
-      "hint": "Pick which platforms to show (recommended: 3–5 max)."
+      "hint": "Only the links already added to this profile appear here."
     },
     "preview": {
       "title": "Live Preview",
-      "note": "What you see here is the signature you’ll copy and paste into your email client."
+      "note": "This is the exact HTML signature you can copy into Gmail, Outlook, or Apple Mail.",
+      "scanMe": "Scan me"
     },
     "actions": {
-      "copy": "📋 Copy signature",
-      "copied": "✓ Copied!",
-      "copyHelp": "Paste directly into your email client signature settings.",
-      "download": "⬇️ Download HTML"
+      "copy": "Copy signature",
+      "copied": "Copied",
+      "copyHelp": "Paste it directly into your email client's signature settings.",
+      "download": "Download HTML",
+      "customColor": "Custom color"
+    },
+    "stats": {
+      "themes": "Themes",
+      "social": "Active socials",
+      "format": "Export"
+    },
+    "imageSupport": {
+      "title": "Image support",
+      "description": "The signature now uses a real image URL instead of base64, so email clients can render the profile photo correctly."
     },
     "howTo": {
       "title": "How to add it to your email client",
       "gmail": {
         "label": "Gmail",
         "steps": [
-          "1) Click “Copy signature”",
-          "2) Gmail → Settings → See all settings",
+          "1) Click Copy signature",
+          "2) Gmail -> Settings -> See all settings",
           "3) In the Signature section, paste it",
           "4) Save changes"
         ]
@@ -2211,8 +2229,8 @@
       "outlook": {
         "label": "Outlook",
         "steps": [
-          "1) Click “Copy signature”",
-          "2) Settings → Mail → Compose and reply",
+          "1) Click Copy signature",
+          "2) Settings -> Mail -> Compose and reply",
           "3) Paste into Email signature",
           "4) Save your settings"
         ]
@@ -2220,8 +2238,8 @@
       "appleMail": {
         "label": "Apple Mail",
         "steps": [
-          "1) Click “Copy signature”",
-          "2) Mail → Settings → Signatures",
+          "1) Click Copy signature",
+          "2) Mail -> Settings -> Signatures",
           "3) Create a new signature and paste the content",
           "4) Select which account should use it"
         ]
