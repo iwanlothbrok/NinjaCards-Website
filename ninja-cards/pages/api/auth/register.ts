@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         if (req.method === 'POST') {
-            const { name, email, password, slug } = req.body;
+            const { name, email, password, slug, company, position, linkedin, website, image, coverImage, firstName, lastName, bio, city, country } = req.body;
 
             console.log('Request body:', req.body);
 
@@ -52,6 +52,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     email,
                     password: hashedPassword,
                     ...(normalizedSlug ? { slug: normalizedSlug } : {}),
+                    ...(company ? { company } : {}),
+                    ...(position ? { position } : {}),
+                    ...(linkedin ? { linkedin } : {}),
+                    ...(website ? { website } : {}),
+                    ...(image ? { image } : {}),
+                    ...(coverImage ? { coverImage } : {}),
+                    ...(firstName ? { firstName } : {}),
+                    ...(lastName ? { lastName } : {}),
+                    ...(bio ? { bio } : {}),
+                    ...(city ? { city } : {}),
+                    ...(country ? { country } : {}),
                 },
             });
 
