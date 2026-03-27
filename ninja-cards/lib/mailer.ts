@@ -1,6 +1,62 @@
 import { Resend } from "resend";
 import nodemailer from "nodemailer";
 
+/** Sends a welcome email after a new profile is created. */
+export async function sendWelcomeEmail(opts: {
+    to: string;
+    name: string;
+    slug?: string;
+}) {
+    if (!process.env.RESEND_API_KEY) return;
+
+    const from = process.env.BILLING_FROM_EMAIL ?? "noreply@ninjacardsnfc.com";
+    const profileUrl = opts.slug
+        ? `https://www.ninjacardsnfc.com/bg/p/${opts.slug}`
+        : `https://www.ninjacardsnfc.com/bg/profile`;
+    const dashboardUrl = "https://www.ninjacardsnfc.com/bg/profile";
+
+    const html = `
+    <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.6;max-width:600px;margin:0 auto;background-color:#000000;color:#ffffff;padding:40px 20px;">
+      <div style="background-color:#f97316;padding:20px;text-align:center;border-radius:8px 8px 0 0;">
+        <h1 style="margin:0;color:#000000;font-size:28px;font-weight:900;">NinjaCards</h1>
+      </div>
+      <div style="background-color:#111111;padding:32px;border-radius:0 0 8px 8px;">
+        <h2 style="color:#f97316;margin-top:0;">Добре дошли, ${opts.name}!</h2>
+        <p style="font-size:15px;color:#cccccc;margin:0 0 24px 0;">
+          Вашият NFC профил е успешно създаден и е готов за използване.
+        </p>
+
+        <div style="background-color:#1a1a1a;border-left:4px solid #f97316;padding:16px 20px;border-radius:0 6px 6px 0;margin:0 0 28px 0;">
+          <p style="margin:0 0 4px 0;font-size:12px;color:#888888;text-transform:uppercase;letter-spacing:0.08em;">Вашият личен линк</p>
+          <a href="${profileUrl}" style="color:#f97316;font-size:15px;font-weight:600;text-decoration:none;">${profileUrl}</a>
+        </div>
+
+        <p style="font-size:14px;color:#888888;margin:0 0 24px 0;">
+          Влезте в dashboard-а, за да добавите контакти, социални мрежи и да персонализирате профила си.
+        </p>
+
+        <a href="${dashboardUrl}" style="display:inline-block;background-color:#f97316;color:#000000;text-decoration:none;padding:13px 32px;border-radius:8px;font-weight:700;font-size:15px;">
+          Отиди към профила →
+        </a>
+
+        <p style="font-size:13px;color:#555555;margin-top:36px;border-top:1px solid #222222;padding-top:20px;">
+          Имате въпроси? Свържете се с нас на <a href="mailto:support@ninjacardsnfc.com" style="color:#f97316;text-decoration:none;">support@ninjacardsnfc.com</a>
+        </p>
+      </div>
+    </div>
+  `;
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const res = await resend.emails.send({
+        from,
+        to: opts.to,
+        subject: `Добре дошли в NinjaCards, ${opts.name}!`,
+        html,
+    });
+    if (res.error) throw new Error(`Resend error: ${res.error.message}`);
+    return res;
+}
+
 /** Sends an invoice email via Resend if available, else SMTP via Nodemailer. */
 export async function sendInvoiceEmail(opts: {
     to: string;

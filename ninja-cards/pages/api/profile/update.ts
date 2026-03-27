@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import cors from "@/utils/cors";
+import { sendWelcomeEmail } from "@/lib/mailer";
 
 const prisma = new PrismaClient();
 
@@ -66,6 +67,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ...(normalizedSlug ? { slug: normalizedSlug } : {}),
             },
         });
+
+        sendWelcomeEmail({
+            to: email,
+            name: updatedUser.name ?? updatedUser.firstName ?? email,
+            slug: updatedUser.slug ?? undefined,
+        }).catch(err => console.error('[finishProfile] welcome email failed:', err));
 
         return res.status(200).json({ success: true, user: updatedUser });
     } catch (error) {
