@@ -44,11 +44,11 @@ async function generateInsight(params: {
     const visitDelta = prevVisits > 0 ? Math.round(((visits - prevVisits) / prevVisits) * 100) : null;
     const leadDelta = prevLeads > 0 ? Math.round(((leads - prevLeads) / prevLeads) * 100) : null;
 
-    const prompt = `You are a personal business coach. Write a short, motivating weekly insight for a professional based on their digital business card stats.
+    const prompt = `You are a personal business coach. Write a short, motivating bi-weekly insight for a professional based on their digital business card stats.
 
 Person: ${name}${position ? `, ${position}` : ''}
-This week: ${visits} profile visits, ${leads} leads, ${downloads} downloads, ${shares} shares, ${clicks} social clicks
-Last week: ${prevVisits} visits, ${prevLeads} leads
+Last 2 weeks: ${visits} profile visits, ${leads} leads, ${downloads} downloads, ${shares} shares, ${clicks} social clicks
+Previous 2 weeks: ${prevVisits} visits, ${prevLeads} leads
 ${visitDelta !== null ? `Visit change: ${visitDelta > 0 ? '+' : ''}${visitDelta}%` : ''}
 ${leadDelta !== null ? `Lead change:  ${leadDelta > 0 ? '+' : ''}${leadDelta}%` : ''}
 
@@ -132,7 +132,7 @@ function buildEmail(params: {
           <div style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#f59e0bcc);border-radius:12px;padding:10px 18px;margin-bottom:20px">
             <span style="font-size:13px;font-weight:900;color:#000;letter-spacing:0.15em;text-transform:uppercase">⚡ Ninja Card</span>
           </div>
-          <h1 style="margin:0;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em">Седмичен отчет</h1>
+          <h1 style="margin:0;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em">Двуседмичен отчет</h1>
           <p style="margin:8px 0 0;font-size:13px;color:#555;font-weight:500">${weekLabel}</p>
         </td></tr>
 
@@ -142,7 +142,7 @@ function buildEmail(params: {
         <!-- Greeting -->
         <tr><td style="background:#0e1017;border-left:1px solid rgba(255,255,255,0.07);border-right:1px solid rgba(255,255,255,0.07);padding:32px 40px 8px">
           <p style="margin:0;font-size:16px;color:#e0e0e0;font-weight:600">Здравей, ${firstName} 👋</p>
-          <p style="margin:10px 0 0;font-size:13px;color:#666;line-height:1.6">Ето как се представи визитката ти тази седмица.</p>
+          <p style="margin:10px 0 0;font-size:13px;color:#666;line-height:1.6">Ето как се представи визитката ти през последните две седмици.</p>
         </td></tr>
 
         <!-- Stats -->
@@ -197,12 +197,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const twoWeeks = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+    const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+    const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
 
-    // Week label e.g. "10 - 17 март 2026"
+    // Period label e.g. "1 - 15 март 2026"
     const fmt = (d: Date) => d.toLocaleDateString('bg-BG', { day: 'numeric', month: 'long' });
-    const weekLabel = `${fmt(weekAgo)} – ${fmt(now)} ${now.getFullYear()}`;
+    const weekLabel = `${fmt(twoWeeksAgo)} – ${fmt(now)} ${now.getFullYear()}`;
 
     try {
         // Fetch all users with email + dashboard + events + leads
@@ -218,9 +218,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
         });
 
-        // Fetch events in bulk for this week and last week
+        // Fetch events in bulk for this period and previous period
         const events = await prisma.dashboardEvent.findMany({
-            where: { timestamp: { gte: twoWeeks } },
+            where: { timestamp: { gte: fourWeeksAgo } },
             select: { userId: true, type: true, timestamp: true },
         });
 
@@ -232,9 +232,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const name = user.name || [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Приятел';
 
-            // This week events
-            const thisWeekEvents = events.filter(e => e.userId === user.id && new Date(e.timestamp) >= weekAgo);
-            const lastWeekEvents = events.filter(e => e.userId === user.id && new Date(e.timestamp) < weekAgo);
+            // This period events (last 14 days) vs previous period (14-28 days ago)
+            const thisWeekEvents = events.filter(e => e.userId === user.id && new Date(e.timestamp) >= twoWeeksAgo);
+            const lastWeekEvents = events.filter(e => e.userId === user.id && new Date(e.timestamp) < twoWeeksAgo);
 
             const count = (evts: typeof events, type: string) => evts.filter(e => e.type === type).length;
 
@@ -242,10 +242,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const downloads = count(thisWeekEvents, 'download');
             const shares = count(thisWeekEvents, 'share');
             const clicks = count(thisWeekEvents, 'socialClick');
-            const leads = user.leads.filter(l => new Date(l.createdAt) >= weekAgo).length;
+            const leads = user.leads.filter(l => new Date(l.createdAt) >= twoWeeksAgo).length;
 
             const prevVisits = count(lastWeekEvents, 'visit');
-            const prevLeads = user.leads.filter(l => new Date(l.createdAt) >= twoWeeks && new Date(l.createdAt) < weekAgo).length;
+            const prevLeads = user.leads.filter(l => new Date(l.createdAt) >= fourWeeksAgo && new Date(l.createdAt) < twoWeeksAgo).length;
 
             // Skip users with zero activity this week
             if (visits === 0 && leads === 0 && downloads === 0) continue;
@@ -261,7 +261,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await resend.emails.send({
                     from: 'Ninja Card <reports@ninjacardsnfc.com>',
                     to: user.email,
-                    subject: `📊 Седмичен отчет — ${visits} посещения, ${leads} лийда`,
+                    subject: `📊 Двуседмичен отчет — ${visits} посещения, ${leads} лийда`,
                     html,
                 });
                 sent++;
