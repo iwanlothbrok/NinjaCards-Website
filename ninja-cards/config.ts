@@ -53,6 +53,8 @@ export const routing = defineRouting({
         '/products/[type]/[id]': '/products/[type]/[id]',
         '/profileDetails/[id]': '/profileDetails/[id]',
         '/plans': '/plans',
+        '/admin': '/admin',
+        '/admin/login': '/admin/login',
 
     }
 });

@@ -65,6 +65,18 @@ model User {
   invoices         Invoice[]
 }
 
+model AdminUser {
+  id          String      @id @default(cuid())
+  email       String      @unique
+  password    String
+  name        String
+  role        AdminRole   @default(SUPER_ADMIN)
+  status      AdminStatus @default(ACTIVE)
+  lastLoginAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
 model Dashboard {
   id               String           @id @default(uuid())
   userId           String           @unique
@@ -280,6 +292,16 @@ enum CRMStage {
   MEETING
   WON
   LOST
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  OPERATIONS
+}
+
+enum AdminStatus {
+  ACTIVE
+  DISABLED
 }
 
 model WebhookEvent {

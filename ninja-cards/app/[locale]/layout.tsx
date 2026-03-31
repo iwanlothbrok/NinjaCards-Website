@@ -2,20 +2,17 @@ import '../globals.css';
 
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import Navbar from './components/Navigation';
 import { AuthProvider } from './context/AuthContext';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import Script from 'next/script';
-import CookieBanner from './components/layout/CookieBanner';
-import ClientLayoutWrapper from './components/layout/ClientLayoutWrapper';
 import { NextIntlClientProvider } from "next-intl";
 import { ReactNode } from "react";
 import { notFound } from 'next/navigation';
 import { locales, defaultLocale, type Locale } from '@/config';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import Footer from './components/layout/Footer';
+import AppChrome from './components/layout/AppChrome';
 
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -101,15 +98,7 @@ export default async function LocaleLayout({
 
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
-            <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 via-gray-950 to-black">
-              <header className="sticky top-0 z-50 bg-gray-900 shadow-md">
-                <Navbar />
-              </header>
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
-            <CookieBanner />
-            <ClientLayoutWrapper />
+            <AppChrome>{children}</AppChrome>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

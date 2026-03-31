@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import formidable, { IncomingForm, Fields, Files } from 'formidable';
 import cors from '@/utils/cors';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/adminAuth';
 
 export const config = {
     api: {
@@ -38,6 +37,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'POST') {
         try {
+            const adminUser = await requireAdmin(req, res, ['SUPER_ADMIN', 'OPERATIONS']);
+            if (!adminUser) return;
+
             const { fields, files } = await parseForm(req);
 
             // Safely extract fields and ensure they are strings

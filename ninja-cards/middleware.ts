@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './config';
+import { ADMIN_COOKIE_NAME } from '@/lib/adminAuthShared';
 
 const intlMiddleware = createMiddleware({
   locales: [...locales],
@@ -21,6 +22,14 @@ export default function middleware(request: NextRequest) {
 
   // Normalize path without locale and trailing slash
   const pathWithoutLocale = stripTrailingSlash(hasLocale ? `/${rest.join('/')}` : pathname);
+
+  if (pathWithoutLocale.startsWith('/admin') && pathWithoutLocale !== '/admin/login') {
+    const adminToken = request.cookies.get(ADMIN_COOKIE_NAME)?.value;
+    if (!adminToken) {
+      const targetLocale = currentLocale ?? defaultLocale;
+      return NextResponse.redirect(new URL(`/${targetLocale}/admin/login`, request.url));
+    }
+  }
 
   // Protect *only* /profile (not /profileDetails/*)
   // if (pathWithoutLocale === '/profile') {
