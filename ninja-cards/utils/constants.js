@@ -1,1 +1,21 @@
-export const BASE_API_URL = 'https://ninja-cards-website-lnp1.vercel.app';
+const getBaseApiUrl = () => {
+    if (typeof window !== 'undefined') {
+        return window.location.origin;
+    }
+
+    if (process.env.NEXT_PUBLIC_SITE_URL) {
+        return process.env.NEXT_PUBLIC_SITE_URL;
+    }
+
+    if (process.env.FRONTEND_URL) {
+        return process.env.FRONTEND_URL;
+    }
+
+    if (process.env.VERCEL_URL) {
+        return `https://${process.env.VERCEL_URL}`;
+    }
+
+    return 'http://localhost:3000';
+};
+
+export const BASE_API_URL = getBaseApiUrl();
