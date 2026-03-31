@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import { Resend } from 'resend';
+import { Resend } from 'resend'; // sending emails via Resend.com API
 import {
     buildFollowUpEmail,
     buildFollowUpPrompt,
@@ -46,8 +46,8 @@ async function generateFollowUp(params: {
                 'anthropic-version': '2023-06-01',
             },
             body: JSON.stringify({
-                model: 'claude-haiku-4-5-20251001',
-                max_tokens: 300,
+                model: 'claude-sonnet-4-6',
+                max_tokens: 600,
                 messages: [{ role: 'user', content: prompt }],
             }),
         });
