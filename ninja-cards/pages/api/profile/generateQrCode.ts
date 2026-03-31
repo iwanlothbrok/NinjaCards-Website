@@ -20,8 +20,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ error: "Грешка: Липсва информация. Моля, предоставете userId." });
         }
 
+        const existingUser = await prisma.user.findUnique({ where: { id: userId }, select: { slug: true } });
 
-        const qrCodeUrl = `https://www.ninjacardsnfc.com/profileDetails/${userId}`;
+        const qrCodeUrl = existingUser?.slug
+            ? `https://www.ninjacardsnfc.com/bg/p/${existingUser.slug}`
+            : `https://www.ninjacardsnfc.com/bg/profileDetails/${userId}`;
 
         // Generate the QR code from the URL
         const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
