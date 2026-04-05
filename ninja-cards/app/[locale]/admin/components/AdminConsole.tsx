@@ -16,8 +16,16 @@ const modules: Array<{ key: ModuleKey; label: string; icon: ComponentType<{ clas
     { key: 'admins', label: 'Admins', icon: ShieldCheck, description: 'Separate admin identities and roles.' },
 ];
 
+const BULGARIA_TIME_ZONE = 'Europe/Sofia';
+
 const fmtDate = (value?: string | null) =>
-    value ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : 'Never';
+    value
+        ? new Intl.DateTimeFormat('en-US', {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+              timeZone: BULGARIA_TIME_ZONE,
+          }).format(new Date(value))
+        : 'Never';
 
 const fmtMoney = (value = 0, currency = 'EUR') =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(value / 100);
