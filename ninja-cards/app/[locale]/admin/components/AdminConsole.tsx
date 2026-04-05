@@ -2,19 +2,17 @@
 
 import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { CreditCard, Crown, LayoutDashboard, Loader2, LogOut, PackagePlus, Search, ShieldCheck, TrendingUp, Users } from 'lucide-react';
+import { CreditCard, Crown, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users } from 'lucide-react';
 import { useAdminAuth } from '../AdminAuthProvider';
 import { BASE_API_URL } from '@/utils/constants';
-import AddProductPanel from './AddProductPanel';
 
-type ModuleKey = 'overview' | 'users' | 'revenue' | 'crm' | 'products' | 'admins';
+type ModuleKey = 'overview' | 'users' | 'revenue' | 'crm' | 'admins';
 
 const modules: Array<{ key: ModuleKey; label: string; icon: ComponentType<{ className?: string }>; description: string }> = [
     { key: 'overview', label: 'Overview', icon: LayoutDashboard, description: 'Growth, revenue, engagement, and funnel health.' },
-    { key: 'users', label: 'Users', icon: Users, description: 'Customer accounts, plans, and profile activity.' },
-    { key: 'revenue', label: 'Revenue', icon: CreditCard, description: 'Subscription status and invoice flow.' },
+    { key: 'users', label: 'Users', icon: Users, description: 'Customer accounts, plans, profile quality, and card activity.' },
+    { key: 'revenue', label: 'Revenue', icon: CreditCard, description: 'Subscription status, retention risk, and invoice flow.' },
     { key: 'crm', label: 'Leads & CRM', icon: TrendingUp, description: 'Lead flow, deals, meetings, and follow-ups.' },
-    { key: 'products', label: 'Products', icon: PackagePlus, description: 'Manage the Ninja Cards catalog.' },
     { key: 'admins', label: 'Admins', icon: ShieldCheck, description: 'Separate admin identities and roles.' },
 ];
 
@@ -23,6 +21,27 @@ const fmtDate = (value?: string | null) =>
 
 const fmtMoney = (value = 0, currency = 'EUR') =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(value / 100);
+
+const fmtAction = (value?: string | null) => {
+    if (!value) return 'No card activity yet';
+
+    const labels: Record<string, string> = {
+        visit: 'Profile visit',
+        share: 'Profile share',
+        download: 'VCF download',
+        socialClick: 'Social click',
+    };
+
+    return labels[value] || value;
+};
+
+const getStatusTone = (status?: string | null): 'neutral' | 'green' | 'orange' | 'blue' | 'red' => {
+    if (!status) return 'neutral';
+    if (['active', 'ACTIVE', 'trialing'].includes(status)) return 'green';
+    if (['past_due', 'unpaid', 'DISABLED'].includes(status)) return 'red';
+    if (['cancelled', 'paused'].includes(status)) return 'orange';
+    return 'blue';
+};
 
 function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: 'neutral' | 'green' | 'orange' | 'blue' | 'red' }) {
     const tones = {
@@ -68,7 +87,8 @@ export default function AdminConsole() {
     const pathname = usePathname();
     const locale = pathname?.split('/')[1] || 'bg';
 
-    const activeModule = (searchParams?.get('module') as ModuleKey) || 'overview';
+    const requestedModule = searchParams?.get('module');
+    const activeModule = modules.some((module) => module.key === requestedModule) ? (requestedModule as ModuleKey) : 'overview';
     const [query, setQuery] = useState('');
     const [dashboard, setDashboard] = useState<any>(null);
     const [usersData, setUsersData] = useState<any>(null);
@@ -135,7 +155,7 @@ export default function AdminConsole() {
                             <div className="rounded-2xl bg-orange/15 p-3 text-orange"><Crown className="h-6 w-6" /></div>
                             <div>
                                 <h1 className="text-3xl font-bold tracking-tight">Ninja Admin</h1>
-                                <p className="mt-1 text-sm text-white/55">Users, revenue, CRM, and product operations.</p>
+                                <p className="mt-1 text-sm text-white/55">Users, retention, revenue, and card activity operations.</p>
                             </div>
                         </div>
                     </div>
@@ -215,9 +235,16 @@ export default function AdminConsole() {
                                 <>
                                     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                                         <Card title="Total Users" value={String(dashboard.overview.totalUsers)} detail={`${dashboard.overview.newUsers30d} joined in the last 30 days`} />
-                                        <Card title="Active Subs" value={String(dashboard.overview.activeSubscriptions)} detail={`${dashboard.overview.totalLeads} total captured leads`} accent="text-cyan-300" />
+                                        <Card title="New Users 7D" value={String(dashboard.overview.newUsers7d)} detail="Fresh signups in the last 7 days" accent="text-cyan-300" />
                                         <Card title="Revenue" value={fmtMoney(dashboard.overview.totalRevenue)} detail={`${fmtMoney(dashboard.overview.revenue30d)} collected in the last 30 days`} accent="text-white" />
                                         <Card title="Follow-up Queue" value={String(dashboard.overview.followUpQueue)} detail="Leads currently due for a follow-up touch" accent="text-cyan-300" />
+                                    </div>
+
+                                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                                        <Card title="Active Subs" value={String(dashboard.overview.activeSubscriptions)} detail="Paying and trialing users right now" accent="text-cyan-300" />
+                                        <Card title="At Risk Subs" value={String(dashboard.overview.atRiskSubscriptions)} detail="Past due, unpaid, paused, or cancelled customers" />
+                                        <Card title="Visit To Lead" value={`${dashboard.overview.visitToLeadRate}%`} detail="Current visit-to-lead conversion rate" accent="text-white" />
+                                        <Card title="Total Visits" value={String(dashboard.engagement.totalVisits)} detail={`${dashboard.engagement.totalShares} shares and ${dashboard.engagement.totalDownloads} downloads tracked`} accent="text-cyan-300" />
                                     </div>
 
                                     <Section title="Funnel Snapshot" subtitle="The operating view of growth, visits, leads, and wins.">
@@ -230,6 +257,91 @@ export default function AdminConsole() {
                                         </div>
                                     </Section>
 
+                                    <Section title="Last 10 Users Active On Cards" subtitle="This is the freshest real card activity we have, and it doubles as the admin last-seen signal.">
+                                        <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
+                                            <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>User</div><div>Last Seen</div><div>Action</div><div>Plan</div><div>Company</div><div>Engagement</div>
+                                            </div>
+                                            {dashboard.recentCardActivity.map((user: any) => (
+                                                <div key={`${user.userId}-${user.timestamp}`} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                    <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div></div>
+                                                    <div>{fmtDate(user.timestamp)}</div>
+                                                    <div><Badge tone="blue">{fmtAction(user.type)}</Badge></div>
+                                                    <div><div>{user.plan}</div><div className="mt-2"><Badge tone={getStatusTone(user.subscriptionStatus)}>{user.subscriptionStatus}</Badge></div></div>
+                                                    <div>{user.company || 'No company set'}</div>
+                                                    <div><div>{user.profileVisits} visits</div><div className="text-xs text-white/45">{user.profileShares} shares / {user.vcfDownloads} downloads</div></div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
+
+                                    <div className="grid gap-6 xl:grid-cols-2">
+                                        <Section title="Newest Signups" subtitle="The latest users who entered the system.">
+                                            <div className="space-y-3">
+                                                {dashboard.recentUsers.map((user: any) => (
+                                                    <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{user.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                            </div>
+                                                            <Badge tone={getStatusTone(user.subscriptionStatus)}>{user.subscriptionStatus}</Badge>
+                                                        </div>
+                                                        <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Joined</div><div className="mt-1">{fmtDate(user.joinedAt)}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Plan</div><div className="mt-1">{user.plan}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Usage</div><div className="mt-1">{user.profileVisits} visits / {user.profileShares} shares / {user.vcfDownloads} downloads</div></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+
+                                        <Section title="Subscription Alerts" subtitle="Customers who may need billing or retention attention.">
+                                            <div className="space-y-3">
+                                                {dashboard.subscriptionAlerts.length === 0 && (
+                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No at-risk subscriptions right now.</div>
+                                                )}
+                                                {dashboard.subscriptionAlerts.map((item: any) => (
+                                                    <div key={item.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{item.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{item.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{item.company || 'No company set'}</div>
+                                                            </div>
+                                                            <Badge tone={getStatusTone(item.status)}>{item.status}</Badge>
+                                                        </div>
+                                                        <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Plan</div><div className="mt-1">{item.plan}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Ends</div><div className="mt-1">{fmtDate(item.endDate || item.cancelDate)}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Started</div><div className="mt-1">{fmtDate(item.startDate)}</div></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+                                    </div>
+
+                                    <Section title="Lead Follow-up Pressure" subtitle="Leads already due for a follow-up so you can see where the pipeline is stalling.">
+                                        <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
+                                            <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>Lead</div><div>Owner</div><div>Source</div><div>Next Follow-up</div><div>Stage</div><div>Contact</div>
+                                            </div>
+                                            {dashboard.followUpLeads.map((lead: any) => (
+                                                <div key={lead.id} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                    <div><div className="font-semibold text-white">{lead.name}</div><div className="text-xs text-white/45">{lead.email || lead.phone || 'No contact detail'}</div></div>
+                                                    <div><div>{lead.ownerName || 'Unassigned owner'}</div><div className="text-xs text-white/45">{lead.company || lead.ownerEmail || ''}</div></div>
+                                                    <div>{lead.source}</div>
+                                                    <div>{fmtDate(lead.nextFollowUpAt)}</div>
+                                                    <div><Badge tone="orange">Stage {lead.followUpStage}</Badge></div>
+                                                    <div>{lead.phone || lead.email || 'No contact detail'}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
+
                                     <Section title="Top Engaged Users" subtitle="Users ranked by visits and downstream engagement.">
                                         <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
                                             <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
@@ -238,7 +350,7 @@ export default function AdminConsole() {
                                             {dashboard.topUsers.map((user: any) => (
                                                 <div key={user.id} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                     <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div></div>
-                                                    <div>{user.company || '—'}</div><div>{user.profileVisits}</div><div>{user.profileShares}</div><div>{user.vcfDownloads}</div><div>{user.socialLinkClicks}</div>
+                                                    <div>{user.company || '-'}</div><div>{user.profileVisits}</div><div>{user.profileShares}</div><div>{user.vcfDownloads}</div><div>{user.socialLinkClicks}</div>
                                                 </div>
                                             ))}
                                         </div>
@@ -247,18 +359,19 @@ export default function AdminConsole() {
                             )}
 
                             {!pageLoading && activeModule === 'users' && usersData && (
-                                <Section title="User Management" subtitle="Search live users, track plan state, and spot weak profiles.">
+                                <Section title="User Management" subtitle="Search live users, track plan state, recent card activity, and weak profiles.">
                                     <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
-                                        <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
-                                            <div>User</div><div>Plan</div><div>Joined</div><div>Visits</div><div>Leads</div><div>Profile Health</div>
+                                        <div className="grid grid-cols-7 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                            <div>User</div><div>Plan</div><div>Last Seen</div><div>Joined</div><div>Engagement</div><div>Leads</div><div>Profile Health</div>
                                         </div>
                                         {usersData.users.map((user: any) => (
-                                            <div key={user.id} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                            <div key={user.id} className="grid grid-cols-7 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                 <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div><div className="text-xs text-white/35">{user.company || 'No company set'}</div></div>
-                                                <div><div>{user.plan}</div><div className="mt-2"><Badge tone={user.subscriptionStatus === 'active' ? 'green' : user.subscriptionStatus === 'past_due' ? 'red' : 'blue'}>{user.subscriptionStatus}</Badge></div></div>
+                                                <div><div>{user.plan}</div><div className="mt-2"><Badge tone={getStatusTone(user.subscriptionStatus)}>{user.subscriptionStatus}</Badge></div></div>
+                                                <div><div>{fmtDate(user.lastSeenAt)}</div><div className="mt-2 text-xs text-white/45">{fmtAction(user.lastCardAction)}</div></div>
                                                 <div>{fmtDate(user.joinedAt)}</div>
                                                 <div><div>{user.profileVisits} visits</div><div className="text-xs text-white/45">{user.profileShares} shares / {user.vcfDownloads} downloads</div></div>
-                                                <div>{user.leadCount}</div>
+                                                <div><div>{user.leadCount}</div><div className="text-xs text-white/45">{user.latestLeadAt ? `Latest ${fmtDate(user.latestLeadAt)}` : 'No leads yet'}</div></div>
                                                 <div><div className="font-semibold text-white">{user.completeness}% complete</div><div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-2 rounded-full bg-gradient-to-r from-orange to-teil" style={{ width: `${user.completeness}%` }} /></div></div>
                                             </div>
                                         ))}
@@ -282,7 +395,24 @@ export default function AdminConsole() {
                                             {revenueData.invoices.map((invoice: any) => (
                                                 <div key={invoice.id} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                     <div><div className="font-semibold text-white">{invoice.userName}</div><div className="text-xs text-white/45">{invoice.userEmail}</div></div>
-                                                    <div>{invoice.company || '—'}</div><div className="font-semibold text-orange">{fmtMoney(invoice.amountPaid, invoice.currency.toUpperCase())}</div><div>{invoice.currency.toUpperCase()}</div><div>{fmtDate(invoice.createdAt)}</div><div><a href={invoice.hostedInvoiceUrl} target="_blank" rel="noreferrer" className="text-cyan-200 hover:text-orange">Open invoice</a></div>
+                                                    <div>{invoice.company || '-'}</div><div className="font-semibold text-orange">{fmtMoney(invoice.amountPaid, invoice.currency.toUpperCase())}</div><div>{invoice.currency.toUpperCase()}</div><div>{fmtDate(invoice.createdAt)}</div><div><a href={invoice.hostedInvoiceUrl} target="_blank" rel="noreferrer" className="text-cyan-200 hover:text-orange">Open invoice</a></div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
+                                    <Section title="Retention Watchlist" subtitle="Billing states that may need customer follow-up before they turn into churn.">
+                                        <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
+                                            <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>Customer</div><div>Company</div><div>Status</div><div>Plan</div><div>Ends</div><div>Started</div>
+                                            </div>
+                                            {revenueData.alerts.map((item: any) => (
+                                                <div key={item.id} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                    <div><div className="font-semibold text-white">{item.userName}</div><div className="text-xs text-white/45">{item.userEmail}</div></div>
+                                                    <div>{item.company || 'No company set'}</div>
+                                                    <div><Badge tone={getStatusTone(item.status)}>{item.status}</Badge></div>
+                                                    <div>{item.plan}</div>
+                                                    <div>{fmtDate(item.endDate || item.cancelDate)}</div>
+                                                    <div>{fmtDate(item.startDate)}</div>
                                                 </div>
                                             ))}
                                         </div>
@@ -306,19 +436,30 @@ export default function AdminConsole() {
                                             {crmData.recentLeads.map((lead: any) => (
                                                 <div key={lead.id} className="grid grid-cols-4 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                     <div><div className="font-semibold text-white">{lead.name}</div><div className="text-xs text-white/45">{lead.email || lead.phone || 'No contact detail'}</div></div>
-                                                    <div><div>{lead.ownerName || '—'}</div><div className="text-xs text-white/45">{lead.company || lead.ownerEmail || ''}</div></div>
+                                                    <div><div>{lead.ownerName || '-'}</div><div className="text-xs text-white/45">{lead.company || lead.ownerEmail || ''}</div></div>
                                                     <div>{lead.source}</div><div>{fmtDate(lead.createdAt)}</div>
                                                 </div>
                                             ))}
                                         </div>
                                     </Section>
+                                    <Section title="Recently Updated Deals" subtitle="The CRM deals your team touched most recently.">
+                                        <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
+                                            <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>Deal</div><div>Owner</div><div>Lead</div><div>Stage</div><div>Value</div><div>Updated</div>
+                                            </div>
+                                            {crmData.recentDeals.map((deal: any) => (
+                                                <div key={deal.id} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                    <div className="font-semibold text-white">{deal.title}</div>
+                                                    <div><div>{deal.ownerName || 'No owner'}</div><div className="text-xs text-white/45">{deal.ownerEmail || ''}</div></div>
+                                                    <div><div>{deal.leadName || 'No linked lead'}</div><div className="text-xs text-white/45">{deal.leadEmail || ''}</div></div>
+                                                    <div><Badge tone={deal.stage === 'WON' ? 'green' : deal.stage === 'LOST' ? 'red' : 'blue'}>{deal.stage}</Badge></div>
+                                                    <div>{fmtMoney(deal.value || 0)}</div>
+                                                    <div>{fmtDate(deal.updatedAt)}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
                                 </>
-                            )}
-
-                            {!pageLoading && activeModule === 'products' && (
-                                <Section title="Product Operations" subtitle="Manage the catalog without leaving the admin console.">
-                                    <AddProductPanel />
-                                </Section>
                             )}
 
                             {!pageLoading && activeModule === 'admins' && adminUsersData && (
@@ -331,7 +472,7 @@ export default function AdminConsole() {
                                             <div key={user.id} className="grid grid-cols-5 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                 <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div></div>
                                                 <div><Badge tone="orange">{user.role.replace('_', ' ')}</Badge></div>
-                                                <div><Badge tone={user.status === 'ACTIVE' ? 'green' : 'red'}>{user.status}</Badge></div>
+                                                <div><Badge tone={getStatusTone(user.status)}>{user.status}</Badge></div>
                                                 <div>{fmtDate(user.lastLoginAt)}</div><div>{fmtDate(user.createdAt)}</div>
                                             </div>
                                         ))}

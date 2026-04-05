@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         const days30 = startOfDaysAgo(30);
 
-        const [subscriptions, invoicesAggregate, invoicesAggregate30d, recentInvoices] = await Promise.all([
+        const [subscriptions, invoicesAggregate, invoicesAggregate30d, recentInvoices, alerts] = await Promise.all([
             prisma.subscription.groupBy({
                 by: ['status'],
                 _count: { status: true },
@@ -35,6 +35,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             prisma.invoice.findMany({
                 take: 15,
                 orderBy: { createdAt: 'desc' },
+                include: {
+                    user: {
+                        select: {
+                            name: true,
+                            email: true,
+                            company: true,
+                        },
+                    },
+                },
+            }),
+            prisma.subscription.findMany({
+                take: 10,
+                where: {
+                    status: { in: [SubscriptionStatus.past_due, SubscriptionStatus.unpaid, SubscriptionStatus.paused, SubscriptionStatus.cancelled] },
+                },
+                orderBy: [{ cancel_date: 'desc' }, { end_date: 'asc' }, { start_date: 'desc' }],
                 include: {
                     user: {
                         select: {
@@ -76,6 +92,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 userName: invoice.user?.name || 'Unknown user',
                 userEmail: invoice.user?.email || '',
                 company: invoice.user?.company || '',
+            })),
+            alerts: alerts.map((subscription) => ({
+                id: subscription.id,
+                status: subscription.status,
+                plan: subscription.plan,
+                startDate: subscription.start_date.toISOString(),
+                endDate: subscription.end_date?.toISOString() ?? null,
+                cancelDate: subscription.cancel_date?.toISOString() ?? null,
+                userName: subscription.user?.name || 'Unknown user',
+                userEmail: subscription.user?.email || '',
+                company: subscription.user?.company || '',
             })),
         });
     } catch (error) {

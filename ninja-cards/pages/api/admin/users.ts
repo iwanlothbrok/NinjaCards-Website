@@ -55,11 +55,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
                 : undefined,
             take,
-            orderBy: { createdAt: 'desc' },
+            orderBy: { updatedAt: 'desc' },
             include: {
-                dashboard: true,
+                dashboard: {
+                    include: {
+                        events: {
+                            take: 1,
+                            orderBy: { timestamp: 'desc' },
+                            select: {
+                                type: true,
+                                timestamp: true,
+                            },
+                        },
+                    },
+                },
                 subscription: true,
-                leads: { select: { id: true } },
+                leads: {
+                    select: {
+                        id: true,
+                        createdAt: true,
+                    },
+                    orderBy: { createdAt: 'desc' },
+                },
             },
         });
 
@@ -72,10 +89,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 plan: user.subscription?.plan || 'No plan',
                 subscriptionStatus: user.subscription?.status || 'none',
                 joinedAt: user.createdAt.toISOString(),
+                updatedAt: user.updatedAt.toISOString(),
+                lastSeenAt: user.dashboard?.events[0]?.timestamp?.toISOString() ?? null,
+                lastCardAction: user.dashboard?.events[0]?.type ?? null,
                 profileVisits: user.dashboard?.profileVisits ?? 0,
                 profileShares: user.dashboard?.profileShares ?? 0,
                 vcfDownloads: user.dashboard?.vcfDownloads ?? 0,
                 leadCount: user.leads.length,
+                latestLeadAt: user.leads[0]?.createdAt?.toISOString() ?? null,
                 completeness: profileCompleteness(user),
             })),
         });

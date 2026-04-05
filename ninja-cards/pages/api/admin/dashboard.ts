@@ -38,6 +38,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             wonDealsAggregate,
             followUpQueue,
             topDashboards,
+            recentCardEvents,
+            recentUsers,
+            subscriptionAlerts,
+            followUpLeads,
         ] = await Promise.all([
             prisma.user.count(),
             prisma.user.count({ where: { createdAt: { gte: days7 } } }),
@@ -89,12 +93,97 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                 },
             }),
+            prisma.dashboardEvent.findMany({
+                take: 10,
+                distinct: ['userId'],
+                orderBy: { timestamp: 'desc' },
+                include: {
+                    dashboard: {
+                        include: {
+                            user: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    email: true,
+                                    company: true,
+                                    createdAt: true,
+                                    updatedAt: true,
+                                    subscription: {
+                                        select: {
+                                            plan: true,
+                                            status: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            }),
+            prisma.user.findMany({
+                take: 8,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    dashboard: {
+                        select: {
+                            profileVisits: true,
+                            profileShares: true,
+                            vcfDownloads: true,
+                        },
+                    },
+                    subscription: {
+                        select: {
+                            plan: true,
+                            status: true,
+                        },
+                    },
+                },
+            }),
+            prisma.subscription.findMany({
+                take: 8,
+                where: {
+                    status: {
+                        in: [SubscriptionStatus.past_due, SubscriptionStatus.unpaid, SubscriptionStatus.paused, SubscriptionStatus.cancelled],
+                    },
+                },
+                orderBy: [{ cancel_date: 'desc' }, { end_date: 'asc' }, { start_date: 'desc' }],
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            company: true,
+                        },
+                    },
+                },
+            }),
+            prisma.subscribed.findMany({
+                take: 8,
+                where: {
+                    followUpStopped: false,
+                    nextFollowUpAt: { lte: now },
+                },
+                orderBy: { nextFollowUpAt: 'asc' },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            company: true,
+                        },
+                    },
+                },
+            }),
         ]);
 
         const totalVisits = visitsAggregate._sum.profileVisits ?? 0;
         const totalShares = visitsAggregate._sum.profileShares ?? 0;
         const totalDownloads = visitsAggregate._sum.vcfDownloads ?? 0;
         const totalSocialClicks = visitsAggregate._sum.socialLinkClicks ?? 0;
+        const atRiskSubscriptions = subscriptionAlerts.length;
+        const visitToLeadRate = totalVisits > 0 ? Number(((totalLeads / totalVisits) * 100).toFixed(1)) : 0;
 
         return res.status(200).json({
             adminUser: {
@@ -112,6 +201,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 totalRevenue: paidInvoicesAggregate._sum.amountPaid ?? 0,
                 revenue30d: recentRevenueAggregate._sum.amountPaid ?? 0,
                 followUpQueue,
+                atRiskSubscriptions,
+                visitToLeadRate,
             },
             funnel: {
                 visits: totalVisits,
@@ -135,6 +226,57 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 profileShares: item.profileShares,
                 vcfDownloads: item.vcfDownloads,
                 socialLinkClicks: item.socialLinkClicks,
+            })),
+            recentCardActivity: recentCardEvents.map((item) => ({
+                userId: item.userId,
+                type: item.type,
+                timestamp: item.timestamp.toISOString(),
+                name: item.dashboard.user?.name || 'Unnamed user',
+                email: item.dashboard.user?.email || '',
+                company: item.dashboard.user?.company || '',
+                joinedAt: item.dashboard.user?.createdAt?.toISOString() ?? null,
+                plan: item.dashboard.user?.subscription?.plan || 'No plan',
+                subscriptionStatus: item.dashboard.user?.subscription?.status || 'none',
+                profileVisits: item.dashboard.profileVisits,
+                profileShares: item.dashboard.profileShares,
+                vcfDownloads: item.dashboard.vcfDownloads,
+                socialLinkClicks: item.dashboard.socialLinkClicks,
+            })),
+            recentUsers: recentUsers.map((user) => ({
+                id: user.id,
+                name: user.name || 'Unnamed user',
+                email: user.email || '',
+                company: user.company || '',
+                joinedAt: user.createdAt.toISOString(),
+                plan: user.subscription?.plan || 'No plan',
+                subscriptionStatus: user.subscription?.status || 'none',
+                profileVisits: user.dashboard?.profileVisits ?? 0,
+                profileShares: user.dashboard?.profileShares ?? 0,
+                vcfDownloads: user.dashboard?.vcfDownloads ?? 0,
+            })),
+            subscriptionAlerts: subscriptionAlerts.map((subscription) => ({
+                id: subscription.id,
+                userId: subscription.userId,
+                name: subscription.user?.name || 'Unknown user',
+                email: subscription.user?.email || '',
+                company: subscription.user?.company || '',
+                plan: subscription.plan,
+                status: subscription.status,
+                startDate: subscription.start_date.toISOString(),
+                endDate: subscription.end_date?.toISOString() ?? null,
+                cancelDate: subscription.cancel_date?.toISOString() ?? null,
+            })),
+            followUpLeads: followUpLeads.map((lead) => ({
+                id: lead.id,
+                name: lead.name,
+                email: lead.email || '',
+                phone: lead.phone || '',
+                source: lead.source || 'profile',
+                followUpStage: lead.followUpStage,
+                nextFollowUpAt: lead.nextFollowUpAt?.toISOString() ?? null,
+                ownerName: lead.user?.name || '',
+                ownerEmail: lead.user?.email || '',
+                company: lead.user?.company || '',
             })),
         });
     } catch (error) {
