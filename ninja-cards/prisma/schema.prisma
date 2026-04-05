@@ -3,9 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-url      = env("DATABASE_URL") 
-   }
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
 
 model User {
   id            String   @id @default(uuid())
@@ -26,7 +27,7 @@ model User {
   state         String?
   country       String?
   bio           String?  @db.Text
-  image         String?  @db.LongText
+  image         String?  @db.Text
   facebook      String?  @db.Text
   instagram     String?  @db.Text
   linkedin      String?
@@ -50,12 +51,12 @@ model User {
   discord       String?
   telegram      String?
   tripadvisor   String?
-  pdf           String?  @db.LongText
-  coverImage    String?  @db.LongText
+  pdf           String?  @db.Text
+  coverImage    String?  @db.Text
   slug          String?  @unique
   isDirect      Boolean  @default(false)
   dashboard     Dashboard?
-  videoUrl String?  @db.LongText 
+  videoUrl String?  @db.Text 
   language  String   @default("bg") 
   leads Subscribed[]  // one-to-many relation: user -> leads
   crmDeals CRMDeal[]
@@ -90,9 +91,9 @@ model Product {
   title      String
   price      Float
   oldPrice   Float?
-  image      String   @db.LongText
-  frontImage String?  @db.LongText
-  backImage  String?  @db.LongText
+  image      String   @db.Text
+  frontImage String?  @db.Text
+  backImage  String?  @db.Text
   type       String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -106,18 +107,18 @@ model CardDesign {
   userName        String
   userPhone       String
   userEmail       String
-  frontDataUrl    String   @db.LongText
-  backDataUrl     String   @db.LongText
+  frontDataUrl    String   @db.Text
+  backDataUrl     String   @db.Text
   createdAt       DateTime @default(now())
   courierAddress  String?
   courierIsSpeedy Int
-  backLogoUrl     String?  @db.LongText
+  backLogoUrl     String?  @db.Text
 }
 
 model Company {
   id        String   @id @default(uuid())
   name      String
-  googleReviewLink  String   @db.LongText
+  googleReviewLink  String   @db.Text
   createdAt DateTime @default(now())
 }
 
@@ -230,9 +231,9 @@ model Invoice {
   hostedInvoiceUrl  String
   createdAt         DateTime @default(now())
 
- // NEW: Stripe subscription id (за лесен дебъг/синк; не е unique – много инвойси към 1 sub)
+ // NEW: Stripe subscription id (Ð·Ð° Ð»ÐµÑÐµÐ½ Ð´ÐµÐ±ÑŠÐ³/ÑÐ¸Ð½Ðº; Ð½Ðµ Ðµ unique â€“ Ð¼Ð½Ð¾Ð³Ð¾ Ð¸Ð½Ð²Ð¾Ð¹ÑÐ¸ ÐºÑŠÐ¼ 1 sub)
   stripeSubscriptionId String?
-  // NEW: FK към локалния Subscription
+  // NEW: FK ÐºÑŠÐ¼ Ð»Ð¾ÐºÐ°Ð»Ð½Ð¸Ñ Subscription
   subscriptionId       String?
   subscription         Subscription? @relation(fields: [subscriptionId], references: [id])
 
@@ -286,7 +287,7 @@ model WebhookEvent {
   type         String
   status       WebhookEventStatus  @default(processing)
   attempts     Int                 @default(0)
-  lastError    String?             @db.LongText
+  lastError    String?             @db.Text
   createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
   processedAt  DateTime?
