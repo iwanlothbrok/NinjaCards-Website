@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
-import { BASE_API_URL } from "@/utils/constants";
+import { BASE_API_URL, PUBLIC_SITE_URL, buildPublicProfileUrl } from "@/utils/constants";
 
 type SlugStatus = "idle" | "checking" | "available" | "taken";
 
@@ -92,8 +92,9 @@ export default function SlugPage() {
     };
 
     const profileUrl = slug.length >= 3
-        ? `https://www.ninjacardsnfc.com/bg/p/${slug}`
+        ? buildPublicProfileUrl({ locale: "bg", slug })
         : null;
+    const publicProfilePrefix = `${new URL(PUBLIC_SITE_URL).host}/bg/p/`;
 
     const canSave = slugStatus === "available" && slug.length >= 3;
 
@@ -148,7 +149,7 @@ export default function SlugPage() {
                             </label>
                             <div className={`flex items-center gap-2 rounded-lg bg-gray-900/60 border px-4 py-3 transition-colors ${slugStatus === "available" ? "border-green-500/50" : slugStatus === "taken" ? "border-red-500/50" : "border-gray-700"}`}>
                                 <span className="text-gray-500 text-sm whitespace-nowrap">
-                                    ninjacardsnfc.com/bg/p/
+                                    {publicProfilePrefix}
                                 </span>
                                 <input
                                     type="text"

@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { APP_SITE_URL, PUBLIC_SITE_URL } from './constants';
+
 const allowedOrigins: Array<string | RegExp> = [
-    'https://www.ninjacardsnfc.com',
+    PUBLIC_SITE_URL,
+    APP_SITE_URL,
     // Helpful in dev:
     /^https?:\/\/localhost:\d+$/,
 ];

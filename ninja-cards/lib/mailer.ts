@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import nodemailer from "nodemailer";
+import { buildAppUrl, buildPublicProfileUrl } from "@/utils/constants";
 
 /** Sends a welcome email after a new profile is created. */
 export async function sendWelcomeEmail(opts: {
@@ -12,9 +13,9 @@ export async function sendWelcomeEmail(opts: {
 
     const from = process.env.BILLING_FROM_EMAIL ?? "noreply@ninjacardsnfc.com";
     const profileUrl = opts.slug
-        ? `https://www.ninjacardsnfc.com/bg/p/${opts.slug}`
-        : `https://www.ninjacardsnfc.com/bg/profile`;
-    const dashboardUrl = "https://www.ninjacardsnfc.com/bg/profile";
+        ? buildPublicProfileUrl({ locale: "bg", slug: opts.slug })
+        : buildAppUrl("/bg/profile");
+    const dashboardUrl = buildAppUrl("/bg/profile");
 
     const html = `
     <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.6;max-width:600px;margin:0 auto;background-color:#000000;color:#ffffff;padding:40px 20px;">

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './config';
+import { APP_SITE_URL, PUBLIC_SITE_URL } from './utils/constants';
 
 const intlMiddleware = createMiddleware({
   locales: [...locales],
@@ -11,8 +12,21 @@ function stripTrailingSlash(path: string) {
   return path !== '/' ? path.replace(/\/+$/, '') : '/';
 }
 
+const PUBLIC_HOSTNAME = new URL(PUBLIC_SITE_URL).hostname;
+const APP_HOSTNAME = new URL(APP_SITE_URL).hostname;
+const PUBLIC_CARD_PREFIXES = ['/profileDetails', '/p'];
+const APP_ONLY_PREFIXES = ['/profile', '/admin'];
+
+function hasPrefixedPath(pathname: string, prefixes: string[]) {
+  return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
+function redirectTo(origin: string, pathname: string, search: string) {
+  return NextResponse.redirect(`${origin}${pathname}${search}`, 308);
+}
+
 export default function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
 
   // Split & detect locale
   const [, firstSeg, ...rest] = pathname.split('/');
@@ -21,6 +35,23 @@ export default function middleware(request: NextRequest) {
 
   // Normalize path without locale and trailing slash
   const pathWithoutLocale = stripTrailingSlash(hasLocale ? `/${rest.join('/')}` : pathname);
+  const hostname = request.nextUrl.hostname;
+
+  if (
+    hostname === APP_HOSTNAME &&
+    PUBLIC_HOSTNAME !== APP_HOSTNAME &&
+    hasPrefixedPath(pathWithoutLocale, PUBLIC_CARD_PREFIXES)
+  ) {
+    return redirectTo(PUBLIC_SITE_URL, pathname, search);
+  }
+
+  if (
+    hostname === PUBLIC_HOSTNAME &&
+    PUBLIC_HOSTNAME !== APP_HOSTNAME &&
+    hasPrefixedPath(pathWithoutLocale, APP_ONLY_PREFIXES)
+  ) {
+    return redirectTo(APP_SITE_URL, pathname, search);
+  }
 
   // Protect *only* /profile (not /profileDetails/*)
   // if (pathWithoutLocale === '/profile') {

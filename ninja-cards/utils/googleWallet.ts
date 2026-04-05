@@ -2,6 +2,7 @@
 import jwt from "jsonwebtoken";
 import { google } from "googleapis";
 import { JWT } from "google-auth-library";
+import { PUBLIC_SITE_URL, buildPublicAssetUrl, buildPublicProfileUrl } from "./constants";
 
 // ─── Translations ─────────────────────────────────────────────────────────────
 const T = {
@@ -72,8 +73,9 @@ export async function generateGoogleWalletJwt(params: WalletParams) {
     const issuerId   = "3388000000023092535";
     const classId    = `${issuerId}.NinjaCard`;
     const objectId   = `${issuerId}.NinjaCard-${userId}`;
-    const profileUrl = `https://www.ninjacardsnfc.com/profileDetails/${userId}`;
-    const defaultLogo = "https://www.ninjacardsnfc.com/navlogo.png";
+    const profileUrl = buildPublicProfileUrl({ locale: "bg", userId });
+    const defaultLogo = buildPublicAssetUrl("/navlogo.png");
+    const publicOrigin = new URL(PUBLIC_SITE_URL).hostname;
 
     const authClient = new JWT({
         email:  credentials.client_email,
@@ -166,7 +168,7 @@ export async function generateGoogleWalletJwt(params: WalletParams) {
                     aud:     "google",
                     typ:     "savetowallet",
                     iat:     Math.floor(Date.now() / 1000),
-                    origins: ["www.ninjacardsnfc.com"],
+                    origins: [publicOrigin],
                     payload: { genericObjects: [{ id: objectId, classId: classId }] },
                 },
                 credentials.private_key, { algorithm: "RS256" }
@@ -183,7 +185,7 @@ export async function generateGoogleWalletJwt(params: WalletParams) {
         aud:     "google",
         typ:     "savetowallet",
         iat:     Math.floor(Date.now() / 1000),
-        origins: ["www.ninjacardsnfc.com"],
+        origins: [publicOrigin],
         payload: {
             genericObjects: [{ id: objectId, classId: classId }],
         },

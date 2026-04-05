@@ -1,4 +1,5 @@
 import cors from '@/utils/cors';
+import { buildPublicProfileUrl } from '@/utils/constants';
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcryptjs';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -66,9 +67,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             });
 
-            const qrCodeUrl = normalizedSlug
-                ? `https://www.ninjacardsnfc.com/bg/p/${normalizedSlug}`
-                : `https://www.ninjacardsnfc.com/bg/profileDetails/${user.id}`;
+            const qrCodeUrl = buildPublicProfileUrl({
+                locale: 'bg',
+                slug: normalizedSlug ?? undefined,
+                userId: user.id,
+            });
 
             // Generate the QR code from the URL
             const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);

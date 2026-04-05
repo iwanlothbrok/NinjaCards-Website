@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import cors from "@/utils/cors";
 import QRCode from 'qrcode';
+import { buildPublicProfileUrl } from "@/utils/constants";
 
 const prisma = new PrismaClient();
 
@@ -22,9 +23,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const existingUser = await prisma.user.findUnique({ where: { id: userId }, select: { slug: true } });
 
-        const qrCodeUrl = existingUser?.slug
-            ? `https://www.ninjacardsnfc.com/bg/p/${existingUser.slug}`
-            : `https://www.ninjacardsnfc.com/bg/profileDetails/${userId}`;
+        const qrCodeUrl = buildPublicProfileUrl({
+            locale: "bg",
+            slug: existingUser?.slug ?? undefined,
+            userId,
+        });
 
         // Generate the QR code from the URL
         const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);

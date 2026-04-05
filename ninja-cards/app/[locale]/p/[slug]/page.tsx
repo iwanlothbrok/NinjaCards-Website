@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { BASE_API_URL } from '@/utils/constants';
+import type { Locale } from '@/config';
+import { BASE_API_URL, PUBLIC_SITE_URL, buildPublicAssetUrl } from '@/utils/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +14,7 @@ const ProfileDetailsContent = dynamicImport(
 );
 
 export async function generateMetadata(
-    { params: { slug } }: { params: { slug: string } }
+    { params: { slug, locale } }: { params: { slug: string; locale: Locale } }
 ): Promise<Metadata> {
     let user: any = null;
     try {
@@ -26,7 +27,8 @@ export async function generateMetadata(
     const description = user?.position
         ? `${user.name} - ${user.position}`
         : 'Смарт NFC визитки – дигитално споделяне на контакти';
-    const image = user?.image ?? 'https://www.ninjacardsnfc.com/navlogo.png';
+    const image = user?.image ?? buildPublicAssetUrl('/navlogo.png');
+    const canonicalPath = `/${locale}/p/${slug}`;
 
     return {
         title,
@@ -36,6 +38,13 @@ export async function generateMetadata(
             description,
             images: [{ url: image, width: 1200, height: 630, alt: name }],
             type: 'profile',
+        },
+        alternates: {
+            canonical: `${PUBLIC_SITE_URL}${canonicalPath}`,
+            languages: {
+                'bg-BG': `${PUBLIC_SITE_URL}/bg/p/${slug}`,
+                'en-US': `${PUBLIC_SITE_URL}/en/p/${slug}`,
+            },
         },
     };
 }

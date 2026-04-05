@@ -10,7 +10,9 @@
     "start": "next start",
     "lint": "next lint",
     "build": "prisma generate && next build",
-    "export": "cross-env CPANEL_BUILD=true npm run build && next export"
+    "export": "cross-env CPANEL_BUILD=true npm run build && next export",
+    "sync:railway-to-supabase": "node scripts/sync-railway-to-supabase.js",
+    "sync:railway-to-supabase:backup": "node scripts/sync-railway-to-supabase.js --backup-only"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.7.2",

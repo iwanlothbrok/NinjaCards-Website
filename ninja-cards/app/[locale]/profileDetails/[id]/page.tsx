@@ -4,7 +4,7 @@ import dynamicImport from 'next/dynamic';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { getPathname, type Href } from '@/navigation';
-import { BASE_API_URL } from '@/utils/constants';
+import { BASE_API_URL, PUBLIC_SITE_URL, buildPublicAssetUrl } from '@/utils/constants';
 import type { Locale } from '@/config';
 
 export const dynamic = 'force-dynamic';
@@ -27,7 +27,8 @@ export async function generateMetadata(
     const description = user?.jobTitle
         ? `${user.name} - ${user.jobTitle}`
         : 'Смарт NFC визитки – дигитално споделяне на контакти';
-    const image = user?.image ?? 'https://www.ninjacardsnfc.com/navlogo.png';
+    const image = user?.image ?? buildPublicAssetUrl('/navlogo.png');
+    const canonicalPath = getPathname({ locale, href });
 
     return {
         title,
@@ -39,10 +40,10 @@ export async function generateMetadata(
             type: 'profile',
         },
         alternates: {
-            canonical: getPathname({ locale, href }),
+            canonical: `${PUBLIC_SITE_URL}${canonicalPath}`,
             languages: {
-                'bg-BG': getPathname({ locale: 'bg', href }),
-                'en-US': getPathname({ locale: 'en', href })
+                'bg-BG': `${PUBLIC_SITE_URL}${getPathname({ locale: 'bg', href })}`,
+                'en-US': `${PUBLIC_SITE_URL}${getPathname({ locale: 'en', href })}`
             }
         }
     };
