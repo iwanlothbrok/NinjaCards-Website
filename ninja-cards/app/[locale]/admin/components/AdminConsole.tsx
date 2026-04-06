@@ -507,12 +507,19 @@ export default function AdminConsole() {
 
                             {!pageLoading && activeModule === 'users' && usersData && (
                                 <Section title="User Management" subtitle="Review the latest 20 signups, search by name, sort by join date, and remove a user's password when needed.">
-                                    <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
-                                        <div className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(180px,0.9fr)_minmax(130px,0.6fr)_minmax(170px,0.8fr)_minmax(210px,1fr)] gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
-                                            <div>User</div><div>Plan</div><div>Last Seen</div><div>Joined</div><div>Engagement</div><div>Leads</div><div>Profile Health</div><div>Access</div>
-                                        </div>
-                                        {usersData.users.map((user: any) => (
-                                            <div key={user.id} className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(180px,0.9fr)_minmax(130px,0.6fr)_minmax(170px,0.8fr)_minmax(210px,1fr)] gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                    <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-xs uppercase tracking-[0.18em] text-white/45">
+                                        <span>Scroll horizontally to see the access controls</span>
+                                        <span className="rounded-full border border-orange/20 bg-orange/10 px-3 py-1 text-[11px] font-semibold text-orange">
+                                            Password actions on the far right
+                                        </span>
+                                    </div>
+                                    <div className="overflow-x-auto rounded-2xl border border-white/8 bg-[#0d1319]">
+                                        <div className="min-w-[1540px]">
+                                            <div className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(180px,0.9fr)_minmax(130px,0.6fr)_minmax(170px,0.8fr)_minmax(240px,1fr)] gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>User</div><div>Plan</div><div>Last Seen</div><div>Joined</div><div>Engagement</div><div>Leads</div><div>Profile Health</div><div>Access</div>
+                                            </div>
+                                            {usersData.users.map((user: any) => (
+                                                <div key={user.id} className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(180px,0.9fr)_minmax(130px,0.6fr)_minmax(170px,0.8fr)_minmax(240px,1fr)] gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                 <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div><div className="text-xs text-white/35">{user.company || 'No company set'}</div></div>
                                                 <div><div>{user.plan}</div><div className="mt-2"><Badge tone={getStatusTone(user.subscriptionStatus)}>{user.subscriptionStatus}</Badge></div></div>
                                                 <div><div>{fmtDate(user.lastSeenAt)}</div><div className="mt-2 text-xs text-white/45">{fmtAction(user.lastCardAction)}</div></div>
@@ -540,13 +547,14 @@ export default function AdminConsole() {
                                                         {user.hasPassword ? 'Remove password' : 'Password cleared'}
                                                     </button>
                                                 </div>
-                                            </div>
-                                        ))}
-                                        {usersData.users.length === 0 && (
-                                            <div className="px-5 py-10 text-center text-sm text-white/55">
-                                                No users matched this search yet.
-                                            </div>
-                                        )}
+                                                </div>
+                                            ))}
+                                            {usersData.users.length === 0 && (
+                                                <div className="px-5 py-10 text-center text-sm text-white/55">
+                                                    No users matched this search yet.
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </Section>
                             )}
