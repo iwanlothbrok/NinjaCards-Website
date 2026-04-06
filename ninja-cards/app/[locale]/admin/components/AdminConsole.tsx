@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { CreditCard, Crown, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users } from 'lucide-react';
+import { CreditCard, Crown, KeyRound, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users } from 'lucide-react';
 import { useAdminAuth } from '../AdminAuthProvider';
 import { BASE_API_URL } from '@/utils/constants';
 
@@ -105,6 +105,9 @@ export default function AdminConsole() {
     const [adminUsersData, setAdminUsersData] = useState<any>(null);
     const [pageLoading, setPageLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [usersActionError, setUsersActionError] = useState<string | null>(null);
+    const [usersActionNotice, setUsersActionNotice] = useState<string | null>(null);
+    const [passwordActionUserId, setPasswordActionUserId] = useState<string | null>(null);
 
     useEffect(() => {
         if (!loading && !adminUser) router.replace(`/${locale}/admin/login`);
@@ -115,10 +118,11 @@ export default function AdminConsole() {
         let ignore = false;
         setPageLoading(true);
         setError(null);
+        setUsersActionError(null);
 
         Promise.all([
             fetch(`${BASE_API_URL}/api/admin/dashboard`, { credentials: 'include', cache: 'no-store' }),
-            fetch(`${BASE_API_URL}/api/admin/users?q=${encodeURIComponent(query)}`, { credentials: 'include', cache: 'no-store' }),
+            fetch(`${BASE_API_URL}/api/admin/users?q=${encodeURIComponent(query)}&limit=20`, { credentials: 'include', cache: 'no-store' }),
             fetch(`${BASE_API_URL}/api/admin/revenue`, { credentials: 'include', cache: 'no-store' }),
             fetch(`${BASE_API_URL}/api/admin/crm`, { credentials: 'include', cache: 'no-store' }),
             fetch(`${BASE_API_URL}/api/admin/admin-users`, { credentials: 'include', cache: 'no-store' }),
@@ -141,6 +145,51 @@ export default function AdminConsole() {
             ignore = true;
         };
     }, [adminUser, query]);
+
+    const handleClearPassword = async (user: any) => {
+        const confirmed = window.confirm(
+            `Remove the password for ${user.name}? They will no longer be able to log in with a password until a new one is set.`,
+        );
+
+        if (!confirmed) return;
+
+        setPasswordActionUserId(user.id);
+        setUsersActionError(null);
+        setUsersActionNotice(null);
+
+        try {
+            const response = await fetch(`${BASE_API_URL}/api/admin/users`, {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'clear-password',
+                    userId: user.id,
+                }),
+            });
+
+            const payload = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(payload?.error || 'Failed to remove password');
+            }
+
+            setUsersData((current: any) =>
+                current
+                    ? {
+                          ...current,
+                          users: current.users.map((item: any) =>
+                              item.id === user.id ? { ...item, hasPassword: false } : item,
+                          ),
+                      }
+                    : current,
+            );
+            setUsersActionNotice(`Password removed for ${user.name}.`);
+        } catch (err) {
+            setUsersActionError(err instanceof Error ? err.message : 'Failed to remove password');
+        } finally {
+            setPasswordActionUserId(null);
+        }
+    };
 
     const setModule = (module: ModuleKey) => {
         const params = new URLSearchParams(searchParams?.toString());
@@ -230,13 +279,32 @@ export default function AdminConsole() {
                             </div>
 
                             {activeModule === 'users' && (
-                                <div className="flex items-center gap-3 rounded-2xl border border-white/8 bg-[#0d1319] px-4 py-3">
-                                    <Search className="h-4 w-4 text-white/35" />
-                                    <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by name, email, or company" className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30" />
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3 rounded-2xl border border-white/8 bg-[#0d1319] px-4 py-3">
+                                        <Search className="h-4 w-4 text-white/35" />
+                                        <input
+                                            value={query}
+                                            onChange={(event) => setQuery(event.target.value)}
+                                            placeholder="Search by user name"
+                                            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
+                                        />
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.18em] text-white/35">
+                                        <span>Showing the latest 20 users</span>
+                                        <span className="rounded-full border border-white/8 bg-white/[0.03] px-3 py-1.5 text-[11px] font-semibold text-white/60">
+                                            Ordered by created date
+                                        </span>
+                                    </div>
                                 </div>
                             )}
 
                             {error && <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-200">{error}</div>}
+                            {usersActionError && activeModule === 'users' && (
+                                <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-200">{usersActionError}</div>
+                            )}
+                            {usersActionNotice && activeModule === 'users' && (
+                                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-200">{usersActionNotice}</div>
+                            )}
                             {pageLoading && <div className="flex min-h-[280px] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-orange" /></div>}
 
                             {!pageLoading && activeModule === 'overview' && dashboard && (
@@ -367,13 +435,13 @@ export default function AdminConsole() {
                             )}
 
                             {!pageLoading && activeModule === 'users' && usersData && (
-                                <Section title="User Management" subtitle="Search live users, track plan state, recent card activity, and weak profiles.">
+                                <Section title="User Management" subtitle="Review the latest 20 signups, search by name, sort by join date, and remove a user's password when needed.">
                                     <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
-                                        <div className="grid grid-cols-7 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
-                                            <div>User</div><div>Plan</div><div>Last Seen</div><div>Joined</div><div>Engagement</div><div>Leads</div><div>Profile Health</div>
+                                        <div className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(180px,0.9fr)_minmax(130px,0.6fr)_minmax(170px,0.8fr)_minmax(210px,1fr)] gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                            <div>User</div><div>Plan</div><div>Last Seen</div><div>Joined</div><div>Engagement</div><div>Leads</div><div>Profile Health</div><div>Access</div>
                                         </div>
                                         {usersData.users.map((user: any) => (
-                                            <div key={user.id} className="grid grid-cols-7 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                            <div key={user.id} className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(180px,0.9fr)_minmax(130px,0.6fr)_minmax(170px,0.8fr)_minmax(210px,1fr)] gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                 <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div><div className="text-xs text-white/35">{user.company || 'No company set'}</div></div>
                                                 <div><div>{user.plan}</div><div className="mt-2"><Badge tone={getStatusTone(user.subscriptionStatus)}>{user.subscriptionStatus}</Badge></div></div>
                                                 <div><div>{fmtDate(user.lastSeenAt)}</div><div className="mt-2 text-xs text-white/45">{fmtAction(user.lastCardAction)}</div></div>
@@ -381,6 +449,26 @@ export default function AdminConsole() {
                                                 <div><div>{user.profileVisits} visits</div><div className="text-xs text-white/45">{user.profileShares} shares / {user.vcfDownloads} downloads</div></div>
                                                 <div><div>{user.leadCount}</div><div className="text-xs text-white/45">{user.latestLeadAt ? `Latest ${fmtDate(user.latestLeadAt)}` : 'No leads yet'}</div></div>
                                                 <div><div className="font-semibold text-white">{user.completeness}% complete</div><div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-2 rounded-full bg-gradient-to-r from-orange to-teil" style={{ width: `${user.completeness}%` }} /></div></div>
+                                                <div className="space-y-3">
+                                                    <div>
+                                                        <Badge tone={user.hasPassword ? 'green' : 'neutral'}>
+                                                            {user.hasPassword ? 'Password set' : 'No password'}
+                                                        </Badge>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => void handleClearPassword(user)}
+                                                        disabled={!user.hasPassword || passwordActionUserId === user.id}
+                                                        className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-white transition hover:border-orange/30 hover:text-orange disabled:cursor-not-allowed disabled:border-white/6 disabled:text-white/30"
+                                                    >
+                                                        {passwordActionUserId === user.id ? (
+                                                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                        ) : (
+                                                            <KeyRound className="h-3.5 w-3.5" />
+                                                        )}
+                                                        {user.hasPassword ? 'Remove password' : 'Password cleared'}
+                                                    </button>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>

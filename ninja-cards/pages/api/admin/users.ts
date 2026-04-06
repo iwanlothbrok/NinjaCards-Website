@@ -33,7 +33,7 @@ function profileCompleteness(user: {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (cors(req, res)) return;
-    if (req.method !== 'GET') {
+    if (!['GET', 'PATCH'].includes(req.method || '')) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
@@ -41,21 +41,58 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!adminUser) return;
 
     try {
+        if (req.method === 'PATCH') {
+            const userId = typeof req.body?.userId === 'string' ? req.body.userId : '';
+            const action = typeof req.body?.action === 'string' ? req.body.action : '';
+
+            if (!userId) {
+                return res.status(400).json({ error: 'User id is required' });
+            }
+
+            if (action !== 'clear-password') {
+                return res.status(400).json({ error: 'Unsupported action' });
+            }
+
+            const existingUser = await prisma.user.findUnique({
+                where: { id: userId },
+                select: { id: true, password: true, name: true, email: true },
+            });
+
+            if (!existingUser) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            await prisma.user.update({
+                where: { id: userId },
+                data: { password: null },
+            });
+
+            return res.status(200).json({
+                ok: true,
+                userId,
+                name: existingUser.name || 'Unnamed user',
+                email: existingUser.email || '',
+                hadPassword: Boolean(existingUser.password),
+                hasPassword: false,
+            });
+        }
+
         const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
-        const take = Math.min(Number(req.query.limit || 25), 100);
+        const take = Math.min(Math.max(Number(req.query.limit || 20), 1), 100);
 
         const users = await prisma.user.findMany({
             where: q
                 ? {
                     OR: [
                         { name: { contains: q, mode: 'insensitive' } },
+                        { firstName: { contains: q, mode: 'insensitive' } },
+                        { lastName: { contains: q, mode: 'insensitive' } },
                         { email: { contains: q, mode: 'insensitive' } },
-                        { company: { contains: q, mode: 'insensitive' } },
                     ],
                 }
                 : undefined,
             take,
-            orderBy: { updatedAt: 'desc' },
+            orderBy: { createdAt: 'desc' },
             include: {
                 dashboard: {
                     include: {
@@ -85,6 +122,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 id: user.id,
                 name: user.name || 'Unnamed user',
                 email: user.email || '',
+                hasPassword: Boolean(user.password),
                 company: user.company || '',
                 plan: user.subscription?.plan || 'No plan',
                 subscriptionStatus: user.subscription?.status || 'none',
