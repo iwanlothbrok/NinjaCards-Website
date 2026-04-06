@@ -22,6 +22,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, type }) => {
     const cardRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        const currentCard = cardRef.current;
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -31,9 +32,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, type }) => {
             },
             { threshold: 0.1 }
         );
-        if (cardRef.current) observer.observe(cardRef.current);
+        if (currentCard) observer.observe(currentCard);
         return () => {
-            if (cardRef.current) observer.unobserve(cardRef.current);
+            if (currentCard) observer.unobserve(currentCard);
         };
     }, [controls]);
 

@@ -473,7 +473,13 @@
         "desc": "Задай кратък URL към своята визитка."
       }
     },
-    "needId": "Изисква се ID на профила"
+    "needId": "Изисква се ID на профила",
+    "builderCta": {
+      "eyebrow": "Ново изживяване",
+      "title": "Създайте картата си в едно водено работно пространство",
+      "description": "Използвайте новия редактор на профила, за да обновите бранда, връзките и визията на картата си от едно място.",
+      "button": "Отвори редактора"
+    }
   },
   "ChangeAddress": {
     "title": "Промяна на адрес",
@@ -2155,103 +2161,103 @@
   },
   "EmailSignature": {
     "header": {
-      "badge": "\u041f\u0440\u0435\u043c\u0438\u0443\u043c \u043f\u043e\u0434\u043f\u0438\u0441",
-      "title": "\u0413\u0435\u043d\u0435\u0440\u0430\u0442\u043e\u0440 \u0437\u0430 \u0438\u043c\u0435\u0439\u043b \u043f\u043e\u0434\u043f\u0438\u0441",
-      "subtitle": "\u0421\u044a\u0437\u0434\u0430\u0439 \u0438\u0437\u0447\u0438\u0441\u0442\u0435\u043d \u0438 \u043f\u0440\u043e\u0444\u0435\u0441\u0438\u043e\u043d\u0430\u043b\u0435\u043d \u043f\u043e\u0434\u043f\u0438\u0441 \u0441 \u0440\u0435\u0430\u043b\u043d\u0438\u0442\u0435 \u0441\u0438 \u043a\u043e\u043d\u0442\u0430\u043a\u0442\u0438, \u0430\u043a\u0442\u0438\u0432\u043d\u0438\u0442\u0435 \u0441\u0438 \u0441\u043e\u0446\u0438\u0430\u043b\u043d\u0438 \u043c\u0440\u0435\u0436\u0438 \u0438 \u0440\u0430\u0431\u043e\u0442\u0435\u0449\u0430 \u043f\u0440\u043e\u0444\u0438\u043b\u043d\u0430 \u0441\u043d\u0438\u043c\u043a\u0430."
+      "badge": "Премиум подпис",
+      "title": "Генератор за имейл подпис",
+      "subtitle": "Създай изчистен и професионален подпис с реалните си контакти, активните си социални мрежи и работеща профилна снимка."
     },
     "sections": {
-      "customization": "\u041f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u044f",
-      "quickSetup": "\u0411\u044a\u0440\u0437\u0430 \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0430",
-      "theme": "\u0422\u0435\u043c\u0430",
-      "accentColor": "\u0410\u043a\u0446\u0435\u043d\u0442\u0435\u043d \u0446\u0432\u044f\u0442",
-      "socialMedia": "\u0421\u043e\u0446\u0438\u0430\u043b\u043d\u0438 \u043c\u0440\u0435\u0436\u0438"
+      "customization": "Персонализация",
+      "quickSetup": "Бърза настройка",
+      "theme": "Тема",
+      "accentColor": "Акцентен цвят",
+      "socialMedia": "Социални мрежи"
     },
     "themes": {
-      "modern": "\u041c\u043e\u0434\u0435\u0440\u0435\u043d",
-      "classic": "\u041a\u043b\u0430\u0441\u0438\u0447\u0435\u0441\u043a\u0438",
-      "minimal": "\u041c\u0438\u043d\u0438\u043c\u0430\u043b\u0435\u043d",
-      "bold": "\u0421\u043c\u0435\u043b",
-      "professional": "\u041f\u0440\u043e\u0444\u0435\u0441\u0438\u043e\u043d\u0430\u043b\u0435\u043d"
+      "modern": "Модерен",
+      "classic": "Класически",
+      "minimal": "Минимален",
+      "bold": "Смел",
+      "professional": "Професионален"
     },
     "fields": {
-      "name": "\u0418\u043c\u0435 \u0438 \u0444\u0430\u043c\u0438\u043b\u0438\u044f",
-      "position": "\u041f\u043e\u0437\u0438\u0446\u0438\u044f",
-      "company": "\u041a\u043e\u043c\u043f\u0430\u043d\u0438\u044f",
-      "email": "\u0418\u043c\u0435\u0439\u043b",
-      "phone1": "\u0422\u0435\u043b\u0435\u0444\u043e\u043d",
-      "address": "\u0410\u0434\u0440\u0435\u0441",
-      "website": "\u0423\u0435\u0431\u0441\u0430\u0439\u0442",
-      "linkedin": "LinkedIn \u043f\u0440\u043e\u0444\u0438\u043b"
+      "name": "Име и фамилия",
+      "position": "Позиция",
+      "company": "Компания",
+      "email": "Имейл",
+      "phone1": "Телефон",
+      "address": "Адрес",
+      "website": "Уебсайт",
+      "linkedin": "LinkedIn профил"
     },
     "placeholders": {
-      "name": "\u0418\u0432\u0430\u043d \u041f\u0435\u0442\u0440\u043e\u0432",
-      "position": "\u0424\u0438\u043d\u0430\u043d\u0441\u043e\u0432 \u043a\u043e\u043d\u0441\u0443\u043b\u0442\u0430\u043d\u0442",
+      "name": "Иван Петров",
+      "position": "Финансов консултант",
       "company": "Ninja Cards",
       "email": "ivan@example.com",
       "phone1": "+359 88 000 0000",
-      "address": "\u0421\u043e\u0444\u0438\u044f, \u0411\u044a\u043b\u0433\u0430\u0440\u0438\u044f",
+      "address": "София, България",
       "website": "ninjacardsnfc.com"
     },
     "toggles": {
-      "showImage": "\u041f\u043e\u043a\u0430\u0436\u0438 \u043f\u0440\u043e\u0444\u0438\u043b\u043d\u0430 \u0441\u043d\u0438\u043c\u043a\u0430",
-      "showQR": "\u041f\u043e\u043a\u0430\u0436\u0438 QR \u043a\u043e\u0434",
-      "showSocial": "\u041f\u043e\u043a\u0430\u0436\u0438 \u0441\u043e\u0446\u0438\u0430\u043b\u043d\u0438 \u043c\u0440\u0435\u0436\u0438"
+      "showImage": "Покажи профилна снимка",
+      "showQR": "Покажи QR код",
+      "showSocial": "Покажи социални мрежи"
     },
     "social": {
-      "hint": "\u0422\u0443\u043a \u0441\u0435 \u043f\u043e\u043a\u0430\u0437\u0432\u0430\u0442 \u0441\u0430\u043c\u043e \u043b\u0438\u043d\u043a\u043e\u0432\u0435\u0442\u0435, \u043a\u043e\u0438\u0442\u043e \u0432\u0435\u0447\u0435 \u0441\u0430 \u0434\u043e\u0431\u0430\u0432\u0435\u043d\u0438 \u0432 \u043f\u0440\u043e\u0444\u0438\u043b\u0430."
+      "hint": "Тук се показват само линковете, които вече са добавени в профила."
     },
     "preview": {
-      "title": "\u041f\u0440\u0435\u0433\u043b\u0435\u0434 \u043d\u0430 \u0436\u0438\u0432\u043e",
-      "note": "\u0422\u043e\u0432\u0430 \u0435 \u0442\u043e\u0447\u043d\u0438\u044f\u0442 HTML \u043f\u043e\u0434\u043f\u0438\u0441, \u043a\u043e\u0439\u0442\u043e \u043c\u043e\u0436\u0435\u0448 \u0434\u0430 \u043f\u043e\u0441\u0442\u0430\u0432\u0438\u0448 \u0432 Gmail, Outlook \u0438\u043b\u0438 Apple Mail.",
-      "scanMe": "\u0421\u043a\u0430\u043d\u0438\u0440\u0430\u0439"
+      "title": "Преглед на живо",
+      "note": "Това е точният HTML подпис, който можеш да поставиш в Gmail, Outlook или Apple Mail.",
+      "scanMe": "Сканирай"
     },
     "actions": {
-      "copy": "\u041a\u043e\u043f\u0438\u0440\u0430\u0439 \u043f\u043e\u0434\u043f\u0438\u0441\u0430",
-      "copied": "\u041a\u043e\u043f\u0438\u0440\u0430\u043d\u043e",
-      "copyHelp": "\u041f\u043e\u0441\u0442\u0430\u0432\u0438 \u0433\u043e \u0434\u0438\u0440\u0435\u043a\u0442\u043d\u043e \u0432 \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438\u0442\u0435 \u0437\u0430 \u043f\u043e\u0434\u043f\u0438\u0441 \u043d\u0430 \u0438\u043c\u0435\u0439\u043b \u043a\u043b\u0438\u0435\u043d\u0442\u0430.",
-      "download": "\u0418\u0437\u0442\u0435\u0433\u043b\u0438 HTML",
-      "customColor": "\u0421\u043e\u0431\u0441\u0442\u0432\u0435\u043d \u0446\u0432\u044f\u0442"
+      "copy": "Копирай подписа",
+      "copied": "Копирано",
+      "copyHelp": "Постави го директно в настройките за подпис на имейл клиента.",
+      "download": "Изтегли HTML",
+      "customColor": "Собствен цвят"
     },
     "stats": {
-      "themes": "\u0422\u0435\u043c\u0438",
-      "social": "\u0410\u043a\u0442\u0438\u0432\u043d\u0438 \u043c\u0440\u0435\u0436\u0438",
-      "format": "\u0415\u043a\u0441\u043f\u043e\u0440\u0442"
+      "themes": "Теми",
+      "social": "Активни мрежи",
+      "format": "Експорт"
     },
     "imageSupport": {
-      "title": "\u041f\u043e\u0434\u0434\u0440\u044a\u0436\u043a\u0430 \u043d\u0430 \u0441\u043d\u0438\u043c\u043a\u0430",
-      "description": "\u041f\u043e\u0434\u043f\u0438\u0441\u044a\u0442 \u0432\u0435\u0447\u0435 \u0438\u0437\u043f\u043e\u043b\u0437\u0432\u0430 \u0440\u0435\u0430\u043b\u0435\u043d image URL \u0432\u043c\u0435\u0441\u0442\u043e base64, \u0437\u0430 \u0434\u0430 \u043c\u043e\u0433\u0430\u0442 \u0438\u043c\u0435\u0439\u043b \u043a\u043b\u0438\u0435\u043d\u0442\u0438\u0442\u0435 \u0434\u0430 \u0432\u0438\u0437\u0443\u0430\u043b\u0438\u0437\u0438\u0440\u0430\u0442 \u0441\u043d\u0438\u043c\u043a\u0430\u0442\u0430 \u043f\u0440\u0430\u0432\u0438\u043b\u043d\u043e."
+      "title": "Поддръжка на снимка",
+      "description": "Подписът вече използва реален image URL вместо base64, за да могат имейл клиентите да визуализират снимката правилно."
     },
     "howTo": {
-      "title": "\u041a\u0430\u043a \u0434\u0430 \u0433\u043e \u0434\u043e\u0431\u0430\u0432\u0438\u0448 \u0432 \u0438\u043c\u0435\u0439\u043b \u043a\u043b\u0438\u0435\u043d\u0442\u0430 \u0441\u0438",
+      "title": "Как да го добавиш в имейл клиента си",
       "gmail": {
         "label": "Gmail",
         "steps": [
-          "1) \u041d\u0430\u0442\u0438\u0441\u043d\u0438 \u041a\u043e\u043f\u0438\u0440\u0430\u0439 \u043f\u043e\u0434\u043f\u0438\u0441\u0430",
+          "1) Натисни Копирай подписа",
           "2) Gmail -> Settings -> See all settings",
-          "3) \u0412 \u0441\u0435\u043a\u0446\u0438\u044f\u0442\u0430 Signature \u043f\u043e\u0441\u0442\u0430\u0432\u0438 \u043f\u043e\u0434\u043f\u0438\u0441\u0430",
-          "4) \u0417\u0430\u043f\u0430\u0437\u0438 \u043f\u0440\u043e\u043c\u0435\u043d\u0438\u0442\u0435"
+          "3) В секцията Signature постави подписа",
+          "4) Запази промените"
         ]
       },
       "outlook": {
         "label": "Outlook",
         "steps": [
-          "1) \u041d\u0430\u0442\u0438\u0441\u043d\u0438 \u041a\u043e\u043f\u0438\u0440\u0430\u0439 \u043f\u043e\u0434\u043f\u0438\u0441\u0430",
+          "1) Натисни Копирай подписа",
           "2) Settings -> Mail -> Compose and reply",
-          "3) \u041f\u043e\u0441\u0442\u0430\u0432\u0438 \u0441\u044a\u0434\u044a\u0440\u0436\u0430\u043d\u0438\u0435\u0442\u043e \u0432 Email signature",
-          "4) \u0417\u0430\u043f\u0430\u0437\u0438 \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438\u0442\u0435"
+          "3) Постави съдържанието в Email signature",
+          "4) Запази настройките"
         ]
       },
       "appleMail": {
         "label": "Apple Mail",
         "steps": [
-          "1) \u041d\u0430\u0442\u0438\u0441\u043d\u0438 \u041a\u043e\u043f\u0438\u0440\u0430\u0439 \u043f\u043e\u0434\u043f\u0438\u0441\u0430",
+          "1) Натисни Копирай подписа",
           "2) Mail -> Settings -> Signatures",
-          "3) \u0421\u044a\u0437\u0434\u0430\u0439 \u043d\u043e\u0432 \u043f\u043e\u0434\u043f\u0438\u0441 \u0438 \u043f\u043e\u0441\u0442\u0430\u0432\u0438 \u0441\u044a\u0434\u044a\u0440\u0436\u0430\u043d\u0438\u0435\u0442\u043e",
-          "4) \u0418\u0437\u0431\u0435\u0440\u0438 \u0437\u0430 \u043a\u043e\u0439 \u0430\u043a\u0430\u0443\u043d\u0442 \u0434\u0430 \u0441\u0435 \u0438\u0437\u043f\u043e\u043b\u0437\u0432\u0430"
+          "3) Създай нов подпис и постави съдържанието",
+          "4) Избери за кой акаунт да се използва"
         ]
       }
     },
-    "loading": "\u0417\u0430\u0440\u0435\u0436\u0434\u0430\u043d\u0435..."
+    "loading": "Зареждане..."
   },
   "deleteAccount": {
     "subtitle": "Настройки на акаунта",
@@ -2571,12 +2577,30 @@
         "meetingConversion": "Meeting conversion по profile variant"
       },
       "events": {
-        "profileView": { "label": "profile_view", "value": "1,284" },
-        "bookingClick": { "label": "cta_booking_click", "value": "312" },
-        "leadFormClick": { "label": "cta_lead_form_click", "value": "177" },
-        "resourceUnlock": { "label": "resource_unlock", "value": "96" },
-        "leadCreated": { "label": "lead_created", "value": "71" },
-        "meetingBooked": { "label": "meeting_booked", "value": "29" }
+        "profileView": {
+          "label": "profile_view",
+          "value": "1,284"
+        },
+        "bookingClick": {
+          "label": "cta_booking_click",
+          "value": "312"
+        },
+        "leadFormClick": {
+          "label": "cta_lead_form_click",
+          "value": "177"
+        },
+        "resourceUnlock": {
+          "label": "resource_unlock",
+          "value": "96"
+        },
+        "leadCreated": {
+          "label": "lead_created",
+          "value": "71"
+        },
+        "meetingBooked": {
+          "label": "meeting_booked",
+          "value": "29"
+        }
       }
     },
     "sources": {
@@ -2661,6 +2685,356 @@
           "status": "Спасява изпуснати възможности"
         }
       }
+    }
+  },
+  "ProfileBuilder": {
+    "eyebrow": "Profile builder",
+    "title": "Build your card in one guided workspace",
+    "subtitle": "Update your identity, links, media, and card style from one place.",
+    "backToDashboard": "Back to dashboard",
+    "previewLabel": "Live preview",
+    "intro": {
+      "title": "Edit your card with live feedback",
+      "description": "Everything you change here updates the preview instantly. Save when you are happy with the result.",
+      "livePreviewTitle": "Live preview",
+      "livePreviewValue": "Realtime",
+      "livePreviewDescription": "See how your card looks before you publish.",
+      "saveFlowTitle": "Save flow",
+      "saveFlowDescription": "We only update the real profile after a successful save.",
+      "savedState": "All changes saved"
+    },
+    "saveBar": {
+      "draftBadge": "Draft",
+      "pendingChip": "Pending changes",
+      "savedChip": "In sync",
+      "pendingTitle": "{count} section(s) need saving",
+      "pendingDescription": "Review the highlighted sections and save when you are ready.",
+      "cleanTitle": "Everything is saved",
+      "cleanDescription": "Your builder draft matches the live profile.",
+      "savingTitle": "Saving your changes",
+      "savingDescription": "We are updating your profile and assets now.",
+      "errorDescription": "Something failed while saving. Review the highlighted sections and try again.",
+      "saveButton": "Save changes",
+      "savingButton": "Saving...",
+      "savedButton": "Saved"
+    },
+    "status": {
+      "idle": "Ready",
+      "dirty": "Needs save",
+      "saving": "Saving",
+      "saved": "Saved",
+      "error": "Needs attention"
+    },
+    "sections": {
+      "templates": {
+        "title": "Choose a card style",
+        "subtitle": "Pick a starting direction for your card and fine-tune it later.",
+        "helper": "Switch between layouts and colors without losing your content."
+      },
+      "identity": {
+        "title": "Identity",
+        "subtitle": "Name, role, company, and bio."
+      },
+      "media": {
+        "title": "Media",
+        "subtitle": "Profile photo and cover image."
+      },
+      "contact": {
+        "title": "Contact details",
+        "subtitle": "Phone, email, and location details."
+      },
+      "links": {
+        "title": "Links",
+        "subtitle": "Add the destinations people should tap next."
+      },
+      "appearance": {
+        "title": "Appearance",
+        "subtitle": "Adjust colors and the overall card mood."
+      }
+    },
+    "media": {
+      "profileImage": "Profile photo",
+      "profileHelp": "Upload a square profile photo for the front of your card.",
+      "pendingUpload": "Unsaved upload",
+      "coverImage": "Cover image",
+      "coverEmpty": "No cover selected yet"
+    },
+    "fields": {
+      "name": "Display name",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "company": "Company",
+      "position": "Position",
+      "phone1": "Primary phone",
+      "phone2": "Secondary phone",
+      "email2": "Work email",
+      "street1": "Street 1",
+      "street2": "Street 2",
+      "zipCode": "ZIP code",
+      "city": "City",
+      "state": "State",
+      "country": "Country",
+      "bio": "Bio",
+      "website": "Website",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
+      "twitter": "X / Twitter",
+      "github": "GitHub",
+      "youtube": "YouTube",
+      "tiktok": "TikTok",
+      "googleReview": "Google review",
+      "revolut": "Revolut",
+      "viber": "Viber",
+      "whatsapp": "WhatsApp",
+      "behance": "Behance",
+      "paypal": "PayPal",
+      "trustpilot": "Trustpilot",
+      "telegram": "Telegram",
+      "calendly": "Calendly",
+      "discord": "Discord",
+      "tripadvisor": "Tripadvisor"
+    },
+    "placeholders": {
+      "name": "John Smith",
+      "firstName": "John",
+      "lastName": "Smith",
+      "company": "Ninja Cards",
+      "position": "Founder",
+      "phone1": "+359...",
+      "phone2": "+359...",
+      "email2": "name@company.com",
+      "street1": "Street address",
+      "street2": "Suite, floor, office",
+      "zipCode": "1000",
+      "city": "Sofia",
+      "state": "Sofia City",
+      "country": "Bulgaria",
+      "bio": "Tell people what you do and why they should contact you.",
+      "website": "https://example.com",
+      "facebook": "https://facebook.com/yourpage",
+      "instagram": "https://instagram.com/yourhandle",
+      "linkedin": "https://linkedin.com/in/yourprofile",
+      "twitter": "https://x.com/yourhandle",
+      "github": "https://github.com/yourhandle",
+      "youtube": "https://youtube.com/@yourchannel",
+      "tiktok": "https://tiktok.com/@yourhandle",
+      "googleReview": "https://g.page/r/...",
+      "revolut": "https://revolut.me/yourname",
+      "viber": "viber://chat?number=...",
+      "whatsapp": "https://wa.me/...",
+      "behance": "https://behance.net/yourname",
+      "paypal": "https://paypal.me/yourname",
+      "trustpilot": "https://www.trustpilot.com/review/...",
+      "telegram": "https://t.me/yourhandle",
+      "calendly": "https://calendly.com/yourname",
+      "discord": "https://discord.gg/...",
+      "tripadvisor": "https://tripadvisor.com/..."
+    },
+    "templates": {
+      "amberClassic": "Amber Classic",
+      "amberClassicDescription": "Warm black and amber layout with strong contrast.",
+      "cleanSlate": "Clean Slate",
+      "cleanSlateDescription": "Bright minimal card for a crisp professional look.",
+      "midnightGlow": "Midnight Glow",
+      "midnightGlowDescription": "Deep dark tones with a neon cyan highlight.",
+      "forestSignal": "Forest Signal",
+      "forestSignalDescription": "Emerald-inspired look for brands that want a fresh tone.",
+      "roseStudio": "Rose Studio",
+      "roseStudioDescription": "Soft luxury palette with a standout accent.",
+      "oceanNote": "Ocean Note",
+      "oceanNoteDescription": "Cool blue minimal card with calm contrast."
+    },
+    "templateBadges": {
+      "classic": "Classic",
+      "minimal": "Minimal",
+      "spotlight": "Spotlight"
+    },
+    "errors": {
+      "invalidUrl": "Please fix invalid links before saving.",
+      "profileSave": "We could not save your profile details.",
+      "linksSave": "We could not save your links.",
+      "appearanceSave": "We could not save the card appearance.",
+      "imageUpload": "We could not upload the profile image.",
+      "coverUpload": "We could not upload the cover image."
+    }
+  },
+  "profileDashboard": {
+    "brand": {
+      "eyebrow": "Dashboard",
+      "name": "NinjaCards"
+    },
+    "sidebar": {
+      "footerTitle": "Need a quick refresh?",
+      "footerDescription": "Open the guided builder and update your card from one place."
+    },
+    "sections": {
+      "home": "Home",
+      "card": "Card",
+      "leads": "Leads",
+      "tools": "Tools",
+      "settings": "Settings"
+    },
+    "nav": {
+      "items": {
+        "dashboard": {
+          "label": "Dashboard",
+          "desc": "Overview, health, and quick actions."
+        },
+        "builder": {
+          "label": "Profile builder",
+          "desc": "Edit your card in one guided workspace."
+        },
+        "businessCard": {
+          "label": "Public card",
+          "desc": "Open your live digital profile."
+        },
+        "slug": {
+          "label": "Personal link",
+          "desc": "Choose the short URL for your card."
+        },
+        "links": {
+          "label": "Important links",
+          "desc": "Manage the destinations people open."
+        },
+        "qr": {
+          "label": "QR code",
+          "desc": "Download and share your card QR code."
+        },
+        "clients": {
+          "label": "Potential clients",
+          "desc": "Review captured contacts and leads."
+        },
+        "analyse": {
+          "label": "Analytics",
+          "desc": "See profile visits, shares, and clicks."
+        },
+        "video": {
+          "label": "Video intro",
+          "desc": "Add or update the short card video."
+        },
+        "optimize": {
+          "label": "Profile optimizer",
+          "desc": "Get AI help improving your profile."
+        },
+        "googleWallet": {
+          "label": "Google Wallet",
+          "desc": "Generate your wallet pass."
+        },
+        "abTester": {
+          "label": "A/B tester",
+          "desc": "Experiment with profile conversion ideas."
+        },
+        "info": {
+          "label": "Personal info",
+          "desc": "Edit name, title, company, and bio."
+        },
+        "changeImage": {
+          "label": "Profile photo",
+          "desc": "Update the main card image."
+        },
+        "cover": {
+          "label": "Cover image",
+          "desc": "Refresh the top visual of the card."
+        },
+        "changePassword": {
+          "label": "Password",
+          "desc": "Change your account password."
+        },
+        "changeEmail": {
+          "label": "Email",
+          "desc": "Update your login and work email."
+        },
+        "features": {
+          "label": "Card settings",
+          "desc": "Control profile download behavior and options."
+        },
+        "help": {
+          "label": "Help",
+          "desc": "Open guides and support resources."
+        },
+        "billing": {
+          "label": "Billing",
+          "desc": "Review subscription and payment details."
+        }
+      }
+    },
+    "labels": {
+      "noLink": "No public link yet",
+      "addPosition": "Add a role and company"
+    },
+    "checklist": {
+      "identity": "Identity details",
+      "image": "Profile photo",
+      "cover": "Cover image",
+      "bio": "Short bio",
+      "contact": "Contact details",
+      "slug": "Personal link",
+      "social": "Important links",
+      "share": "Share readiness"
+    },
+    "actions": {
+      "preview": "Preview",
+      "edit": "Edit profile",
+      "copy": "Copy link",
+      "copied": "Copied",
+      "leads": "Open leads"
+    },
+    "hero": {
+      "eyebrow": "Workspace",
+      "title": "Welcome back",
+      "greeting": "Welcome back, {name}",
+      "description": "Manage your digital card, leads, and profile setup from one dashboard.",
+      "preview": "Open public card",
+      "copyPublicLink": "Copy public link"
+    },
+    "card": {
+      "eyebrow": "Digital card",
+      "setupTitle": "Finish setting up your active card",
+      "manageTitle": "Manage your active card",
+      "editButton": "Open builder",
+      "primaryCtaTitle": "Start with the essentials",
+      "primaryCtaDescription": "Open the builder and finish your {item} so the card is ready to share.",
+      "secondaryCtaTitle": "Keep your card fresh",
+      "secondaryCtaDescription": "Use the builder to update your brand, links, and visuals anytime.",
+      "live": "Live",
+      "inProgress": "In progress",
+      "previewLabel": "Card preview",
+      "manageLinks": "Manage links"
+    },
+    "health": {
+      "eyebrow": "Profile health",
+      "title": "Completion and quality",
+      "description": "Track the core parts that make your card easier to share and trust.",
+      "ready": "Ready",
+      "growing": "Growing",
+      "setup": "Needs setup",
+      "scoreLabel": "{score}% complete",
+      "prompt": "Your next best upgrade is finishing your {item}.",
+      "readyPrompt": "Your profile is in good shape. Keep it current as your business evolves.",
+      "done": "Done",
+      "needsAttention": "Needs attention"
+    },
+    "performance": {
+      "eyebrow": "Performance",
+      "title": "Card activity",
+      "viewAnalytics": "View analytics",
+      "leads": "Leads",
+      "visits": "Visits",
+      "shares": "Shares",
+      "clicks": "Link clicks"
+    },
+    "utility": {
+      "eyebrow": "Quick tools",
+      "title": "Launch your card tools",
+      "subtitle": "Fast access",
+      "ready": "Ready",
+      "missing": "Missing",
+      "launch": "Launch",
+      "health": "health",
+      "experiment": "Experiment",
+      "optional": "Optional",
+      "visits": "visits"
     }
   }
 }

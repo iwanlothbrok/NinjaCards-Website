@@ -3,9 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import cors from '@/utils/cors';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const corsHandled = cors(req, res);
-    if (corsHandled) return;
-
+  
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     const { profile, stats } = req.body as {

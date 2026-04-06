@@ -20,6 +20,7 @@ export const routing = defineRouting({
         '/joinus': '/joinus',
         '/cards': '/cards',
         '/profile': '/profile',
+        '/profile/create': '/profile/create',
         '/profile/settings': '/profile/settings',
         '/profile/changeEmail': '/profile/changeEmail',
         '/profile/changeAddress': '/profile/changeAddress',

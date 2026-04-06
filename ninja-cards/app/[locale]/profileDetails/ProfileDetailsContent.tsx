@@ -199,7 +199,7 @@ const ProfileDetailsContent: React.FC<{ userId: string }> = ({ userId }) => {
             setHasDownloadedVCF(true)
             generateVCF(currentUser)
         }
-    }, [currentUser])
+    }, [currentUser, hasDownloadedVCF, hasIncrementedVisit, router, userId])
 
     // ── Theme change handler (called by BackgroundSelector) ──────────────────
     const handleThemeChange = (theme: CardTheme) => {

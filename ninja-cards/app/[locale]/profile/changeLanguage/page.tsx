@@ -25,7 +25,7 @@ export default function LanguageSwitcher() {
     useEffect(() => {
         if (!user?.id) return;
         setLanguage(user.language || "bg");
-    }, [user?.id]);
+    }, [user?.id, user?.language]);
 
     const showAlert = (message: string, title: string, color: Alert["color"]) => {
         setAlert({ message, title, color });
@@ -69,7 +69,7 @@ export default function LanguageSwitcher() {
         <>
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-                    <img src="/load.gif" className="w-24 h-24 animate-spin" />
+                    <img src="/load.gif" alt="" className="w-24 h-24 animate-spin" />
                 </div>
             )}
 

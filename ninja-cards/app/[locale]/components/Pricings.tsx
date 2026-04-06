@@ -38,7 +38,7 @@ export default function Pricing() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md">
                     <div className="flex flex-col items-center gap-4">
                         <div className="relative">
-                            <img src="/load.gif" className="w-24 h-24" />
+                        <img src="/load.gif" alt="" className="w-24 h-24" />
                             <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange rounded-full blur-xl opacity-50" />
                         </div>
                         <p className="text-white text-lg font-medium bg-gradient-to-r from-amber-400 to-orange bg-clip-text text-transparent">

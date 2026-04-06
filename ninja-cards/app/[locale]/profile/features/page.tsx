@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BASE_API_URL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
@@ -22,12 +22,7 @@ export default function FeaturesComponent() {
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState<Alert | null>(null);
 
-    useEffect(() => {
-        if (!user?.id) return;
-        fetchUserDetails(user.id);
-    }, [user?.id]);
-
-    const fetchUserDetails = async (userId: string) => {
+    const fetchUserDetails = useCallback(async (userId: string) => {
         setLoading(true);
         try {
             const res = await fetch(`${BASE_API_URL}/api/profile/${userId}`);
@@ -39,7 +34,12 @@ export default function FeaturesComponent() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        if (!user?.id) return;
+        fetchUserDetails(user.id);
+    }, [fetchUserDetails, user?.id]);
 
     const updateIsDirect = async (value: boolean) => {
         if (!user?.id) return;
@@ -77,7 +77,7 @@ export default function FeaturesComponent() {
     if (isDirect === null) {
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-                <img src="/load.gif" className="w-24 h-24 animate-spin" />
+                <img src="/load.gif" alt="" className="w-24 h-24 animate-spin" />
             </div>
         );
     }
@@ -86,7 +86,7 @@ export default function FeaturesComponent() {
         <>
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-                    <img src="/load.gif" className="w-24 h-24 animate-spin" />
+                    <img src="/load.gif" alt="" className="w-24 h-24 animate-spin" />
                 </div>
             )}
 

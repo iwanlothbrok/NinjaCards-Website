@@ -1,82 +1,21 @@
 'use client';
 
 import React from 'react';
-import { useRouter, type Href, usePathname } from '@/navigation';
+import { useRouter, type Href } from '@/navigation';
 import { useRouter as useNextRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { useAuth } from '../context/AuthContext';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-
-const Icons: Record<string, React.FC<{ className?: string; style?: React.CSSProperties }>> = {
-  idCard: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><rect x="2" y="5" width="20" height="14" rx="2" /><circle cx="8" cy="12" r="2" /><path strokeLinecap="round" d="M13 10h4M13 14h4" /></svg>,
-  user: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path strokeLinecap="round" d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg>,
-  chart: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
-  link: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.1-1.1m-.758-4.9a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>,
-  qr: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><path strokeLinecap="round" d="M14 14h3v3h-3zM17 17h3v3h-3z" /></svg>,
-  globe: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>,
-  lock: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><rect x="5" y="11" width="14" height="10" rx="2" /><path strokeLinecap="round" d="M8 11V7a4 4 0 018 0v4" /></svg>,
-  info: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" d="M12 16v-4M12 8h.01" /></svg>,
-  email: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>,
-  image: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path strokeLinecap="round" d="M21 15l-5-5L5 21" /></svg>,
-  eye: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>,
-  location: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><circle cx="12" cy="11" r="3" /></svg>,
-  video: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" /></svg>,
-  billing: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><rect x="1" y="4" width="22" height="16" rx="2" /><path strokeLinecap="round" d="M1 10h22" /></svg>,
-  changelog: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>,
-  delete: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
-
-  optimize: (p) => (
-    <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <circle cx="12" cy="12" r="3" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M19.07 4.93l-2.12 2.12M7.05 16.95l-2.12 2.12" />
-    </svg>
-  ),
-
-  googleWallet: (p) => (
-    <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <rect x="3" y="6" width="18" height="12" rx="3" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 14h3" />
-    </svg>
-  ),
-  at: (p) => (
-    <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <circle cx="12" cy="12" r="4" />
-      <path strokeLinecap="round" d="M16 12a4 4 0 10-4 4c1 0 2-.5 2-1.5V12m2 0c0 4-8 4-8 0a8 8 0 1116 0v1.5c0 1.5-1 2.5-2.5 2.5" />
-    </svg>
-  ),
-
-  arrow: (p) => <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>,
-}
-
-type TabDef = { labelKey: string; icon: string; accent: string; href?: Href; buildHref?: (id: string, slug?: string) => Href | string }
-
-const BIG_TABS: TabDef[] = [
-  { labelKey: 'businessCard', icon: 'idCard', accent: '#f59e0b', buildHref: (id, slug) => slug ? `/p/${slug}` : ({ pathname: '/profileDetails/[id]', params: { id } } as const) },
-  { labelKey: 'clients', icon: 'user', accent: '#60a5fa', href: '/profile/subscribed' },
-  { labelKey: 'analyse', icon: 'chart', accent: '#4ade80', href: '/analyse' },
-  { labelKey: 'links', icon: 'link', accent: '#a78bfa', href: '/profile/links' },
-  { labelKey: 'qr', icon: 'qr', accent: '#f59e0b', href: '/profile/profileQr' },
-  { labelKey: 'language', icon: 'globe', accent: '#34d399', href: '/profile/changeLanguage' },
-]
-
-const SETTINGS_TABS: TabDef[] = [
-  { labelKey: 'info', icon: 'info', accent: '#9ca3af', href: '/profile/information' },
-  { labelKey: 'changeImage', icon: 'image', accent: '#9ca3af', href: '/profile/changeImage' },
-  { labelKey: 'cover', icon: 'video', accent: '#9ca3af', href: '/profile/cover' },
-  { labelKey: 'changePassword', icon: 'lock', accent: '#9ca3af', href: '/profile/settings' },
-  { labelKey: 'changeEmail', icon: 'email', accent: '#9ca3af', href: '/profile/changeEmail' },
-  { labelKey: 'features', icon: 'eye', accent: '#9ca3af', href: '/profile/features' },
-  { labelKey: 'help', icon: 'location', accent: '#9ca3af', href: '/profile/help' },
-  { labelKey: 'billing', icon: 'billing', accent: '#9ca3af', href: '/profile/billing' },
-  { labelKey: "video", icon: "video", accent: "#9ca3af", href: "/profile/video" },
-  { labelKey: "optimize", icon: "optimize", accent: "#9ca3af", href: "/profile/optimizeProfile" },
-  { labelKey: "googleWallet", icon: "googleWallet", accent: "#9ca3af", href: "/profile/googleWallet" },
-  // { labelKey: 'changelog', icon: 'changelog', accent: '#9ca3af', href: '/changelog' },
-]
-
-const DELETE_TAB: TabDef = { labelKey: 'delete', icon: 'delete', accent: '#ef4444', href: '/profile/delete' }
+import {
+  PROFILE_BIG_TABS,
+  PROFILE_BUILDER_TAB,
+  PROFILE_DELETE_TAB,
+  PROFILE_SETTINGS_TABS,
+  ProfileIcons,
+  type ProfileTabDef,
+  resolveProfileHref,
+} from './profileNavigation';
 
 export default function ProfileTabs() {
   const { user, loading } = useAuth()
@@ -92,8 +31,8 @@ export default function ProfileTabs() {
     if (!user) router.replace('/')
   }, [loading, user, router])
 
-  const go = (tab: TabDef) => {
-    const href = tab.href ?? (userId && tab.buildHref ? tab.buildHref(userId, user?.slug) : null)
+  const go = (tab: ProfileTabDef) => {
+    const href = resolveProfileHref(tab, userId, user?.slug)
     if (!href) return
     setNavigating(true)
     if (typeof href === 'string' && href.startsWith('/p/')) {
@@ -137,11 +76,42 @@ export default function ProfileTabs() {
             </h1>
           </motion.div>
 
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => go(PROFILE_BUILDER_TAB)}
+            className="w-full rounded-[28px] border border-amber-400/20 bg-[linear-gradient(135deg,rgba(245,158,11,0.18),rgba(245,158,11,0.05))] p-5 text-left shadow-[0_10px_35px_rgba(245,158,11,0.10)] transition hover:border-amber-400/35"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-400/25 bg-amber-400/12">
+                  <ProfileIcons.idCard className="h-6 w-6 text-amber-300" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-300/70">
+                    {t('builderCta.eyebrow')}
+                  </p>
+                  <h2 className="mt-1 text-xl font-black tracking-tight text-white">
+                    {t('builderCta.title')}
+                  </h2>
+                  <p className="mt-2 max-w-md text-sm leading-6 text-white/60">
+                    {t('builderCta.description')}
+                  </p>
+                </div>
+              </div>
+              <div className="hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white sm:block">
+                {t('builderCta.button')}
+              </div>
+            </div>
+          </motion.button>
+
           {/* ── BIG 6 — 2 колони, огромен touch target ── */}
           <div className="grid grid-cols-2 gap-3">
-            {BIG_TABS.map((tab, i) => {
+            {PROFILE_BIG_TABS.map((tab, i) => {
               const disabled = !tab.href && !userId
-              const Icon = Icons[tab.icon]
+              const Icon = ProfileIcons[tab.icon]
               return (
                 <motion.button
                   key={tab.labelKey}
@@ -189,8 +159,8 @@ export default function ProfileTabs() {
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-600 mb-3">{t('moreOptions')}</p>
             <div className="rounded-2xl border border-white/[0.06] overflow-hidden divide-y divide-white/[0.04]"
               style={{ background: 'rgba(255,255,255,0.03)' }}>
-              {SETTINGS_TABS.map((tab, i) => {
-                const Icon = Icons[tab.icon]
+              {PROFILE_SETTINGS_TABS.map((tab, i) => {
+                const Icon = ProfileIcons[tab.icon]
                 return (
                   <motion.button
                     key={tab.labelKey}
@@ -208,7 +178,7 @@ export default function ProfileTabs() {
                       <p className="text-[14px] font-semibold text-white">{t(`tabs.${tab.labelKey}.label`)}</p>
                       <p className="text-[11px] text-gray-600 truncate">{t(`tabs.${tab.labelKey}.desc`)}</p>
                     </div>
-                    <Icons.arrow className="w-4 h-4 text-gray-700 flex-shrink-0" />
+                    <ProfileIcons.arrow className="w-4 h-4 text-gray-700 flex-shrink-0" />
                   </motion.button>
                 )
               })}
@@ -218,17 +188,17 @@ export default function ProfileTabs() {
           {/* ── Delete — отделен, червен ── */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}>
             <button
-              onClick={() => go(DELETE_TAB)}
+              onClick={() => go(PROFILE_DELETE_TAB)}
               className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl border border-red-500/15 bg-red-500/[0.04] hover:bg-red-500/[0.08] hover:border-red-500/30 active:bg-red-500/[0.12] transition-all text-left"
             >
               <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-red-500/10 border border-red-500/20">
-                <Icons.delete className="w-4 h-4 text-red-400" />
+                <ProfileIcons.delete className="w-4 h-4 text-red-400" />
               </div>
               <div className="flex-1">
                 <p className="text-[14px] font-semibold text-red-400">{t('tabs.delete.label')}</p>
                 <p className="text-[11px] text-red-500/50">{t('tabs.delete.desc')}</p>
               </div>
-              <Icons.arrow className="w-4 h-4 text-red-800 flex-shrink-0" />
+              <ProfileIcons.arrow className="w-4 h-4 text-red-800 flex-shrink-0" />
             </button>
           </motion.div>
 
