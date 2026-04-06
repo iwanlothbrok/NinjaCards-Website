@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { CreditCard, Crown, KeyRound, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users } from 'lucide-react';
+import { CreditCard, Crown, KeyRound, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users, X } from 'lucide-react';
 import { useAdminAuth } from '../AdminAuthProvider';
 import { BASE_API_URL } from '@/utils/constants';
 
@@ -98,6 +98,7 @@ export default function AdminConsole() {
     const requestedModule = searchParams?.get('module');
     const activeModule = modules.some((module) => module.key === requestedModule) ? (requestedModule as ModuleKey) : 'overview';
     const [query, setQuery] = useState('');
+    const [appliedQuery, setAppliedQuery] = useState('');
     const [dashboard, setDashboard] = useState<any>(null);
     const [usersData, setUsersData] = useState<any>(null);
     const [revenueData, setRevenueData] = useState<any>(null);
@@ -116,35 +117,66 @@ export default function AdminConsole() {
     useEffect(() => {
         if (!adminUser) return;
         let ignore = false;
-        setPageLoading(true);
-        setError(null);
-        setUsersActionError(null);
 
-        Promise.all([
-            fetch(`${BASE_API_URL}/api/admin/dashboard`, { credentials: 'include', cache: 'no-store' }),
-            fetch(`${BASE_API_URL}/api/admin/users?q=${encodeURIComponent(query)}&limit=20`, { credentials: 'include', cache: 'no-store' }),
-            fetch(`${BASE_API_URL}/api/admin/revenue`, { credentials: 'include', cache: 'no-store' }),
-            fetch(`${BASE_API_URL}/api/admin/crm`, { credentials: 'include', cache: 'no-store' }),
-            fetch(`${BASE_API_URL}/api/admin/admin-users`, { credentials: 'include', cache: 'no-store' }),
-        ])
-            .then(async (responses) => {
-                if (!responses.every((res) => res.ok)) throw new Error('Failed to load admin console data');
-                const [dash, users, revenue, crm, admins] = await Promise.all(responses.map((res) => res.json()));
-                if (!ignore) {
-                    setDashboard(dash);
-                    setUsersData(users);
-                    setRevenueData(revenue);
-                    setCrmData(crm);
-                    setAdminUsersData(admins);
+        const fetchJson = async (url: string, fallbackMessage: string) => {
+            const response = await fetch(url, { credentials: 'include', cache: 'no-store' });
+            const payload = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(payload?.error || fallbackMessage);
+            }
+            return payload;
+        };
+
+        const loadModule = async () => {
+            setPageLoading(true);
+            setError(null);
+            setUsersActionError(null);
+
+            try {
+                if (activeModule === 'overview') {
+                    const dash = await fetchJson(`${BASE_API_URL}/api/admin/dashboard`, 'Failed to load dashboard data');
+                    if (!ignore) setDashboard(dash);
+                    return;
                 }
-            })
-            .catch((err) => !ignore && setError(err instanceof Error ? err.message : 'Failed to load admin console'))
-            .finally(() => !ignore && setPageLoading(false));
+
+                if (activeModule === 'users') {
+                    const users = await fetchJson(
+                        `${BASE_API_URL}/api/admin/users?q=${encodeURIComponent(appliedQuery)}&limit=20`,
+                        'Failed to load users data',
+                    );
+                    if (!ignore) setUsersData(users);
+                    return;
+                }
+
+                if (activeModule === 'revenue') {
+                    const revenue = await fetchJson(`${BASE_API_URL}/api/admin/revenue`, 'Failed to load revenue data');
+                    if (!ignore) setRevenueData(revenue);
+                    return;
+                }
+
+                if (activeModule === 'crm') {
+                    const crm = await fetchJson(`${BASE_API_URL}/api/admin/crm`, 'Failed to load CRM data');
+                    if (!ignore) setCrmData(crm);
+                    return;
+                }
+
+                const admins = await fetchJson(`${BASE_API_URL}/api/admin/admin-users`, 'Failed to load admin users');
+                if (!ignore) setAdminUsersData(admins);
+            } catch (err) {
+                if (!ignore) {
+                    setError(err instanceof Error ? err.message : 'Failed to load admin console');
+                }
+            } finally {
+                if (!ignore) setPageLoading(false);
+            }
+        };
+
+        void loadModule();
 
         return () => {
             ignore = true;
         };
-    }, [adminUser, query]);
+    }, [activeModule, adminUser, appliedQuery]);
 
     const handleClearPassword = async (user: any) => {
         const confirmed = window.confirm(
@@ -195,6 +227,15 @@ export default function AdminConsole() {
         const params = new URLSearchParams(searchParams?.toString());
         params.set('module', module);
         router.push(`${pathname}?${params.toString()}`);
+    };
+
+    const submitUserSearch = () => {
+        setAppliedQuery(query.trim());
+    };
+
+    const clearUserSearch = () => {
+        setQuery('');
+        setAppliedQuery('');
     };
 
     const currentModule = useMemo(() => modules.find((item) => item.key === activeModule) || modules[0], [activeModule]);
@@ -280,20 +321,50 @@ export default function AdminConsole() {
 
                             {activeModule === 'users' && (
                                 <div className="space-y-3">
-                                    <div className="flex items-center gap-3 rounded-2xl border border-white/8 bg-[#0d1319] px-4 py-3">
-                                        <Search className="h-4 w-4 text-white/35" />
-                                        <input
-                                            value={query}
-                                            onChange={(event) => setQuery(event.target.value)}
-                                            placeholder="Search by user name"
-                                            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
-                                        />
-                                    </div>
+                                    <form
+                                        onSubmit={(event) => {
+                                            event.preventDefault();
+                                            submitUserSearch();
+                                        }}
+                                        className="flex flex-col gap-3 lg:flex-row"
+                                    >
+                                        <div className="flex items-center gap-3 rounded-2xl border border-white/8 bg-[#0d1319] px-4 py-3 lg:flex-1">
+                                            <Search className="h-4 w-4 text-white/35" />
+                                            <input
+                                                value={query}
+                                                onChange={(event) => setQuery(event.target.value)}
+                                                placeholder="Search by user name"
+                                                className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
+                                            />
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button
+                                                type="submit"
+                                                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-orange/30 bg-orange px-5 py-3 text-sm font-semibold text-black transition hover:brightness-110"
+                                            >
+                                                <Search className="h-4 w-4" />
+                                                Search
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={clearUserSearch}
+                                                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-white/[0.06]"
+                                            >
+                                                <X className="h-4 w-4" />
+                                                Clear
+                                            </button>
+                                        </div>
+                                    </form>
                                     <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.18em] text-white/35">
                                         <span>Showing the latest 20 users</span>
                                         <span className="rounded-full border border-white/8 bg-white/[0.03] px-3 py-1.5 text-[11px] font-semibold text-white/60">
                                             Ordered by created date
                                         </span>
+                                        {appliedQuery && (
+                                            <span className="rounded-full border border-orange/20 bg-orange/10 px-3 py-1.5 text-[11px] font-semibold text-orange">
+                                                Filter: {appliedQuery}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             )}
@@ -471,6 +542,11 @@ export default function AdminConsole() {
                                                 </div>
                                             </div>
                                         ))}
+                                        {usersData.users.length === 0 && (
+                                            <div className="px-5 py-10 text-center text-sm text-white/55">
+                                                No users matched this search yet.
+                                            </div>
+                                        )}
                                     </div>
                                 </Section>
                             )}
