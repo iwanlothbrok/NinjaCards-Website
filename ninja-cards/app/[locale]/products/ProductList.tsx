@@ -20,7 +20,6 @@ interface ProductListProps {
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
     const t = useTranslations("ProductList");
-    console.log("Current locale:", t);
 
     return (
         <div className="mt-5">

@@ -18,7 +18,6 @@ interface Product {
 
 const AllProductsPage: React.FC = () => {
     const t = useTranslations("AllProductsPage");
-    console.log("Current locale:", t);
 
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);

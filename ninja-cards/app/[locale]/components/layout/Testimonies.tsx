@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 
 export const Showcase: React.FC = () => {
   const t = useTranslations("ShowcasePage");
-  console.log("Current locale:", t);
 
   return (
     <motion.section

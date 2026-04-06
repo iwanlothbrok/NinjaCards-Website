@@ -8,7 +8,6 @@ const About: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   const t = useTranslations("AboutPage");
-  console.log("Current locale:", t);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);

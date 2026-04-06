@@ -10,7 +10,6 @@ export const Hero: React.FC = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
 
     const t = useTranslations("HeroPage");
-    console.log("Current locale:", t);
 
     useEffect(() => {
         const currentSection = sectionRef.current;

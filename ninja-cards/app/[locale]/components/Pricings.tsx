@@ -3,16 +3,11 @@
 import { Key, useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "../context/AuthContext";
 import { BASE_API_URL } from "@/utils/constants";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from '@/navigation';
 import { addToCart, loadCartFromLocalStorage } from "@/lib/cart";
-
-const stripePromise = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!
-);
 
 
 export default function Pricing() {
