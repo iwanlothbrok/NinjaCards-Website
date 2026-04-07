@@ -15,7 +15,7 @@ function stripTrailingSlash(path: string) {
 const PUBLIC_HOSTNAME = new URL(PUBLIC_SITE_URL).hostname;
 const APP_HOSTNAME = new URL(APP_SITE_URL).hostname;
 const PUBLIC_CARD_PREFIXES = ['/profileDetails', '/p'];
-const APP_ONLY_PREFIXES = ['/profile', '/admin'];
+const APP_ONLY_PREFIXES = ['/profile', '/admin', '/login', '/changePassword'];
 
 function hasPrefixedPath(pathname: string, prefixes: string[]) {
   return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
@@ -35,7 +35,10 @@ export default function middleware(request: NextRequest) {
 
   // Normalize path without locale and trailing slash
   const pathWithoutLocale = stripTrailingSlash(hasLocale ? `/${rest.join('/')}` : pathname);
-  const hostname = request.nextUrl.hostname;
+  const hostname =
+    request.headers.get('x-forwarded-host') ||
+    request.headers.get('host') ||
+    request.nextUrl.hostname;
 
   if (
     hostname === APP_HOSTNAME &&
