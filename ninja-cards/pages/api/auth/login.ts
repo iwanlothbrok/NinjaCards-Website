@@ -8,6 +8,10 @@ import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
+function getUserAuthSecret() {
+    return process.env.NEXTAUTH_SECRET || process.env.ADMIN_AUTH_SECRET || null;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Handle CORS (preflight may end here).
     if (cors(req, res)) return;
@@ -23,10 +27,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const isPasswordValid = await compare(password, user.password);
         if (!isPasswordValid) return res.status(401).json({ error: 'Invalid email or password' });
 
-        if (!process.env.NEXTAUTH_SECRET)
+        const authSecret = getUserAuthSecret();
+        if (!authSecret)
             return res.status(500).json({ error: 'Internal server error: Missing secret' });
 
-        const token = sign({ id: user.id, email: user.email }, process.env.NEXTAUTH_SECRET, {
+        const token = sign({ id: user.id, email: user.email }, authSecret, {
             expiresIn: '12h',
         });
 
