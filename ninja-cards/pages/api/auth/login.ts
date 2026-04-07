@@ -35,6 +35,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             expiresIn: '12h',
         });
 
+        const updatedUser = await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLoginAt: new Date() },
+        });
+
+        const { password: _password, ...safeUser } = updatedUser;
+
         // Cross-site request => require SameSite=None; Secure for the cookie to be accepted.
         // Note: This will still be blocked if the browser disables third-party cookies entirely.
         const cookie = serialize('token', token, {
@@ -49,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.setHeader('Set-Cookie', cookie);
 
-        return res.status(200).json({ token, user });
+        return res.status(200).json({ token, user: safeUser });
     } catch (error) {
         console.error('Internal server error:', error);
         return res.status(500).json({ error: 'Internal server error' });

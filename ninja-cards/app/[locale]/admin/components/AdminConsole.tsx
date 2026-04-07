@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { CreditCard, Crown, KeyRound, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users, X } from 'lucide-react';
+import { ArrowUpRight, CreditCard, Crown, KeyRound, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users, X } from 'lucide-react';
 import { useAdminAuth } from '../AdminAuthProvider';
 import { BASE_API_URL } from '@/utils/constants';
 
@@ -18,14 +18,14 @@ const modules: Array<{ key: ModuleKey; label: string; icon: ComponentType<{ clas
 
 const BULGARIA_TIME_ZONE = 'Europe/Sofia';
 
-const fmtDate = (value?: string | null) =>
+const fmtDate = (value?: string | null, fallback = 'Never') =>
     value
         ? new Intl.DateTimeFormat('en-US', {
               dateStyle: 'medium',
               timeStyle: 'short',
               timeZone: BULGARIA_TIME_ZONE,
           }).format(new Date(value))
-        : 'Never';
+        : fallback;
 
 const fmtMoney = (value = 0, currency = 'EUR') =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(value / 100);
@@ -134,14 +134,14 @@ export default function AdminConsole() {
 
             try {
                 if (activeModule === 'overview') {
-                    const dash = await fetchJson(`${BASE_API_URL}/api/admin/dashboard`, 'Failed to load dashboard data');
+                    const dash = await fetchJson(`${BASE_API_URL}/api/admin/dashboard?locale=${encodeURIComponent(locale)}`, 'Failed to load dashboard data');
                     if (!ignore) setDashboard(dash);
                     return;
                 }
 
                 if (activeModule === 'users') {
                     const users = await fetchJson(
-                        `${BASE_API_URL}/api/admin/users?q=${encodeURIComponent(appliedQuery)}&limit=20`,
+                        `${BASE_API_URL}/api/admin/users?q=${encodeURIComponent(appliedQuery)}&limit=20&locale=${encodeURIComponent(locale)}`,
                         'Failed to load users data',
                     );
                     if (!ignore) setUsersData(users);
@@ -176,7 +176,7 @@ export default function AdminConsole() {
         return () => {
             ignore = true;
         };
-    }, [activeModule, adminUser, appliedQuery]);
+    }, [activeModule, adminUser, appliedQuery, locale]);
 
     const handleClearPassword = async (user: any) => {
         const confirmed = window.confirm(
@@ -239,6 +239,7 @@ export default function AdminConsole() {
     };
 
     const currentModule = useMemo(() => modules.find((item) => item.key === activeModule) || modules[0], [activeModule]);
+    const latestMonthlyAnalytics = dashboard?.monthlyAnalytics?.[dashboard.monthlyAnalytics.length - 1] || null;
 
     if (loading || (!adminUser && !error)) {
         return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-10 w-10 animate-spin text-orange" /></div>;
@@ -394,6 +395,32 @@ export default function AdminConsole() {
                                         <Card title="Total Visits" value={String(dashboard.engagement.totalVisits)} detail={`${dashboard.engagement.totalShares} shares and ${dashboard.engagement.totalDownloads} downloads tracked`} accent="text-cyan-300" />
                                     </div>
 
+                                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                                        <Card
+                                            title="Active Users 7D"
+                                            value={String(dashboard.overview.activeUsers7d)}
+                                            detail="Users with at least one card event in the last 7 days"
+                                            accent="text-white"
+                                        />
+                                        <Card
+                                            title="Active Users 30D"
+                                            value={String(dashboard.overview.activeUsers30d)}
+                                            detail="Users with at least one card event in the last 30 days"
+                                            accent="text-cyan-300"
+                                        />
+                                        <Card
+                                            title="This Month Interactions"
+                                            value={String(latestMonthlyAnalytics?.interactions || 0)}
+                                            detail={`${latestMonthlyAnalytics?.activeUsers || 0} active users and ${latestMonthlyAnalytics?.leads || 0} leads this month`}
+                                        />
+                                        <Card
+                                            title="This Month Conversion"
+                                            value={`${latestMonthlyAnalytics?.visitToLeadRate || 0}%`}
+                                            detail={`${latestMonthlyAnalytics?.visits || 0} visits turned into ${latestMonthlyAnalytics?.leads || 0} leads`}
+                                            accent="text-white"
+                                        />
+                                    </div>
+
                                     <Section title="Funnel Snapshot" subtitle="The operating view of growth, visits, leads, and wins.">
                                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                                             <Card title="Visits" value={String(dashboard.funnel.visits)} detail="Tracked profile visits" accent="text-white" />
@@ -404,19 +431,47 @@ export default function AdminConsole() {
                                         </div>
                                     </Section>
 
-                                    <Section title="Last 10 Users Active On Cards" subtitle="This is the freshest real card activity we have, and it doubles as the admin last-seen signal.">
+                                    <Section title="Monthly Card Analytics" subtitle="A six-month view of card usage, active users, and lead conversion.">
                                         <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
-                                            <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
-                                                <div>User</div><div>Last Seen</div><div>Action</div><div>Plan</div><div>Company</div><div>Engagement</div>
+                                            <div className="grid grid-cols-8 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>Month</div><div>Active Users</div><div>Visits</div><div>Shares</div><div>Downloads</div><div>Social Clicks</div><div>Leads</div><div>Visit To Lead</div>
+                                            </div>
+                                            {dashboard.monthlyAnalytics.map((month: any) => (
+                                                <div key={month.monthKey} className="grid grid-cols-8 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                    <div className="font-semibold text-white">{month.label}</div>
+                                                    <div>{month.activeUsers}</div>
+                                                    <div>{month.visits}</div>
+                                                    <div>{month.shares}</div>
+                                                    <div>{month.downloads}</div>
+                                                    <div>{month.socialClicks}</div>
+                                                    <div>{month.leads}</div>
+                                                    <div>{month.visitToLeadRate}%</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
+
+                                    <Section title="Latest Card Events" subtitle="The most recent profile and card actions across the platform.">
+                                        <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
+                                            <div className="grid grid-cols-7 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>User</div><div>Event Time</div><div>Action</div><div>Last Login</div><div>Plan</div><div>Company</div><div>Engagement</div>
                                             </div>
                                             {dashboard.recentCardActivity.map((user: any) => (
-                                                <div key={`${user.userId}-${user.timestamp}`} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
-                                                    <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div></div>
+                                                <div key={`${user.userId}-${user.timestamp}`} className="grid grid-cols-7 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                    <div>
+                                                        <div className="font-semibold text-white">{user.name}</div>
+                                                        <div className="text-xs text-white/45">{user.email}</div>
+                                                        <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-orange hover:text-cyan-200">
+                                                            Open card
+                                                            <ArrowUpRight className="h-3 w-3" />
+                                                        </a>
+                                                    </div>
                                                     <div>{fmtDate(user.timestamp)}</div>
                                                     <div><Badge tone="blue">{fmtAction(user.type)}</Badge></div>
+                                                    <div>{fmtDate(user.lastLoginAt, 'Not tracked yet')}</div>
                                                     <div><div>{user.plan}</div><div className="mt-2"><Badge tone={getStatusTone(user.subscriptionStatus)}>{user.subscriptionStatus}</Badge></div></div>
                                                     <div>{user.company || 'No company set'}</div>
-                                                    <div><div>{user.profileVisits} visits</div><div className="text-xs text-white/45">{user.profileShares} shares / {user.vcfDownloads} downloads</div></div>
+                                                    <div><div>{user.profileVisits} visits</div><div className="text-xs text-white/45">{user.profileShares} shares / {user.vcfDownloads} downloads / {user.socialLinkClicks} social clicks</div></div>
                                                 </div>
                                             ))}
                                         </div>
@@ -491,13 +546,97 @@ export default function AdminConsole() {
 
                                     <Section title="Top Engaged Users" subtitle="Users ranked by visits and downstream engagement.">
                                         <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
-                                            <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
-                                                <div>User</div><div>Company</div><div>Visits</div><div>Shares</div><div>Downloads</div><div>Social Clicks</div>
+                                            <div className="grid grid-cols-7 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>User</div><div>Company</div><div>Visits</div><div>Shares</div><div>Downloads</div><div>Social Clicks</div><div>Leads</div>
                                             </div>
                                             {dashboard.topUsers.map((user: any) => (
-                                                <div key={user.id} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                <div key={user.id} className="grid grid-cols-7 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                    <div>
+                                                        <div className="font-semibold text-white">{user.name}</div>
+                                                        <div className="text-xs text-white/45">{user.email}</div>
+                                                        <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-orange hover:text-cyan-200">
+                                                            Open card
+                                                            <ArrowUpRight className="h-3 w-3" />
+                                                        </a>
+                                                    </div>
+                                                    <div>{user.company || '-'}</div><div>{user.profileVisits}</div><div>{user.profileShares}</div><div>{user.vcfDownloads}</div><div>{user.socialLinkClicks}</div><div>{user.leadCount}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
+
+                                    <div className="grid gap-6 xl:grid-cols-2">
+                                        <Section title="Top Active Users This Month" subtitle="Users with the freshest activity in the current month.">
+                                            <div className="space-y-3">
+                                                {dashboard.insights.topActiveUsersThisMonth.map((user: any) => (
+                                                    <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{user.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                            </div>
+                                                            <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                                Open card
+                                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                            </a>
+                                                        </div>
+                                                        <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Last Activity</div><div className="mt-1">{fmtDate(user.lastSeenAt)}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Interactions</div><div className="mt-1">{user.profileVisits} visits / {user.profileShares} shares</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Clicks</div><div className="mt-1">{user.vcfDownloads} downloads / {user.socialLinkClicks} social clicks</div></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+
+                                        <Section title="High Traffic, Low Lead Capture" subtitle="Cards getting attention without turning visits into leads yet.">
+                                            <div className="space-y-3">
+                                                {dashboard.insights.highTrafficLowLeadUsers.length === 0 && (
+                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No high-traffic, zero-lead users right now.</div>
+                                                )}
+                                                {dashboard.insights.highTrafficLowLeadUsers.map((user: any) => (
+                                                    <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{user.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                            </div>
+                                                            <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                                Open card
+                                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                            </a>
+                                                        </div>
+                                                        <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Visits</div><div className="mt-1">{user.profileVisits}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Shares / Downloads</div><div className="mt-1">{user.profileShares} / {user.vcfDownloads}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Leads</div><div className="mt-1">{user.leadCount}</div></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+                                    </div>
+
+                                    <Section title="Users With No Recent Card Activity" subtitle="Customers whose cards have not been used in the last 30 days.">
+                                        <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
+                                            <div className="grid grid-cols-5 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>User</div><div>Company</div><div>Last Activity</div><div>Last Action</div><div>Card</div>
+                                            </div>
+                                            {dashboard.insights.inactiveUsers.map((user: any) => (
+                                                <div key={user.id} className="grid grid-cols-5 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                     <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div></div>
-                                                    <div>{user.company || '-'}</div><div>{user.profileVisits}</div><div>{user.profileShares}</div><div>{user.vcfDownloads}</div><div>{user.socialLinkClicks}</div>
+                                                    <div>{user.company || 'No company set'}</div>
+                                                    <div>{fmtDate(user.lastSeenAt, 'No card activity yet')}</div>
+                                                    <div>{fmtAction(user.lastCardAction)}</div>
+                                                    <div>
+                                                        <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-orange hover:text-cyan-200">
+                                                            Open card
+                                                            <ArrowUpRight className="h-3.5 w-3.5" />
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -506,46 +645,62 @@ export default function AdminConsole() {
                             )}
 
                             {!pageLoading && activeModule === 'users' && usersData && (
-                                <Section title="User Management" subtitle="Review the latest 20 signups, search by name, sort by join date, and remove a user's password when needed.">
+                                <>
+                                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                                    <Card title="Users Loaded" value={String(usersData.summary.totalShown)} detail="Current results set" />
+                                    <Card title="Active Users 30D" value={String(usersData.summary.activeUsers30d)} detail="Users with recent card events" accent="text-cyan-300" />
+                                    <Card title="Login Tracked" value={String(usersData.summary.loginTrackedCount)} detail="Users with a recorded password login" accent="text-white" />
+                                    <Card title="No Recent Activity" value={String(usersData.summary.noRecentActivityCount)} detail="Users with no card activity in the last 30 days" accent="text-cyan-300" />
+                                </div>
+                                <Section title="User Management" subtitle="Review the latest 20 signups, search by name, sort by join date, open business cards, and remove a user's password when needed.">
                                     <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-xs uppercase tracking-[0.18em] text-white/45">
                                         <span>Scroll horizontally to see the access controls</span>
                                         <span className="rounded-full border border-orange/20 bg-orange/10 px-3 py-1 text-[11px] font-semibold text-orange">
-                                            Password actions on the far right
+                                            Card and password actions on the far right
                                         </span>
                                     </div>
                                     <div className="overflow-x-auto rounded-2xl border border-white/8 bg-[#0d1319]">
-                                        <div className="min-w-[1540px]">
-                                            <div className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(180px,0.9fr)_minmax(130px,0.6fr)_minmax(170px,0.8fr)_minmax(240px,1fr)] gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
-                                                <div>User</div><div>Plan</div><div>Last Seen</div><div>Joined</div><div>Engagement</div><div>Leads</div><div>Profile Health</div><div>Access</div>
+                                        <div className="min-w-[1880px]">
+                                            <div className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(160px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.8fr)_minmax(150px,0.7fr)_minmax(170px,0.8fr)_minmax(280px,1.1fr)] gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>User</div><div>Plan</div><div>Last Login</div><div>Last Card Activity</div><div>Joined</div><div>Engagement</div><div>Social + Leads</div><div>Profile Health</div><div>Card</div><div>Access</div>
                                             </div>
                                             {usersData.users.map((user: any) => (
-                                                <div key={user.id} className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(180px,0.9fr)_minmax(130px,0.6fr)_minmax(170px,0.8fr)_minmax(240px,1fr)] gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                <div key={user.id} className="grid grid-cols-[minmax(220px,1.3fr)_minmax(140px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.9fr)_minmax(160px,0.8fr)_minmax(170px,0.9fr)_minmax(170px,0.8fr)_minmax(150px,0.7fr)_minmax(170px,0.8fr)_minmax(280px,1.1fr)] gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                 <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div><div className="text-xs text-white/35">{user.company || 'No company set'}</div></div>
                                                 <div><div>{user.plan}</div><div className="mt-2"><Badge tone={getStatusTone(user.subscriptionStatus)}>{user.subscriptionStatus}</Badge></div></div>
-                                                <div><div>{fmtDate(user.lastSeenAt)}</div><div className="mt-2 text-xs text-white/45">{fmtAction(user.lastCardAction)}</div></div>
+                                                <div>{fmtDate(user.lastLoginAt, 'Not tracked yet')}</div>
+                                                <div><div>{fmtDate(user.lastSeenAt, 'No card activity yet')}</div><div className="mt-2 text-xs text-white/45">{fmtAction(user.lastCardAction)}</div></div>
                                                 <div>{fmtDate(user.joinedAt)}</div>
                                                 <div><div>{user.profileVisits} visits</div><div className="text-xs text-white/45">{user.profileShares} shares / {user.vcfDownloads} downloads</div></div>
-                                                <div><div>{user.leadCount}</div><div className="text-xs text-white/45">{user.latestLeadAt ? `Latest ${fmtDate(user.latestLeadAt)}` : 'No leads yet'}</div></div>
+                                                <div><div>{user.socialLinkClicks} social clicks / {user.leadCount} leads</div><div className="text-xs text-white/45">{user.latestLeadAt ? `Latest ${fmtDate(user.latestLeadAt)}` : 'No leads yet'}</div></div>
                                                 <div><div className="font-semibold text-white">{user.completeness}% complete</div><div className="mt-2 h-2 rounded-full bg-white/10"><div className="h-2 rounded-full bg-gradient-to-r from-orange to-teil" style={{ width: `${user.completeness}%` }} /></div></div>
+                                                <div>
+                                                    <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                        Open card
+                                                        <ArrowUpRight className="h-3.5 w-3.5" />
+                                                    </a>
+                                                </div>
                                                 <div className="space-y-3">
                                                     <div>
                                                         <Badge tone={user.hasPassword ? 'green' : 'neutral'}>
                                                             {user.hasPassword ? 'Password set' : 'No password'}
                                                         </Badge>
                                                     </div>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => void handleClearPassword(user)}
-                                                        disabled={!user.hasPassword || passwordActionUserId === user.id}
-                                                        className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-white transition hover:border-orange/30 hover:text-orange disabled:cursor-not-allowed disabled:border-white/6 disabled:text-white/30"
-                                                    >
-                                                        {passwordActionUserId === user.id ? (
-                                                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                                        ) : (
-                                                            <KeyRound className="h-3.5 w-3.5" />
-                                                        )}
-                                                        {user.hasPassword ? 'Remove password' : 'Password cleared'}
-                                                    </button>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => void handleClearPassword(user)}
+                                                            disabled={!user.hasPassword || passwordActionUserId === user.id}
+                                                            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-white transition hover:border-orange/30 hover:text-orange disabled:cursor-not-allowed disabled:border-white/6 disabled:text-white/30"
+                                                        >
+                                                            {passwordActionUserId === user.id ? (
+                                                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                            ) : (
+                                                                <KeyRound className="h-3.5 w-3.5" />
+                                                            )}
+                                                            {user.hasPassword ? 'Remove password' : 'Password cleared'}
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 </div>
                                             ))}
@@ -557,6 +712,78 @@ export default function AdminConsole() {
                                         </div>
                                     </div>
                                 </Section>
+                                <div className="grid gap-6 xl:grid-cols-2">
+                                    <Section title="Top Recently Active Users" subtitle="Users ordered by the newest card activity event.">
+                                        <div className="space-y-3">
+                                            {usersData.recentlyActiveUsers.map((user: any) => (
+                                                <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                    <div className="flex items-start justify-between gap-4">
+                                                        <div>
+                                                            <div className="font-semibold text-white">{user.name}</div>
+                                                            <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                            <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                        </div>
+                                                        <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                            Open card
+                                                            <ArrowUpRight className="h-3.5 w-3.5" />
+                                                        </a>
+                                                    </div>
+                                                    <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
+                                                        <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Last Card Activity</div><div className="mt-1">{fmtDate(user.lastSeenAt, 'No card activity yet')}</div></div>
+                                                        <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Last Login</div><div className="mt-1">{fmtDate(user.lastLoginAt, 'Not tracked yet')}</div></div>
+                                                        <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Engagement</div><div className="mt-1">{user.profileVisits} visits / {user.profileShares} shares / {user.vcfDownloads} downloads</div></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
+                                    <Section title="Most Engaged Users" subtitle="Users ranked by combined visits, shares, downloads, social clicks, and leads.">
+                                        <div className="space-y-3">
+                                            {usersData.mostEngagedUsers.map((user: any) => (
+                                                <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                    <div className="flex items-start justify-between gap-4">
+                                                        <div>
+                                                            <div className="font-semibold text-white">{user.name}</div>
+                                                            <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                            <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                        </div>
+                                                        <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                            Open card
+                                                            <ArrowUpRight className="h-3.5 w-3.5" />
+                                                        </a>
+                                                    </div>
+                                                    <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
+                                                        <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Visits / Shares</div><div className="mt-1">{user.profileVisits} / {user.profileShares}</div></div>
+                                                        <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Downloads / Social</div><div className="mt-1">{user.vcfDownloads} / {user.socialLinkClicks}</div></div>
+                                                        <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Leads</div><div className="mt-1">{user.leadCount}</div></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
+                                </div>
+                                <Section title="Users With No Recent Activity" subtitle="Recent signups and customers with no card activity in the last 30 days.">
+                                    <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
+                                        <div className="grid grid-cols-5 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                            <div>User</div><div>Company</div><div>Joined</div><div>Last Activity</div><div>Card</div>
+                                        </div>
+                                        {usersData.noRecentActivityUsers.map((user: any) => (
+                                            <div key={user.id} className="grid grid-cols-5 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div></div>
+                                                <div>{user.company || 'No company set'}</div>
+                                                <div>{fmtDate(user.joinedAt)}</div>
+                                                <div>{fmtDate(user.lastSeenAt, 'No card activity yet')}</div>
+                                                <div>
+                                                    <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-orange hover:text-cyan-200">
+                                                        Open card
+                                                        <ArrowUpRight className="h-3.5 w-3.5" />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </Section>
+                                </>
                             )}
 
                             {!pageLoading && activeModule === 'revenue' && revenueData && (

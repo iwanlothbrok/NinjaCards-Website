@@ -30,6 +30,7 @@ export interface User {
     revolut: string;
     qrCode: string;
     selectedColor: string;
+    lastLoginAt?: string | null;
     cv: string;
     behance: string;
     paypal: string;
