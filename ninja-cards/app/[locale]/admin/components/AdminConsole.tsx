@@ -609,12 +609,12 @@ export default function AdminConsole() {
                                             </div>
                                         </Section>
 
-                                        <Section title="High Traffic, Low Lead Capture" subtitle="Cards getting attention without turning visits into leads yet.">
+                                        <Section title="Worst Converting Cards" subtitle="Cards with meaningful traffic but weak lead conversion right now.">
                                             <div className="space-y-3">
-                                                {dashboard.insights.highTrafficLowLeadUsers.length === 0 && (
-                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No high-traffic, zero-lead users right now.</div>
+                                                {dashboard.insights.worstConverters.length === 0 && (
+                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No weak-conversion cards worth flagging right now.</div>
                                                 )}
-                                                {dashboard.insights.highTrafficLowLeadUsers.map((user: any) => (
+                                                {dashboard.insights.worstConverters.map((user: any) => (
                                                     <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
                                                         <div className="flex items-start justify-between gap-4">
                                                             <div>
@@ -629,8 +629,8 @@ export default function AdminConsole() {
                                                         </div>
                                                         <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
                                                             <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Visits</div><div className="mt-1">{user.profileVisits}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Leads / Rate</div><div className="mt-1">{user.leadCount} / {user.conversionRate}%</div></div>
                                                             <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Shares / Downloads</div><div className="mt-1">{user.profileShares} / {user.vcfDownloads}</div></div>
-                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Leads</div><div className="mt-1">{user.leadCount}</div></div>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -686,6 +686,123 @@ export default function AdminConsole() {
                                                         <div className="mt-4 text-sm text-white/65">
                                                             Last login: {fmtDate(user.lastLoginAt, 'Not tracked yet')}
                                                         </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+                                    </div>
+
+                                    <div className="grid gap-6 xl:grid-cols-2">
+                                        <Section title="Best Converting Cards" subtitle="Cards turning visits into real leads most efficiently.">
+                                            <div className="space-y-3">
+                                                {dashboard.insights.bestConverters.length === 0 && (
+                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No strong conversion leaders yet.</div>
+                                                )}
+                                                {dashboard.insights.bestConverters.map((user: any) => (
+                                                    <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{user.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                            </div>
+                                                            <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                                Open card
+                                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                            </a>
+                                                        </div>
+                                                        <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Visits</div><div className="mt-1">{user.profileVisits}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Leads</div><div className="mt-1">{user.leadCount}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Conversion</div><div className="mt-1">{user.conversionRate}%</div></div>
+                                                        </div>
+                                                        <div className="mt-3 text-sm text-white/55">Last login: {fmtDate(user.lastLoginAt, 'Not tracked yet')}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+
+                                        <Section title="Top Lead Generators This Month" subtitle="Users capturing the most new leads this month.">
+                                            <div className="space-y-3">
+                                                {dashboard.insights.topLeadGeneratorsThisMonth.length === 0 && (
+                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No new lead generation has been tracked this month yet.</div>
+                                                )}
+                                                {dashboard.insights.topLeadGeneratorsThisMonth.map((user: any) => (
+                                                    <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{user.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                            </div>
+                                                            <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                                Open card
+                                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                            </a>
+                                                        </div>
+                                                        <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-2">
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">New Leads</div><div className="mt-1">{user.leadCount}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Latest Lead</div><div className="mt-1">{fmtDate(user.latestLeadAt)}</div></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+                                    </div>
+
+                                    <div className="grid gap-6 xl:grid-cols-2">
+                                        <Section title="Users Who Never Logged In" subtitle="Signed-up users who still have no tracked password login.">
+                                            <div className="space-y-3">
+                                                {dashboard.insights.neverLoggedInUsers.length === 0 && (
+                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">Everyone in the current sample has a recorded login.</div>
+                                                )}
+                                                {dashboard.insights.neverLoggedInUsers.map((user: any) => (
+                                                    <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{user.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                            </div>
+                                                            <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                                Open card
+                                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                            </a>
+                                                        </div>
+                                                        <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Joined</div><div className="mt-1">{fmtDate(user.joinedAt)}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Plan</div><div className="mt-1">{user.plan}</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Card Traffic</div><div className="mt-1">{user.profileVisits} visits</div></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+
+                                        <Section title="Declining Users" subtitle="Users whose card activity dropped compared with last month.">
+                                            <div className="space-y-3">
+                                                {dashboard.insights.decliningUsers.length === 0 && (
+                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No meaningful activity drop-offs this month.</div>
+                                                )}
+                                                {dashboard.insights.decliningUsers.map((user: any) => (
+                                                    <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{user.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                            </div>
+                                                            <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                                Open card
+                                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                            </a>
+                                                        </div>
+                                                        <div className="mt-4 grid gap-3 text-sm text-white/65 md:grid-cols-3">
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Last Month</div><div className="mt-1">{user.previousEvents} events</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">This Month</div><div className="mt-1">{user.currentEvents} events</div></div>
+                                                            <div><div className="text-xs uppercase tracking-[0.18em] text-white/35">Decline</div><div className="mt-1">{user.declineRate}%</div></div>
+                                                        </div>
+                                                        <div className="mt-3 text-sm text-white/55">Last login: {fmtDate(user.lastLoginAt, 'Not tracked yet')}</div>
                                                     </div>
                                                 ))}
                                             </div>

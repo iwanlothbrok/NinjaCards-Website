@@ -96,6 +96,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             inactiveUsersRaw,
             highTrafficLowLeadUsersRaw,
             topActiveUsersThisMonthRaw,
+            conversionCandidatesRaw,
+            neverLoggedInUsersRaw,
+            currentMonthLeadsRaw,
         ] = await Promise.all([
             prisma.user.count(),
             prisma.user.count({ where: { createdAt: { gte: days7 } } }),
@@ -332,6 +335,66 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                 },
             }),
+            prisma.dashboard.findMany({
+                take: 40,
+                orderBy: [{ profileVisits: 'desc' }, { profileShares: 'desc' }],
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            company: true,
+                            slug: true,
+                            lastLoginAt: true,
+                            _count: {
+                                select: {
+                                    leads: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            }),
+            prisma.user.findMany({
+                take: 12,
+                where: {
+                    lastLoginAt: null,
+                },
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    dashboard: {
+                        select: {
+                            profileVisits: true,
+                            profileShares: true,
+                            vcfDownloads: true,
+                            socialLinkClicks: true,
+                        },
+                    },
+                    subscription: {
+                        select: {
+                            plan: true,
+                            status: true,
+                        },
+                    },
+                },
+            }),
+            prisma.subscribed.findMany({
+                where: {
+                    createdAt: { gte: startOfMonth(now) },
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            company: true,
+                            slug: true,
+                        },
+                    },
+                },
+            }),
         ]);
 
         const totalVisits = visitsAggregate._sum.profileVisits ?? 0;
@@ -527,6 +590,137 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 publicProfileUrl: buildPublicProfileUrl({ locale, slug: item.user?.slug, userId: item.userId }),
             }));
 
+        const conversionCandidates = conversionCandidatesRaw
+            .map((item) => {
+                const visits = item.profileVisits ?? 0;
+                const leads = item.user?._count?.leads ?? 0;
+                const conversionRate = visits > 0 ? Number(((leads / visits) * 100).toFixed(1)) : 0;
+
+                return {
+                    id: item.userId,
+                    name: item.user?.name || 'Unnamed user',
+                    email: item.user?.email || '',
+                    company: item.user?.company || '',
+                    profileVisits: visits,
+                    profileShares: item.profileShares,
+                    vcfDownloads: item.vcfDownloads,
+                    socialLinkClicks: item.socialLinkClicks,
+                    leadCount: leads,
+                    conversionRate,
+                    lastLoginAt: item.user?.lastLoginAt?.toISOString() ?? null,
+                    publicProfileUrl: buildPublicProfileUrl({ locale, slug: item.user?.slug, userId: item.userId }),
+                };
+            })
+            .filter((user) => user.profileVisits > 0);
+
+        const bestConverters = conversionCandidates
+            .filter((user) => user.profileVisits >= 10 && user.leadCount > 0)
+            .sort((a, b) => {
+                if (b.conversionRate !== a.conversionRate) return b.conversionRate - a.conversionRate;
+                if (b.leadCount !== a.leadCount) return b.leadCount - a.leadCount;
+                return b.profileVisits - a.profileVisits;
+            })
+            .slice(0, 6);
+
+        const worstConverters = conversionCandidates
+            .filter((user) => user.profileVisits >= 10)
+            .sort((a, b) => {
+                if (a.conversionRate !== b.conversionRate) return a.conversionRate - b.conversionRate;
+                if (b.profileVisits !== a.profileVisits) return b.profileVisits - a.profileVisits;
+                return a.leadCount - b.leadCount;
+            })
+            .slice(0, 6);
+
+        const neverLoggedInUsers = neverLoggedInUsersRaw
+            .map((user) => ({
+                id: user.id,
+                name: user.name || 'Unnamed user',
+                email: user.email || '',
+                company: user.company || '',
+                joinedAt: user.createdAt.toISOString(),
+                plan: user.subscription?.plan || 'No plan',
+                subscriptionStatus: user.subscription?.status || 'none',
+                profileVisits: user.dashboard?.profileVisits ?? 0,
+                profileShares: user.dashboard?.profileShares ?? 0,
+                vcfDownloads: user.dashboard?.vcfDownloads ?? 0,
+                socialLinkClicks: user.dashboard?.socialLinkClicks ?? 0,
+                publicProfileUrl: buildPublicProfileUrl({ locale, slug: user.slug, userId: user.id }),
+            }))
+            .sort((a, b) => {
+                if (b.profileVisits !== a.profileVisits) return b.profileVisits - a.profileVisits;
+                return new Date(b.joinedAt).getTime() - new Date(a.joinedAt).getTime();
+            })
+            .slice(0, 8);
+
+        const topLeadGeneratorsThisMonthMap = new Map<
+            string,
+            {
+                id: string;
+                name: string;
+                email: string;
+                company: string;
+                publicProfileUrl: string;
+                leadCount: number;
+                latestLeadAt: string | null;
+            }
+        >();
+
+        for (const lead of currentMonthLeadsRaw) {
+            const existing = topLeadGeneratorsThisMonthMap.get(lead.userId);
+            const latestLeadAt = lead.createdAt.toISOString();
+            if (existing) {
+                existing.leadCount += 1;
+                if (!existing.latestLeadAt || latestLeadAt > existing.latestLeadAt) {
+                    existing.latestLeadAt = latestLeadAt;
+                }
+                continue;
+            }
+
+            topLeadGeneratorsThisMonthMap.set(lead.userId, {
+                id: lead.userId,
+                name: lead.user?.name || 'Unnamed user',
+                email: lead.user?.email || '',
+                company: lead.user?.company || '',
+                publicProfileUrl: buildPublicProfileUrl({ locale, slug: lead.user?.slug, userId: lead.userId }),
+                leadCount: 1,
+                latestLeadAt,
+            });
+        }
+
+        const topLeadGeneratorsThisMonth = Array.from(topLeadGeneratorsThisMonthMap.values())
+            .sort((a, b) => {
+                if (b.leadCount !== a.leadCount) return b.leadCount - a.leadCount;
+                return (b.latestLeadAt || '').localeCompare(a.latestLeadAt || '');
+            })
+            .slice(0, 8);
+
+        const decliningUsers = Array.from(monthlyEventCounts.get(previousMonthKey || '')?.entries() || [])
+            .map(([userId, previousEvents]) => {
+                const currentEvents = monthlyEventCounts.get(currentMonthKey)?.get(userId) || 0;
+                const change = currentEvents - previousEvents;
+                const declineRate = previousEvents > 0 ? Number((((previousEvents - currentEvents) / previousEvents) * 100).toFixed(1)) : 0;
+                const user = userDirectory.get(userId);
+
+                return {
+                    id: userId,
+                    name: user?.name || 'Unnamed user',
+                    email: user?.email || '',
+                    company: user?.company || '',
+                    previousEvents,
+                    currentEvents,
+                    change,
+                    declineRate,
+                    lastLoginAt: user?.lastLoginAt?.toISOString() ?? null,
+                    publicProfileUrl: buildPublicProfileUrl({ locale, slug: user?.slug, userId }),
+                };
+            })
+            .filter((user) => user.previousEvents >= 3 && user.currentEvents < user.previousEvents)
+            .sort((a, b) => {
+                if (b.declineRate !== a.declineRate) return b.declineRate - a.declineRate;
+                return b.previousEvents - a.previousEvents;
+            })
+            .slice(0, 8);
+
         const topActiveUsersThisMonth = topActiveUsersThisMonthRaw
             .slice(0, 8)
             .map((item) => ({
@@ -659,6 +853,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 topActiveUsersByMonth,
                 reactivatedUsersNow,
                 newlyInactiveUsersNow,
+                bestConverters,
+                worstConverters,
+                neverLoggedInUsers,
+                topLeadGeneratorsThisMonth,
+                decliningUsers,
             },
         });
     } catch (error) {
