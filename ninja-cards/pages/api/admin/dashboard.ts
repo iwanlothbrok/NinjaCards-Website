@@ -49,6 +49,10 @@ function createMonthlySeries(monthCount: number) {
     }));
 }
 
+function startOfDay(date: Date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (cors(req, res)) return;
     if (req.method !== 'GET') {
@@ -88,6 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             monthlyLeads,
             activeUsers7d,
             activeUsers30d,
+            allUsersForActivity,
             inactiveUsersRaw,
             highTrafficLowLeadUsersRaw,
             topActiveUsersThisMonthRaw,
@@ -262,6 +267,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 select: { userId: true },
             }),
             prisma.user.findMany({
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    company: true,
+                    slug: true,
+                    createdAt: true,
+                    lastLoginAt: true,
+                },
+            }),
+            prisma.user.findMany({
                 take: 8,
                 orderBy: { createdAt: 'desc' },
                 include: {
@@ -327,6 +343,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const monthlySeries = createMonthlySeries(6);
         const monthlyIndex = new Map(monthlySeries.map((item) => [item.monthKey, item]));
+        const userDirectory = new Map(
+            allUsersForActivity.map((user) => [
+                user.id,
+                {
+                    id: user.id,
+                    name: user.name || 'Unnamed user',
+                    email: user.email || '',
+                    company: user.company || '',
+                    slug: user.slug || null,
+                    createdAt: user.createdAt,
+                    lastLoginAt: user.lastLoginAt,
+                },
+            ]),
+        );
+        const monthlyEventCounts = new Map<string, Map<string, number>>();
+        const firstActivityMonthByUser = new Map<string, string>();
 
         for (const event of monthlyEvents) {
             const key = `${event.timestamp.getFullYear()}-${String(event.timestamp.getMonth() + 1).padStart(2, '0')}`;
@@ -339,6 +371,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (event.type === 'socialClick') month.socialClicks += 1;
 
             month._activeUserIds.add(event.userId);
+            if (!monthlyEventCounts.has(key)) {
+                monthlyEventCounts.set(key, new Map<string, number>());
+            }
+            monthlyEventCounts.get(key)!.set(event.userId, (monthlyEventCounts.get(key)!.get(event.userId) || 0) + 1);
+            if (!firstActivityMonthByUser.has(event.userId)) {
+                firstActivityMonthByUser.set(event.userId, key);
+            }
         }
 
         for (const lead of monthlyLeads) {
@@ -357,6 +396,104 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 visitToLeadRate: month.visits > 0 ? Number(((month.leads / month.visits) * 100).toFixed(1)) : 0,
             };
         });
+
+        const monthKeys = finalizedMonthlySeries.map((month) => month.monthKey);
+        const monthMetaByKey = new Map(finalizedMonthlySeries.map((month) => [month.monthKey, month]));
+        const monthlyLifecycle = monthKeys.map((monthKey, index) => {
+            const currentActive = new Set(monthlyEventCounts.get(monthKey)?.keys() || []);
+            const previousActive = index > 0 ? new Set(monthlyEventCounts.get(monthKeys[index - 1])?.keys() || []) : new Set<string>();
+            const monthMeta = months[index];
+            const eligibleUsers = allUsersForActivity.filter((user) => user.createdAt < monthMeta.end).length;
+            const inactiveUsers = Math.max(eligibleUsers - currentActive.size, 0);
+            let reactivatedUsers = 0;
+            let newlyInactiveUsers = 0;
+            let firstTimeActiveUsers = 0;
+
+            for (const userId of currentActive) {
+                if (!previousActive.has(userId) && firstActivityMonthByUser.get(userId) !== monthKey) {
+                    reactivatedUsers += 1;
+                }
+                if (firstActivityMonthByUser.get(userId) === monthKey) {
+                    firstTimeActiveUsers += 1;
+                }
+            }
+
+            for (const userId of previousActive) {
+                if (!currentActive.has(userId)) {
+                    newlyInactiveUsers += 1;
+                }
+            }
+
+            return {
+                monthKey,
+                label: monthMetaByKey.get(monthKey)?.label || monthKey,
+                activeUsers: currentActive.size,
+                inactiveUsers,
+                reactivatedUsers,
+                newlyInactiveUsers,
+                firstTimeActiveUsers,
+            };
+        });
+
+        const topActiveUsersByMonth = monthKeys.map((monthKey) => {
+            const monthCounts = Array.from(monthlyEventCounts.get(monthKey)?.entries() || [])
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([userId, events]) => {
+                    const user = userDirectory.get(userId);
+                    return {
+                        id: userId,
+                        events,
+                        name: user?.name || 'Unnamed user',
+                        email: user?.email || '',
+                        company: user?.company || '',
+                        publicProfileUrl: buildPublicProfileUrl({ locale, slug: user?.slug, userId }),
+                    };
+                });
+
+            return {
+                monthKey,
+                label: monthMetaByKey.get(monthKey)?.label || monthKey,
+                users: monthCounts,
+            };
+        });
+
+        const currentMonthKey = monthKeys[monthKeys.length - 1];
+        const previousMonthKey = monthKeys[monthKeys.length - 2];
+        const reactivatedUsersNow = Array.from(monthlyEventCounts.get(currentMonthKey)?.keys() || [])
+            .filter((userId) => {
+                const currentActive = monthlyEventCounts.get(currentMonthKey)?.has(userId);
+                const previousActive = previousMonthKey ? monthlyEventCounts.get(previousMonthKey)?.has(userId) : false;
+                const firstSeenMonth = firstActivityMonthByUser.get(userId);
+                return currentActive && !previousActive && firstSeenMonth !== currentMonthKey;
+            })
+            .slice(0, 8)
+            .map((userId) => {
+                const user = userDirectory.get(userId);
+                return {
+                    id: userId,
+                    name: user?.name || 'Unnamed user',
+                    email: user?.email || '',
+                    company: user?.company || '',
+                    publicProfileUrl: buildPublicProfileUrl({ locale, slug: user?.slug, userId }),
+                    lastLoginAt: user?.lastLoginAt?.toISOString() ?? null,
+                };
+            });
+
+        const newlyInactiveUsersNow = Array.from(monthlyEventCounts.get(previousMonthKey || '')?.keys() || [])
+            .filter((userId) => !monthlyEventCounts.get(currentMonthKey)?.has(userId))
+            .slice(0, 8)
+            .map((userId) => {
+                const user = userDirectory.get(userId);
+                return {
+                    id: userId,
+                    name: user?.name || 'Unnamed user',
+                    email: user?.email || '',
+                    company: user?.company || '',
+                    publicProfileUrl: buildPublicProfileUrl({ locale, slug: user?.slug, userId }),
+                    lastLoginAt: user?.lastLoginAt?.toISOString() ?? null,
+                };
+            });
 
         const inactiveUsers = inactiveUsersRaw
             .map((user) => {
@@ -518,6 +655,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 topActiveUsersThisMonth,
                 inactiveUsers,
                 highTrafficLowLeadUsers,
+                monthlyLifecycle,
+                topActiveUsersByMonth,
+                reactivatedUsersNow,
+                newlyInactiveUsersNow,
             },
         });
     } catch (error) {

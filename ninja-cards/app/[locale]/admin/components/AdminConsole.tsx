@@ -451,6 +451,24 @@ export default function AdminConsole() {
                                         </div>
                                     </Section>
 
+                                    <Section title="Monthly User Lifecycle" subtitle="See who is active, inactive, reactivated, or dropping off month by month.">
+                                        <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
+                                            <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
+                                                <div>Month</div><div>Active</div><div>Inactive</div><div>Reactivated</div><div>Newly Inactive</div><div>First-Time Active</div>
+                                            </div>
+                                            {dashboard.insights.monthlyLifecycle.map((month: any) => (
+                                                <div key={month.monthKey} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
+                                                    <div className="font-semibold text-white">{month.label}</div>
+                                                    <div>{month.activeUsers}</div>
+                                                    <div>{month.inactiveUsers}</div>
+                                                    <div>{month.reactivatedUsers}</div>
+                                                    <div>{month.newlyInactiveUsers}</div>
+                                                    <div>{month.firstTimeActiveUsers}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
+
                                     <Section title="Latest Card Events" subtitle="The most recent profile and card actions across the platform.">
                                         <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
                                             <div className="grid grid-cols-7 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
@@ -619,6 +637,94 @@ export default function AdminConsole() {
                                             </div>
                                         </Section>
                                     </div>
+
+                                    <div className="grid gap-6 xl:grid-cols-2">
+                                        <Section title="Reactivated Users This Month" subtitle="Users who came back this month after being inactive last month.">
+                                            <div className="space-y-3">
+                                                {dashboard.insights.reactivatedUsersNow.length === 0 && (
+                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No reactivated users this month yet.</div>
+                                                )}
+                                                {dashboard.insights.reactivatedUsersNow.map((user: any) => (
+                                                    <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{user.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                            </div>
+                                                            <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                                Open card
+                                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                            </a>
+                                                        </div>
+                                                        <div className="mt-4 text-sm text-white/65">
+                                                            Last login: {fmtDate(user.lastLoginAt, 'Not tracked yet')}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+
+                                        <Section title="Dropped-Off Users This Month" subtitle="Users who were active last month but have no card activity this month.">
+                                            <div className="space-y-3">
+                                                {dashboard.insights.newlyInactiveUsersNow.length === 0 && (
+                                                    <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No newly inactive users this month.</div>
+                                                )}
+                                                {dashboard.insights.newlyInactiveUsersNow.map((user: any) => (
+                                                    <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                        <div className="flex items-start justify-between gap-4">
+                                                            <div>
+                                                                <div className="font-semibold text-white">{user.name}</div>
+                                                                <div className="mt-1 text-sm text-white/45">{user.email}</div>
+                                                                <div className="mt-1 text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                            </div>
+                                                            <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-xl border border-orange/20 bg-orange/10 px-3 py-2 text-xs font-semibold text-orange transition hover:border-orange/40 hover:text-white">
+                                                                Open card
+                                                                <ArrowUpRight className="h-3.5 w-3.5" />
+                                                            </a>
+                                                        </div>
+                                                        <div className="mt-4 text-sm text-white/65">
+                                                            Last login: {fmtDate(user.lastLoginAt, 'Not tracked yet')}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Section>
+                                    </div>
+
+                                    <Section title="Top Active Users By Month" subtitle="Monthly leaderboards so you can see which cards dominate each month.">
+                                        <div className="grid gap-4 xl:grid-cols-2">
+                                            {dashboard.insights.topActiveUsersByMonth.map((month: any) => (
+                                                <div key={month.monthKey} className="rounded-2xl border border-white/8 bg-[#0d1319] p-5">
+                                                    <div className="mb-4 flex items-center justify-between gap-4">
+                                                        <h3 className="text-lg font-semibold text-white">{month.label}</h3>
+                                                        <Badge tone="blue">{month.users.length} tracked leaders</Badge>
+                                                    </div>
+                                                    <div className="space-y-3">
+                                                        {month.users.length === 0 && (
+                                                            <div className="text-sm text-white/50">No activity leaders for this month.</div>
+                                                        )}
+                                                        {month.users.map((user: any, index: number) => (
+                                                            <div key={`${month.monthKey}-${user.id}`} className="flex items-center justify-between gap-4 rounded-xl border border-white/8 bg-white/[0.03] px-4 py-3">
+                                                                <div>
+                                                                    <div className="font-semibold text-white">{index + 1}. {user.name}</div>
+                                                                    <div className="text-xs text-white/45">{user.email}</div>
+                                                                    <div className="text-xs text-white/35">{user.company || 'No company set'}</div>
+                                                                </div>
+                                                                <div className="flex items-center gap-3">
+                                                                    <Badge tone="orange">{user.events} events</Badge>
+                                                                    <a href={user.publicProfileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-orange hover:text-cyan-200">
+                                                                        Open card
+                                                                        <ArrowUpRight className="h-3.5 w-3.5" />
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Section>
 
                                     <Section title="Users With No Recent Card Activity" subtitle="Customers whose cards have not been used in the last 30 days.">
                                         <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
