@@ -3,10 +3,25 @@
 import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowUpRight, CreditCard, Crown, KeyRound, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users, X } from 'lucide-react';
+import { Bar, Line } from 'react-chartjs-2';
+import {
+    BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
+    LinearScale,
+    LineElement,
+    PointElement,
+    Tooltip,
+} from 'chart.js';
 import { useAdminAuth } from '../AdminAuthProvider';
 import { BASE_API_URL } from '@/utils/constants';
 
 type ModuleKey = 'overview' | 'users' | 'revenue' | 'crm' | 'admins';
+type OverviewTabKey = 'performance' | 'lifecycle' | 'conversion' | 'watchlist';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend, Filler);
 
 const modules: Array<{ key: ModuleKey; label: string; icon: ComponentType<{ className?: string }>; description: string }> = [
     { key: 'overview', label: 'Overview', icon: LayoutDashboard, description: 'Growth, revenue, engagement, and funnel health.' },
@@ -17,6 +32,12 @@ const modules: Array<{ key: ModuleKey; label: string; icon: ComponentType<{ clas
 ];
 
 const BULGARIA_TIME_ZONE = 'Europe/Sofia';
+const overviewTabs: Array<{ key: OverviewTabKey; label: string; description: string }> = [
+    { key: 'performance', label: 'Performance', description: 'Monthly usage, active users, and platform velocity.' },
+    { key: 'lifecycle', label: 'Lifecycle', description: 'Who is active, inactive, reactivated, or dropping off.' },
+    { key: 'conversion', label: 'Conversion', description: 'Which cards convert visits into leads best or worst.' },
+    { key: 'watchlist', label: 'Watchlist', description: 'Users who need admin attention right now.' },
+];
 
 const fmtDate = (value?: string | null, fallback = 'Never') =>
     value
@@ -88,6 +109,18 @@ function Section({ title, subtitle, actions, children }: { title: string; subtit
     );
 }
 
+function ChartPanel({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
+    return (
+        <div className="rounded-3xl border border-white/8 bg-[#0d1319] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.2)]">
+            <div className="mb-4">
+                <h3 className="text-lg font-semibold text-white">{title}</h3>
+                <p className="mt-1 text-sm text-white/45">{subtitle}</p>
+            </div>
+            <div className="h-[320px]">{children}</div>
+        </div>
+    );
+}
+
 export default function AdminConsole() {
     const { adminUser, loading, logout } = useAdminAuth();
     const searchParams = useSearchParams();
@@ -109,6 +142,7 @@ export default function AdminConsole() {
     const [usersActionError, setUsersActionError] = useState<string | null>(null);
     const [usersActionNotice, setUsersActionNotice] = useState<string | null>(null);
     const [passwordActionUserId, setPasswordActionUserId] = useState<string | null>(null);
+    const [overviewTab, setOverviewTab] = useState<OverviewTabKey>('performance');
 
     useEffect(() => {
         if (!loading && !adminUser) router.replace(`/${locale}/admin/login`);
@@ -240,6 +274,131 @@ export default function AdminConsole() {
 
     const currentModule = useMemo(() => modules.find((item) => item.key === activeModule) || modules[0], [activeModule]);
     const latestMonthlyAnalytics = dashboard?.monthlyAnalytics?.[dashboard.monthlyAnalytics.length - 1] || null;
+    const monthlyLabels = useMemo(() => dashboard?.monthlyAnalytics?.map((month: any) => month.label) || [], [dashboard]);
+    const chartOptions = useMemo(
+        () => ({
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index' as const, intersect: false },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'rgba(255,255,255,0.72)',
+                        boxWidth: 12,
+                        boxHeight: 12,
+                        usePointStyle: true,
+                        pointStyle: 'circle' as const,
+                    },
+                },
+                tooltip: {
+                    backgroundColor: '#081118',
+                    borderColor: 'rgba(255,255,255,0.08)',
+                    borderWidth: 1,
+                    titleColor: '#ffffff',
+                    bodyColor: 'rgba(255,255,255,0.78)',
+                },
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(255,255,255,0.04)' },
+                    ticks: { color: 'rgba(255,255,255,0.5)' },
+                },
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.06)' },
+                    ticks: { color: 'rgba(255,255,255,0.5)' },
+                },
+            },
+        }),
+        [],
+    );
+    const activityChartData = useMemo(
+        () => ({
+            labels: monthlyLabels,
+            datasets: [
+                {
+                    label: 'Visits',
+                    data: dashboard?.monthlyAnalytics?.map((month: any) => month.visits) || [],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.18)',
+                    fill: true,
+                    tension: 0.35,
+                },
+                {
+                    label: 'Active Users',
+                    data: dashboard?.monthlyAnalytics?.map((month: any) => month.activeUsers) || [],
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.15)',
+                    fill: true,
+                    tension: 0.35,
+                },
+                {
+                    label: 'Leads',
+                    data: dashboard?.monthlyAnalytics?.map((month: any) => month.leads) || [],
+                    borderColor: '#ffffff',
+                    backgroundColor: 'rgba(255,255,255,0.08)',
+                    fill: true,
+                    tension: 0.35,
+                },
+            ],
+        }),
+        [dashboard, monthlyLabels],
+    );
+    const lifecycleChartData = useMemo(
+        () => ({
+            labels: dashboard?.insights?.monthlyLifecycle?.map((month: any) => month.label) || [],
+            datasets: [
+                {
+                    label: 'Active',
+                    data: dashboard?.insights?.monthlyLifecycle?.map((month: any) => month.activeUsers) || [],
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.12)',
+                    fill: false,
+                    tension: 0.35,
+                },
+                {
+                    label: 'Inactive',
+                    data: dashboard?.insights?.monthlyLifecycle?.map((month: any) => month.inactiveUsers) || [],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                    fill: false,
+                    tension: 0.35,
+                },
+                {
+                    label: 'Reactivated',
+                    data: dashboard?.insights?.monthlyLifecycle?.map((month: any) => month.reactivatedUsers) || [],
+                    borderColor: '#34d399',
+                    backgroundColor: 'rgba(52, 211, 153, 0.12)',
+                    fill: false,
+                    tension: 0.35,
+                },
+            ],
+        }),
+        [dashboard],
+    );
+    const conversionChartData = useMemo(
+        () => ({
+            labels: monthlyLabels,
+            datasets: [
+                {
+                    label: 'Leads',
+                    data: dashboard?.monthlyAnalytics?.map((month: any) => month.leads) || [],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.18)',
+                    fill: true,
+                    tension: 0.35,
+                },
+                {
+                    label: 'Visit to Lead %',
+                    data: dashboard?.monthlyAnalytics?.map((month: any) => month.visitToLeadRate) || [],
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.15)',
+                    tension: 0.35,
+                    fill: true,
+                },
+            ],
+        }),
+        [dashboard, monthlyLabels],
+    );
 
     if (loading || (!adminUser && !error)) {
         return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-10 w-10 animate-spin text-orange" /></div>;
@@ -420,6 +579,108 @@ export default function AdminConsole() {
                                             accent="text-white"
                                         />
                                     </div>
+
+                                    <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-3">
+                                        <div className="flex flex-wrap gap-2">
+                                            {overviewTabs.map((tab) => (
+                                                <button
+                                                    key={tab.key}
+                                                    type="button"
+                                                    onClick={() => setOverviewTab(tab.key)}
+                                                    className={`rounded-2xl border px-4 py-3 text-left transition ${
+                                                        overviewTab === tab.key
+                                                            ? 'border-orange/40 bg-orange/15 text-white'
+                                                            : 'border-white/8 bg-[#0d1319] text-white/65 hover:border-white/15 hover:text-white'
+                                                    }`}
+                                                >
+                                                    <div className="text-sm font-semibold">{tab.label}</div>
+                                                    <div className="mt-1 text-xs text-white/45">{tab.description}</div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {overviewTab === 'performance' && (
+                                        <div className="grid gap-6 xl:grid-cols-2">
+                                            <ChartPanel title="Usage Trend" subtitle="Twelve months of visits, active users, and leads.">
+                                                <Line data={activityChartData} options={chartOptions} />
+                                            </ChartPanel>
+                                            <ChartPanel title="Lead Conversion Trend" subtitle="Monthly leads against visit-to-lead conversion rate.">
+                                                <Line data={conversionChartData} options={chartOptions} />
+                                            </ChartPanel>
+                                        </div>
+                                    )}
+
+                                    {overviewTab === 'lifecycle' && (
+                                        <div className="grid gap-6 xl:grid-cols-2">
+                                            <ChartPanel title="User Lifecycle Trend" subtitle="Track active, inactive, and reactivated users over the last year.">
+                                                <Line data={lifecycleChartData} options={chartOptions} />
+                                            </ChartPanel>
+                                            <Section title="Lifecycle Highlights" subtitle="A quick operational read on who is moving in and out of activity right now.">
+                                                <div className="grid gap-4 md:grid-cols-2">
+                                                    <Card title="Reactivated" value={String(dashboard.insights.reactivatedUsersNow.length)} detail="Users who came back this month" />
+                                                    <Card title="Dropped Off" value={String(dashboard.insights.newlyInactiveUsersNow.length)} detail="Users active last month but quiet now" accent="text-cyan-300" />
+                                                    <Card title="Inactive Sample" value={String(dashboard.insights.inactiveUsers.length)} detail="Users with no recent card activity" accent="text-white" />
+                                                    <Card title="Monthly Leaders" value={String(dashboard.insights.topActiveUsersByMonth.length)} detail="Months with tracked user leaderboards" accent="text-cyan-300" />
+                                                </div>
+                                            </Section>
+                                        </div>
+                                    )}
+
+                                    {overviewTab === 'conversion' && (
+                                        <div className="grid gap-6 xl:grid-cols-2">
+                                            <ChartPanel title="Conversion Focus" subtitle="Compare monthly leads with conversion rate to spot strong and weak periods.">
+                                                <Line data={conversionChartData} options={chartOptions} />
+                                            </ChartPanel>
+                                            <Section title="Conversion Highlights" subtitle="See who is winning and who needs attention.">
+                                                <div className="grid gap-4 md:grid-cols-2">
+                                                    <Card title="Best Converters" value={String(dashboard.insights.bestConverters.length)} detail="Strong cards turning traffic into leads" />
+                                                    <Card title="Weak Converters" value={String(dashboard.insights.worstConverters.length)} detail="Cards with meaningful traffic but poor conversion" accent="text-cyan-300" />
+                                                    <Card title="Lead Generators" value={String(dashboard.insights.topLeadGeneratorsThisMonth.length)} detail="Users producing new leads this month" accent="text-white" />
+                                                    <Card title="Follow-Up Queue" value={String(dashboard.followUpLeads.length)} detail="Leads already due for a follow-up" accent="text-cyan-300" />
+                                                </div>
+                                            </Section>
+                                        </div>
+                                    )}
+
+                                    {overviewTab === 'watchlist' && (
+                                        <div className="grid gap-6 xl:grid-cols-2">
+                                            <ChartPanel title="Watchlist Snapshot" subtitle="Use this view to spot risk before it becomes churn or missed revenue.">
+                                                <Bar
+                                                    data={{
+                                                        labels: ['Never logged in', 'Declining users', 'High traffic low lead', 'At-risk subs'],
+                                                        datasets: [
+                                                            {
+                                                                label: 'Users to review',
+                                                                data: [
+                                                                    dashboard.insights.neverLoggedInUsers.length,
+                                                                    dashboard.insights.decliningUsers.length,
+                                                                    dashboard.insights.highTrafficLowLeadUsers.length,
+                                                                    dashboard.subscriptionAlerts.length,
+                                                                ],
+                                                                backgroundColor: [
+                                                                    'rgba(245, 158, 11, 0.7)',
+                                                                    'rgba(34, 211, 238, 0.7)',
+                                                                    'rgba(255,255,255,0.5)',
+                                                                    'rgba(239, 68, 68, 0.65)',
+                                                                ],
+                                                                borderRadius: 10,
+                                                            },
+                                                        ],
+                                                    }}
+                                                    options={chartOptions}
+                                                />
+                                            </ChartPanel>
+                                            <Section title="Watchlist Highlights" subtitle="The users and accounts most likely to need intervention.">
+                                                <div className="grid gap-4 md:grid-cols-2">
+                                                    <Card title="Never Logged In" value={String(dashboard.insights.neverLoggedInUsers.length)} detail="Signed up but never completed a password login" />
+                                                    <Card title="Declining Users" value={String(dashboard.insights.decliningUsers.length)} detail="Month-over-month usage drop detected" accent="text-cyan-300" />
+                                                    <Card title="High Traffic / Low Lead" value={String(dashboard.insights.highTrafficLowLeadUsers.length)} detail="Cards getting visits without converting" accent="text-white" />
+                                                    <Card title="At-Risk Subscriptions" value={String(dashboard.subscriptionAlerts.length)} detail="Billing states that may need retention work" accent="text-cyan-300" />
+                                                </div>
+                                            </Section>
+                                        </div>
+                                    )}
 
                                     <Section title="Funnel Snapshot" subtitle="The operating view of growth, visits, leads, and wins.">
                                         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">

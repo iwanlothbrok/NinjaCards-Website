@@ -67,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const now = new Date();
         const days7 = startOfDaysAgo(7);
         const days30 = startOfDaysAgo(30);
-        const months = makeMonthBuckets(6);
+        const months = makeMonthBuckets(12);
         const firstMonthStart = months[0].start;
 
         const [
@@ -404,7 +404,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const atRiskSubscriptions = subscriptionAlerts.length;
         const visitToLeadRate = totalVisits > 0 ? Number(((totalLeads / totalVisits) * 100).toFixed(1)) : 0;
 
-        const monthlySeries = createMonthlySeries(6);
+        const monthlySeries = createMonthlySeries(12);
         const monthlyIndex = new Map(monthlySeries.map((item) => [item.monthKey, item]));
         const userDirectory = new Map(
             allUsersForActivity.map((user) => [
