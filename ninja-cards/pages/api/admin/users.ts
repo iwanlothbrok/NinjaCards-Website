@@ -141,7 +141,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const userWhere = buildAdminUserWhere(filters, q);
 
-        const [users, activeUsersInRange, loginTrackedCount, recentlyActiveUsersRaw, mostEngagedUsersRaw, noRecentActivityUsersRaw] = await Promise.all([
+        const [users, activeUsersInRange, loginTrackedCount, recentlyActiveUsersRaw, mostEngagedUsersRaw] = await Promise.all([
             prisma.user.findMany({
                 where: userWhere,
                 orderBy: { createdAt: 'desc' },
@@ -176,11 +176,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ],
                 include: userInclude,
             }),
-            prisma.user.findMany({
-                where: userWhere,
-                orderBy: { createdAt: 'desc' },
-                include: userInclude,
-            }),
         ]);
 
         const activeIdsInRange = new Set(activeUsersInRange.map((item) => item.userId));
@@ -213,10 +208,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     new Date(b.lastSeenAt || b.joinedAt).getTime() - new Date(a.lastSeenAt || a.joinedAt).getTime(),
             )
             .slice(0, 6);
-        const noRecentActivityUsers = noRecentActivityUsersRaw
+        const noRecentActivityUsers = users
             .map((user) => mapUserRecord(user, locale))
             .filter((user) => !user.lastSeenAt || new Date(user.lastSeenAt).getTime() < rangeWindow.start.getTime())
             .filter((user) => matchesCompletenessBand(user.completeness, filters.completenessBand))
+            .sort((a, b) => new Date(b.joinedAt).getTime() - new Date(a.joinedAt).getTime())
             .slice(0, 6);
 
         return res.status(200).json({

@@ -20,6 +20,7 @@ import { BASE_API_URL } from '@/utils/constants';
 
 type ModuleKey = 'overview' | 'users' | 'revenue' | 'crm' | 'admins';
 type OverviewTabKey = 'performance' | 'lifecycle' | 'conversion' | 'watchlist';
+type UsersTabKey = 'directory' | 'activity' | 'watchlist';
 type AdminRangeKey = 'today' | '7d' | '30d' | '90d' | 'thisMonth' | 'lastMonth' | '12m';
 
 type AdminFilterState = {
@@ -49,6 +50,11 @@ const overviewTabs: Array<{ key: OverviewTabKey; label: string; description: str
     { key: 'lifecycle', label: 'Lifecycle', description: 'Who is active, inactive, reactivated, or dropping off.' },
     { key: 'conversion', label: 'Conversion', description: 'Which cards convert visits into leads best or worst.' },
     { key: 'watchlist', label: 'Watchlist', description: 'Users who need admin attention right now.' },
+];
+const usersTabs: Array<{ key: UsersTabKey; label: string; description: string }> = [
+    { key: 'directory', label: 'Directory', description: 'Search users, card access, and password controls.' },
+    { key: 'activity', label: 'Activity', description: 'Recently active and most engaged users.' },
+    { key: 'watchlist', label: 'Watchlist', description: 'Inactive users and accounts that need attention.' },
 ];
 
 const rangeOptions: Array<{ value: AdminRangeKey; label: string }> = [
@@ -234,6 +240,7 @@ export default function AdminConsole() {
     const [usersActionNotice, setUsersActionNotice] = useState<string | null>(null);
     const [passwordActionUserId, setPasswordActionUserId] = useState<string | null>(null);
     const [overviewTab, setOverviewTab] = useState<OverviewTabKey>('performance');
+    const [usersTab, setUsersTab] = useState<UsersTabKey>('directory');
     const [timelineUser, setTimelineUser] = useState<any>(null);
     const [timelineData, setTimelineData] = useState<any>(null);
     const [timelineLoading, setTimelineLoading] = useState(false);
@@ -1366,11 +1373,16 @@ export default function AdminConsole() {
                                         </div>
                                     </Section>
 
-                                    <Section title="Users With No Recent Card Activity" subtitle="Customers whose cards have not been used in the last 30 days.">
+                                    <Section title="Users With No Recent Card Activity" subtitle={`Customers whose cards have not been used in ${dashboard.filterSummary.rangeLabel.toLowerCase()}.`}>
                                         <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
                                             <div className="grid grid-cols-5 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
                                                 <div>User</div><div>Company</div><div>Last Activity</div><div>Last Action</div><div>Card</div>
                                             </div>
+                                            {dashboard.insights.inactiveUsers.length === 0 && (
+                                                <div className="px-5 py-10 text-center text-sm text-white/55">
+                                                    No inactive users matched the current overview filters and date range.
+                                                </div>
+                                            )}
                                             {dashboard.insights.inactiveUsers.map((user: any) => (
                                                 <div key={user.id} className="grid grid-cols-5 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                     <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div></div>
@@ -1398,6 +1410,26 @@ export default function AdminConsole() {
                                     <Card title="Login Tracked" value={String(usersData.summary.loginTrackedCount)} detail="Users with a recorded password login" accent="text-white" />
                                     <Card title="No Recent Activity" value={String(usersData.summary.noRecentActivityCount)} detail={`Inactive in ${usersData.summary.rangeLabel.toLowerCase()}`} accent="text-cyan-300" />
                                 </div>
+                                <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-3">
+                                    <div className="flex flex-wrap gap-2">
+                                        {usersTabs.map((tab) => (
+                                            <button
+                                                key={tab.key}
+                                                type="button"
+                                                onClick={() => setUsersTab(tab.key)}
+                                                className={`rounded-2xl border px-4 py-3 text-left transition ${
+                                                    usersTab === tab.key
+                                                        ? 'border-orange/40 bg-orange/15 text-white'
+                                                        : 'border-white/8 bg-[#0d1319] text-white/65 hover:border-white/15 hover:text-white'
+                                                }`}
+                                            >
+                                                <div className="text-sm font-semibold">{tab.label}</div>
+                                                <div className="mt-1 text-xs text-white/45">{tab.description}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                {usersTab === 'directory' && (
                                 <Section title="User Management" subtitle="Review the latest 20 signups, search by name, sort by join date, open business cards, and remove a user's password when needed.">
                                     <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-xs uppercase tracking-[0.18em] text-white/45">
                                         <span>Scroll horizontally to see the access controls</span>
@@ -1466,6 +1498,8 @@ export default function AdminConsole() {
                                         </div>
                                     </div>
                                 </Section>
+                                )}
+                                {usersTab === 'activity' && (
                                 <div className="grid gap-6 xl:grid-cols-2">
                                     <Section title="Top Recently Active Users" subtitle={`Users ordered by newest card activity within ${usersData.summary.rangeLabel.toLowerCase()}.`}>
                                         <div className="space-y-3">
@@ -1516,11 +1550,18 @@ export default function AdminConsole() {
                                         </div>
                                     </Section>
                                 </div>
+                                )}
+                                {usersTab === 'watchlist' && (
                                 <Section title="Users With No Recent Activity" subtitle={`Recent signups and customers with no card activity in ${usersData.summary.rangeLabel.toLowerCase()}.`}>
                                     <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
                                         <div className="grid grid-cols-5 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
                                             <div>User</div><div>Company</div><div>Joined</div><div>Last Activity</div><div>Card</div>
                                         </div>
+                                        {usersData.noRecentActivityUsers.length === 0 && (
+                                            <div className="px-5 py-10 text-center text-sm text-white/55">
+                                                No inactive users matched the current filters and date range.
+                                            </div>
+                                        )}
                                         {usersData.noRecentActivityUsers.map((user: any) => (
                                             <div key={user.id} className="grid grid-cols-5 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
                                                 <div><div className="font-semibold text-white">{user.name}</div><div className="text-xs text-white/45">{user.email}</div></div>
@@ -1537,6 +1578,7 @@ export default function AdminConsole() {
                                         ))}
                                     </div>
                                 </Section>
+                                )}
                                 </>
                             )}
 

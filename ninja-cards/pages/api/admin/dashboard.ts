@@ -103,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         events: {
                             take: 1,
                             orderBy: { timestamp: 'desc' },
-                            select: { timestamp: true },
+                            select: { timestamp: true, type: true },
                         },
                     },
                 },
@@ -136,7 +136,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             activeUsers7d,
             activeUsers30d,
             allUsersForActivity,
-            inactiveUsersRaw,
             highTrafficLowLeadUsersRaw,
             topActiveUsersThisMonthRaw,
             conversionCandidatesRaw,
@@ -332,22 +331,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     slug: true,
                     createdAt: true,
                     lastLoginAt: true,
-                },
-            }),
-            prisma.user.findMany({
-                take: 8,
-                orderBy: { createdAt: 'desc' },
-                where: { id: { in: scopedUserIdList } },
-                include: {
-                    dashboard: {
-                        include: {
-                            events: {
-                                take: 1,
-                                orderBy: { timestamp: 'desc' },
-                                select: { timestamp: true, type: true },
-                            },
-                        },
-                    },
                 },
             }),
             prisma.dashboard.findMany({
@@ -621,7 +604,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 };
             });
 
-        const inactiveUsers = inactiveUsersRaw
+        const inactiveUsers = scopedUsersRaw
             .map((user) => {
                 const latestEvent = user.dashboard?.events?.[0] ?? null;
                 return {
@@ -634,7 +617,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     publicProfileUrl: buildPublicProfileUrl({ locale, slug: user.slug, userId: user.id }),
                 };
             })
-            .filter((user) => !user.lastSeenAt || new Date(user.lastSeenAt).getTime() < days30.getTime())
+            .filter((user) => !user.lastSeenAt || new Date(user.lastSeenAt).getTime() < rangeWindow.start.getTime())
+            .sort((a, b) => {
+                const aTime = a.lastSeenAt ? new Date(a.lastSeenAt).getTime() : 0;
+                const bTime = b.lastSeenAt ? new Date(b.lastSeenAt).getTime() : 0;
+                return aTime - bTime;
+            })
             .slice(0, 6);
 
         const highTrafficLowLeadUsers = highTrafficLowLeadUsersRaw
