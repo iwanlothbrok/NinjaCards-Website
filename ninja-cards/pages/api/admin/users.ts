@@ -3,34 +3,15 @@ import cors from '@/utils/cors';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/adminAuth';
 import { buildPublicProfileUrl } from '@/utils/constants';
-
-function profileCompleteness(user: {
-    firstName: string | null;
-    lastName: string | null;
-    company: string | null;
-    position: string | null;
-    phone1: string | null;
-    bio: string | null;
-    image: string | null;
-    slug: string | null;
-    website: string | null;
-    linkedin: string | null;
-}) {
-    const fields = [
-        user.firstName,
-        user.lastName,
-        user.company,
-        user.position,
-        user.phone1,
-        user.bio,
-        user.image,
-        user.slug,
-        user.website,
-        user.linkedin,
-    ];
-    const completed = fields.filter(Boolean).length;
-    return Math.round((completed / fields.length) * 100);
-}
+import {
+    buildAdminUserWhere,
+    buildFilterSummary,
+    getAdminRangeWindow,
+    matchesActivityState,
+    matchesCompletenessBand,
+    parseAdminFilters,
+    profileCompleteness,
+} from '@/lib/adminDashboard';
 
 function engagementScore(input: {
     profileVisits: number;
@@ -126,8 +107,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
         const locale = typeof req.query.locale === 'string' && req.query.locale ? req.query.locale : 'bg';
         const take = Math.min(Math.max(Number(req.query.limit || 20), 1), 100);
-        const days30 = new Date();
-        days30.setDate(days30.getDate() - 30);
+        const filters = parseAdminFilters(req.query);
+        const rangeWindow = getAdminRangeWindow(filters.range);
 
         const userInclude = {
             dashboard: {
@@ -158,47 +139,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
         };
 
-        const [users, activeUsers30d, loginTrackedCount, recentlyActiveUsersRaw, mostEngagedUsersRaw, noRecentActivityUsersRaw] = await Promise.all([
+        const userWhere = buildAdminUserWhere(filters, q);
+
+        const [users, activeUsersInRange, loginTrackedCount, recentlyActiveUsersRaw, mostEngagedUsersRaw, noRecentActivityUsersRaw] = await Promise.all([
             prisma.user.findMany({
-                where: q
-                    ? {
-                          OR: [
-                              { name: { contains: q, mode: 'insensitive' } },
-                              { firstName: { contains: q, mode: 'insensitive' } },
-                              { lastName: { contains: q, mode: 'insensitive' } },
-                              { email: { contains: q, mode: 'insensitive' } },
-                          ],
-                      }
-                    : undefined,
-                take,
+                where: userWhere,
                 orderBy: { createdAt: 'desc' },
                 include: userInclude,
             }),
             prisma.dashboardEvent.findMany({
-                where: { timestamp: { gte: days30 } },
+                where: { timestamp: { gte: rangeWindow.start } },
                 distinct: ['userId'],
                 select: { userId: true },
             }),
             prisma.user.count({
-                where: { lastLoginAt: { not: null } },
+                where: { ...userWhere, lastLoginAt: { not: null } },
             }),
             prisma.user.findMany({
-                take: 8,
                 where: {
-                    dashboard: {
-                        is: {
-                            events: {
-                                some: {},
-                            },
-                        },
-                    },
+                    ...userWhere,
+                    dashboard: { is: { events: { some: {} } } },
                 },
                 orderBy: { updatedAt: 'desc' },
                 include: userInclude,
             }),
             prisma.user.findMany({
-                take: 12,
                 where: {
+                    ...userWhere,
                     dashboard: {
                         isNot: null,
                     },
@@ -210,15 +177,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 include: userInclude,
             }),
             prisma.user.findMany({
-                take: 8,
+                where: userWhere,
                 orderBy: { createdAt: 'desc' },
                 include: userInclude,
             }),
         ]);
 
-        const mappedUsers = users.map((user) => mapUserRecord(user, locale));
+        const activeIdsInRange = new Set(activeUsersInRange.map((item) => item.userId));
+        const filterMappedUsers = (records: any[]) =>
+            records
+                .map((user) => mapUserRecord(user, locale))
+                .filter((user) => matchesCompletenessBand(user.completeness, filters.completenessBand))
+                .filter((user) => matchesActivityState(user.lastSeenAt, filters, rangeWindow.start));
+
+        const mappedUsers = filterMappedUsers(users)
+            .slice(0, take);
         const recentlyActiveUsers = recentlyActiveUsersRaw
             .map((user) => mapUserRecord(user, locale))
+            .filter((user) => activeIdsInRange.has(user.id))
+            .filter((user) => matchesCompletenessBand(user.completeness, filters.completenessBand))
             .sort((a, b) => {
                 if (!a.lastSeenAt && !b.lastSeenAt) return 0;
                 if (!a.lastSeenAt) return 1;
@@ -228,6 +205,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .slice(0, 6);
         const mostEngagedUsers = mostEngagedUsersRaw
             .map((user) => mapUserRecord(user, locale))
+            .filter((user) => matchesCompletenessBand(user.completeness, filters.completenessBand))
+            .filter((user) => matchesActivityState(user.lastSeenAt, filters, rangeWindow.start))
             .sort(
                 (a, b) =>
                     engagementScore(b) - engagementScore(a) ||
@@ -236,16 +215,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .slice(0, 6);
         const noRecentActivityUsers = noRecentActivityUsersRaw
             .map((user) => mapUserRecord(user, locale))
-            .filter((user) => !user.lastSeenAt || new Date(user.lastSeenAt).getTime() < days30.getTime())
+            .filter((user) => !user.lastSeenAt || new Date(user.lastSeenAt).getTime() < rangeWindow.start.getTime())
+            .filter((user) => matchesCompletenessBand(user.completeness, filters.completenessBand))
             .slice(0, 6);
 
         return res.status(200).json({
             summary: {
                 totalShown: mappedUsers.length,
-                activeUsers30d: activeUsers30d.length,
+                activeUsers30d: mappedUsers.filter((user) => activeIdsInRange.has(user.id)).length,
                 loginTrackedCount,
                 noRecentActivityCount: noRecentActivityUsers.length,
+                rangeLabel: rangeWindow.label,
+                appliedFilters: buildFilterSummary(filters),
             },
+            filters,
             users: mappedUsers,
             recentlyActiveUsers,
             mostEngagedUsers,

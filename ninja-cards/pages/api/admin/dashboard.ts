@@ -4,6 +4,15 @@ import cors from '@/utils/cors';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/adminAuth';
 import { buildPublicProfileUrl } from '@/utils/constants';
+import {
+    buildAdminUserWhere,
+    buildFilterSummary,
+    getAdminRangeWindow,
+    matchesActivityState,
+    matchesCompletenessBand,
+    parseAdminFilters,
+    profileCompleteness,
+} from '@/lib/adminDashboard';
 
 function startOfDaysAgo(days: number) {
     const date = new Date();
@@ -64,16 +73,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
         const locale = typeof req.query.locale === 'string' && req.query.locale ? req.query.locale : 'bg';
+        const filters = parseAdminFilters(req.query);
+        const rangeWindow = getAdminRangeWindow(filters.range);
         const now = new Date();
         const days7 = startOfDaysAgo(7);
         const days30 = startOfDaysAgo(30);
         const months = makeMonthBuckets(12);
         const firstMonthStart = months[0].start;
+        const scopedUsersRaw = await prisma.user.findMany({
+            where: buildAdminUserWhere(filters),
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                company: true,
+                slug: true,
+                createdAt: true,
+                lastLoginAt: true,
+                firstName: true,
+                lastName: true,
+                position: true,
+                phone1: true,
+                bio: true,
+                image: true,
+                website: true,
+                linkedin: true,
+                dashboard: {
+                    select: {
+                        events: {
+                            take: 1,
+                            orderBy: { timestamp: 'desc' },
+                            select: { timestamp: true },
+                        },
+                    },
+                },
+            },
+        });
+        const scopedUsers = scopedUsersRaw.filter((user) =>
+            matchesCompletenessBand(profileCompleteness(user), filters.completenessBand) &&
+            matchesActivityState(user.dashboard?.events?.[0]?.timestamp, filters, rangeWindow.start),
+        );
+        const scopedUserIds = scopedUsers.map((user) => user.id);
+        const scopedUserIdList = scopedUserIds.length > 0 ? scopedUserIds : ['__no_matching_users__'];
 
         const [
-            totalUsers,
-            newUsers7d,
-            newUsers30d,
             totalLeads,
             activeSubscriptions,
             paidInvoicesAggregate,
@@ -100,17 +143,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             neverLoggedInUsersRaw,
             currentMonthLeadsRaw,
         ] = await prisma.$transaction([
-            prisma.user.count(),
-            prisma.user.count({ where: { createdAt: { gte: days7 } } }),
-            prisma.user.count({ where: { createdAt: { gte: days30 } } }),
-            prisma.subscribed.count(),
+            prisma.subscribed.count({ where: { userId: { in: scopedUserIdList } } }),
             prisma.subscription.count({
-                where: { status: { in: [SubscriptionStatus.active, SubscriptionStatus.trialing] } },
+                where: { userId: { in: scopedUserIdList }, status: { in: [SubscriptionStatus.active, SubscriptionStatus.trialing] } },
             }),
-            prisma.invoice.aggregate({ _sum: { amountPaid: true } }),
+            prisma.invoice.aggregate({ _sum: { amountPaid: true }, where: { userId: { in: scopedUserIdList } } }),
             prisma.invoice.aggregate({
                 _sum: { amountPaid: true },
-                where: { createdAt: { gte: days30 } },
+                where: { userId: { in: scopedUserIdList }, createdAt: { gte: rangeWindow.start } },
             }),
             prisma.dashboard.aggregate({
                 _sum: {
@@ -119,25 +159,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     vcfDownloads: true,
                     socialLinkClicks: true,
                 },
+                where: { userId: { in: scopedUserIdList } },
             }),
             prisma.cRMDeal.count({
                 where: {
+                    userId: { in: scopedUserIdList },
                     OR: [{ stage: CRMStage.MEETING }, { stage: CRMStage.WON }, { meetingAt: { not: null } }],
                 },
             }),
-            prisma.cRMDeal.count({ where: { stage: CRMStage.WON } }),
+            prisma.cRMDeal.count({ where: { userId: { in: scopedUserIdList }, stage: CRMStage.WON } }),
             prisma.cRMDeal.aggregate({
                 _sum: { value: true },
-                where: { stage: CRMStage.WON },
+                where: { userId: { in: scopedUserIdList }, stage: CRMStage.WON },
             }),
             prisma.subscribed.count({
                 where: {
+                    userId: { in: scopedUserIdList },
                     followUpStopped: false,
                     nextFollowUpAt: { lte: now },
                 },
             }),
             prisma.dashboard.findMany({
                 take: 8,
+                where: { userId: { in: scopedUserIdList } },
                 orderBy: [{ profileVisits: 'desc' }, { profileShares: 'desc' }],
                 include: {
                     user: {
@@ -158,6 +202,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }),
             prisma.dashboardEvent.findMany({
                 take: 12,
+                where: {
+                    userId: { in: scopedUserIdList },
+                    timestamp: { gte: rangeWindow.start },
+                },
                 orderBy: { timestamp: 'desc' },
                 include: {
                     dashboard: {
@@ -185,6 +233,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }),
             prisma.user.findMany({
                 take: 8,
+                where: { id: { in: scopedUserIdList } },
                 orderBy: { createdAt: 'desc' },
                 include: {
                     dashboard: {
@@ -206,6 +255,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             prisma.subscription.findMany({
                 take: 8,
                 where: {
+                    userId: { in: scopedUserIdList },
                     status: {
                         in: [SubscriptionStatus.past_due, SubscriptionStatus.unpaid, SubscriptionStatus.paused, SubscriptionStatus.cancelled],
                     },
@@ -225,6 +275,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             prisma.subscribed.findMany({
                 take: 8,
                 where: {
+                    userId: { in: scopedUserIdList },
                     followUpStopped: false,
                     nextFollowUpAt: { lte: now },
                 },
@@ -242,6 +293,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }),
             prisma.dashboardEvent.findMany({
                 where: {
+                    userId: { in: scopedUserIdList },
                     timestamp: { gte: firstMonthStart },
                 },
                 select: {
@@ -252,6 +304,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }),
             prisma.subscribed.findMany({
                 where: {
+                    userId: { in: scopedUserIdList },
                     createdAt: { gte: firstMonthStart },
                 },
                 select: {
@@ -260,16 +313,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             }),
             prisma.dashboardEvent.findMany({
-                where: { timestamp: { gte: days7 } },
+                where: { userId: { in: scopedUserIdList }, timestamp: { gte: days7 } },
                 distinct: ['userId'],
                 select: { userId: true },
             }),
             prisma.dashboardEvent.findMany({
-                where: { timestamp: { gte: days30 } },
+                where: { userId: { in: scopedUserIdList }, timestamp: { gte: days30 } },
                 distinct: ['userId'],
                 select: { userId: true },
             }),
             prisma.user.findMany({
+                where: { id: { in: scopedUserIdList } },
                 select: {
                     id: true,
                     name: true,
@@ -283,6 +337,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             prisma.user.findMany({
                 take: 8,
                 orderBy: { createdAt: 'desc' },
+                where: { id: { in: scopedUserIdList } },
                 include: {
                     dashboard: {
                         include: {
@@ -297,6 +352,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }),
             prisma.dashboard.findMany({
                 take: 12,
+                where: { userId: { in: scopedUserIdList } },
                 orderBy: [{ profileVisits: 'desc' }, { profileShares: 'desc' }],
                 include: {
                     user: {
@@ -316,7 +372,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             }),
             prisma.dashboardEvent.findMany({
-                where: { timestamp: { gte: startOfMonth(now) } },
+                where: { userId: { in: scopedUserIdList }, timestamp: { gte: startOfMonth(now) } },
                 distinct: ['userId'],
                 orderBy: { timestamp: 'desc' },
                 include: {
@@ -337,6 +393,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }),
             prisma.dashboard.findMany({
                 take: 40,
+                where: { userId: { in: scopedUserIdList } },
                 orderBy: [{ profileVisits: 'desc' }, { profileShares: 'desc' }],
                 include: {
                     user: {
@@ -359,6 +416,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             prisma.user.findMany({
                 take: 12,
                 where: {
+                    id: { in: scopedUserIdList },
                     lastLoginAt: null,
                 },
                 orderBy: { createdAt: 'desc' },
@@ -381,6 +439,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }),
             prisma.subscribed.findMany({
                 where: {
+                    userId: { in: scopedUserIdList },
                     createdAt: { gte: startOfMonth(now) },
                 },
                 include: {
@@ -396,6 +455,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             }),
         ]);
+
+        const totalUsers = scopedUsers.length;
+        const newUsers7d = scopedUsers.filter((user) => user.createdAt >= days7).length;
+        const newUsers30d = scopedUsers.filter((user) => user.createdAt >= days30).length;
 
         const totalVisits = visitsAggregate._sum.profileVisits ?? 0;
         const totalShares = visitsAggregate._sum.profileShares ?? 0;
@@ -746,6 +809,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 name: adminUser.name,
                 email: adminUser.email,
                 role: adminUser.role,
+            },
+            filters,
+            filterSummary: {
+                rangeLabel: rangeWindow.label,
+                appliedFilters: buildFilterSummary(filters),
+                matchedUsers: totalUsers,
             },
             overview: {
                 totalUsers,

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { ArrowUpRight, CreditCard, Crown, KeyRound, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users, X } from 'lucide-react';
+import { ArrowUpRight, CalendarClock, CreditCard, Crown, Funnel, KeyRound, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users, X } from 'lucide-react';
 import { Bar, Line } from 'react-chartjs-2';
 import {
     BarElement,
@@ -20,6 +20,18 @@ import { BASE_API_URL } from '@/utils/constants';
 
 type ModuleKey = 'overview' | 'users' | 'revenue' | 'crm' | 'admins';
 type OverviewTabKey = 'performance' | 'lifecycle' | 'conversion' | 'watchlist';
+type AdminRangeKey = 'today' | '7d' | '30d' | '90d' | 'thisMonth' | 'lastMonth' | '12m';
+
+type AdminFilterState = {
+    range: AdminRangeKey;
+    plan: string;
+    subscriptionStatus: string;
+    hasSlug: string;
+    hasLeads: string;
+    loginState: string;
+    activityState: string;
+    completenessBand: string;
+};
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend, Filler);
 
@@ -38,6 +50,72 @@ const overviewTabs: Array<{ key: OverviewTabKey; label: string; description: str
     { key: 'conversion', label: 'Conversion', description: 'Which cards convert visits into leads best or worst.' },
     { key: 'watchlist', label: 'Watchlist', description: 'Users who need admin attention right now.' },
 ];
+
+const rangeOptions: Array<{ value: AdminRangeKey; label: string }> = [
+    { value: 'today', label: 'Today' },
+    { value: '7d', label: '7 days' },
+    { value: '30d', label: '30 days' },
+    { value: '90d', label: '90 days' },
+    { value: 'thisMonth', label: 'This month' },
+    { value: 'lastMonth', label: 'Last month' },
+    { value: '12m', label: '12 months' },
+];
+
+const filterOptions = {
+    plan: [
+        { value: 'all', label: 'All plans' },
+        { value: 'SHINOBI', label: 'Shinobi' },
+        { value: 'SAMURAI', label: 'Samurai' },
+        { value: 'SHOGUN', label: 'Shogun' },
+    ],
+    subscriptionStatus: [
+        { value: 'all', label: 'All subscriptions' },
+        { value: 'active', label: 'Active' },
+        { value: 'trialing', label: 'Trialing' },
+        { value: 'past_due', label: 'Past due' },
+        { value: 'unpaid', label: 'Unpaid' },
+        { value: 'paused', label: 'Paused' },
+        { value: 'cancelled', label: 'Cancelled' },
+        { value: 'none', label: 'No subscription' },
+    ],
+    hasSlug: [
+        { value: 'all', label: 'All slug states' },
+        { value: 'yes', label: 'Has slug' },
+        { value: 'no', label: 'No slug' },
+    ],
+    hasLeads: [
+        { value: 'all', label: 'All lead states' },
+        { value: 'yes', label: 'Has leads' },
+        { value: 'no', label: 'No leads' },
+    ],
+    loginState: [
+        { value: 'all', label: 'All login states' },
+        { value: 'tracked', label: 'Login tracked' },
+        { value: 'never', label: 'Never logged in' },
+    ],
+    activityState: [
+        { value: 'all', label: 'All activity states' },
+        { value: 'active', label: 'Active in range' },
+        { value: 'inactive', label: 'Inactive in range' },
+    ],
+    completenessBand: [
+        { value: 'all', label: 'All completeness' },
+        { value: 'low', label: 'Low completeness' },
+        { value: 'medium', label: 'Medium completeness' },
+        { value: 'high', label: 'High completeness' },
+    ],
+};
+
+const defaultFilters: AdminFilterState = {
+    range: '30d',
+    plan: 'all',
+    subscriptionStatus: 'all',
+    hasSlug: 'all',
+    hasLeads: 'all',
+    loginState: 'all',
+    activityState: 'all',
+    completenessBand: 'all',
+};
 
 const fmtDate = (value?: string | null, fallback = 'Never') =>
     value
@@ -130,6 +208,19 @@ export default function AdminConsole() {
 
     const requestedModule = searchParams?.get('module');
     const activeModule = modules.some((module) => module.key === requestedModule) ? (requestedModule as ModuleKey) : 'overview';
+    const filters = useMemo<AdminFilterState>(
+        () => ({
+            range: (searchParams?.get('range') as AdminRangeKey) || defaultFilters.range,
+            plan: searchParams?.get('plan') || defaultFilters.plan,
+            subscriptionStatus: searchParams?.get('subscriptionStatus') || defaultFilters.subscriptionStatus,
+            hasSlug: searchParams?.get('hasSlug') || defaultFilters.hasSlug,
+            hasLeads: searchParams?.get('hasLeads') || defaultFilters.hasLeads,
+            loginState: searchParams?.get('loginState') || defaultFilters.loginState,
+            activityState: searchParams?.get('activityState') || defaultFilters.activityState,
+            completenessBand: searchParams?.get('completenessBand') || defaultFilters.completenessBand,
+        }),
+        [searchParams],
+    );
     const [query, setQuery] = useState('');
     const [appliedQuery, setAppliedQuery] = useState('');
     const [dashboard, setDashboard] = useState<any>(null);
@@ -143,6 +234,56 @@ export default function AdminConsole() {
     const [usersActionNotice, setUsersActionNotice] = useState<string | null>(null);
     const [passwordActionUserId, setPasswordActionUserId] = useState<string | null>(null);
     const [overviewTab, setOverviewTab] = useState<OverviewTabKey>('performance');
+    const [timelineUser, setTimelineUser] = useState<any>(null);
+    const [timelineData, setTimelineData] = useState<any>(null);
+    const [timelineLoading, setTimelineLoading] = useState(false);
+    const [timelineError, setTimelineError] = useState<string | null>(null);
+
+    const sharedFilterParams = useMemo(() => {
+        const params = new URLSearchParams();
+        params.set('locale', locale);
+        params.set('range', filters.range);
+
+        (Object.keys(defaultFilters) as Array<keyof AdminFilterState>).forEach((key) => {
+            const value = filters[key];
+            if (key !== 'range' && value && value !== 'all') {
+                params.set(key, value);
+            }
+        });
+
+        return params.toString();
+    }, [filters, locale]);
+
+    const updateFilter = (key: keyof AdminFilterState, value: string) => {
+        const params = new URLSearchParams(searchParams?.toString());
+
+        if (value === 'all' && key !== 'range') {
+            params.delete(key);
+        } else {
+            params.set(key, value);
+        }
+
+        if (!params.get('module')) {
+            params.set('module', activeModule);
+        }
+
+        router.push(`${pathname}?${params.toString()}`);
+    };
+
+    const clearFilters = () => {
+        const params = new URLSearchParams(searchParams?.toString());
+        (Object.keys(defaultFilters) as Array<keyof AdminFilterState>).forEach((key) => {
+            if (key === 'range') {
+                params.set('range', defaultFilters.range);
+            } else {
+                params.delete(key);
+            }
+        });
+        if (!params.get('module')) {
+            params.set('module', activeModule);
+        }
+        router.push(`${pathname}?${params.toString()}`);
+    };
 
     useEffect(() => {
         if (!loading && !adminUser) router.replace(`/${locale}/admin/login`);
@@ -165,17 +306,20 @@ export default function AdminConsole() {
             setPageLoading(true);
             setError(null);
             setUsersActionError(null);
+            const baseParams = new URLSearchParams(sharedFilterParams);
 
             try {
                 if (activeModule === 'overview') {
-                    const dash = await fetchJson(`${BASE_API_URL}/api/admin/dashboard?locale=${encodeURIComponent(locale)}`, 'Failed to load dashboard data');
+                    const dash = await fetchJson(`${BASE_API_URL}/api/admin/dashboard?${baseParams.toString()}`, 'Failed to load dashboard data');
                     if (!ignore) setDashboard(dash);
                     return;
                 }
 
                 if (activeModule === 'users') {
+                    baseParams.set('q', appliedQuery);
+                    baseParams.set('limit', '20');
                     const users = await fetchJson(
-                        `${BASE_API_URL}/api/admin/users?q=${encodeURIComponent(appliedQuery)}&limit=20&locale=${encodeURIComponent(locale)}`,
+                        `${BASE_API_URL}/api/admin/users?${baseParams.toString()}`,
                         'Failed to load users data',
                     );
                     if (!ignore) setUsersData(users);
@@ -210,7 +354,46 @@ export default function AdminConsole() {
         return () => {
             ignore = true;
         };
-    }, [activeModule, adminUser, appliedQuery, locale]);
+    }, [activeModule, adminUser, appliedQuery, sharedFilterParams]);
+
+    useEffect(() => {
+        if (!timelineUser || !adminUser) return;
+        let ignore = false;
+
+        const loadTimeline = async () => {
+            setTimelineLoading(true);
+            setTimelineError(null);
+            try {
+                const params = new URLSearchParams(sharedFilterParams);
+                params.set('userId', timelineUser.id);
+                const response = await fetch(`${BASE_API_URL}/api/admin/user-timeline?${params.toString()}`, {
+                    credentials: 'include',
+                    cache: 'no-store',
+                });
+                const payload = await response.json().catch(() => null);
+                if (!response.ok) {
+                    throw new Error(payload?.error || 'Failed to load user timeline');
+                }
+                if (!ignore) {
+                    setTimelineData(payload);
+                }
+            } catch (err) {
+                if (!ignore) {
+                    setTimelineError(err instanceof Error ? err.message : 'Failed to load user timeline');
+                }
+            } finally {
+                if (!ignore) {
+                    setTimelineLoading(false);
+                }
+            }
+        };
+
+        void loadTimeline();
+
+        return () => {
+            ignore = true;
+        };
+    }, [adminUser, sharedFilterParams, timelineUser]);
 
     const handleClearPassword = async (user: any) => {
         const confirmed = window.confirm(
@@ -255,6 +438,12 @@ export default function AdminConsole() {
         } finally {
             setPasswordActionUserId(null);
         }
+    };
+
+    const handleViewTimeline = (user: any) => {
+        setTimelineUser(user);
+        setTimelineData(null);
+        setTimelineError(null);
     };
 
     const setModule = (module: ModuleKey) => {
@@ -478,6 +667,79 @@ export default function AdminConsole() {
                                     </button>
                                 ))}
                             </div>
+
+                            {(activeModule === 'overview' || activeModule === 'users') && (
+                                <Section
+                                    title="Operations Filters"
+                                    subtitle="Shared time and segment filters for overview and user operations."
+                                    actions={
+                                        <button
+                                            type="button"
+                                            onClick={clearFilters}
+                                            className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-white transition hover:border-orange/30 hover:text-orange"
+                                        >
+                                            <X className="h-4 w-4" />
+                                            Reset filters
+                                        </button>
+                                    }
+                                >
+                                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                                        <label className="space-y-2 text-sm text-white/70">
+                                            <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-white/35"><CalendarClock className="h-3.5 w-3.5" />Range</span>
+                                            <select value={filters.range} onChange={(event) => updateFilter('range', event.target.value)} className="w-full rounded-2xl border border-white/10 bg-[#0d1319] px-4 py-3 text-white outline-none">
+                                                {rangeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                                            </select>
+                                        </label>
+                                        <label className="space-y-2 text-sm text-white/70">
+                                            <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-white/35"><Funnel className="h-3.5 w-3.5" />Plan</span>
+                                            <select value={filters.plan} onChange={(event) => updateFilter('plan', event.target.value)} className="w-full rounded-2xl border border-white/10 bg-[#0d1319] px-4 py-3 text-white outline-none">
+                                                {filterOptions.plan.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                                            </select>
+                                        </label>
+                                        <label className="space-y-2 text-sm text-white/70">
+                                            <span className="text-xs uppercase tracking-[0.18em] text-white/35">Subscription</span>
+                                            <select value={filters.subscriptionStatus} onChange={(event) => updateFilter('subscriptionStatus', event.target.value)} className="w-full rounded-2xl border border-white/10 bg-[#0d1319] px-4 py-3 text-white outline-none">
+                                                {filterOptions.subscriptionStatus.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                                            </select>
+                                        </label>
+                                        <label className="space-y-2 text-sm text-white/70">
+                                            <span className="text-xs uppercase tracking-[0.18em] text-white/35">Activity</span>
+                                            <select value={filters.activityState} onChange={(event) => updateFilter('activityState', event.target.value)} className="w-full rounded-2xl border border-white/10 bg-[#0d1319] px-4 py-3 text-white outline-none">
+                                                {filterOptions.activityState.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                                            </select>
+                                        </label>
+                                        <label className="space-y-2 text-sm text-white/70">
+                                            <span className="text-xs uppercase tracking-[0.18em] text-white/35">Slug</span>
+                                            <select value={filters.hasSlug} onChange={(event) => updateFilter('hasSlug', event.target.value)} className="w-full rounded-2xl border border-white/10 bg-[#0d1319] px-4 py-3 text-white outline-none">
+                                                {filterOptions.hasSlug.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                                            </select>
+                                        </label>
+                                        <label className="space-y-2 text-sm text-white/70">
+                                            <span className="text-xs uppercase tracking-[0.18em] text-white/35">Leads</span>
+                                            <select value={filters.hasLeads} onChange={(event) => updateFilter('hasLeads', event.target.value)} className="w-full rounded-2xl border border-white/10 bg-[#0d1319] px-4 py-3 text-white outline-none">
+                                                {filterOptions.hasLeads.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                                            </select>
+                                        </label>
+                                        <label className="space-y-2 text-sm text-white/70">
+                                            <span className="text-xs uppercase tracking-[0.18em] text-white/35">Login</span>
+                                            <select value={filters.loginState} onChange={(event) => updateFilter('loginState', event.target.value)} className="w-full rounded-2xl border border-white/10 bg-[#0d1319] px-4 py-3 text-white outline-none">
+                                                {filterOptions.loginState.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                                            </select>
+                                        </label>
+                                        <label className="space-y-2 text-sm text-white/70">
+                                            <span className="text-xs uppercase tracking-[0.18em] text-white/35">Completeness</span>
+                                            <select value={filters.completenessBand} onChange={(event) => updateFilter('completenessBand', event.target.value)} className="w-full rounded-2xl border border-white/10 bg-[#0d1319] px-4 py-3 text-white outline-none">
+                                                {filterOptions.completenessBand.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div className="mt-4 flex flex-wrap gap-2 text-xs uppercase tracking-[0.18em] text-white/35">
+                                        {(activeModule === 'overview' ? dashboard?.filterSummary?.appliedFilters : usersData?.summary?.appliedFilters)?.map((label: string) => (
+                                            <span key={label} className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[11px] font-semibold text-white/65">{label}</span>
+                                        ))}
+                                    </div>
+                                </Section>
+                            )}
 
                             {activeModule === 'users' && (
                                 <div className="space-y-3">
@@ -1132,9 +1394,9 @@ export default function AdminConsole() {
                                 <>
                                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                                     <Card title="Users Loaded" value={String(usersData.summary.totalShown)} detail="Current results set" />
-                                    <Card title="Active Users 30D" value={String(usersData.summary.activeUsers30d)} detail="Users with recent card events" accent="text-cyan-300" />
+                                    <Card title="Active In Range" value={String(usersData.summary.activeUsers30d)} detail={usersData.summary.rangeLabel} accent="text-cyan-300" />
                                     <Card title="Login Tracked" value={String(usersData.summary.loginTrackedCount)} detail="Users with a recorded password login" accent="text-white" />
-                                    <Card title="No Recent Activity" value={String(usersData.summary.noRecentActivityCount)} detail="Users with no card activity in the last 30 days" accent="text-cyan-300" />
+                                    <Card title="No Recent Activity" value={String(usersData.summary.noRecentActivityCount)} detail={`Inactive in ${usersData.summary.rangeLabel.toLowerCase()}`} accent="text-cyan-300" />
                                 </div>
                                 <Section title="User Management" subtitle="Review the latest 20 signups, search by name, sort by join date, open business cards, and remove a user's password when needed.">
                                     <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-xs uppercase tracking-[0.18em] text-white/45">
@@ -1164,13 +1426,21 @@ export default function AdminConsole() {
                                                         <ArrowUpRight className="h-3.5 w-3.5" />
                                                     </a>
                                                 </div>
-                                                <div className="space-y-3">
-                                                    <div>
-                                                        <Badge tone={user.hasPassword ? 'green' : 'neutral'}>
-                                                            {user.hasPassword ? 'Password set' : 'No password'}
-                                                        </Badge>
-                                                    </div>
+                                                    <div className="space-y-3">
+                                                        <div>
+                                                            <Badge tone={user.hasPassword ? 'green' : 'neutral'}>
+                                                                {user.hasPassword ? 'Password set' : 'No password'}
+                                                            </Badge>
+                                                        </div>
                                                     <div className="flex flex-wrap gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleViewTimeline(user)}
+                                                            className="inline-flex items-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-xs font-semibold text-cyan-200 transition hover:border-cyan-300/40 hover:text-white"
+                                                        >
+                                                            <CalendarClock className="h-3.5 w-3.5" />
+                                                            View timeline
+                                                        </button>
                                                         <button
                                                             type="button"
                                                             onClick={() => void handleClearPassword(user)}
@@ -1197,7 +1467,7 @@ export default function AdminConsole() {
                                     </div>
                                 </Section>
                                 <div className="grid gap-6 xl:grid-cols-2">
-                                    <Section title="Top Recently Active Users" subtitle="Users ordered by the newest card activity event.">
+                                    <Section title="Top Recently Active Users" subtitle={`Users ordered by newest card activity within ${usersData.summary.rangeLabel.toLowerCase()}.`}>
                                         <div className="space-y-3">
                                             {usersData.recentlyActiveUsers.map((user: any) => (
                                                 <div key={user.id} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
@@ -1246,7 +1516,7 @@ export default function AdminConsole() {
                                         </div>
                                     </Section>
                                 </div>
-                                <Section title="Users With No Recent Activity" subtitle="Recent signups and customers with no card activity in the last 30 days.">
+                                <Section title="Users With No Recent Activity" subtitle={`Recent signups and customers with no card activity in ${usersData.summary.rangeLabel.toLowerCase()}.`}>
                                     <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
                                         <div className="grid grid-cols-5 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
                                             <div>User</div><div>Company</div><div>Joined</div><div>Last Activity</div><div>Card</div>
@@ -1369,6 +1639,87 @@ export default function AdminConsole() {
                                         ))}
                                     </div>
                                 </Section>
+                            )}
+
+                            {timelineUser && (
+                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+                                    <div className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#081118] shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
+                                        <div className="flex items-start justify-between gap-4 border-b border-white/8 px-6 py-5">
+                                            <div>
+                                                <p className="text-xs uppercase tracking-[0.24em] text-orange/80">User timeline</p>
+                                                <h3 className="mt-3 text-2xl font-bold text-white">{timelineUser.name}</h3>
+                                                <p className="mt-2 text-sm text-white/50">
+                                                    Important account, card, lead, billing, and CRM events in {(timelineData?.range?.label || usersData?.summary?.rangeLabel || filters.range).toString().toLowerCase()}.
+                                                </p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setTimelineUser(null);
+                                                    setTimelineData(null);
+                                                    setTimelineError(null);
+                                                }}
+                                                className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-white transition hover:border-orange/30 hover:text-orange"
+                                            >
+                                                <X className="h-4 w-4" />
+                                                Close
+                                            </button>
+                                        </div>
+                                        <div className="space-y-6 overflow-y-auto p-6">
+                                            {timelineError && <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-200">{timelineError}</div>}
+                                            {timelineLoading && (
+                                                <div className="flex min-h-[260px] items-center justify-center">
+                                                    <Loader2 className="h-8 w-8 animate-spin text-orange" />
+                                                </div>
+                                            )}
+                                            {!timelineLoading && timelineData && (
+                                                <>
+                                                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                                                        <Card title="Joined" value={fmtDate(timelineData.user.joinedAt, 'Unknown')} detail="Account creation" />
+                                                        <Card title="Last login" value={fmtDate(timelineData.user.lastLoginAt, 'Not tracked')} detail="Latest password login" accent="text-cyan-300" />
+                                                        <Card title="Last card activity" value={fmtDate(timelineData.user.lastSeenAt, 'No card activity')} detail="Newest tracked card event" accent="text-white" />
+                                                        <Card title="Profile health" value={`${timelineData.user.completeness}%`} detail={`${timelineData.user.leadCount} total leads`} accent="text-cyan-300" />
+                                                    </div>
+                                                    <Section
+                                                        title="Timeline"
+                                                        subtitle="Signup, login, card activity, leads, subscription, and CRM milestones."
+                                                        actions={
+                                                            <a
+                                                                href={timelineData.user.publicProfileUrl}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                                className="inline-flex items-center gap-2 rounded-2xl border border-orange/20 bg-orange/10 px-4 py-3 text-sm font-semibold text-orange transition hover:border-orange/40 hover:text-white"
+                                                            >
+                                                                Open card
+                                                                <ArrowUpRight className="h-4 w-4" />
+                                                            </a>
+                                                        }
+                                                    >
+                                                        <div className="space-y-4">
+                                                            {timelineData.timeline.length === 0 && (
+                                                                <div className="rounded-2xl border border-white/8 bg-[#0d1319] p-4 text-sm text-white/55">No timeline events were found in the selected range.</div>
+                                                            )}
+                                                            {timelineData.timeline.map((event: any) => (
+                                                                <div key={`${event.type}-${event.timestamp}-${event.title}`} className="rounded-2xl border border-white/8 bg-[#0d1319] p-4">
+                                                                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                                                                        <div>
+                                                                            <div className="font-semibold text-white">{event.title}</div>
+                                                                            <div className="mt-2 text-sm text-white/60">{event.detail}</div>
+                                                                        </div>
+                                                                        <div className="md:text-right">
+                                                                            <Badge tone="blue">{event.source}</Badge>
+                                                                            <div className="mt-2 text-sm text-white/55">{fmtDate(event.timestamp)}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </Section>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             )}
                         </div>
                     </div>
