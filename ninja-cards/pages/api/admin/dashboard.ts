@@ -99,7 +99,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             conversionCandidatesRaw,
             neverLoggedInUsersRaw,
             currentMonthLeadsRaw,
-        ] = await Promise.all([
+        ] = await prisma.$transaction([
             prisma.user.count(),
             prisma.user.count({ where: { createdAt: { gte: days7 } } }),
             prisma.user.count({ where: { createdAt: { gte: days30 } } }),
