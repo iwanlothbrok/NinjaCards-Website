@@ -4,3 +4,4 @@ ninja-cards/.env
 ninja-cards/.env
 /node_modules
 ninja-cards/.env
+/ninja-cards/.playwright-cli
