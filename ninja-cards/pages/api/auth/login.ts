@@ -7,6 +7,56 @@ import { serialize } from 'cookie';
 import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
+const USER_LOGIN_SELECT = {
+    id: true,
+    name: true,
+    email: true,
+    password: true,
+    firstName: true,
+    lastName: true,
+    company: true,
+    position: true,
+    phone1: true,
+    phone2: true,
+    email2: true,
+    street1: true,
+    street2: true,
+    zipCode: true,
+    city: true,
+    state: true,
+    country: true,
+    bio: true,
+    image: true,
+    facebook: true,
+    instagram: true,
+    linkedin: true,
+    twitter: true,
+    tiktok: true,
+    googleReview: true,
+    revolut: true,
+    website: true,
+    viber: true,
+    whatsapp: true,
+    github: true,
+    behance: true,
+    youtube: true,
+    paypal: true,
+    trustpilot: true,
+    qrCode: true,
+    selectedColor: true,
+    createdAt: true,
+    updatedAt: true,
+    calendly: true,
+    discord: true,
+    telegram: true,
+    tripadvisor: true,
+    pdf: true,
+    coverImage: true,
+    slug: true,
+    isDirect: true,
+    videoUrl: true,
+    language: true,
+} as const;
 
 function getUserAuthSecret() {
     return (
@@ -30,7 +80,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ error: 'Email and password are required' });
         }
 
-        const user = await prisma.user.findUnique({ where: { email } });
+        const user = await prisma.user.findUnique({
+            where: { email },
+            select: USER_LOGIN_SELECT,
+        });
         if (!user || !user.password) return res.status(401).json({ error: 'Invalid email or password' });
 
         let isPasswordValid = false;
