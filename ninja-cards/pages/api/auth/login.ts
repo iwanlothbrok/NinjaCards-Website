@@ -35,12 +35,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             expiresIn: '12h',
         });
 
-        const updatedUser = await prisma.user.update({
-            where: { id: user.id },
-            data: { lastLoginAt: new Date() },
-        });
-
-        const { password: _password, ...safeUser } = updatedUser;
+        let safeUser: Omit<typeof user, 'password'>;
+        try {
+            const updatedUser = await prisma.user.update({
+                where: { id: user.id },
+                data: { lastLoginAt: new Date() },
+            });
+            const { password: _password, ...sanitizedUser } = updatedUser;
+            safeUser = sanitizedUser;
+        } catch (updateError) {
+            // Keep login working when the deployment is ahead of the applied DB schema.
+            console.warn('Failed to persist lastLoginAt during login:', updateError);
+            const { password: _password, ...sanitizedUser } = user;
+            safeUser = sanitizedUser;
+        }
 
         // Cross-site request => require SameSite=None; Secure for the cookie to be accepted.
         // Note: This will still be blocked if the browser disables third-party cookies entirely.
