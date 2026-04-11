@@ -9,7 +9,13 @@ import cors from '@/utils/cors';
 const prisma = new PrismaClient();
 
 function getUserAuthSecret() {
-    return process.env.NEXTAUTH_SECRET || process.env.ADMIN_AUTH_SECRET || null;
+    return (
+        process.env.NEXTAUTH_SECRET ||
+        process.env.ADMIN_AUTH_SECRET ||
+        process.env.AUTH_SECRET ||
+        process.env.JWT_SECRET ||
+        null
+    );
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -19,12 +25,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-        const { email, password } = req.body as { email: string; password: string };
+        const { email, password } = req.body as { email?: string; password?: string };
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
 
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user || !user.password) return res.status(401).json({ error: 'Invalid email or password' });
 
-        const isPasswordValid = await compare(password, user.password);
+        let isPasswordValid = false;
+        try {
+            isPasswordValid = await compare(password, user.password);
+        } catch (passwordError) {
+            // Some legacy accounts may still have a non-bcrypt password value stored.
+            console.warn('Falling back to plain-text password comparison during login:', passwordError);
+            isPasswordValid = password === user.password;
+        }
         if (!isPasswordValid) return res.status(401).json({ error: 'Invalid email or password' });
 
         const authSecret = getUserAuthSecret();
