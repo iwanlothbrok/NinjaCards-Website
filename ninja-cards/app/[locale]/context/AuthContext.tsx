@@ -1,7 +1,7 @@
 // File: /app/[locale]/context/AuthContext.tsx
 'use client';
 
-import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
+import React, { createContext, useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from '@/types/user';
 import { BASE_API_URL } from '@/utils/constants';
@@ -53,24 +53,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Single-shot auto-logout timer
     const logoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const clearLogoutTimer = () => {
+    const logoutRef = useRef<() => Promise<void>>(async () => {});
+    const clearLogoutTimer = useCallback(() => {
         if (logoutTimerRef.current) {
             clearTimeout(logoutTimerRef.current);
             logoutTimerRef.current = null;
         }
-    };
+    }, []);
 
-    const scheduleAutoLogout = (token: string) => {
+    const scheduleAutoLogout = useCallback((token: string) => {
         clearLogoutTimer();
         const ms = msUntilExpiry(token);
         if (ms <= 0) {
             // Token already expired → logout once (only when actually logged in)
-            void logout();
+            void logoutRef.current();
             return;
         }
         // 12h token is ~43,200,000 ms — setTimeout can handle that fine
-        logoutTimerRef.current = setTimeout(() => { void logout(); }, ms);
-    };
+        logoutTimerRef.current = setTimeout(() => { void logoutRef.current(); }, ms);
+    }, [clearLogoutTimer]);
 
     const login = (token: string, userData: User) => {
         localStorage.setItem('token', token);
@@ -80,7 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         router.push('/profile');
     };
 
-    const logout = async () => {
+    const logout = useCallback(async () => {
         try {
             await fetch(`${BASE_API_URL}/api/auth/logout`, { method: 'POST', credentials: 'include' });
         } catch {/* ignore */ }
@@ -89,7 +90,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         clearLogoutTimer();
         setUser(null);
         router.push('/');
-    };
+    }, [clearLogoutTimer, router]);
+
+    useEffect(() => {
+        logoutRef.current = logout;
+    }, [logout]);
 
     // Initial hydration
     useEffect(() => {
@@ -120,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         scheduleAutoLogout(token);
         setLoading(false);
-    }, []); // mount only
+    }, [logout, scheduleAutoLogout]);
 
     // Re-check on tab focus/visibility (ONLY if logged in)
     useEffect(() => {
@@ -137,7 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             window.removeEventListener('focus', check);
             window.removeEventListener('visibilitychange', check);
         };
-    }, []); // mount only
+    }, [logout, scheduleAutoLogout]);
 
     // Cross-tab sync: only redirect if we were logged in in this tab
     useEffect(() => {
@@ -163,7 +168,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return res;
         };
         return () => { window.fetch = original; };
-    }, []); // mount only
+    }, [logout]);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900  to-black"> {/* Ensures full-screen black background */}

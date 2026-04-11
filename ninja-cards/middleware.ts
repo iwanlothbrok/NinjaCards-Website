@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './config';
+import { ADMIN_COOKIE_NAME } from '@/lib/adminAuthShared';
 import { APP_SITE_URL, PUBLIC_SITE_URL } from './utils/constants';
 
 const intlMiddleware = createMiddleware({
@@ -28,12 +29,9 @@ function redirectTo(origin: string, pathname: string, search: string) {
 export default function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  // Split & detect locale
   const [, firstSeg, ...rest] = pathname.split('/');
   const hasLocale = locales.includes(firstSeg as (typeof locales)[number]);
   const currentLocale = hasLocale ? firstSeg : undefined;
-
-  // Normalize path without locale and trailing slash
   const pathWithoutLocale = stripTrailingSlash(hasLocale ? `/${rest.join('/')}` : pathname);
   const hostname =
     request.headers.get('x-forwarded-host') ||
@@ -56,20 +54,14 @@ export default function middleware(request: NextRequest) {
     return redirectTo(APP_SITE_URL, pathname, search);
   }
 
-  // Protect *only* /profile (not /profileDetails/*)
-  // if (pathWithoutLocale === '/profile') {
-  //   const token = request.cookies.get('token')?.value;
+  if (pathWithoutLocale.startsWith('/admin') && pathWithoutLocale !== '/admin/login') {
+    const adminToken = request.cookies.get(ADMIN_COOKIE_NAME)?.value;
+    if (!adminToken) {
+      const targetLocale = currentLocale ?? defaultLocale;
+      return NextResponse.redirect(new URL(`/${targetLocale}/admin/login`, request.url));
+    }
+  }
 
-  //   console.log('Auth token:', token);
-
-  //   if (!token) {
-  //     const targetLocale = currentLocale ?? defaultLocale;
-
-  //     return NextResponse.redirect(new URL(`/${targetLocale}`, request.url));
-  //   }
-  // }
-
-  // Everything else goes through next-intl
   return intlMiddleware(request);
 }
 

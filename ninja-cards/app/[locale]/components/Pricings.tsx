@@ -3,16 +3,11 @@
 import { Key, useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "../context/AuthContext";
 import { BASE_API_URL } from "@/utils/constants";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from '@/navigation';
 import { addToCart, loadCartFromLocalStorage } from "@/lib/cart";
-
-const stripePromise = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!
-);
 
 
 export default function Pricing() {
@@ -38,7 +33,7 @@ export default function Pricing() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md">
                     <div className="flex flex-col items-center gap-4">
                         <div className="relative">
-                            <img src="/load.gif" className="w-24 h-24" />
+                        <img src="/load.gif" alt="" className="w-24 h-24" />
                             <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange rounded-full blur-xl opacity-50" />
                         </div>
                         <p className="text-white text-lg font-medium bg-gradient-to-r from-amber-400 to-orange bg-clip-text text-transparent">

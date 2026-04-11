@@ -174,7 +174,7 @@ const CoverComponent: React.FC = () => {
 
     if (loading || currentLoading) {
         return (<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-            <img src="/load.gif" className="w-24 h-24 animate-spin" />
+            <img src="/load.gif" alt="" className="w-24 h-24 animate-spin" />
         </div>);
     }
 

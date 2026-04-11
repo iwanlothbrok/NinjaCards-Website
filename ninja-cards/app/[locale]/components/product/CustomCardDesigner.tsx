@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import QRCode from 'qrcode';
 import { BASE_API_URL } from '@/utils/constants';
 interface Alert {
@@ -35,6 +35,7 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
     const [alert, setAlert] = useState<Alert | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [acceptTerms, setAcceptTerms] = useState(false);
+    const qrForeground = color === '#FFFFFF' ? '#ffffff' : '#000000';
 
 
     const parseBase64ToPNG = (base64String: string): Promise<HTMLImageElement> => {
@@ -83,19 +84,13 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
             width: 100,
             margin: 2,
             color: {
-                dark: color === '#FFFFFF' ? '#ffffff' : '#000000',
+                dark: qrForeground,
                 light: '#00000000',  // Transparent background
             },
         })
             .then(url => setQrCodeUrl(url))
             .catch(err => console.error(err));
-    }, [qrCodeData, `${color}`]);
-
-    useEffect(() => {
-        if (frontImage && backImage) {
-            drawCard();
-        }
-    }, [frontImage, backImage, qrCodeUrl, name, title, backLogoUrl, fontSizeName, fontSizeTitle, backLogoSize, '#ffffff']);
+    }, [qrCodeData, qrForeground]);
 
     const drawRoundedRect = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) => {
         ctx.beginPath();
@@ -136,7 +131,7 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
         return tempCanvas;
     };
 
-    const drawCard = () => {
+    const drawCard = useCallback(() => {
         if (!frontImage || !backImage) return;
 
         const frontCanvas = frontCanvasRef.current;
@@ -194,7 +189,13 @@ const CustomCardDesigner: React.FC<CardProps> = ({ back, front, color }) => {
                 backCtx.fillText('Качете вашето лого', backCanvas.width / 2, backCanvas.height / 2);
             }
         }
-    };
+    }, [backImage, backLogoSize, backLogoUrl, color, fontSizeName, fontSizeTitle, frontImage, name, qrCodeUrl, title]);
+
+    useEffect(() => {
+        if (frontImage && backImage) {
+            drawCard();
+        }
+    }, [backImage, drawCard, frontImage]);
 
 
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>, setLogoFn: React.Dispatch<React.SetStateAction<string | null>>) => {

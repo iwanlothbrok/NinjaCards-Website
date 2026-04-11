@@ -16,12 +16,12 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, type }) => {
     const t = useTranslations("ProductsPage");
-    console.log("Current locale:", t);
 
     const controls = useAnimation();
     const cardRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        const currentCard = cardRef.current;
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -31,9 +31,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, type }) => {
             },
             { threshold: 0.1 }
         );
-        if (cardRef.current) observer.observe(cardRef.current);
+        if (currentCard) observer.observe(currentCard);
         return () => {
-            if (cardRef.current) observer.unobserve(cardRef.current);
+            if (currentCard) observer.unobserve(currentCard);
         };
     }, [controls]);
 
@@ -88,7 +88,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, imageUrl, type }) => {
 
 export const ProductGallery: React.FC = () => {
     const t = useTranslations("ProductsPage");
-    console.log("Current locale:", t);
 
     return (
         <div className="bg-gradient-to-b z-0 from-black to-gray-950 py-16 p-1">

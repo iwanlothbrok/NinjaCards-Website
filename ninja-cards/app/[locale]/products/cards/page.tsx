@@ -18,7 +18,6 @@ interface Product {
 
 export default function NfcCardsList() {
     const t = useTranslations("NfcCardsPage");
-    console.log("Current locale:", t);
 
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);

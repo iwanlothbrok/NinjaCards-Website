@@ -25,6 +25,7 @@ const FeatureItemLeftImage: React.FC<FeatureProps> = ({
     const sectionRef = useRef(null);
 
     useEffect(() => {
+        const currentSection = sectionRef.current;
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -38,13 +39,13 @@ const FeatureItemLeftImage: React.FC<FeatureProps> = ({
             { threshold: 0.2 }
         );
 
-        if (sectionRef.current) {
-            observer.observe(sectionRef.current);
+        if (currentSection) {
+            observer.observe(currentSection);
         }
 
         return () => {
-            if (sectionRef.current) {
-                observer.unobserve(sectionRef.current);
+            if (currentSection) {
+                observer.unobserve(currentSection);
             }
         };
     }, [controls]);
@@ -123,6 +124,7 @@ const FeatureItemRightImage: React.FC<FeatureProps> = ({
     const sectionRef = useRef(null);
 
     useEffect(() => {
+        const currentSection = sectionRef.current;
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -136,13 +138,13 @@ const FeatureItemRightImage: React.FC<FeatureProps> = ({
             { threshold: 0.2 }
         );
 
-        if (sectionRef.current) {
-            observer.observe(sectionRef.current);
+        if (currentSection) {
+            observer.observe(currentSection);
         }
 
         return () => {
-            if (sectionRef.current) {
-                observer.unobserve(sectionRef.current);
+            if (currentSection) {
+                observer.unobserve(currentSection);
             }
         };
     }, [controls]);

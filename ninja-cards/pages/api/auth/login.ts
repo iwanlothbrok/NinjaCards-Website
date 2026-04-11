@@ -8,6 +8,10 @@ import cors from '@/utils/cors';
 
 const prisma = new PrismaClient();
 
+function getUserAuthSecret() {
+    return process.env.NEXTAUTH_SECRET || process.env.ADMIN_AUTH_SECRET || null;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Handle CORS (preflight may end here).
     if (cors(req, res)) return;
@@ -23,12 +27,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const isPasswordValid = await compare(password, user.password);
         if (!isPasswordValid) return res.status(401).json({ error: 'Invalid email or password' });
 
-        if (!process.env.NEXTAUTH_SECRET)
+        const authSecret = getUserAuthSecret();
+        if (!authSecret)
             return res.status(500).json({ error: 'Internal server error: Missing secret' });
 
-        const token = sign({ id: user.id, email: user.email }, process.env.NEXTAUTH_SECRET, {
+        const token = sign({ id: user.id, email: user.email }, authSecret, {
             expiresIn: '12h',
         });
+
+        const updatedUser = await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLoginAt: new Date() },
+        });
+
+        const { password: _password, ...safeUser } = updatedUser;
 
         // Cross-site request => require SameSite=None; Secure for the cookie to be accepted.
         // Note: This will still be blocked if the browser disables third-party cookies entirely.
@@ -44,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.setHeader('Set-Cookie', cookie);
 
-        return res.status(200).json({ token, user });
+        return res.status(200).json({ token, user: safeUser });
     } catch (error) {
         console.error('Internal server error:', error);
         return res.status(500).json({ error: 'Internal server error' });
