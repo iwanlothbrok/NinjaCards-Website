@@ -169,7 +169,7 @@ export default function EmailSignaturePage() {
             professional: `${common}<tr><td style="border:1px solid #e5e7eb;border-radius:22px;overflow:hidden;background:#ffffff;"><table cellpadding="0" cellspacing="0" role="presentation" style="width:100%;border-collapse:collapse;"><tr><td style="padding:20px 24px;background:#111827;"><div style="font-size:22px;font-weight:800;color:#ffffff;">${name}</div><div style="margin-top:6px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${accent};font-weight:700;">${position}</div>${company ? `<div style="margin-top:6px;font-size:13px;color:#cbd5e1;">${company}</div>` : ''}</td></tr><tr><td style="padding:20px 24px;"><table cellpadding="0" cellspacing="0" role="presentation" style="width:100%;border-collapse:collapse;"><tr>${photo}<td style="vertical-align:top;"><div style="font-size:13px;line-height:1.7;">${details}</div></td>${qr}</tr></table></td></tr></table></td></tr>${tail}`,
         };
         return map[options.theme];
-    }, [authUser?.id, options, previewImage, qrUrl, t]);
+    }, [options, previewImage, qrUrl, t]);
 
     const copySignature = async () => {
         try {

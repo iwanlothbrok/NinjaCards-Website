@@ -24,7 +24,6 @@ const ProductItem: React.FC<ProductItemProps> = ({
     type,
 }) => {
     const t = useTranslations("ProductItem");
-    console.log("Current locale:", t);
 
     return (
         <motion.div

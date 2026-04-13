@@ -10,9 +10,10 @@ type LinkInputProps = {
     placeholder: string;
     iconSrc: string;
     focusRingColor: string;
+    disabled?: boolean;
 };
 
-const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange, placeholder, iconSrc, focusRingColor }) => {
+const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange, placeholder, iconSrc, focusRingColor, disabled = false }) => {
     const [isFocused, setIsFocused] = useState(false);
 
     const handleFocus = () => setIsFocused(true);
@@ -34,7 +35,8 @@ const LinkInput: React.FC<LinkInputProps> = React.memo(({ name, value, onChange,
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="flex-grow bg-transparent text-gray-200 border-none focus:ring-0 placeholder-gray-400 focus:outline-none"
+                disabled={disabled}
+                className="flex-grow bg-transparent text-gray-200 border-none focus:ring-0 placeholder-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:text-gray-500"
                 onFocus={handleFocus}
                 onBlur={handleBlur}
             />

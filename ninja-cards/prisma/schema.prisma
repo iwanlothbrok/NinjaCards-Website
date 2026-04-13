@@ -46,6 +46,7 @@ model User {
   qrCode        String?  @db.Text
   selectedColor String?
   createdAt     DateTime @default(now())
+  lastLoginAt   DateTime?
   updatedAt     DateTime @updatedAt
   calendly      String?
   discord       String?
@@ -63,6 +64,18 @@ model User {
   subscriptionId   String?        @unique
   subscription     Subscription?  @relation("UserSubscription")
   invoices         Invoice[]
+}
+
+model AdminUser {
+  id          String      @id @default(cuid())
+  email       String      @unique
+  password    String
+  name        String
+  role        AdminRole   @default(SUPER_ADMIN)
+  status      AdminStatus @default(ACTIVE)
+  lastLoginAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model Dashboard {
@@ -280,6 +293,16 @@ enum CRMStage {
   MEETING
   WON
   LOST
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  OPERATIONS
+}
+
+enum AdminStatus {
+  ACTIVE
+  DISABLED
 }
 
 model WebhookEvent {

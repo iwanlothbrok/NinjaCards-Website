@@ -84,7 +84,7 @@ export default function ProfileInformationPage() {
             state: user.state || "",
             country: user.country || "",
         });
-    }, [user]);
+    }, [addressForm, profileForm, user]);
 
     const showAlert = (message: string, title: string, color: Alert["color"]) => {
         setAlert({ message, title, color });

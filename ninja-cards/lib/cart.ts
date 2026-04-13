@@ -129,33 +129,24 @@ export function loadCartFromLocalStorage(): Cart {
 export function useCart() {
     const [cartItemCount, setCartItemCount] = useState(0);
 
-    // Function to load the cart from localStorage
-    const loadCartFromLocalStorage = () => {
-        const cartData = localStorage.getItem('cart');
-        if (cartData) {
-            return JSON.parse(cartData);
-        }
-        return { items: [], totalPrice: 0, freeItemsCount: 0 };
-    };
-
-    // Update the state whenever cart is modified
-    const updateCartItemCount = () => {
-        const savedCart = loadCartFromLocalStorage();
-        setCartItemCount(savedCart && Array.isArray(savedCart.items) ? savedCart.items.length : 0);
-    };
-
     useEffect(() => {
-        // Initialize cart count on first load
+        const updateCartItemCount = () => {
+            const cartData = localStorage.getItem('cart');
+            const savedCart = cartData
+                ? JSON.parse(cartData)
+                : { items: [], totalPrice: 0, freeItemsCount: 0 };
+            setCartItemCount(savedCart && Array.isArray(savedCart.items) ? savedCart.items.length : 0);
+        };
+
         updateCartItemCount();
 
-        // Listen for localStorage changes to update the count when other parts of the app modify the cart
         const storageListener = () => {
             updateCartItemCount();
         };
 
         window.addEventListener("storage", storageListener);
         return () => window.removeEventListener("storage", storageListener);
-    }, [updateCartItemCount]);
+    }, []);
 
     return cartItemCount;
 }

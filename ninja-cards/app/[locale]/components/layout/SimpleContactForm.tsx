@@ -14,7 +14,6 @@ interface FormData {
 
 const SimpleContactForm: React.FC = () => {
     const t = useTranslations("ContactPage");
-    console.log("Current locale:", t);
 
     const [formData, setFormData] = useState<FormData>({
         name: "",

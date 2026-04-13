@@ -10,9 +10,9 @@ export const Hero: React.FC = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
 
     const t = useTranslations("HeroPage");
-    console.log("Current locale:", t);
 
     useEffect(() => {
+        const currentSection = sectionRef.current;
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -25,9 +25,9 @@ export const Hero: React.FC = () => {
             { threshold: 0.1 }
         );
 
-        if (sectionRef.current) observer.observe(sectionRef.current);
+        if (currentSection) observer.observe(currentSection);
         return () => {
-            if (sectionRef.current) observer.unobserve(sectionRef.current);
+            if (currentSection) observer.unobserve(currentSection);
         };
     }, []);
     return (

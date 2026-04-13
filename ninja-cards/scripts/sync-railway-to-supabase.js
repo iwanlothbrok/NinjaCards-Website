@@ -225,6 +225,7 @@ function coerceValueForTarget(value, typeInfo) {
   }
 
   const lowerDataType = String(typeInfo.dataType || "").toLowerCase();
+  const lowerUdtName = String(typeInfo.udtName || "").toLowerCase();
 
   if (lowerDataType === "boolean") {
     if (typeof value === "boolean") {
@@ -463,7 +464,6 @@ async function main() {
       console.log(`Backup report written to ${reportPath}`);
       return;
     }
-
     console.log(`Starting ${report.mode} sync from Railway MySQL to Supabase Postgres...`);
     console.log(`Batch size: ${options.batchSize}`);
 

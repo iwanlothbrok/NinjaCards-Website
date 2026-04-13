@@ -2,12 +2,12 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import Image from "next/image";
 import { Link, usePathname } from "@/navigation";
 import { useAuth } from "../context/AuthContext";
 import { locales } from "@/config";
 import { useTranslations } from "next-intl";
 import { LangSwitcher } from "./layout/LangSwitcher";
-import { loadCartFromLocalStorage, useCart } from "@/lib/cart"; // Импортираме функцията от либ-а
 
 type LinkHref = React.ComponentProps<typeof Link>["href"];
 
@@ -17,7 +17,13 @@ interface NavItemProps {
   className?: string;
   children: React.ReactNode;
 }
-const NavItem: React.FC<NavItemProps> = ({ href, onClick, children, className }) => (
+
+const NavItem: React.FC<NavItemProps> = ({
+  href,
+  onClick,
+  children,
+  className,
+}) => (
   <li>
     <Link
       href={href}
@@ -29,8 +35,6 @@ const NavItem: React.FC<NavItemProps> = ({ href, onClick, children, className })
   </li>
 );
 
-/* -------- Helpers to decide when to hide the language switcher -------- */
-// Strip locale prefix ("/bg", "/en") and return locale-less path.
 function stripLocale(pathname: string | null | undefined): string {
   const p = pathname || "/";
   for (const loc of locales) {
@@ -41,7 +45,6 @@ function stripLocale(pathname: string | null | undefined): string {
   return p;
 }
 
-// True if on /profileDetails/[id] or /p/[slug]
 function isProfileDetailsPath(pathname: string | null | undefined): boolean {
   const path = stripLocale(pathname);
   return (
@@ -49,8 +52,6 @@ function isProfileDetailsPath(pathname: string | null | undefined): boolean {
     /^\/p\/[^\/?#]+(?:[\/?#]|$)/.test(path)
   );
 }
-
-
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -61,7 +62,6 @@ const Navbar: React.FC = () => {
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
   const t = useTranslations("Navbar");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -70,11 +70,7 @@ const Navbar: React.FC = () => {
   const pathname = usePathname();
   const isAuthenticated = !!user;
 
-  // Hide switcher on dynamic detail pages
-  const hideLangSwitcher =
-    isProfileDetailsPath(pathname);
-
-  // If you still need special header offset for details page on phones:
+  const hideLangSwitcher = isProfileDetailsPath(pathname);
   const isOnDetailsPage = isProfileDetailsPath(pathname);
 
   useEffect(() => {
@@ -92,9 +88,21 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setIsDropdownOpen(false);
-      if (productDropdownRef.current && !productDropdownRef.current.contains(event.target as Node)) setIsProductDropdownOpen(false);
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) setIsMenuOpen(false);
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+      if (
+        productDropdownRef.current &&
+        !productDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsProductDropdownOpen(false);
+      }
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
     };
 
     if (isDropdownOpen || isMenuOpen || isProductDropdownOpen) {
@@ -107,17 +115,14 @@ const Navbar: React.FC = () => {
   }, [isDropdownOpen, isMenuOpen, isProductDropdownOpen]);
 
   useEffect(() => {
-    // Start loading when the pathname changes or when the user clicks the same link
     setIsLoading(true);
 
-    // Set a timeout to stop the loading spinner after a short delay
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 500); // Adjust the duration to match your loading animation duration
+    }, 500);
 
-    return () => clearTimeout(timer); // Clean up the timer on component unmount or before the next render
-  }, [pathname]); // This useEffect triggers on pathname change (or when clicked on the same path)
-
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
@@ -145,20 +150,21 @@ const Navbar: React.FC = () => {
   const handleNavLinkClick = useCallback(() => {
     setIsLoading(true);
 
-    // If you want the spinner to remain for a short time, set a timeout.
     setTimeout(() => {
-      setIsLoading(false); // Stop loading after a small delay for the animation
-    }, 500); // Adjust the timing if necessary
+      setIsLoading(false);
+    }, 500);
 
     if (isPhone) setIsMenuOpen(false);
   }, [isPhone]);
 
-
   return (
     <>
       <header
-        className={`fixed ${isOnDetailsPage && isPhone ? "top-16" : "top-0"} left-0 z-40 w-full transition-all duration-500 ${isScrolled ? " !top-0  shadow-md backdrop-blur-lg bg-opacity-60" : `${isOnDetailsPage ?? ""}`
-          }`}
+        className={`fixed ${isOnDetailsPage && isPhone ? "top-16" : "top-0"} left-0 z-40 w-full transition-all duration-500 ${
+          isScrolled
+            ? " !top-0  shadow-md backdrop-blur-lg bg-opacity-60"
+            : `${isOnDetailsPage ?? ""}`
+        }`}
         aria-label={t("aria.header")}
       >
         <div className="container mx-auto px-4 lg:px-6">
@@ -167,14 +173,20 @@ const Navbar: React.FC = () => {
               <div className="flex-shrink-0 w-28">
                 {!isOnDetailsPage ? (
                   <Link href="/" className="block" onClick={handleNavLinkClick}>
-                    <img src="/navlogo.png" alt={t("logoAlt")} className="w-full" />
+                    <Image
+                      src="/navlogo.png"
+                      alt={t("logoAlt")}
+                      width={112}
+                      height={50}
+                      priority
+                      className="w-full h-auto"
+                    />
                   </Link>
                 ) : (
                   <div className="w-28 mb-5" />
                 )}
               </div>
 
-              {/* Language switcher (desktop) */}
               {!hideLangSwitcher && (
                 <div className="hidden lg:block">
                   <LangSwitcher setIsMenuOpen={setIsMenuOpen} />
@@ -197,14 +209,16 @@ const Navbar: React.FC = () => {
 
               <nav
                 ref={menuRef}
-                className={`fixed top-0 left-0 w-full h-screen bg-darkBg transform transition-transform duration-500 ease-in-out lg:relative lg:h-auto lg:w-auto lg:bg-transparent lg:transform-none ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
-                  } lg:translate-x-0`}
+                className={`fixed top-0 left-0 w-full h-screen bg-darkBg transform transition-transform duration-500 ease-in-out lg:relative lg:h-auto lg:w-auto lg:bg-transparent lg:transform-none ${
+                  isMenuOpen ? "translate-x-0" : "-translate-x-full"
+                } lg:translate-x-0`}
                 aria-label={t("aria.mainNav")}
               >
                 <div className="flex justify-between items-center p-4 lg:hidden">
                   <div>
-                    {/* Language switcher (mobile) */}
-                    {!hideLangSwitcher && <LangSwitcher setIsMenuOpen={setIsMenuOpen} />}
+                    {!hideLangSwitcher && (
+                      <LangSwitcher setIsMenuOpen={setIsMenuOpen} />
+                    )}
                   </div>
                   <button
                     onClick={toggleMenu}
@@ -212,47 +226,74 @@ const Navbar: React.FC = () => {
                     className="text-orange font-bold text-3xl"
                     title={t("aria.closeMenu")}
                   >
-                    ✕
+                    ×
                   </button>
                 </div>
 
                 <ul className="flex flex-col items-center justify-center h-2/3 lg:flex-row lg:space-x-8">
                   <li>
-                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/" onClick={handleNavLinkClick}>
+                    <Link
+                      className="text-white py-2 text-lg font-medium hover:text-orange"
+                      href="/"
+                      onClick={handleNavLinkClick}
+                    >
                       {t("menu.home")}
                     </Link>
                   </li>
 
-
                   <li>
-                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/plans" onClick={handleNavLinkClick}>
+                    <Link
+                      className="text-white py-2 text-lg font-medium hover:text-orange"
+                      href="/plans"
+                      onClick={handleNavLinkClick}
+                    >
                       {t("menu.plans")}
                     </Link>
                   </li>
                   <li>
-                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/cards" onClick={handleNavLinkClick}>
+                    <Link
+                      className="text-white py-2 text-lg font-medium hover:text-orange"
+                      href="/cards"
+                      onClick={handleNavLinkClick}
+                    >
                       {t("menu.cards")}
                     </Link>
                   </li>
                   <li>
-                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/features" onClick={handleNavLinkClick}>
+                    <Link
+                      className="text-white py-2 text-lg font-medium hover:text-orange"
+                      href="/features"
+                      onClick={handleNavLinkClick}
+                    >
                       {t("menu.features")}
                     </Link>
                   </li>
                   <li>
-                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/askedQuestions" onClick={handleNavLinkClick}>
+                    <Link
+                      className="text-white py-2 text-lg font-medium hover:text-orange"
+                      href="/askedQuestions"
+                      onClick={handleNavLinkClick}
+                    >
                       {t("menu.faq")}
                     </Link>
                   </li>
                   <li>
-                    <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/contact" onClick={handleNavLinkClick}>
+                    <Link
+                      className="text-white py-2 text-lg font-medium hover:text-orange"
+                      href="/contact"
+                      onClick={handleNavLinkClick}
+                    >
                       {t("menu.contact")}
                     </Link>
                   </li>
 
                   {isAuthenticated && (
                     <li>
-                      <Link className="text-white py-2 text-lg font-medium hover:text-orange" href="/profile" onClick={handleNavLinkClick}>
+                      <Link
+                        className="text-white py-2 text-lg font-medium hover:text-orange"
+                        href="/profile"
+                        onClick={handleNavLinkClick}
+                      >
                         {t("menu.profile")}
                       </Link>
                     </li>
@@ -261,11 +302,14 @@ const Navbar: React.FC = () => {
                   {isAuthenticated ? (
                     <li className="relative flex items-center group mt-5 lg:mt-0">
                       {user.image ? (
-                        <img
+                        <Image
                           onClick={handleDropdownToggle}
                           className="w-20 h-20 rounded-full cursor-pointer border-2 border-orange shadow-md"
                           src={`data:image/jpeg;base64,${user.image}`}
                           alt={t("alt.userAvatar")}
+                          width={80}
+                          height={80}
+                          unoptimized
                         />
                       ) : (
                         <div
@@ -283,13 +327,21 @@ const Navbar: React.FC = () => {
                         >
                           <div className="px-4 py-3 text-sm text-white">
                             <div className="text-orange">{user?.name}</div>
-                            <div className="font-medium truncate text-orange">{user?.email}</div>
+                            <div className="font-medium truncate text-orange">
+                              {user?.email}
+                            </div>
                           </div>
                           <ul className="py-2 text-sm text-gray-200">
-                            <NavItem href="/profile" onClick={handleNavLinkClick}>
+                            <NavItem
+                              href="/profile"
+                              onClick={handleNavLinkClick}
+                            >
                               {t("menu.profile")}
                             </NavItem>
-                            <NavItem href="/analyse" onClick={handleNavLinkClick}>
+                            <NavItem
+                              href="/analyse"
+                              onClick={handleNavLinkClick}
+                            >
                               {t("menu.analysis")}
                             </NavItem>
                           </ul>
@@ -326,7 +378,11 @@ const Navbar: React.FC = () => {
                     </div>
                   )}
                   <li className="relative flex items-center group mt-5 lg:mt-0">
-                    <Link href="/cart" className="flex items-center space-x-2 relative group" aria-label={t("menu.cart")}>
+                    <Link
+                      href="/cart"
+                      className="flex items-center space-x-2 relative group"
+                      aria-label={t("menu.cart")}
+                    >
                       <span className="relative flex items-center justify-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -336,7 +392,15 @@ const Navbar: React.FC = () => {
                           strokeWidth={2}
                           className="h-8 w-8 text-orange group-hover:scale-110 group-hover:drop-shadow-lg transition-transform duration-200"
                         >
-                          <rect x="6" y="10" width="20" height="12" rx="4" fill="#1a1a1a" stroke="#FFA500" />
+                          <rect
+                            x="6"
+                            y="10"
+                            width="20"
+                            height="12"
+                            rx="4"
+                            fill="#1a1a1a"
+                            stroke="#FFA500"
+                          />
                           <path
                             d="M10 22a2 2 0 1 0 4 0M18 22a2 2 0 1 0 4 0"
                             stroke="#FFA500"
@@ -351,7 +415,6 @@ const Navbar: React.FC = () => {
                           />
                         </svg>
                       </span>
-
                     </Link>
                   </li>
                 </ul>
@@ -361,10 +424,16 @@ const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* Loading Overlay */}
       {isLoading && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <img src="/load.gif" className="w-24 h-24" alt="Loading" />
+          <Image
+            src="/load.gif"
+            className="w-24 h-24"
+            alt="Loading"
+            width={96}
+            height={96}
+            unoptimized
+          />
         </div>
       )}
     </>

@@ -32,7 +32,9 @@ body {
 .roadmap-step {
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s ease-out;
 }
 
 .roadmap-line-container {
@@ -58,7 +60,9 @@ body {
 .roadmap-step {
   opacity: 1;
   /* Ensure elements are visible */
-  transition: transform 0.7s, opacity 0.7s;
+  transition:
+    transform 0.7s,
+    opacity 0.7s;
 }
 
 .roadmap-step-title {

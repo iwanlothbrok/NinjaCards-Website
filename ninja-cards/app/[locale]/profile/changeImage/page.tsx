@@ -55,7 +55,7 @@ export default function ProfileImageUploader() {
             };
             reader.readAsDataURL(file);
         },
-        [t]
+        [MAX_BYTES, t]
     );
 
     const onLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -172,7 +172,7 @@ export default function ProfileImageUploader() {
         <>
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-                    <img src="/load.gif" className="w-24 h-24 animate-spin" />
+                    <img src="/load.gif" alt="" className="w-24 h-24 animate-spin" />
                 </div>
             )}
 
@@ -206,6 +206,7 @@ export default function ProfileImageUploader() {
                         <div className="flex flex-col items-center gap-4">
                             <img
                                 src={`data:image/jpeg;base64,${user.image}`}
+                                alt={t("preview.currentAlt")}
                                 className="w-36 h-36 rounded-full border-4 border-amber-500/30 object-cover"
                             />
                             <button
@@ -244,7 +245,7 @@ export default function ProfileImageUploader() {
                                 aspect={1}
                                 keepSelection
                             >
-                                <img src={imageSrc} ref={imageRef} onLoad={onLoad} />
+                                <img src={imageSrc} alt={t("preview.cropAlt")} ref={imageRef} onLoad={onLoad} />
                             </ReactCrop>
 
                             {croppedImageUrl && (
@@ -252,6 +253,7 @@ export default function ProfileImageUploader() {
                                     <p className="text-gray-400 mb-2">{t("preview.title")}</p>
                                     <img
                                         src={croppedImageUrl}
+                                        alt={t("preview.croppedAlt")}
                                         className="mx-auto w-40 h-40 rounded-full border-4 border-amber-500/40 object-cover"
                                     />
                                 </div>
