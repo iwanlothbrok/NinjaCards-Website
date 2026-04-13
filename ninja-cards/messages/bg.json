@@ -2693,6 +2693,12 @@
     "subtitle": "Update your identity, links, media, and card style from one place.",
     "backToDashboard": "Back to dashboard",
     "previewLabel": "Live preview",
+    "mobilePreview": {
+      "openButton": "Preview",
+      "closeButton": "Close preview",
+      "sheetTitle": "Preview your card",
+      "sheetDescription": "Check the mobile card layout without leaving the builder."
+    },
     "intro": {
       "title": "Edit your card with live feedback",
       "description": "Everything you change here updates the preview instantly. Save when you are happy with the result.",

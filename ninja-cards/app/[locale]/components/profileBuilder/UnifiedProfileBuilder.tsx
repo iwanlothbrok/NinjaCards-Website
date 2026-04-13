@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { Eye, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/navigation";
 import { useAuth } from "../../context/AuthContext";
@@ -424,6 +425,7 @@ export default function UnifiedProfileBuilder() {
   const [saveState, setSaveState] = React.useState<SaveBarState>("idle");
   const [profileImageFile, setProfileImageFile] = React.useState<File | null>(null);
   const [coverImageFile, setCoverImageFile] = React.useState<File | null>(null);
+  const [isMobilePreviewOpen, setIsMobilePreviewOpen] = React.useState(false);
 
   const draftUserRef = React.useRef<BuilderDraftState | null>(null);
   const themeRef = React.useRef<CardTheme>(themeDraft);
@@ -465,6 +467,7 @@ export default function UnifiedProfileBuilder() {
     });
     setSectionErrors({});
     setSaveState("idle");
+    setIsMobilePreviewOpen(false);
   }, [loading, router, user]);
 
   const markDirty = React.useCallback((section: BuilderSectionKey) => {
@@ -854,7 +857,7 @@ export default function UnifiedProfileBuilder() {
         </div>
 
         <div className="grid gap-8 xl:grid-cols-[minmax(340px,420px)_minmax(0,1fr)]">
-          <aside className="xl:sticky xl:top-24 xl:self-start">
+          <aside className="hidden xl:sticky xl:top-24 xl:block xl:self-start">
             <ProfileBuilderPreview
               draftUser={draftUser}
               cardStyle={cardStyle}
@@ -1061,6 +1064,61 @@ export default function UnifiedProfileBuilder() {
           </div>
         </div>
       </div>
+
+      <div className="fixed inset-x-0 bottom-28 z-40 flex justify-center px-4 xl:hidden">
+        <button
+          type="button"
+          onClick={() => setIsMobilePreviewOpen(true)}
+          className="inline-flex items-center gap-2 rounded-full border border-emerald-200/50 bg-[#eef8ef] px-6 py-3 text-sm font-semibold text-slate-900 shadow-[0_18px_45px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:bg-white"
+        >
+          <Eye className="h-4 w-4" />
+          {t("mobilePreview.openButton")}
+        </button>
+      </div>
+
+      {isMobilePreviewOpen ? (
+        <div className="fixed inset-0 z-50 xl:hidden">
+          <button
+            type="button"
+            aria-label={t("mobilePreview.closeButton")}
+            className="absolute inset-0 bg-[#03050a]/80 backdrop-blur-md"
+            onClick={() => setIsMobilePreviewOpen(false)}
+          />
+
+          <div className="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-[2rem] border border-white/10 bg-[#07090f] px-4 pb-8 pt-4 shadow-[0_-24px_60px_rgba(0,0,0,0.45)]">
+            <div className="mx-auto mb-4 h-1.5 w-16 rounded-full bg-white/15" />
+
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-300/70">
+                  {t("previewLabel")}
+                </p>
+                <h2 className="mt-2 text-2xl font-black tracking-tight text-white">
+                  {t("mobilePreview.sheetTitle")}
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-white/55">
+                  {t("mobilePreview.sheetDescription")}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsMobilePreviewOpen(false)}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-white transition hover:bg-white/[0.1]"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <ProfileBuilderPreview
+              draftUser={draftUser}
+              cardStyle={cardStyle}
+              layout={selectedTemplate.layout}
+              previewLabel={t("previewLabel")}
+            />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
