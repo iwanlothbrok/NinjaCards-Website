@@ -18,6 +18,7 @@ type UploadedImage = {
 };
 
 const CARD_RATIO = "85 / 55";
+const NFC_WAVES = [1, 2, 3];
 
 const defaultState = {
   companyName: "Trivium Estate",
@@ -94,7 +95,6 @@ export default function CreateDesignStudio() {
   const [textColor, setTextColor] = useState(defaultState.textColor);
   const [accentColor, setAccentColor] = useState(defaultState.accentColor);
   const [logoImage, setLogoImage] = useState<UploadedImage | null>(null);
-  const [portraitImage, setPortraitImage] = useState<UploadedImage | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<UploadedImage | null>(null);
   const [downloadingSide, setDownloadingSide] = useState<"front" | "back" | null>(null);
 
@@ -171,7 +171,6 @@ export default function CreateDesignStudio() {
     setTextColor(defaultState.textColor);
     setAccentColor(defaultState.accentColor);
     setLogoImage(null);
-    setPortraitImage(null);
     setBackgroundImage(null);
   };
 
@@ -210,7 +209,7 @@ export default function CreateDesignStudio() {
           </div>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
+        <div className="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
           <aside className="rounded-[28px] border border-white/10 bg-slate-950/70 p-5 shadow-2xl backdrop-blur md:p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="rounded-2xl bg-orange-500/15 p-3 text-orange-200">
@@ -325,19 +324,6 @@ export default function CreateDesignStudio() {
                       className="cursor-pointer file:mr-4 file:rounded-full file:border-0 file:bg-orange-400/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-orange-200"
                     />
                   </InputLabel>
-
-                  <InputLabel
-                    label="Portrait"
-                    description={portraitImage?.name ?? "Round photo on the front"}
-                  >
-                    <StudioInput
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => handleUpload(event, setPortraitImage)}
-                      className="cursor-pointer file:mr-4 file:rounded-full file:border-0 file:bg-orange-400/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-orange-200"
-                    />
-                  </InputLabel>
-
                   <InputLabel
                     label="Background image"
                     description={backgroundImage?.name ?? "Optional full-card image"}
@@ -355,7 +341,7 @@ export default function CreateDesignStudio() {
           </aside>
 
           <div className="space-y-6">
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid gap-6 xl:grid-cols-2">
               <div className="rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur md:p-5">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
@@ -377,63 +363,37 @@ export default function CreateDesignStudio() {
 
                 <div
                   ref={frontRef}
-                  className="relative isolate aspect-[85/55] overflow-hidden rounded-[30px] border border-white/20 p-[5.4%] shadow-[0_25px_80px_rgba(15,23,42,0.45)]"
+                  className="relative isolate mx-auto aspect-[85/55] w-full max-w-[780px] overflow-hidden rounded-[34px] border-2 border-white/30 p-[5.4%] shadow-[0_25px_80px_rgba(15,23,42,0.45)]"
                   style={frontStyle}
                 >
-                  <div className="absolute inset-[4.6%] rounded-[24px] border border-white/25" />
-                  <div className="relative z-10 flex h-full items-center justify-between gap-[4.5%]">
-                    <div className="flex max-w-[60%] flex-col justify-between">
-                      <div className="space-y-[5%]">
-                        {logoImage ? (
-                          <img
-                            src={logoImage.src}
-                            alt="Uploaded logo"
-                            className="max-h-[24%] max-w-[46%] object-contain"
-                          />
-                        ) : (
-                          <div
-                            className="inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-[clamp(10px,1.05vw,14px)] font-semibold"
-                            style={{ borderColor: `${accentColor}99`, color: textColor }}
-                          >
-                            <ImagePlus className="h-4 w-4" />
-                            Add logo
-                          </div>
-                        )}
-
-                        <div>
-                          <p className="text-[clamp(18px,3.2vw,46px)] font-light uppercase tracking-[0.08em]">
-                            {companyName}
-                          </p>
-                          <p
-                            className="mt-[2.5%] text-[clamp(9px,1vw,16px)] uppercase tracking-[0.42em]"
-                            style={{ color: `${textColor}CC` }}
-                          >
-                            {companyTagline}
-                          </p>
+                  <div className="absolute inset-[5.5%] rounded-[24px] border border-white/25" />
+                  <div className="relative z-10 flex h-full items-center justify-center">
+                    <div className="flex w-full max-w-[64%] flex-col items-center justify-center text-center">
+                      {logoImage ? (
+                        <img
+                          src={logoImage.src}
+                          alt="Uploaded logo"
+                          className="max-h-[42%] max-w-full object-contain"
+                        />
+                      ) : (
+                        <div
+                          className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[clamp(11px,1.1vw,16px)] font-semibold"
+                          style={{ borderColor: `${accentColor}99`, color: textColor }}
+                        >
+                          <ImagePlus className="h-4 w-4" />
+                          Add logo
                         </div>
-                      </div>
-                    </div>
-
-                    <div className="relative flex w-[32%] justify-end">
-                      <div
-                        className="absolute inset-[10%] rounded-full blur-2xl"
-                        style={{ backgroundColor: `${accentColor}4D` }}
-                      />
-                      <div
-                        className="relative aspect-square w-full overflow-hidden rounded-full border-[5px] bg-white/10"
-                        style={{ borderColor: accentColor }}
-                      >
-                        {portraitImage ? (
-                          <img
-                            src={portraitImage.src}
-                            alt="Portrait preview"
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center text-center text-[clamp(10px,1.1vw,15px)] font-medium text-white/80">
-                            Portrait
-                          </div>
-                        )}
+                      )}
+                      <div className="mt-[5.5%]">
+                        <p className="text-[clamp(20px,3vw,42px)] font-light uppercase tracking-[0.08em]">
+                          {companyName}
+                        </p>
+                        <p
+                          className="mt-[2.5%] text-[clamp(9px,1vw,16px)] uppercase tracking-[0.42em]"
+                          style={{ color: `${textColor}CC` }}
+                        >
+                          {companyTagline}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -461,17 +421,17 @@ export default function CreateDesignStudio() {
 
                 <div
                   ref={backRef}
-                  className="relative isolate aspect-[85/55] overflow-hidden rounded-[30px] border border-white/20 p-[5.4%] shadow-[0_25px_80px_rgba(15,23,42,0.45)]"
+                  className="relative isolate mx-auto aspect-[85/55] w-full max-w-[780px] overflow-hidden rounded-[34px] border-2 border-white/30 p-[5.4%] shadow-[0_25px_80px_rgba(15,23,42,0.45)]"
                   style={backStyle}
                 >
-                  <div className="absolute inset-[4.6%] rounded-[24px] border border-white/25" />
+                  <div className="absolute inset-[5.5%] rounded-[24px] border border-white/25" />
                   <div className="relative z-10 flex h-full flex-col justify-between">
                     <div className="flex items-start justify-between gap-4">
                       {logoImage ? (
                         <img
                           src={logoImage.src}
                           alt="Uploaded logo"
-                          className="max-h-[26%] max-w-[42%] object-contain"
+                          className="max-h-[24%] max-w-[36%] object-contain"
                         />
                       ) : (
                         <div className="rounded-full border border-white/20 px-3 py-2 text-[clamp(10px,1.1vw,14px)] text-white/70">
@@ -501,16 +461,30 @@ export default function CreateDesignStudio() {
                         >
                           {personRole}
                         </p>
-                        <div className="mt-4 inline-flex items-center rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[clamp(10px,1vw,14px)] text-white/80">
+                        <p className="mt-4 text-[clamp(12px,1.05vw,16px)] text-white/85">
                           Powered by Ninja Card
-                        </div>
+                        </p>
                       </div>
 
-                      <div
-                        className="rounded-full border border-white/20 px-4 py-2 text-[clamp(10px,1vw,14px)] font-semibold"
-                        style={{ color: accentColor }}
-                      >
-                        NFC
+                      <div className="flex h-[clamp(52px,5vw,78px)] w-[clamp(52px,5vw,78px)] items-center justify-center">
+                        <div className="relative h-full w-full">
+                          {NFC_WAVES.map((wave) => (
+                            <div
+                              key={wave}
+                              className="absolute right-0 top-1/2 -translate-y-1/2 rounded-full border-2 border-l-0"
+                              style={{
+                                width: `${wave * 24}%`,
+                                height: `${wave * 28}%`,
+                                borderColor: textColor,
+                                opacity: 0.95 - wave * 0.18,
+                              }}
+                            />
+                          ))}
+                          <div
+                            className="absolute bottom-[24%] right-[4%] h-[16%] w-[16%] rounded-full"
+                            style={{ backgroundColor: textColor }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
