@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import QRCode from "react-qr-code";
 import {
+  Eraser,
   Download,
   ImagePlus,
   Palette,
@@ -17,8 +18,22 @@ type UploadedImage = {
   src: string;
 };
 
+type RangeFieldProps = {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  onChange: (value: number) => void;
+};
+
 const CARD_RATIO = "85 / 55";
 const NFC_WAVES = [1, 2, 3];
+const FONT_OPTIONS = [
+  { label: "Modern", value: "Inter, system-ui, sans-serif" },
+  { label: "Elegant", value: "Georgia, serif" },
+  { label: "Sharp", value: "'Trebuchet MS', sans-serif" },
+];
 
 const defaultState = {
   personName: "Martin Hristov",
@@ -26,6 +41,17 @@ const defaultState = {
   frontBackground: "#20262d",
   backBackground: "#20262d",
   textColor: "#f8fafc",
+  frontLogoScale: 48,
+  backLogoScale: 24,
+  qrScale: 132,
+  nameSize: 30,
+  poweredBySize: 14,
+  frontLogoOffsetY: 0,
+  backTilt: 11,
+  backOffsetY: -6,
+  overlayStrength: 48,
+  logoRemoveBgTolerance: 236,
+  fontFamily: FONT_OPTIONS[0].value,
 };
 
 function readFileAsDataUrl(file: File) {
@@ -69,6 +95,33 @@ function InputLabel({
   );
 }
 
+function RangeField({
+  label,
+  value,
+  min,
+  max,
+  step = 1,
+  onChange,
+}: RangeFieldProps) {
+  return (
+    <label className="block space-y-2">
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-sm font-semibold text-slate-100">{label}</span>
+        <span className="text-xs text-slate-400">{value}</span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-orange-400"
+      />
+    </label>
+  );
+}
+
 function StudioInput(
   props: React.InputHTMLAttributes<HTMLInputElement> & { className?: string }
 ) {
@@ -88,35 +141,106 @@ export default function CreateDesignStudio() {
   const [textColor, setTextColor] = useState(defaultState.textColor);
   const [logoImage, setLogoImage] = useState<UploadedImage | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<UploadedImage | null>(null);
+  const [frontLogoScale, setFrontLogoScale] = useState(defaultState.frontLogoScale);
+  const [backLogoScale, setBackLogoScale] = useState(defaultState.backLogoScale);
+  const [qrScale, setQrScale] = useState(defaultState.qrScale);
+  const [nameSize, setNameSize] = useState(defaultState.nameSize);
+  const [poweredBySize, setPoweredBySize] = useState(defaultState.poweredBySize);
+  const [frontLogoOffsetY, setFrontLogoOffsetY] = useState(defaultState.frontLogoOffsetY);
+  const [backTilt, setBackTilt] = useState(defaultState.backTilt);
+  const [backOffsetY, setBackOffsetY] = useState(defaultState.backOffsetY);
+  const [overlayStrength, setOverlayStrength] = useState(defaultState.overlayStrength);
+  const [logoRemoveBackground, setLogoRemoveBackground] = useState(false);
+  const [logoRemoveBgTolerance, setLogoRemoveBgTolerance] = useState(defaultState.logoRemoveBgTolerance);
+  const [fontFamily, setFontFamily] = useState(defaultState.fontFamily);
   const [downloadingSide, setDownloadingSide] = useState<"front" | "back" | null>(null);
 
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
 
+  const [resolvedLogoSrc, setResolvedLogoSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!logoImage?.src) {
+      setResolvedLogoSrc(null);
+      return;
+    }
+
+    if (!logoRemoveBackground) {
+      setResolvedLogoSrc(logoImage.src);
+      return;
+    }
+
+    let cancelled = false;
+    const canvas = document.createElement("canvas");
+    const image = document.createElement("img");
+    image.src = logoImage.src;
+
+    image.onload = () => {
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        if (!cancelled) setResolvedLogoSrc(logoImage.src);
+        return;
+      }
+
+      ctx.drawImage(image, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const red = data[i];
+        const green = data[i + 1];
+        const blue = data[i + 2];
+        if (
+          red >= logoRemoveBgTolerance &&
+          green >= logoRemoveBgTolerance &&
+          blue >= logoRemoveBgTolerance
+        ) {
+          data[i + 3] = 0;
+        }
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      if (!cancelled) {
+        setResolvedLogoSrc(canvas.toDataURL("image/png"));
+      }
+    };
+
+    image.onerror = () => {
+      if (!cancelled) setResolvedLogoSrc(logoImage.src);
+    };
+
+    return () => {
+      cancelled = true;
+    };
+  }, [logoImage, logoRemoveBackground, logoRemoveBgTolerance]);
+
   const frontStyle = useMemo(
     () => ({
       backgroundColor: frontBackground,
       backgroundImage: backgroundImage
-        ? `linear-gradient(180deg, rgba(6,10,18,0.22), rgba(6,10,18,0.68)), url(${backgroundImage.src})`
+        ? `linear-gradient(180deg, rgba(6,10,18,${overlayStrength / 200}), rgba(6,10,18,${overlayStrength / 100})), url(${backgroundImage.src})`
         : `linear-gradient(135deg, ${frontBackground}, #141a22)`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       color: textColor,
     }),
-    [backgroundImage, frontBackground, textColor]
+    [backgroundImage, frontBackground, overlayStrength, textColor]
   );
 
   const backStyle = useMemo(
     () => ({
       backgroundColor: backBackground,
       backgroundImage: backgroundImage
-        ? `linear-gradient(180deg, rgba(4,8,15,0.26), rgba(4,8,15,0.74)), url(${backgroundImage.src})`
+        ? `linear-gradient(180deg, rgba(4,8,15,${overlayStrength / 220}), rgba(4,8,15,${overlayStrength / 90})), url(${backgroundImage.src})`
         : `linear-gradient(135deg, ${backBackground}, #141a22)`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       color: textColor,
     }),
-    [backBackground, backgroundImage, textColor]
+    [backBackground, backgroundImage, overlayStrength, textColor]
   );
 
   const handleUpload = async (
@@ -158,6 +282,18 @@ export default function CreateDesignStudio() {
     setFrontBackground(defaultState.frontBackground);
     setBackBackground(defaultState.backBackground);
     setTextColor(defaultState.textColor);
+    setFrontLogoScale(defaultState.frontLogoScale);
+    setBackLogoScale(defaultState.backLogoScale);
+    setQrScale(defaultState.qrScale);
+    setNameSize(defaultState.nameSize);
+    setPoweredBySize(defaultState.poweredBySize);
+    setFrontLogoOffsetY(defaultState.frontLogoOffsetY);
+    setBackTilt(defaultState.backTilt);
+    setBackOffsetY(defaultState.backOffsetY);
+    setOverlayStrength(defaultState.overlayStrength);
+    setLogoRemoveBackground(false);
+    setLogoRemoveBgTolerance(defaultState.logoRemoveBgTolerance);
+    setFontFamily(defaultState.fontFamily);
     setLogoImage(null);
     setBackgroundImage(null);
   };
@@ -206,7 +342,7 @@ export default function CreateDesignStudio() {
               <div>
                 <h2 className="text-xl font-semibold text-white">Design Controls</h2>
                 <p className="text-sm text-slate-400">
-                  Keep it simple and customize only what matters.
+                  Keep the clean layout, but fine-tune the details.
                 </p>
               </div>
             </div>
@@ -260,6 +396,95 @@ export default function CreateDesignStudio() {
               </div>
 
               <div className="space-y-4 rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-sm font-semibold text-white">Sizing</div>
+                <RangeField
+                  label="Front logo size"
+                  value={frontLogoScale}
+                  min={24}
+                  max={72}
+                  onChange={setFrontLogoScale}
+                />
+                <RangeField
+                  label="Back logo size"
+                  value={backLogoScale}
+                  min={14}
+                  max={42}
+                  onChange={setBackLogoScale}
+                />
+                <RangeField
+                  label="QR size"
+                  value={qrScale}
+                  min={84}
+                  max={180}
+                  onChange={setQrScale}
+                />
+                <RangeField
+                  label="Name size"
+                  value={nameSize}
+                  min={18}
+                  max={42}
+                  onChange={setNameSize}
+                />
+                <RangeField
+                  label="Powered by size"
+                  value={poweredBySize}
+                  min={10}
+                  max={22}
+                  onChange={setPoweredBySize}
+                />
+              </div>
+
+              <div className="space-y-4 rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-sm font-semibold text-white">Placement</div>
+                <RangeField
+                  label="Front logo vertical offset"
+                  value={frontLogoOffsetY}
+                  min={-20}
+                  max={20}
+                  onChange={setFrontLogoOffsetY}
+                />
+                <RangeField
+                  label="Back card angle"
+                  value={backTilt}
+                  min={-2}
+                  max={18}
+                  onChange={setBackTilt}
+                />
+                <RangeField
+                  label="Back card vertical offset"
+                  value={backOffsetY}
+                  min={-18}
+                  max={12}
+                  onChange={setBackOffsetY}
+                />
+                <RangeField
+                  label="Background overlay"
+                  value={overlayStrength}
+                  min={10}
+                  max={85}
+                  onChange={setOverlayStrength}
+                />
+              </div>
+
+              <div className="space-y-4 rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-sm font-semibold text-white">Typography</div>
+                <label className="block space-y-2">
+                  <span className="text-sm font-semibold text-slate-100">Font style</span>
+                  <select
+                    value={fontFamily}
+                    onChange={(event) => setFontFamily(event.target.value)}
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-400/70 focus:bg-white/10"
+                  >
+                    {FONT_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value} className="bg-slate-900">
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <div className="space-y-4 rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-white">
                   <Upload className="h-4 w-4 text-orange-300" />
                   Upload assets
@@ -277,6 +502,27 @@ export default function CreateDesignStudio() {
                       className="cursor-pointer file:mr-4 file:rounded-full file:border-0 file:bg-orange-400/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-orange-200"
                     />
                   </InputLabel>
+                  <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-slate-200">
+                    <input
+                      type="checkbox"
+                      checked={logoRemoveBackground}
+                      onChange={(event) => setLogoRemoveBackground(event.target.checked)}
+                      className="h-4 w-4 rounded border-white/20 bg-transparent accent-orange-400"
+                    />
+                    <span className="inline-flex items-center gap-2">
+                      <Eraser className="h-4 w-4 text-orange-300" />
+                      Remove white logo background
+                    </span>
+                  </label>
+                  {logoRemoveBackground ? (
+                    <RangeField
+                      label="Background remover tolerance"
+                      value={logoRemoveBgTolerance}
+                      min={180}
+                      max={250}
+                      onChange={setLogoRemoveBgTolerance}
+                    />
+                  ) : null}
                   <InputLabel
                     label="Background image"
                     description={backgroundImage?.name ?? "Optional full-card image"}
@@ -332,13 +578,17 @@ export default function CreateDesignStudio() {
                   style={frontStyle}
                 >
                   <div className="absolute inset-[5.5%] rounded-[24px] border border-white/25" />
-                  <div className="relative z-10 flex h-full items-center justify-center">
+                  <div
+                    className="relative z-10 flex h-full items-center justify-center"
+                    style={{ transform: `translateY(${frontLogoOffsetY}%)` }}
+                  >
                     <div className="flex w-full max-w-[52%] items-center justify-center text-center">
-                      {logoImage ? (
+                      {resolvedLogoSrc ? (
                         <img
-                          src={logoImage.src}
+                          src={resolvedLogoSrc}
                           alt="Uploaded logo"
-                          className="max-h-[48%] max-w-full object-contain"
+                          className="max-w-full object-contain"
+                          style={{ maxHeight: `${frontLogoScale}%` }}
                         />
                       ) : (
                         <div
@@ -355,17 +605,22 @@ export default function CreateDesignStudio() {
 
                 <div
                   ref={backRef}
-                  className="relative isolate ml-auto mr-[3%] mt-[-6%] aspect-[85/55] w-full max-w-[760px] rotate-[11deg] overflow-hidden rounded-[36px] border border-white/18 p-[5.4%] shadow-[0_34px_110px_rgba(0,0,0,0.5)]"
-                  style={backStyle}
+                  className="relative isolate ml-auto mr-[3%] aspect-[85/55] w-full max-w-[760px] overflow-hidden rounded-[36px] border border-white/18 p-[5.4%] shadow-[0_34px_110px_rgba(0,0,0,0.5)]"
+                  style={{
+                    ...backStyle,
+                    transform: `translateY(${backOffsetY}%) rotate(${backTilt}deg)`,
+                    transformOrigin: "center center",
+                  }}
                 >
                   <div className="absolute inset-[5.5%] rounded-[24px] border border-white/25" />
                   <div className="relative z-10 flex h-full flex-col justify-between">
                     <div className="flex items-start justify-between gap-4">
-                      {logoImage ? (
+                      {resolvedLogoSrc ? (
                         <img
-                          src={logoImage.src}
+                          src={resolvedLogoSrc}
                           alt="Uploaded logo"
-                          className="max-h-[24%] max-w-[36%] object-contain"
+                          className="max-w-[36%] object-contain"
+                          style={{ maxHeight: `${backLogoScale}%` }}
                         />
                       ) : (
                         <div className="rounded-full border border-white/20 px-3 py-2 text-[clamp(10px,1.1vw,14px)] text-white/70">
@@ -376,20 +631,27 @@ export default function CreateDesignStudio() {
                       <div className="rounded-[18px] bg-white p-[4.5%] shadow-xl">
                         <QRCode
                           value={qrUrl || "https://www.ninjacardsnfc.com"}
-                          size={132}
+                          size={qrScale}
                           fgColor="#111827"
                           bgColor="#ffffff"
-                          className="h-[clamp(70px,8vw,132px)] w-[clamp(70px,8vw,132px)]"
+                          className="h-auto w-auto"
+                          style={{ height: `${qrScale}px`, width: `${qrScale}px`, maxHeight: "32vw", maxWidth: "32vw" }}
                         />
                       </div>
                     </div>
 
                     <div className="flex items-end justify-between gap-4">
                       <div>
-                        <p className="text-[clamp(18px,2.6vw,36px)] font-semibold">
+                        <p
+                          className="font-semibold"
+                          style={{ fontSize: `clamp(18px, ${nameSize / 10}vw, ${nameSize + 8}px)`, fontFamily }}
+                        >
                           {personName}
                         </p>
-                        <p className="mt-2 text-[clamp(12px,1.05vw,16px)] text-white/85">
+                        <p
+                          className="mt-2 text-white/85"
+                          style={{ fontSize: `clamp(11px, ${poweredBySize / 14}vw, ${poweredBySize + 2}px)`, fontFamily }}
+                        >
                           Powered by Ninja Card
                         </p>
                       </div>
@@ -426,7 +688,8 @@ export default function CreateDesignStudio() {
                   <h2 className="text-lg font-semibold text-white">Ready for production handoff</h2>
                   <p className="mt-1 text-sm text-slate-400">
                     Front is centered-logo only. Back keeps the clean print
-                    structure: logo, QR, name, Ninja Card line, and NFC icon.
+                    structure: logo, QR, name, Ninja Card line, and NFC icon,
+                    but now you can tune the sizes and spacing much more deeply.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3 text-sm text-slate-300">
