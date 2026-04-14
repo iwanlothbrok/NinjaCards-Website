@@ -21,15 +21,11 @@ const CARD_RATIO = "85 / 55";
 const NFC_WAVES = [1, 2, 3];
 
 const defaultState = {
-  companyName: "Trivium Estate",
-  companyTagline: "real estate company",
-  personName: "Ivanka Gyosheva",
-  personRole: "Sales Director",
+  personName: "Martin Hristov",
   qrUrl: "https://www.ninjacardsnfc.com",
-  frontBackground: "#12263a",
-  backBackground: "#16202b",
+  frontBackground: "#20262d",
+  backBackground: "#20262d",
   textColor: "#f8fafc",
-  accentColor: "#f97316",
 };
 
 function readFileAsDataUrl(file: File) {
@@ -85,15 +81,11 @@ function StudioInput(
 }
 
 export default function CreateDesignStudio() {
-  const [companyName, setCompanyName] = useState(defaultState.companyName);
-  const [companyTagline, setCompanyTagline] = useState(defaultState.companyTagline);
   const [personName, setPersonName] = useState(defaultState.personName);
-  const [personRole, setPersonRole] = useState(defaultState.personRole);
   const [qrUrl, setQrUrl] = useState(defaultState.qrUrl);
   const [frontBackground, setFrontBackground] = useState(defaultState.frontBackground);
   const [backBackground, setBackBackground] = useState(defaultState.backBackground);
   const [textColor, setTextColor] = useState(defaultState.textColor);
-  const [accentColor, setAccentColor] = useState(defaultState.accentColor);
   const [logoImage, setLogoImage] = useState<UploadedImage | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<UploadedImage | null>(null);
   const [downloadingSide, setDownloadingSide] = useState<"front" | "back" | null>(null);
@@ -105,26 +97,26 @@ export default function CreateDesignStudio() {
     () => ({
       backgroundColor: frontBackground,
       backgroundImage: backgroundImage
-        ? `linear-gradient(180deg, rgba(6,10,18,0.28), rgba(6,10,18,0.82)), url(${backgroundImage.src})`
-        : `radial-gradient(circle at top right, ${accentColor}33, transparent 36%), linear-gradient(135deg, ${frontBackground}, #0f172a)`,
+        ? `linear-gradient(180deg, rgba(6,10,18,0.22), rgba(6,10,18,0.68)), url(${backgroundImage.src})`
+        : `linear-gradient(135deg, ${frontBackground}, #141a22)`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       color: textColor,
     }),
-    [accentColor, backgroundImage, frontBackground, textColor]
+    [backgroundImage, frontBackground, textColor]
   );
 
   const backStyle = useMemo(
     () => ({
       backgroundColor: backBackground,
       backgroundImage: backgroundImage
-        ? `linear-gradient(180deg, rgba(4,8,15,0.36), rgba(4,8,15,0.88)), url(${backgroundImage.src})`
-        : `radial-gradient(circle at bottom left, ${accentColor}30, transparent 34%), linear-gradient(135deg, ${backBackground}, #020617)`,
+        ? `linear-gradient(180deg, rgba(4,8,15,0.26), rgba(4,8,15,0.74)), url(${backgroundImage.src})`
+        : `linear-gradient(135deg, ${backBackground}, #141a22)`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       color: textColor,
     }),
-    [accentColor, backBackground, backgroundImage, textColor]
+    [backBackground, backgroundImage, textColor]
   );
 
   const handleUpload = async (
@@ -153,7 +145,7 @@ export default function CreateDesignStudio() {
 
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
-      link.download = buildDownloadName(companyName || personName, side);
+      link.download = buildDownloadName(personName, side);
       link.click();
     } finally {
       setDownloadingSide(null);
@@ -161,23 +153,19 @@ export default function CreateDesignStudio() {
   };
 
   const handleReset = () => {
-    setCompanyName(defaultState.companyName);
-    setCompanyTagline(defaultState.companyTagline);
     setPersonName(defaultState.personName);
-    setPersonRole(defaultState.personRole);
     setQrUrl(defaultState.qrUrl);
     setFrontBackground(defaultState.frontBackground);
     setBackBackground(defaultState.backBackground);
     setTextColor(defaultState.textColor);
-    setAccentColor(defaultState.accentColor);
     setLogoImage(null);
     setBackgroundImage(null);
   };
 
   return (
-    <section className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(249,115,22,0.16),_transparent_28%),linear-gradient(180deg,#020617_0%,#0f172a_42%,#020617_100%)]">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-        <div className="mb-8 rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_120px_rgba(2,6,23,0.45)] backdrop-blur md:p-8">
+    <section className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.12),_transparent_24%),linear-gradient(180deg,#050505_0%,#080808_42%,#020202_100%)]">
+      <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
+        <div className="mb-8 rounded-[28px] border border-amber-400/10 bg-white/[0.03] p-6 shadow-[0_30px_120px_rgba(2,6,23,0.45)] backdrop-blur md:p-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-orange-400/30 bg-orange-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-orange-200">
@@ -185,11 +173,11 @@ export default function CreateDesignStudio() {
                 CreateDesign Studio
               </div>
               <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-                Build a card design your client can approve instantly.
+                Build a card that looks like the real product.
               </h1>
               <p className="mt-4 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">
-                Upload the brand, tune the layout, and preview both sides of an
-                85 x 55 mm NFC business card in real time.
+                Simple layout, bigger previews, and the exact front and back
+                structure you described for an 85 x 55 mm NFC card.
               </p>
             </div>
 
@@ -209,7 +197,7 @@ export default function CreateDesignStudio() {
           </div>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+        <div className="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
           <aside className="rounded-[28px] border border-white/10 bg-slate-950/70 p-5 shadow-2xl backdrop-blur md:p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="rounded-2xl bg-orange-500/15 p-3 text-orange-200">
@@ -218,45 +206,19 @@ export default function CreateDesignStudio() {
               <div>
                 <h2 className="text-xl font-semibold text-white">Design Controls</h2>
                 <p className="text-sm text-slate-400">
-                  Brand, content, and background styling in one place.
+                  Keep it simple and customize only what matters.
                 </p>
               </div>
             </div>
 
             <div className="space-y-5">
-              <InputLabel label="Company name">
+              <InputLabel label="Name">
                 <StudioInput
-                  value={companyName}
-                  onChange={(event) => setCompanyName(event.target.value)}
-                  placeholder="Trivium Estate"
+                  value={personName}
+                  onChange={(event) => setPersonName(event.target.value)}
+                  placeholder="Martin Hristov"
                 />
               </InputLabel>
-
-              <InputLabel label="Tagline" description="Small supporting text">
-                <StudioInput
-                  value={companyTagline}
-                  onChange={(event) => setCompanyTagline(event.target.value)}
-                  placeholder="real estate company"
-                />
-              </InputLabel>
-
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputLabel label="Name">
-                  <StudioInput
-                    value={personName}
-                    onChange={(event) => setPersonName(event.target.value)}
-                    placeholder="Ivanka Gyosheva"
-                  />
-                </InputLabel>
-
-                <InputLabel label="Role">
-                  <StudioInput
-                    value={personRole}
-                    onChange={(event) => setPersonRole(event.target.value)}
-                    placeholder="Sales Director"
-                  />
-                </InputLabel>
-              </div>
 
               <InputLabel label="QR destination URL">
                 <StudioInput
@@ -292,15 +254,6 @@ export default function CreateDesignStudio() {
                     type="color"
                     value={textColor}
                     onChange={(event) => setTextColor(event.target.value)}
-                    className="h-12 cursor-pointer p-2"
-                  />
-                </InputLabel>
-
-                <InputLabel label="Accent color">
-                  <StudioInput
-                    type="color"
-                    value={accentColor}
-                    onChange={(event) => setAccentColor(event.target.value)}
                     className="h-12 cursor-pointer p-2"
                   />
                 </InputLabel>
@@ -341,87 +294,68 @@ export default function CreateDesignStudio() {
           </aside>
 
           <div className="space-y-6">
-            <div className="grid gap-6 xl:grid-cols-2">
-              <div className="rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur md:p-5">
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-                      Front
-                    </p>
-                    <h3 className="text-lg font-semibold text-white">Brand introduction</h3>
-                  </div>
+            <div className="rounded-[32px] border border-amber-400/10 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.08),_transparent_32%),linear-gradient(180deg,#0a0a0a_0%,#080808_100%)] p-5 shadow-[0_35px_120px_rgba(0,0,0,0.45)] md:p-8">
+              <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.32em] text-slate-500">
+                    Live mockup
+                  </p>
+                  <h3 className="text-2xl font-semibold text-white">Full-size card preview</h3>
+                </div>
+                <div className="flex flex-wrap gap-3">
                   <button
                     type="button"
                     onClick={() => handleDownload("front")}
                     disabled={downloadingSide !== null}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Download className="h-4 w-4" />
                     {downloadingSide === "front" ? "Rendering..." : "Export front"}
                   </button>
-                </div>
-
-                <div
-                  ref={frontRef}
-                  className="relative isolate mx-auto aspect-[85/55] w-full max-w-[780px] overflow-hidden rounded-[34px] border-2 border-white/30 p-[5.4%] shadow-[0_25px_80px_rgba(15,23,42,0.45)]"
-                  style={frontStyle}
-                >
-                  <div className="absolute inset-[5.5%] rounded-[24px] border border-white/25" />
-                  <div className="relative z-10 flex h-full items-center justify-center">
-                    <div className="flex w-full max-w-[64%] flex-col items-center justify-center text-center">
-                      {logoImage ? (
-                        <img
-                          src={logoImage.src}
-                          alt="Uploaded logo"
-                          className="max-h-[42%] max-w-full object-contain"
-                        />
-                      ) : (
-                        <div
-                          className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[clamp(11px,1.1vw,16px)] font-semibold"
-                          style={{ borderColor: `${accentColor}99`, color: textColor }}
-                        >
-                          <ImagePlus className="h-4 w-4" />
-                          Add logo
-                        </div>
-                      )}
-                      <div className="mt-[5.5%]">
-                        <p className="text-[clamp(20px,3vw,42px)] font-light uppercase tracking-[0.08em]">
-                          {companyName}
-                        </p>
-                        <p
-                          className="mt-[2.5%] text-[clamp(9px,1vw,16px)] uppercase tracking-[0.42em]"
-                          style={{ color: `${textColor}CC` }}
-                        >
-                          {companyTagline}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur md:p-5">
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-                      Back
-                    </p>
-                    <h3 className="text-lg font-semibold text-white">Contact and scan side</h3>
-                  </div>
                   <button
                     type="button"
                     onClick={() => handleDownload("back")}
                     disabled={downloadingSide !== null}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Download className="h-4 w-4" />
                     {downloadingSide === "back" ? "Rendering..." : "Export back"}
                   </button>
                 </div>
+              </div>
+
+              <div className="relative min-h-[760px] overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.08),_transparent_42%),linear-gradient(180deg,#111111_0%,#050505_100%)] px-6 py-12 sm:px-10">
+                <div className="absolute left-1/2 top-1/2 h-[540px] w-[540px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-3xl" />
+                <div
+                  ref={frontRef}
+                  className="relative isolate ml-[2%] mt-[24%] aspect-[85/55] w-full max-w-[760px] overflow-hidden rounded-[36px] border border-white/18 p-[5.4%] shadow-[0_30px_90px_rgba(0,0,0,0.45)] sm:mt-[18%]"
+                  style={frontStyle}
+                >
+                  <div className="absolute inset-[5.5%] rounded-[24px] border border-white/25" />
+                  <div className="relative z-10 flex h-full items-center justify-center">
+                    <div className="flex w-full max-w-[52%] items-center justify-center text-center">
+                      {logoImage ? (
+                        <img
+                          src={logoImage.src}
+                          alt="Uploaded logo"
+                          className="max-h-[48%] max-w-full object-contain"
+                        />
+                      ) : (
+                        <div
+                          className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[clamp(11px,1.1vw,16px)] font-semibold"
+                          style={{ borderColor: `${textColor}66`, color: textColor }}
+                        >
+                          <ImagePlus className="h-4 w-4" />
+                          Add logo
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 <div
                   ref={backRef}
-                  className="relative isolate mx-auto aspect-[85/55] w-full max-w-[780px] overflow-hidden rounded-[34px] border-2 border-white/30 p-[5.4%] shadow-[0_25px_80px_rgba(15,23,42,0.45)]"
+                  className="relative isolate ml-auto mr-[3%] mt-[-6%] aspect-[85/55] w-full max-w-[760px] rotate-[11deg] overflow-hidden rounded-[36px] border border-white/18 p-[5.4%] shadow-[0_34px_110px_rgba(0,0,0,0.5)]"
                   style={backStyle}
                 >
                   <div className="absolute inset-[5.5%] rounded-[24px] border border-white/25" />
@@ -455,13 +389,7 @@ export default function CreateDesignStudio() {
                         <p className="text-[clamp(18px,2.6vw,36px)] font-semibold">
                           {personName}
                         </p>
-                        <p
-                          className="mt-1 text-[clamp(12px,1.15vw,16px)]"
-                          style={{ color: `${textColor}CC` }}
-                        >
-                          {personRole}
-                        </p>
-                        <p className="mt-4 text-[clamp(12px,1.05vw,16px)] text-white/85">
+                        <p className="mt-2 text-[clamp(12px,1.05vw,16px)] text-white/85">
                           Powered by Ninja Card
                         </p>
                       </div>
@@ -497,8 +425,8 @@ export default function CreateDesignStudio() {
                 <div>
                   <h2 className="text-lg font-semibold text-white">Ready for production handoff</h2>
                   <p className="mt-1 text-sm text-slate-400">
-                    Use the exports as approval previews, then pass the final
-                    85 x 55 mm concept to print production.
+                    Front is centered-logo only. Back keeps the clean print
+                    structure: logo, QR, name, Ninja Card line, and NFC icon.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3 text-sm text-slate-300">
@@ -506,7 +434,7 @@ export default function CreateDesignStudio() {
                     Ratio: <span className="font-semibold text-white">{CARD_RATIO}</span>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    Assets: <span className="font-semibold text-white">Logo, portrait, background</span>
+                    Assets: <span className="font-semibold text-white">Logo, QR, background</span>
                   </div>
                 </div>
               </div>
