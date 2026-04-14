@@ -1,4 +1,5 @@
 export type FollowUpStage = 1 | 2 | 3;
+export type FollowUpLanguage = 'bg' | 'en';
 
 type BuildPromptParams = {
     stage: FollowUpStage;
@@ -86,6 +87,72 @@ Respond ONLY with valid JSON, no other text:
   "subject": "email subject line",
   "body": "full email body including greeting and sign-off"
 }`;
+}
+
+function resolveLeadGreetingName(leadName: string) {
+    return leadName.trim().split(/\s+/)[0] || leadName;
+}
+
+function resolveOwnerSignature(ownerName: string, ownerPosition?: string, ownerCompany?: string) {
+    const details = [ownerPosition, ownerCompany].filter(Boolean).join(', ');
+    return details ? `${ownerName}\n${details}` : ownerName;
+}
+
+export function buildStaticFollowUpContent(params: {
+    stage: FollowUpStage;
+    language?: string | null;
+    ownerName: string;
+    ownerPosition?: string;
+    ownerCompany?: string;
+    leadName: string;
+    leadMessage?: string;
+}): { subject: string; body: string } {
+    const language: FollowUpLanguage = params.language === 'en' ? 'en' : 'bg';
+    const firstName = resolveLeadGreetingName(params.leadName);
+    const signature = resolveOwnerSignature(params.ownerName, params.ownerPosition, params.ownerCompany);
+    const hasLeadMessage = Boolean(params.leadMessage?.trim());
+    const companyRef = params.ownerCompany ? ` at ${params.ownerCompany}` : '';
+    const companyRefBg = params.ownerCompany ? ` в ${params.ownerCompany}` : '';
+
+    if (language === 'en') {
+        switch (params.stage) {
+            case 1:
+                return {
+                    subject: `Great connecting, ${firstName}`,
+                    body: `Hi ${firstName},\n\nThank you for sharing your details with me${companyRef}. I wanted to follow up in case you have any questions or if there is anything I can help you with right away.\n\nIf it is useful, just reply here and I will gladly continue the conversation.\n\nBest,\n${signature}`,
+                };
+            case 2:
+                return {
+                    subject: `Quick follow-up from ${params.ownerName}`,
+                    body: `Hi ${firstName},\n\nI wanted to check back in after we connected${companyRef}.${hasLeadMessage ? ' I also kept your message in mind and would be happy to help with the next step.' : ' If this is still relevant for you, I would be happy to point you in the right direction.'}\n\nIf you want, reply to this email and I can send more details or suggest the best next step.\n\nBest,\n${signature}`,
+                };
+            case 3:
+            default:
+                return {
+                    subject: `Still open to connect, ${firstName}?`,
+                    body: `Hi ${firstName},\n\nJust one last gentle follow-up from my side. If this is still something you would like to discuss, I would be happy to continue whenever the timing is right for you.\n\nIf now is not the best moment, no worries at all. If you reply when ready, I will take it from there.\n\nBest,\n${signature}`,
+                };
+        }
+    }
+
+    switch (params.stage) {
+        case 1:
+            return {
+                subject: `Приятно ми беше да се свържем, ${firstName}`,
+                body: `Здравей, ${firstName},\n\nБлагодаря ти, че остави контактите си${companyRefBg}. Пиша ти с кратко последващо съобщение, в случай че имаш въпроси или има нещо, с което мога да помогна още сега.\n\nАко е удобно, просто ми отговори тук и с радост ще продължим разговора.\n\nПоздрави,\n${signature}`,
+            };
+        case 2:
+            return {
+                subject: `Кратък follow-up от ${params.ownerName}`,
+                body: `Здравей, ${firstName},\n\nИсках да се върна с кратко последващо съобщение след контакта ни${companyRefBg}.${hasLeadMessage ? ' Видях и това, което сподели, и с удоволствие бих помогнал с конкретна следваща стъпка.' : ' Ако темата все още е актуална за теб, мога да дам насока или повече информация.'}\n\nАко искаш, отговори на този имейл и ще продължим оттам.\n\nПоздрави,\n${signature}`,
+            };
+        case 3:
+        default:
+            return {
+                subject: `Да останем ли във връзка, ${firstName}?`,
+                body: `Здравей, ${firstName},\n\nИзпращам едно последно ненатрапчиво последващо съобщение от моя страна. Ако темата все още е актуална, с удоволствие ще продължим разговора, когато е удобно за теб.\n\nАко моментът не е подходящ сега, няма проблем. Пиши ми, когато решиш, и ще поема нататък.\n\nПоздрави,\n${signature}`,
+            };
+    }
 }
 
 export function parseFollowUpResponse(rawText: string): { subject: string; body: string } {

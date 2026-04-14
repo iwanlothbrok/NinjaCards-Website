@@ -3,10 +3,9 @@ import { PrismaClient } from '@prisma/client';
 import { Resend } from 'resend'; // sending emails via Resend.com API
 import {
     buildFollowUpEmail,
-    buildFollowUpPrompt,
+    buildStaticFollowUpContent,
     FollowUpStage,
     getNextFollowUpAt,
-    parseFollowUpResponse,
 } from '@/lib/leadFollowUp';
 
 const prisma = new PrismaClient();
@@ -26,50 +25,11 @@ function getNextStage(currentStage: number): FollowUpStage | null {
     return null;
 }
 
-async function generateFollowUp(params: {
-    stage: FollowUpStage;
-    ownerName: string;
-    ownerPosition?: string;
-    ownerCompany?: string;
-    leadName: string;
-    leadEmail: string;
-    leadMessage?: string;
-}): Promise<{ subject: string; body: string } | null> {
-    const prompt = buildFollowUpPrompt(params);
-
-    try {
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': process.env.ANTHROPIC_API_KEY!,
-                'anthropic-version': '2023-06-01',
-            },
-            body: JSON.stringify({
-                model: 'claude-sonnet-4-6',
-                max_tokens: 600,
-                messages: [{ role: 'user', content: prompt }],
-            }),
-        });
-
-        if (!response.ok) {
-            console.error('[follow-up] Claude API error:', await response.json().catch(() => ({})));
-            return null;
-        }
-
-        const data = await response.json();
-        const rawText = data.content?.[0]?.text ?? '';
-        return parseFollowUpResponse(rawText);
-    } catch (error) {
-        console.error('[follow-up] Failed to generate AI copy:', error);
-        return null;
-    }
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (!isAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
 
     const now = new Date();
+    const PROCESS_LIMIT = 12;
 
     try {
         const leads = await prisma.subscribed.findMany({
@@ -87,10 +47,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         lastName: true,
                         position: true,
                         company: true,
+                        language: true,
                     },
                 },
             },
             orderBy: { nextFollowUpAt: 'asc' },
+            take: PROCESS_LIMIT,
         });
 
         let checked = 0;
@@ -112,20 +74,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 [owner.firstName, owner.lastName].filter(Boolean).join(' ') ||
                 'Ninja Card';
 
-            const emailContent = await generateFollowUp({
+            const emailContent = buildStaticFollowUpContent({
                 stage,
+                language: owner.language,
                 ownerName,
                 ownerPosition: owner.position ?? undefined,
                 ownerCompany: owner.company ?? undefined,
                 leadName: lead.name,
-                leadEmail: lead.email,
                 leadMessage: lead.message ?? undefined,
             });
-
-            if (!emailContent) {
-                failed++;
-                continue;
-            }
 
             try {
                 await resend.emails.send({
@@ -155,8 +112,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 failed++;
                 console.error(`[follow-up] Failed to send to ${lead.email}:`, error);
             }
-
-            await new Promise((resolve) => setTimeout(resolve, 300));
         }
 
         return res.status(200).json({

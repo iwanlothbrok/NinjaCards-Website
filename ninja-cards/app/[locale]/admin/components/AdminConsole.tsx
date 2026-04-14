@@ -1074,10 +1074,10 @@ export default function AdminConsole() {
                                         </Section>
                                     </div>
 
-                                    <Section title="Lead Follow-up Pressure" subtitle="Leads already due for a follow-up so you can see where the pipeline is stalling.">
+                                    <Section title="Lead Follow-up Pressure" subtitle="Leads already due for a follow-up so you can see which follow-up is pending next.">
                                         <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
                                             <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
-                                                <div>Lead</div><div>Owner</div><div>Source</div><div>Next Follow-up</div><div>Stage</div><div>Contact</div>
+                                                <div>Lead</div><div>Owner</div><div>Source</div><div>Due Since</div><div>Pending</div><div>Contact</div>
                                             </div>
                                             {dashboard.followUpLeads.map((lead: any) => (
                                                 <div key={lead.id} className="grid grid-cols-6 gap-4 border-b border-white/6 px-5 py-4 text-sm text-white/75 last:border-b-0">
@@ -1085,7 +1085,7 @@ export default function AdminConsole() {
                                                     <div><div>{lead.ownerName || 'Unassigned owner'}</div><div className="text-xs text-white/45">{lead.company || lead.ownerEmail || ''}</div></div>
                                                     <div>{lead.source}</div>
                                                     <div>{fmtDate(lead.nextFollowUpAt)}</div>
-                                                    <div><Badge tone="orange">Stage {lead.followUpStage}</Badge></div>
+                                                    <div><Badge tone="orange">Stage {lead.pendingFollowUpStage ?? ((lead.followUpStage ?? 0) + 1)}</Badge></div>
                                                     <div>{lead.phone || lead.email || 'No contact detail'}</div>
                                                 </div>
                                             ))}
