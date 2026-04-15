@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { ArrowUpRight, CalendarClock, CreditCard, Crown, Funnel, KeyRound, LayoutDashboard, Loader2, LogOut, Search, ShieldCheck, TrendingUp, Users, X } from 'lucide-react';
+import { ArrowUpRight, CalendarClock, CreditCard, Crown, Funnel, KeyRound, LayoutDashboard, Loader2, LogOut, Search, Send, ShieldCheck, TrendingUp, Users, X } from 'lucide-react';
 import { Bar, Line } from 'react-chartjs-2';
 import {
     BarElement,
@@ -245,6 +245,12 @@ export default function AdminConsole() {
     const [timelineData, setTimelineData] = useState<any>(null);
     const [timelineLoading, setTimelineLoading] = useState(false);
     const [timelineError, setTimelineError] = useState<string | null>(null);
+    const [followUpSending, setFollowUpSending] = useState(false);
+    const [followUpNotice, setFollowUpNotice] = useState<string | null>(null);
+    const [followUpError, setFollowUpError] = useState<string | null>(null);
+    const [digestSending, setDigestSending] = useState(false);
+    const [digestNotice, setDigestNotice] = useState<string | null>(null);
+    const [digestError, setDigestError] = useState<string | null>(null);
 
     const sharedFilterParams = useMemo(() => {
         const params = new URLSearchParams();
@@ -466,6 +472,65 @@ export default function AdminConsole() {
     const clearUserSearch = () => {
         setQuery('');
         setAppliedQuery('');
+    };
+
+    const refreshCrmData = async () => {
+        const response = await fetch(`${BASE_API_URL}/api/admin/crm`, {
+            credentials: 'include',
+            cache: 'no-store',
+        });
+        const payload = await response.json().catch(() => null);
+        if (!response.ok) {
+            throw new Error(payload?.error || 'Failed to load CRM data');
+        }
+        setCrmData(payload);
+    };
+
+    const handleSendDueFollowUps = async () => {
+        setFollowUpSending(true);
+        setFollowUpNotice(null);
+        setFollowUpError(null);
+
+        try {
+            const response = await fetch(`${BASE_API_URL}/api/admin/follow-up`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+            const payload = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(payload?.error || 'Failed to send due follow-ups');
+            }
+
+            setFollowUpNotice(payload?.message || 'Due follow-ups processed successfully.');
+            await refreshCrmData();
+        } catch (err) {
+            setFollowUpError(err instanceof Error ? err.message : 'Failed to send due follow-ups');
+        } finally {
+            setFollowUpSending(false);
+        }
+    };
+
+    const handleSendWeeklyDigest = async () => {
+        setDigestSending(true);
+        setDigestNotice(null);
+        setDigestError(null);
+
+        try {
+            const response = await fetch(`${BASE_API_URL}/api/admin/weekly-digest`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+            const payload = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(payload?.error || 'Failed to send dashboard digest emails');
+            }
+
+            setDigestNotice(payload?.message || 'Dashboard digest emails sent successfully.');
+        } catch (err) {
+            setDigestError(err instanceof Error ? err.message : 'Failed to send dashboard digest emails');
+        } finally {
+            setDigestSending(false);
+        }
     };
 
     const currentModule = useMemo(() => modules.find((item) => item.key === activeModule) || modules[0], [activeModule]);
@@ -1631,6 +1696,28 @@ export default function AdminConsole() {
                                         <Card title="Meetings" value={String(crmData.summary.meetings)} detail="Deals that reached meeting stage" accent="text-white" />
                                         <Card title="Won Value" value={fmtMoney(crmData.summary.wonDealValue)} detail={`${crmData.summary.followUpQueue} leads waiting for follow-up`} />
                                     </div>
+                                    {(followUpNotice || followUpError) && (
+                                        <div
+                                            className={`rounded-2xl border px-5 py-4 text-sm ${
+                                                followUpError
+                                                    ? 'border-red-500/20 bg-red-500/10 text-red-200'
+                                                    : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200'
+                                            }`}
+                                        >
+                                            {followUpError || followUpNotice}
+                                        </div>
+                                    )}
+                                    {(digestNotice || digestError) && (
+                                        <div
+                                            className={`rounded-2xl border px-5 py-4 text-sm ${
+                                                digestError
+                                                    ? 'border-red-500/20 bg-red-500/10 text-red-200'
+                                                    : 'border-cyan-500/20 bg-cyan-500/10 text-cyan-100'
+                                            }`}
+                                        >
+                                            {digestError || digestNotice}
+                                        </div>
+                                    )}
                                     <Section title="Recent Leads" subtitle="Newest lead captures across the user base.">
                                         <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
                                             <div className="grid grid-cols-4 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
@@ -1645,7 +1732,32 @@ export default function AdminConsole() {
                                             ))}
                                         </div>
                                     </Section>
-                                    <Section title="Recently Updated Deals" subtitle="The CRM deals your team touched most recently.">
+                                    <Section
+                                        title="Recently Updated Deals"
+                                        subtitle="The CRM deals your team touched most recently."
+                                        actions={
+                                            <div className="flex flex-wrap items-center justify-end gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => void handleSendWeeklyDigest()}
+                                                    disabled={digestSending}
+                                                    className="inline-flex items-center gap-2 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:border-cyan-300/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                                                >
+                                                    {digestSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CalendarClock className="h-4 w-4" />}
+                                                    {digestSending ? 'Sending dashboard digest...' : 'Send last 2 weeks digest'}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => void handleSendDueFollowUps()}
+                                                    disabled={followUpSending}
+                                                    className="inline-flex items-center gap-2 rounded-2xl border border-orange/20 bg-orange/10 px-4 py-3 text-sm font-semibold text-orange transition hover:border-orange/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                                                >
+                                                    {followUpSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                                                    {followUpSending ? 'Sending follow-ups...' : 'Send due follow-ups'}
+                                                </button>
+                                            </div>
+                                        }
+                                    >
                                         <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#0d1319]">
                                             <div className="grid grid-cols-6 gap-4 border-b border-white/8 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/35">
                                                 <div>Deal</div><div>Owner</div><div>Lead</div><div>Stage</div><div>Value</div><div>Updated</div>

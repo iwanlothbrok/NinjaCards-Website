@@ -29,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 prisma.subscribed.count({
                     where: {
                         followUpStopped: false,
+                        followUpStage: { lt: 3 },
                         nextFollowUpAt: { lte: now },
                     },
                 }),
