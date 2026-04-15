@@ -31,7 +31,7 @@ function buildInsight(params: {
 
 function buildEmail(params: {
     name: string;
-    weekLabel: string;
+    periodLabel: string;
     visits: number;
     downloads: number;
     shares: number;
@@ -42,7 +42,7 @@ function buildEmail(params: {
     insight: string;
     profileUrl: string;
 }) {
-    const { name, weekLabel, visits, downloads, shares, clicks, leads, prevVisits, prevLeads, insight, profileUrl } = params;
+    const { name, periodLabel, visits, downloads, shares, clicks, leads, prevVisits, prevLeads, insight, profileUrl } = params;
     const firstName = name.split(' ')[0];
 
     const delta = (curr: number, prev: number) => {
@@ -70,7 +70,7 @@ function buildEmail(params: {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Двуседмичен отчет — Ninja Card</title>
+  <title>Двуседмична аналитика — Ninja Card</title>
 </head>
 <body style="margin:0;padding:0;background:#0a0a0f;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0f;padding:40px 16px">
@@ -80,8 +80,8 @@ function buildEmail(params: {
           <div style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#f59e0bcc);border-radius:12px;padding:10px 18px;margin-bottom:20px">
             <span style="font-size:13px;font-weight:900;color:#000;letter-spacing:0.15em;text-transform:uppercase">⚡ Ninja Card</span>
           </div>
-          <h1 style="margin:0;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em">Двуседмичен отчет</h1>
-          <p style="margin:8px 0 0;font-size:13px;color:#555;font-weight:500">${weekLabel}</p>
+          <h1 style="margin:0;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em">Двуседмична аналитика</h1>
+          <p style="margin:8px 0 0;font-size:13px;color:#555;font-weight:500">${periodLabel}</p>
         </td></tr>
         <tr><td style="height:3px;background:linear-gradient(90deg,transparent,#f59e0b,transparent)"></td></tr>
         <tr><td style="background:#0e1017;border-left:1px solid rgba(255,255,255,0.07);border-right:1px solid rgba(255,255,255,0.07);padding:32px 40px 8px">
@@ -125,7 +125,7 @@ export async function processWeeklyDigest(params?: { limit?: number }) {
     const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
     const limit = params?.limit ?? 100;
     const fmt = (d: Date) => d.toLocaleDateString('bg-BG', { day: 'numeric', month: 'long' });
-    const weekLabel = `${fmt(twoWeeksAgo)} – ${fmt(now)} ${now.getFullYear()}`;
+    const periodLabel = `${fmt(twoWeeksAgo)} – ${fmt(now)} ${now.getFullYear()}`;
 
     try {
         const users = await prisma.user.findMany({
@@ -177,7 +177,7 @@ export async function processWeeklyDigest(params?: { limit?: number }) {
             const profileUrl = `${process.env.NEXT_PUBLIC_BASE_URL || process.env.FRONTEND_URL || 'https://app.ninjacardsnfc.com'}/profile`;
             const html = buildEmail({
                 name,
-                weekLabel,
+                periodLabel,
                 visits,
                 downloads,
                 shares,
@@ -193,18 +193,18 @@ export async function processWeeklyDigest(params?: { limit?: number }) {
                 await resend.emails.send({
                     from: 'Ninja Card <reports@ninjacardsnfc.com>',
                     to: user.email,
-                    subject: `📊 Двуседмичен отчет — ${visits} посещения, ${leads} лийда`,
+                    subject: `📊 Двуседмична аналитика — ${visits} посещения, ${leads} лийда`,
                     html,
                 });
                 sent++;
                 processedUserIds.push(user.id);
             } catch (error) {
                 failed++;
-                console.error(`[weekly-digest] Failed to send to ${user.email}:`, error);
+                console.error(`[biweekly-analytics] Failed to send to ${user.email}:`, error);
             }
         }
 
-        return { checked, sent, failed, processedUserIds, weekLabel };
+        return { checked, sent, failed, processedUserIds, periodLabel };
     } finally {
         await prisma.$disconnect();
     }

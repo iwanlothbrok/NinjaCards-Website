@@ -20,10 +20,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             message:
                 result.sent === 0
                     ? 'No active users were found for the last 2 weeks.'
-                    : `Sent ${result.sent} dashboard digest email(s) for ${result.weekLabel}.`,
+                    : `Sent ${result.sent} analytics email(s) for ${result.periodLabel}.`,
         });
     } catch (error) {
         console.error('[admin weekly-digest]', error);
-        return res.status(500).json({ error: 'Failed to send weekly digest emails' });
+        return res.status(500).json({ error: 'Failed to send biweekly analytics emails' });
     }
 }
