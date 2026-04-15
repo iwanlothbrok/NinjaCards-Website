@@ -1,0 +1,34 @@
+name: Send Follow-Ups
+
+on:
+  schedule:
+    - cron: "5 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: send-follow-ups
+  cancel-in-progress: false
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Validate secrets
+        env:
+          AUTOMATION_BASE_URL: ${{ secrets.AUTOMATION_BASE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          test -n "$AUTOMATION_BASE_URL" || { echo "Missing secret: AUTOMATION_BASE_URL"; exit 1; }
+          test -n "$CRON_SECRET" || { echo "Missing secret: CRON_SECRET"; exit 1; }
+
+      - name: Trigger follow-up sender
+        env:
+          AUTOMATION_BASE_URL: ${{ secrets.AUTOMATION_BASE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl --fail-with-body --show-error --silent \
+            -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            "$AUTOMATION_BASE_URL/api/cron/follow-up"
