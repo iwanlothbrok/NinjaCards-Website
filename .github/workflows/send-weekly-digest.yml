@@ -14,7 +14,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Decide whether this is a biweekly run
+        id: cadence
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run_digest=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          WEEK_NUMBER=$(date -u +%V)
+          if [ $((10#$WEEK_NUMBER % 2)) -eq 0 ]; then
+            echo "run_digest=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_digest=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Validate secrets
+        if: steps.cadence.outputs.run_digest == 'true'
         env:
           AUTOMATION_BASE_URL: ${{ secrets.AUTOMATION_BASE_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
@@ -23,6 +39,7 @@ jobs:
           test -n "$CRON_SECRET" || { echo "Missing secret: CRON_SECRET"; exit 1; }
 
       - name: Trigger weekly digest sender
+        if: steps.cadence.outputs.run_digest == 'true'
         env:
           AUTOMATION_BASE_URL: ${{ secrets.AUTOMATION_BASE_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
@@ -32,3 +49,7 @@ jobs:
             -H "Authorization: Bearer $CRON_SECRET" \
             -H "Content-Type: application/json" \
             "$AUTOMATION_BASE_URL/api/cron/weekly-digest"
+
+      - name: Skip this off-week run
+        if: steps.cadence.outputs.run_digest != 'true'
+        run: echo "Skipping digest this week because the biweekly cadence is not due."
