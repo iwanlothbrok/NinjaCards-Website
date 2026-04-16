@@ -389,18 +389,22 @@ export default function SalesLandingPage({ locale, source = "lp" }: Props) {
 
   return (
     <div className="bg-[#08090d] text-white">
-      <section className="relative overflow-hidden px-4 pb-16 pt-24 sm:px-6 lg:px-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(251,146,60,0.18),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,0.16),_transparent_26%)]" />
+      <section className="relative overflow-hidden px-4 pb-18 pt-20 sm:px-6 lg:px-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(251,146,60,0.22),transparent_24%),radial-gradient(circle_at_88%_20%,rgba(56,189,248,0.15),transparent_22%),linear-gradient(180deg,rgba(8,9,13,0.4),rgba(8,9,13,0.94))]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-transparent" />
         <div className="relative mx-auto max-w-7xl">
-          <div className="mb-6 inline-flex rounded-full border border-amber-400/25 bg-amber-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-amber-200">
+          <div className="mb-6 inline-flex rounded-full border border-amber-400/20 bg-black/25 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-200/90 backdrop-blur-md">
             {t.heroEyebrow}
           </div>
-          <div className="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
-            <div>
-              <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.04em] sm:text-6xl lg:text-7xl">
+          <div className="grid min-h-[calc(100svh-9rem)] items-center gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-20">
+            <div className="max-w-2xl">
+              <div className="mb-4 text-sm font-medium uppercase tracking-[0.32em] text-slate-500">
+                NinjaCards
+              </div>
+              <h1 className="max-w-4xl text-[3.4rem] font-black leading-[0.86] tracking-[-0.075em] text-white sm:text-[4.8rem] lg:text-[6.1rem]">
                 {t.heroTitle}
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
                 {t.heroSubtitle}
               </p>
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -411,142 +415,62 @@ export default function SalesLandingPage({ locale, source = "lp" }: Props) {
                   {t.talkSales}
                 </SalesCtaButton>
               </div>
-              <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-300">
+              <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] font-medium uppercase tracking-[0.22em] text-slate-500">
                 {t.trust.map((item) => (
-                  <span key={item} className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
+                  <span key={item} className="relative pr-5 last:pr-0 last:after:hidden after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-white/10">
                     {item}
                   </span>
                 ))}
               </div>
+              <div className="mt-10 max-w-lg border-l border-white/10 pl-5">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+                  {l === "bg" ? "Реален продукт" : "Real product"}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-slate-300">
+                  {l === "bg"
+                    ? "Първият екран показва реалния профил, който клиентът вижда след tap върху картата ти. Няма фалшив UI, само истинския продукт."
+                    : "The first screen shows the real profile your prospect sees after tapping your card. No fake UI, just the real product."}
+                </p>
+              </div>
             </div>
 
-            <div className="relative">
-              <div className="grid gap-5 lg:grid-cols-[0.72fr_0.9fr]">
-                <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-black p-4 shadow-[0_30px_100px_rgba(0,0,0,0.4)]">
-                  <div className="mx-auto w-[290px] rounded-[2.6rem] border border-white/10 bg-[#04070c] p-3 shadow-[0_20px_80px_rgba(0,0,0,0.5)]">
-                    <div className="rounded-[2rem] border border-white/10 bg-[#0b1018] p-3">
-                      <div className="mb-3 flex items-center justify-between px-2 text-[11px] text-slate-400">
-                        <span>9:41</span>
-                        <span>{l === "bg" ? "Live demo" : "Live demo"}</span>
-                      </div>
-                      <div className="h-[520px] overflow-y-auto rounded-[1.7rem] border border-white/8 bg-gradient-to-b from-[#121926] to-[#090d15] p-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
-                        <div className="rounded-[1.4rem] bg-gradient-to-br from-amber-500/35 via-orange-400/15 to-cyan-400/10 p-[1px]">
-                          <div className="rounded-[1.35rem] bg-[#0b1119] p-4">
-                            <div className="mb-4 flex items-center gap-3">
-                              <div className="h-14 w-14 overflow-hidden rounded-2xl border border-white/10">
-                                <img src="/navlogo.png" alt="NinjaCards profile" className="h-full w-full object-cover" />
-                              </div>
-                              <div>
-                                <div className="text-lg font-semibold text-white">NinjaCards</div>
-                                <div className="text-sm text-amber-200">
-                                  {l === "bg" ? "Digital business profile" : "Digital business profile"}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="rounded-2xl bg-white/5 p-3 text-sm text-slate-300">
-                              {l === "bg"
-                                ? "Това е preview на профила вътре в телефона. Потребителят може да scroll-ва и да види как изглежда реалното networking изживяване."
-                                : "This is an in-phone profile preview. Users can scroll and see how the real networking experience feels."}
-                            </div>
-                          </div>
-                        </div>
+            <div className="relative flex items-center justify-center lg:justify-end">
+              <div className="absolute right-[10%] top-[8%] hidden h-56 w-56 rounded-full bg-cyan-400/10 blur-3xl lg:block" />
+              <div className="absolute bottom-[10%] left-[4%] hidden h-64 w-64 rounded-full bg-amber-500/12 blur-3xl lg:block" />
 
-                        <div className="mt-4 grid gap-3">
-                          {[
-                            l === "bg" ? "Запази контакт" : "Save contact",
-                            l === "bg" ? "Изпрати запитване" : "Send inquiry",
-                            l === "bg" ? "Отвори сайта" : "Open website",
-                          ].map((cta) => (
-                            <div key={cta} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-slate-100">
-                              {cta}
-                            </div>
-                          ))}
-                        </div>
+              <div className="relative w-full max-w-[720px]">
+                <div className="mx-auto mb-6 flex max-w-[420px] items-center justify-between text-xs uppercase tracking-[0.24em] text-slate-500 lg:mr-8">
+                  <span>{l === "bg" ? "Live preview" : "Live preview"}</span>
+                  <span>/p/ivan</span>
+                </div>
 
-                        <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
-                          <div className="text-xs uppercase tracking-[0.22em] text-slate-500">
-                            {l === "bg" ? "Lead capture" : "Lead capture"}
-                          </div>
-                          <div className="mt-2 text-lg font-semibold text-white">
-                            {l === "bg" ? "Ново запитване е записано" : "New inquiry captured"}
-                          </div>
-                          <div className="mt-3 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
-                            {l === "bg"
-                              ? "Physical tap -> profile view -> digital lead"
-                              : "Physical tap -> profile view -> digital lead"}
-                          </div>
-                        </div>
+                <div className="relative mx-auto w-[330px] rounded-[3.3rem] border border-white/10 bg-[#02050b] p-3 shadow-[0_48px_140px_rgba(0,0,0,0.72)] sm:w-[380px] lg:mr-0 lg:rotate-[4deg]">
+                  <div className="absolute inset-x-12 top-3 h-10 rounded-full bg-gradient-to-r from-white/10 via-white/4 to-white/10 blur-xl" />
+                  <div className="pointer-events-none absolute inset-0 rounded-[3.3rem] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.16),transparent_20%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_45%)]" />
+                  <div className="rounded-[2.9rem] border border-white/10 bg-[linear-gradient(180deg,#050912,#0b1320)] p-3">
+                    <div className="mb-3 flex items-center justify-between px-3 text-[11px] text-slate-500">
+                      <span>9:41</span>
+                      <span>{l === "bg" ? "Профил /p/ivan" : "Profile /p/ivan"}</span>
+                    </div>
 
-                        <div className="mt-5 grid gap-3">
-                          {[
-                            l === "bg" ? "Instagram" : "Instagram",
-                            l === "bg" ? "LinkedIn" : "LinkedIn",
-                            l === "bg" ? "WhatsApp" : "WhatsApp",
-                            l === "bg" ? "Calendar booking" : "Calendar booking",
-                          ].map((linkItem) => (
-                            <div key={linkItem} className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#0f1520] px-4 py-3">
-                              <span className="text-sm text-slate-200">{linkItem}</span>
-                              <span className="text-xs text-slate-500">open</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                    <div className="relative overflow-hidden rounded-[2.3rem] border border-white/10 bg-black">
+                      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-14 bg-gradient-to-b from-black/35 to-transparent" />
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-black/35 to-transparent" />
+                      <div className="pointer-events-none absolute left-1/2 top-3 z-20 h-1.5 w-24 -translate-x-1/2 rounded-full bg-white/20" />
+                      <iframe
+                        src={l === "bg" ? "/bg/p/ivan" : "/en/p/ivan"}
+                        title="NinjaCards Ivan profile preview"
+                        className="h-[680px] w-full bg-white"
+                      />
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-5">
-                  <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-slate-900 to-[#090d15] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-                    <div className="mb-3 flex items-center justify-between">
-                      <div>
-                        <div className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">
-                          {l === "bg" ? "Card design" : "Card design"}
-                        </div>
-                        <div className="mt-2 text-2xl font-bold">
-                          {l === "bg" ? "Създай визията си" : "Build your card look"}
-                        </div>
-                      </div>
-                      <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
-                        {l === "bg" ? "Next step" : "Next step"}
-                      </div>
-                    </div>
-
-                    <div className="rounded-[1.5rem] border border-white/10 bg-[#0c1118] p-4">
-                      <div className="relative overflow-hidden rounded-[1.3rem] border border-amber-300/15 bg-gradient-to-br from-[#1b2430] to-[#0a0f15] p-3">
-                        <img src="/cards/wa-front-back.png" alt="Card design preview" className="h-44 w-full rounded-2xl object-cover object-center opacity-95" />
-                        <div className="absolute inset-x-4 bottom-4 rounded-xl border border-white/10 bg-black/45 px-3 py-2 text-xs text-slate-100 backdrop-blur-md">
-                          {l === "bg"
-                            ? "Live card preview с материали, цветове и персонализация"
-                            : "Live card preview with materials, colors and personalization"}
-                        </div>
-                      </div>
-
-                      <div className="mt-4 grid grid-cols-4 gap-3">
-                        {["#f59e0b", "#f97316", "#0f172a", "#38bdf8"].map((tone) => (
-                          <div key={tone} className="h-9 rounded-full border border-white/10" style={{ backgroundColor: tone }} />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="rounded-[2rem] border border-white/10 bg-white/5 p-5">
-                    <div className="text-xs uppercase tracking-[0.26em] text-amber-300/80">
-                      {l === "bg" ? "Demo flow" : "Demo flow"}
-                    </div>
-                    <div className="mt-4 space-y-3">
-                      {[
-                        l === "bg" ? "1. Картата отваря профила" : "1. The card opens the profile",
-                        l === "bg" ? "2. Човекът scroll-ва и разглежда" : "2. The visitor scrolls and explores",
-                        l === "bg" ? "3. Lead form-ът запазва контакта" : "3. The lead form stores the contact",
-                        l === "bg" ? "4. После правиш своя дизайн" : "4. Then you build your own design",
-                      ].map((step) => (
-                        <div key={step} className="rounded-2xl border border-white/10 bg-[#0d121a] px-4 py-3 text-sm text-slate-200">
-                          {step}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <p className="mx-auto mt-7 max-w-[380px] text-center text-sm leading-7 text-slate-400">
+                  {l === "bg"
+                    ? "Един tap. Истински профил. Реален шанс за разговор."
+                    : "One tap. A real profile. A real chance to start a conversation."}
+                </p>
               </div>
             </div>
           </div>
