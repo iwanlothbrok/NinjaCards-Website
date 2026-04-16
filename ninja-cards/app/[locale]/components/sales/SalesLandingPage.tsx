@@ -357,7 +357,10 @@ export default function SalesLandingPage({ locale, source = "lp" }: Props) {
   );
 
   const handleSalesClick = () => {
-    router.push(`/contact?intent=enterprise-bulk&source=${source}`);
+    router.push({
+      pathname: "/contact",
+      query: { intent: "enterprise-bulk", source },
+    });
   };
 
   const handleCheckout = async (plan: "PRO" | "TEAMS") => {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
 import { useAuth } from "../../context/AuthContext";
 import { BASE_API_URL } from "@/utils/constants";
 import type { Subscription } from "@/types/subscription";
@@ -39,7 +39,7 @@ function formatStatus(status?: string | undefined) {
 
 export default function AccountBillingPage() {
     const { user } = useAuth();
-    const searchParams = useSearchParams();
+    const locale = useLocale();
     const [me, setMe] = useState<MeResponse | null>(null);
     const [invoices, setInvoices] = useState<InvoiceItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -49,14 +49,17 @@ export default function AccountBillingPage() {
     const t = useTranslations("Billing");
 
     useEffect(() => {
-        const cardOrderState = searchParams.get("cardOrder");
+        const cardOrderState =
+            typeof window !== "undefined"
+                ? new URLSearchParams(window.location.search).get("cardOrder")
+                : null;
         if (cardOrderState === "success") {
             toast.success("Card checkout completed. We queued your personalized card for fulfillment.");
         }
         if (cardOrderState === "cancelled") {
             toast("Card checkout was cancelled.");
         }
-    }, [searchParams]);
+    }, []);
 
     const fetchMe = async (userId: string) => {
         try {

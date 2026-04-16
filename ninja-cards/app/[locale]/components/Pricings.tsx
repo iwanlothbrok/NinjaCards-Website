@@ -220,7 +220,10 @@ export default function Pricing() {
                                     {t("enterprise.description") || "Talk to sales for custom rollout plans, bulk card volumes and company onboarding."}
                                 </p>
                                 <Link
-                                    href="/contact?intent=enterprise-bulk&source=homepage-pricing"
+                                    href={{
+                                        pathname: "/contact",
+                                        query: { intent: "enterprise-bulk", source: "homepage-pricing" },
+                                    }}
                                     className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-orange to-amber-500 text-black font-bold text-base shadow-2xl shadow-amber-500/50 border-2 border-amber-300 transition-all duration-300 overflow-hidden hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400"
                                 >
                                     <span className="relative z-10 flex items-center justify-center gap-2">
