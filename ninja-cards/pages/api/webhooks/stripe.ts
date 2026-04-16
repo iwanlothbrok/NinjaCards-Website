@@ -4,6 +4,7 @@ import { buffer } from "micro";
 import Stripe from "stripe";
 import { PrismaClient } from "@prisma/client";
 import { Resend } from "resend";
+import { getCanonicalPlanId, mapStripePriceIdToLegacyPlan } from "@/lib/planCatalog";
 
 const prisma = new PrismaClient();
 const resend = new Resend(process.env.RESEND_API_KEY!);
@@ -132,10 +133,40 @@ function mapStripeStatus(s: Stripe.Subscription.Status): LocalStatus {
 }
 
 function mapPriceToPlan(priceId?: string | null): "SHINOBI" | "SAMURAI" | "SHOGUN" {
-    if (!priceId) return "SHINOBI";
-    if (priceId === process.env.STRIPE_PRICE_SHOGUN) return "SHOGUN";
-    if (priceId === process.env.STRIPE_PRICE_SAMURAI) return "SAMURAI";
-    return "SHINOBI";
+    return mapStripePriceIdToLegacyPlan(priceId);
+}
+
+async function createCardOrderContact(opts: {
+    userId: string;
+    email: string | null;
+    phone?: string | null;
+    name?: string | null;
+    type: "personalized";
+    canonicalPlan: string;
+    paid: boolean;
+}) {
+    const contactEmail = opts.email ?? `user+${opts.userId}@ninjacards.local`;
+    const subject = `CARD_REQUEST|${opts.type}|user:${opts.userId}|plan:${opts.canonicalPlan}|paid:${opts.paid ? "yes" : "no"}`;
+
+    const existing = await prisma.contact.findFirst({
+        where: {
+            email: contactEmail,
+            subject: {
+                startsWith: `CARD_REQUEST|${opts.type}|user:${opts.userId}`,
+            },
+        },
+    });
+
+    if (existing) return existing;
+
+    return prisma.contact.create({
+        data: {
+            name: opts.name || "NinjaCards user",
+            email: contactEmail,
+            phone: opts.phone ?? null,
+            subject,
+        },
+    });
 }
 
 function getPriceIdFromSubscription(sub: Stripe.Subscription): string | null {
@@ -286,6 +317,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     metaUserId: session.metadata?.userId,
                 });
 
+                if (session.mode === "payment") {
+                    const purchaseType = session.metadata?.purchaseType;
+                    const metaUserId = session.metadata?.userId?.trim() || null;
+
+                    if (purchaseType === "personalized_card" && metaUserId) {
+                        const user = await prisma.user.findUnique({
+                            where: { id: metaUserId },
+                            include: { subscription: true },
+                        });
+
+                        if (!user) {
+                            await dbLog(event.id, "PAYMENT_CARD_USER_NOT_FOUND", { metaUserId });
+                            break;
+                        }
+
+                        await createCardOrderContact({
+                            userId: user.id,
+                            email: user.email ?? null,
+                            phone: user.phone1 ?? null,
+                            name: user.name || [user.firstName, user.lastName].filter(Boolean).join(" "),
+                            type: "personalized",
+                            canonicalPlan: getCanonicalPlanId(user.subscription?.plan),
+                            paid: true,
+                        });
+
+                        await dbLog(event.id, "PAYMENT_CARD_REQUEST_CREATED", {
+                            userId: user.id,
+                            purchaseType,
+                        });
+                    } else {
+                        await dbLog(event.id, "SKIP_UNHANDLED_PAYMENT_CHECKOUT", {
+                            purchaseType,
+                            hasUserId: Boolean(metaUserId),
+                        });
+                    }
+
+                    break;
+                }
+
                 if (session.mode !== "subscription") {
                     await dbLog(event.id, "SKIP_NOT_SUBSCRIPTION", { mode: session.mode });
                     break;
@@ -335,6 +405,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 const priceId = getPriceIdFromSubscription(stripeSub);
                 const planEnum = mapPriceToPlan(priceId);
+                const canonicalPlan = getCanonicalPlanId(planEnum);
                 const localStatus = mapStripeStatus(stripeSub.status);
 
                 const startDate = (() => {
@@ -393,7 +464,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     try {
                         await sendPaymentSuccessEmail({
                             to: emailFromStripe,
-                            plan: planEnum,
+                            plan: canonicalPlan,
                             amountMinor: 0,
                             currency: "eur",
                             isNewUser,
@@ -484,7 +555,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if (isRenewal && userEmail && sub) {
                     try {
                         await sendPaymentSuccessEmail({
-                            to: userEmail, plan: sub.plan,
+                            to: userEmail, plan: getCanonicalPlanId(sub.plan),
                             amountMinor: amountPaidCents, currency,
                             invoiceUrl: hostedUrl, isNewUser: false,
                         });

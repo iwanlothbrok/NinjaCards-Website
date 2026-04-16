@@ -1,14 +1,9 @@
 import { PlanType } from "@prisma/client";
+import { getMaxLinksForPlan } from "./planCatalog";
 
 export function canAddNewLink(
     plan: PlanType,
     usedLinks: number
 ): boolean {
-    const limits: Record<string, number> = {
-        SHINOBI: 3,
-        SAMURAI: 20,
-        SHOGUN: 999,
-    };
-
-    return usedLinks < (limits[plan] ?? 3);
+    return usedLinks < getMaxLinksForPlan(plan);
 }

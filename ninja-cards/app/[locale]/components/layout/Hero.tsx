@@ -88,13 +88,13 @@ export const Hero: React.FC = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
                 >
-                    <Link href="/plans">
+                    <Link href="/lp-1">
                         <button className="relative bg-gradient-to-r from-orange to-yellow-600 text-white px-10 py-5 rounded-full text-lg font-bold shadow-2xl hover:shadow-orange/50 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-orange/50 backdrop-blur-sm">
                             <span className="relative z-10">{t("hero.buyNow")}</span>
                             <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-orange opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-full blur-sm" />
                         </button>
                     </Link>
-                    <Link href="/features">
+                    <Link href="/lp-1">
                         <button className="relative bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-10 py-5 rounded-full text-lg font-bold shadow-2xl hover:bg-white/20 hover:border-white/50 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-white/30">
                             {t("hero.learnMore")}
                         </button>

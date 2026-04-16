@@ -16,6 +16,7 @@ import {
   type ProfileTabDef,
   resolveProfileHref,
 } from './profileNavigation';
+import MonetizationStatusPanel from '../components/profile/MonetizationStatusPanel';
 
 export default function ProfileTabs() {
   const { user, loading } = useAuth()
@@ -108,6 +109,8 @@ export default function ProfileTabs() {
           </motion.button>
 
           {/* ── BIG 6 — 2 колони, огромен touch target ── */}
+          <MonetizationStatusPanel />
+
           <div className="grid grid-cols-2 gap-3">
             {PROFILE_BIG_TABS.map((tab, i) => {
               const disabled = !tab.href && !userId

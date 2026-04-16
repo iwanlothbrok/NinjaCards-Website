@@ -27,9 +27,40 @@ export default function DataExportPage() {
     const [loading, setLoading] = useState(false)
     const [done, setDone] = useState(false)
     const [error, setError] = useState('')
+    const [canExport, setCanExport] = useState<boolean | null>(null)
+    const [upgradeReason, setUpgradeReason] = useState('')
+
+    React.useEffect(() => {
+        if (!user?.id) return
+
+        const loadEntitlements = async () => {
+            try {
+                const res = await fetch(`${BASE_API_URL}/api/subscription/me`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user.id }),
+                })
+                const data = await res.json().catch(() => ({}))
+                const exportAllowed = Boolean(data?.entitlements?.canExportLeads)
+                setCanExport(exportAllowed)
+                if (!exportAllowed) {
+                    setUpgradeReason('Export is available on Pro and Teams plans.')
+                }
+            } catch {
+                setCanExport(false)
+                setUpgradeReason('Could not verify your plan right now.')
+            }
+        }
+
+        void loadEntitlements()
+    }, [user?.id])
 
     const handleExport = async () => {
         if (!user?.id) return
+        if (canExport === false) {
+            setError(upgradeReason || 'Export is available on Pro and Teams plans.')
+            return
+        }
         setLoading(true)
         setDone(false)
         setError('')
@@ -95,6 +126,27 @@ export default function DataExportPage() {
                         {t('title')}
                     </h1>
                 </motion.header>
+
+                {canExport === false && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] px-5 py-4"
+                    >
+                        <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-amber-400/75 mb-1">
+                            Pro Feature
+                        </p>
+                        <p className="text-sm text-amber-100/85 leading-relaxed">
+                            {upgradeReason}
+                        </p>
+                        <button
+                            onClick={() => { window.location.href = '/lp-1'; }}
+                            className="mt-4 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-bold text-black transition hover:bg-amber-400"
+                        >
+                            Upgrade to Pro
+                        </button>
+                    </motion.div>
+                )}
 
                 {/* ── Error banner ── */}
                 <AnimatePresence>
@@ -204,11 +256,11 @@ export default function DataExportPage() {
                 >
                     <button
                         onClick={handleExport}
-                        disabled={loading}
+                        disabled={loading || canExport === false}
                         className="w-full py-3.5 rounded-xl border border-blue-500/30 text-white font-semibold text-sm transition-all duration-200 shadow-lg shadow-blue-500/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2.5"
                         style={{ background: loading ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.2)' }}
-                        onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(59,130,246,0.28)' }}
-                        onMouseLeave={e => { if (!loading) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(59,130,246,0.2)' }}
+                        onMouseEnter={e => { if (!loading && canExport !== false) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(59,130,246,0.28)' }}
+                        onMouseLeave={e => { if (!loading && canExport !== false) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(59,130,246,0.2)' }}
                     >
                         {loading ? (
                             <><SpinnerIcon /> {t('downloadingButton')}</>

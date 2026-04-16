@@ -1,9 +1,9 @@
 import SalesLandingPage from "../components/sales/SalesLandingPage";
 
-export default function PlansPage({
+export default function LP1Page({
   params: { locale },
 }: {
   params: { locale: string };
 }) {
-  return <SalesLandingPage locale={locale} source="plans" />;
+  return <SalesLandingPage locale={locale} source="lp" />;
 }

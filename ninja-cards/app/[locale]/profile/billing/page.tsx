@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { BASE_API_URL } from "@/utils/constants";
 import type { Subscription } from "@/types/subscription";
 import type { Invoice as InvoiceItem } from "@/types/invoice";
 import { toast } from "react-hot-toast";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
+import { getCanonicalPlanId, getPlanDisplayName } from "@/lib/planCatalog";
+import MonetizationStatusPanel from "../../components/profile/MonetizationStatusPanel";
 
 type MeResponse = {
     userId: string;
@@ -36,6 +39,7 @@ function formatStatus(status?: string | undefined) {
 
 export default function AccountBillingPage() {
     const { user } = useAuth();
+    const searchParams = useSearchParams();
     const [me, setMe] = useState<MeResponse | null>(null);
     const [invoices, setInvoices] = useState<InvoiceItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -43,7 +47,16 @@ export default function AccountBillingPage() {
     const [error, setError] = useState<string | null>(null);
 
     const t = useTranslations("Billing");
-    const locale = useLocale();
+
+    useEffect(() => {
+        const cardOrderState = searchParams.get("cardOrder");
+        if (cardOrderState === "success") {
+            toast.success("Card checkout completed. We queued your personalized card for fulfillment.");
+        }
+        if (cardOrderState === "cancelled") {
+            toast("Card checkout was cancelled.");
+        }
+    }, [searchParams]);
 
     const fetchMe = async (userId: string) => {
         try {
@@ -109,6 +122,8 @@ export default function AccountBillingPage() {
 
     const sub = me?.subscription;
     const isActive = sub && (["active", "trialing"] as unknown as Array<typeof sub.status>).includes(sub.status);
+    const canonicalPlan = getCanonicalPlanId(sub?.plan);
+    const displayPlan = getPlanDisplayName(sub?.plan);
 
     return (
         <>
@@ -168,12 +183,12 @@ export default function AccountBillingPage() {
                             {sub?.plan && (
                                 <p className="mt-4 text-gray-300 text-sm">
                                     {t("subscription.plan")}:{" "}
-                                    <span className="font-bold text-amber-400 text-lg">{sub.plan}</span>
+                                    <span className="font-bold text-amber-400 text-lg">{displayPlan}</span>
                                 </p>
                             )}
 
                             {/* Upgrade CTAs */}
-                            {sub?.plan === "SHINOBI" && (
+                            {canonicalPlan === "FREE" && (
                                 <div className="mt-6 space-y-3">
                                     <div className="p-5 rounded-xl bg-gradient-to-r from-red-600/20 via-orange/15 to-amber-400/20 border border-red-600/40 shadow-lg hover:shadow-red-500/20 transition">
                                         <p className="text-lg font-bold text-red-400 mb-2">
@@ -184,7 +199,7 @@ export default function AccountBillingPage() {
                                         </p>
                                         <button
                                             className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-red-600 via-orange to-red-700 text-white font-bold transition hover:scale-105 hover:shadow-lg shadow-lg"
-                                            onClick={() => window.location.href = "/plans"}
+                                            onClick={() => window.location.href = "/lp-1"}
                                         >
                                             {t("upgrade.button")}
                                         </button>
@@ -203,7 +218,7 @@ export default function AccountBillingPage() {
                                         </p>
                                         <button
                                             className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-amber-500 via-orange to-amber-600 text-black font-bold transition hover:scale-105 hover:shadow-lg shadow-lg"
-                                            onClick={() => window.location.href = "/plans"}
+                                            onClick={() => window.location.href = "/lp-1"}
                                         >
                                             {t("upgrade.button")}
                                         </button>
@@ -221,13 +236,15 @@ export default function AccountBillingPage() {
                                 {t("subscription.managePayments")}
                             </button>
                             <button
-                                onClick={() => window.location.href = "/plans"}
+                                onClick={() => window.location.href = "/lp-1"}
                                 className="w-full md:w-auto px-8 py-3 rounded-lg bg-gray-700/50 hover:bg-gray-600 text-amber-400 font-semibold transition shadow-lg border border-amber-600/30"
                             >
                                 {t("subscription.viewPlans")}
                             </button>
                         </div>
                     </motion.section>
+
+                    <MonetizationStatusPanel mode="compact" />
 
                     {/* Invoices */}
                     <motion.section

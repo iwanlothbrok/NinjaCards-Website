@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NinjaCards - Pricing Strategy V3</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #0b0d11;
+    --panel: #131821;
+    --panel-2: #1a202b;
+    --text: #eef2f7;
+    --muted: #93a0b5;
+    --border: rgba(255,255,255,0.08);
+    --orange: #ff9f1a;
+    --orange-soft: rgba(255,159,26,0.12);
+    --orange-border: rgba(255,159,26,0.28);
+    --green: #22c55e;
+    --green-soft: rgba(34,197,94,0.12);
+    --red: #ef4444;
+    --red-soft: rgba(239,68,68,0.12);
+    --blue: #3b82f6;
+    --blue-soft: rgba(59,130,246,0.12);
+    --gold: #facc15;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  p { margin-bottom: 12px; color: var(--muted); }
+  ul { padding-left: 18px; }
+  li { color: var(--muted); margin-bottom: 8px; }
+  strong { color: var(--text); }
+
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(16px);
+    background: rgba(11,13,17,0.82);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 6px 10px;
+    border-radius: 999px;
+    transition: 0.2s ease;
+  }
+
+  .nav-links a:hover {
+    background: var(--panel);
+    color: var(--text);
+  }
+
+  .hero {
+    padding: 92px 24px 70px;
+    background:
+      radial-gradient(circle at top, rgba(255,159,26,0.16), transparent 38%),
+      linear-gradient(180deg, rgba(255,255,255,0.02), transparent 30%);
+  }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--orange-soft);
+    border: 1px solid var(--orange-border);
+    color: var(--orange);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+
+  h1 {
+    font-size: clamp(38px, 6vw, 68px);
+    line-height: 1.04;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    margin-bottom: 18px;
+  }
+
+  h1 span { color: var(--orange); }
+
+  .hero p {
+    max-width: 780px;
+    font-size: 18px;
+  }
+
+  .section {
+    padding: 68px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    color: var(--orange);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.15;
+    margin-bottom: 14px;
+    font-weight: 850;
+  }
+
+  .lead {
+    max-width: 820px;
+    font-size: 17px;
+    margin-bottom: 30px;
+  }
+
+  .toc {
+    margin-top: 32px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+  }
+
+  .toc ol { padding-left: 18px; }
+  .toc li { margin-bottom: 10px; }
+
+  .verdict {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    padding: 26px;
+    border-radius: 20px;
+    border: 1px solid var(--orange-border);
+    background: linear-gradient(180deg, rgba(255,159,26,0.12), rgba(255,159,26,0.03));
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  }
+
+  .verdict-icon {
+    font-size: 34px;
+    line-height: 1;
+  }
+
+  .verdict h3 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .grid-2, .grid-3, .grid-4, .plans {
+    display: grid;
+    gap: 18px;
+  }
+
+  .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .plans { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  .card,
+  .plan {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+  }
+
+  .card.highlight,
+  .plan.popular {
+    background: linear-gradient(180deg, rgba(255,159,26,0.09), rgba(255,159,26,0.03));
+    border-color: var(--orange-border);
+  }
+
+  .card.good {
+    background: linear-gradient(180deg, rgba(34,197,94,0.10), rgba(34,197,94,0.03));
+    border-color: rgba(34,197,94,0.25);
+  }
+
+  .card.warn {
+    background: linear-gradient(180deg, rgba(239,68,68,0.10), rgba(239,68,68,0.03));
+    border-color: rgba(239,68,68,0.25);
+  }
+
+  .card.info {
+    background: linear-gradient(180deg, rgba(59,130,246,0.10), rgba(59,130,246,0.03));
+    border-color: rgba(59,130,246,0.25);
+  }
+
+  .plan.team {
+    border-color: rgba(250,204,21,0.32);
+  }
+
+  .badge {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--orange-soft);
+    color: var(--orange);
+    border: 1px solid var(--orange-border);
+  }
+
+  .badge.gold {
+    background: rgba(250,204,21,0.12);
+    color: var(--gold);
+    border-color: rgba(250,204,21,0.24);
+  }
+
+  .plan-name {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .plan-title {
+    font-size: 28px;
+    font-weight: 850;
+    margin-bottom: 8px;
+  }
+
+  .plan-subtitle {
+    font-size: 14px;
+    min-height: 84px;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .price {
+    margin-bottom: 6px;
+    font-size: 38px;
+    line-height: 1;
+    font-weight: 900;
+    color: var(--text);
+  }
+
+  .price small {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .price-note {
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 600;
+    margin-bottom: 18px;
+    min-height: 36px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 18px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 22px;
+  }
+
+  th, td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+    font-size: 14px;
+  }
+
+  th {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  .yes { color: var(--green); font-weight: 700; }
+  .no { color: rgba(255,255,255,0.3); }
+  .partial { color: var(--orange); font-weight: 700; }
+
+  .callout {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-top: 20px;
+  }
+
+  .callout.good { background: var(--green-soft); border: 1px solid rgba(34,197,94,0.24); }
+  .callout.warn { background: var(--red-soft); border: 1px solid rgba(239,68,68,0.24); }
+  .callout.info { background: var(--blue-soft); border: 1px solid rgba(59,130,246,0.24); }
+  .callout.orange { background: var(--orange-soft); border: 1px solid var(--orange-border); }
+  .callout strong { display: block; margin-bottom: 4px; }
+
+  .steps {
+    display: grid;
+    gap: 16px;
+    margin-top: 26px;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+  }
+
+  .step-num {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--orange-soft);
+    border: 1px solid var(--orange-border);
+    color: var(--orange);
+    font-weight: 900;
+    font-size: 13px;
+  }
+
+  .footer {
+    padding: 42px 24px 64px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .footer strong { color: var(--orange); }
+
+  @media (max-width: 980px) {
+    .plans, .grid-4, .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 700px) {
+    .grid-2, .grid-3, .grid-4, .plans { grid-template-columns: 1fr; }
+    .nav-inner { padding: 12px 16px; }
+    .hero, .section, .footer { padding-left: 16px; padding-right: 16px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">NinjaCards Pricing V3</div>
+    <div class="nav-links">
+      <a href="#verdict">Verdict</a>
+      <a href="#plans">Планове</a>
+      <a href="#card">Карта</a>
+      <a href="#paid">Feature Gating</a>
+      <a href="#pricing">Цени</a>
+      <a href="#b2b">B2B</a>
+      <a href="#next">Next</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Pricing Strategy V3 · Април 2026</div>
+    <h1>NinjaCards <span>финална логика</span> за планове, карта и upsell</h1>
+    <p>Този документ вече е пренаписан спрямо реалните usage сигнали: повечето потребители получават малко лийдове на месец, физическата карта е евтина като себестойност, но има силна възприемана стойност, а team и bulk rollout продажбите не могат да се поберат в една проста плоска цена.</p>
+
+    <div class="toc">
+      <h3 style="margin-bottom:16px;">Съдържание</h3>
+      <ol>
+        <li><a href="#verdict">Основен извод</a></li>
+        <li><a href="#plans">Финална структура на плановете</a></li>
+        <li><a href="#card">Логика за generic и personalized card</a></li>
+        <li><a href="#paid">Кое е free и кое paid</a></li>
+        <li><a href="#pricing">Препоръчани цени и pricing logic</a></li>
+        <li><a href="#b2b">Teams срещу Enterprise / Bulk</a></li>
+        <li><a href="#risks">Какво да не правим</a></li>
+        <li><a href="#next">Какво заключваме за имплементация</a></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="plans">
+  <div class="container">
+    <div class="section-label">02 - Plan Architecture</div>
+    <h2>Финална публична структура на плановете</h2>
+    <p class="lead">На сайта комуникацията трябва да е ясна и професионална. Theme names могат да останат вътрешно, но публично е по-силно да имаш ясни имена и точни ограничения.</p>
+
+    <div class="plans">
+      <div class="plan">
+        <div class="badge">Entry</div>
+        <div class="plan-name">Plan 01</div>
+        <div class="plan-title">Free</div>
+        <p class="plan-subtitle">За хора, които искат да усетят продукта, да си изградят профила и да видят първия реален резултат без да плащат абонамент.</p>
+        <div class="price">€0 <small>/ завинаги</small></div>
+        <div class="price-note">1 lead / месец · generic card unlock при qualification</div>
+        <div class="divider"></div>
+        <ul>
+          <li>1 дигитален профил</li>
+          <li>QR код + share link</li>
+          <li>1 stored lead / месец</li>
+          <li>До 3 линка</li>
+          <li>Базови секции и базова тема</li>
+          <li>Basic stats само за visits и leads</li>
+          <li>NinjaCards branding</li>
+          <li>Без export, AI, integrations и personalization</li>
+        </ul>
+      </div>
+
+      <div class="plan popular">
+        <div class="badge">Main Offer</div>
+        <div class="plan-name">Plan 02</div>
+        <div class="plan-title">Pro</div>
+        <p class="plan-subtitle">За активни професионалисти, които искат да използват NinjaCards сериозно, да притежават лийдовете си и да изглеждат по-професионално.</p>
+        <div class="price">€6.99 <small>/ месец</small></div>
+        <div class="price-note">€17.99 / 3 месеца · €69 / година с 1 personalized card · €20 add-on на monthly</div>
+        <div class="divider"></div>
+        <ul>
+          <li>Всичко от Free</li>
+          <li>10 stored leads / месец</li>
+          <li>Lead export</li>
+          <li>Advanced analytics</li>
+          <li>Повече секции, CTA и линкове</li>
+          <li>Премахване на NinjaCards branding</li>
+          <li>AI summaries / follow-up tools</li>
+          <li>Personalized card add-on на monthly за €20 / карта</li>
+        </ul>
+      </div>
+
+      <div class="plan team">
+        <div class="badge gold">Up To 15</div>
+        <div class="plan-name">Plan 03</div>
+        <div class="plan-title">Teams</div>
+        <p class="plan-subtitle">За екипи до 15 профила, които искат една фирмена система вместо 15 отделни Pro акаунта, 15 отделни плащания и 15 различни профилни настройки.</p>
+        <div class="price">€129 <small>/ месец</small></div>
+        <div class="price-note">€349 / 3 месеца · €1290 / година · central billing + team control</div>
+        <div class="divider"></div>
+        <ul>
+          <li>До 15 профила в един team workspace</li>
+          <li>Едно централизирано плащане вместо 15 отделни абонамента</li>
+          <li>Team admin, role management и member control</li>
+          <li>Shared branding и еднакъв фирмен стандарт за всички профили</li>
+          <li>Team analytics dashboard и общи отчети</li>
+          <li>Onboarding и setup support за rollout на екипа</li>
+          <li>Bulk card ordering и team card benefits</li>
+          <li>Подходящ за малки rollout-и, не за mass procurement</li>
+          <li>25+ users или 200+ cards минават към Enterprise / Bulk</li>
+        </ul>
+      </div>
+
+      <div class="plan">
+        <div class="badge">Sales-Led</div>
+        <div class="plan-name">Plan 04</div>
+        <div class="plan-title">Enterprise / Bulk</div>
+        <p class="plan-subtitle">За по-големи организации, масови поръчки, rollout към много хора, custom logistics, custom onboarding и различни card volumes.</p>
+        <div class="price">Запитване</div>
+        <div class="price-note">25+ users · 200+ cards · custom rollout</div>
+        <div class="divider"></div>
+        <ul>
+          <li>Custom pricing според seats, cards и onboarding</li>
+          <li>Bulk deployment за 200 до 2000+ карти</li>
+          <li>Company rollout planning</li>
+          <li>Priority support и custom terms</li>
+          <li>Custom reporting и workflow options</li>
+          <li>Подходящо за сделки, не за self-serve checkout</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout orange">
+      <div>💡</div>
+      <div>
+        <strong>Важен извод</strong>
+        Teams не трябва да бъде обещание за всеки възможен фирмен сценарий. Той е bridge offer за малки екипи. Истинските масови rollout-и трябва да минават към custom quote, иначе рискуваш да underprice-неш най-ценните сделки.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="card">
+  <div class="container">
+    <div class="section-label">03 - Physical Card Strategy</div>
+    <h2>Какво правим с generic и personalized картите</h2>
+    <p class="lead">При теб материалът и пакетирането са евтини, което променя логиката. Това отваря добра growth възможност за <strong>generic free card</strong>, но само ако тя е gated и не се превърне в abuse loophole.</p>
+
+    <div class="grid-2">
+      <div class="card highlight">
+        <h3>Заключена логика</h3>
+        <ul>
+          <li><strong>Free:</strong> 1 generic card може да се отключи</li>
+          <li><strong>Qualification:</strong> profile score над 50</li>
+          <li><strong>Qualification:</strong> verified email</li>
+          <li><strong>Shipping:</strong> плаща се от клиента</li>
+          <li><strong>Packaging:</strong> включва се в shipping / fulfillment</li>
+          <li><strong>Pro monthly:</strong> personalized card като add-on за €20 / карта</li>
+          <li><strong>Pro annual:</strong> 1 personalized card включена</li>
+          <li><strong>Teams:</strong> discounted or bundled cards според офертата</li>
+        </ul>
+      </div>
+
+      <div class="card warn">
+        <h3>Какво да не правим</h3>
+        <ul>
+          <li>Да изпращаме generic card веднага след signup</li>
+          <li>Да поемаме shipping на free users</li>
+          <li>Да даваме personalized card на free plan</li>
+          <li>Да смесим open signup с automatic fulfillment</li>
+          <li>Да нямаме abuse checks за адреси и акаунти</li>
+        </ul>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Card scenario</th>
+          <th>Препоръка</th>
+          <th>Защо</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Generic card за Free</td>
+          <td><span class="yes">Да, но само след qualification</span></td>
+          <td>Дава голяма perceived value, ускорява activation и прави продукта физически реален</td>
+        </tr>
+        <tr>
+          <td>Shipping за Free card</td>
+          <td><span class="yes">Плаща се от клиента</span></td>
+          <td>Пази маржа и намалява abuse-а</td>
+        </tr>
+        <tr>
+          <td>Personalized card</td>
+          <td><span class="yes">€20 add-on на monthly или включена в annual Pro</span></td>
+          <td>Тук има реален upsell и възприемана premium стойност</td>
+        </tr>
+        <tr>
+          <td>Bulk cards за teams</td>
+          <td><span class="partial">Влизат в team / enterprise quote логика</span></td>
+          <td>Не може да се побере честно в един flat self-serve price</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout good">
+      <div>✅</div>
+      <div>
+        <strong>Най-силният growth move</strong>
+        Free user може да отключи 1 generic card само ако има profile score над 50 и verified email, а доставката се плаща отделно. Това комбинира generosity, qualification и по-добър onboarding completion.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="paid">
+  <div class="container">
+    <div class="section-label">04 - Feature Gating</div>
+    <h2>Кое трябва да е free и кое paid</h2>
+    <p class="lead">Най-важната граница за NinjaCards е следната: <strong>networking and first signal can be free, but lead ownership and serious usage must be paid</strong>. Това е по-силна логика от просто да заключваш декоративни функции.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Функция</th>
+          <th>Free</th>
+          <th>Pro</th>
+          <th>Teams</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Дигитален профил</strong></td>
+          <td class="yes">1 профил</td>
+          <td class="yes">1 профил</td>
+          <td class="yes">Много профили</td>
+        </tr>
+        <tr>
+          <td><strong>QR + share link</strong></td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Lead form</strong></td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Stored leads</strong></td>
+          <td class="partial">1 / месец</td>
+          <td class="yes">10 / месец</td>
+          <td class="yes">Според пакета / rollout-а</td>
+        </tr>
+        <tr>
+          <td><strong>Линкове</strong></td>
+          <td class="partial">До 3</td>
+          <td class="yes">Повече</td>
+          <td class="yes">Повече</td>
+        </tr>
+        <tr>
+          <td><strong>Basic stats</strong></td>
+          <td class="yes">Visits + leads</td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Advanced analytics</strong></td>
+          <td class="no">Не</td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Lead export</strong></td>
+          <td class="no">Не</td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Branding removal</strong></td>
+          <td class="no">Не</td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>AI tools</strong></td>
+          <td class="no">Не</td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Generic card eligibility</strong></td>
+          <td class="partial">Да, след qualification</td>
+          <td class="yes">Да</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Personalized card</strong></td>
+          <td class="no">Не</td>
+          <td class="partial">€20 add-on / included annual</td>
+          <td class="yes">Според офертата</td>
+        </tr>
+        <tr>
+          <td><strong>Admin / team roles</strong></td>
+          <td class="no">Не</td>
+          <td class="no">Не</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Centralized billing</strong></td>
+          <td class="no">Не</td>
+          <td class="no">Не</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Shared team branding</strong></td>
+          <td class="no">Не</td>
+          <td class="no">Не</td>
+          <td class="yes">Да</td>
+        </tr>
+        <tr>
+          <td><strong>Team analytics dashboard</strong></td>
+          <td class="no">Не</td>
+          <td class="no">Не</td>
+          <td class="yes">Да</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid-2" style="margin-top:22px;">
+      <div class="card good">
+        <h3>Какво е правилно да остане free</h3>
+        <ul>
+          <li>Първото споделяне и първият networking use case</li>
+          <li>Първият реален lead signal</li>
+          <li>Basic profile presence</li>
+          <li>Qualification path към generic card</li>
+        </ul>
+      </div>
+      <div class="card warn">
+        <h3>Какво трябва да остане paid</h3>
+        <ul>
+          <li>Lead ownership и export</li>
+          <li>Analytics и по-умна обработка</li>
+          <li>Brand control и premium presentation</li>
+          <li>AI и сериозното follow-up използване</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div>🧠</div>
+      <div>
+        <strong>Най-силният upsell trigger</strong>
+        "Имаш реален networking сигнал, но за да задържиш повече лийдове, да ги export-неш и да работиш по тях сериозно, ти трябва Pro." Това е по-силен мотиватор от всяка козметична функция.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="section-label">05 - Pricing Logic</div>
+    <h2>Препоръчани цени за launch</h2>
+    <p class="lead">Българският пазар е чувствителен към цена, но не трябва да позиционираш NinjaCards като евтина джаджа. Правилната зона е <strong>достъпен premium</strong>. Pro може да е self-serve. Teams е малък business plan. Enterprise / Bulk е custom.</p>
+
+    <div class="grid-4">
+      <div class="card">
+        <h3>Free</h3>
+        <p><strong>€0</strong></p>
+        <p>Да е истински free forever с 1 stored lead на месец и qualification path към generic card.</p>
+      </div>
+      <div class="card highlight">
+        <h3>Pro</h3>
+        <p><strong>€6.99 / месец</strong></p>
+        <p><strong>€17.99 / 3 месеца</strong></p>
+        <p><strong>€69 / година</strong></p>
+        <p>Personalized card на monthly струва <strong>€20 / карта</strong>, затова annual е най-силният offer.</p>
+      </div>
+      <div class="card">
+        <h3>Teams</h3>
+        <p><strong>€129 / месец</strong></p>
+        <p><strong>€349 / 3 месеца</strong></p>
+        <p><strong>€1290 / година</strong></p>
+        <p>Това е за small teams, не за всяка масова поръчка.</p>
+      </div>
+      <div class="card">
+        <h3>Enterprise / Bulk</h3>
+        <p><strong>Custom quote</strong></p>
+        <p>25+ users, 200+ cards или rollout, който изисква различни обеми и logistics.</p>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div>📈</div>
+      <div>
+        <strong>Пазарен anchor</strong>
+        Ако конкурент продава team offer около <strong>€172.49 / месец billed yearly</strong> и отделно продава карти, тогава <strong>€129</strong> е разумен small-team anchor, но само ако bulk и high-volume сделките не са заключени в същата публична цена.
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Сценарий</th>
+          <th>15 x Pro</th>
+          <th>Teams</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Месечна логика</strong></td>
+          <td>15 отделни абонамента = €104.85</td>
+          <td>Един фирмен пакет = €129</td>
+        </tr>
+        <tr>
+          <td><strong>Billing</strong></td>
+          <td>15 отделни плащания и управление</td>
+          <td><span class="yes">1 централизирано плащане</span></td>
+        </tr>
+        <tr>
+          <td><strong>Branding</strong></td>
+          <td>Всеки си настройва профила отделно</td>
+          <td><span class="yes">Един фирмен стандарт за всички</span></td>
+        </tr>
+        <tr>
+          <td><strong>Control</strong></td>
+          <td>Няма централен admin</td>
+          <td><span class="yes">Admin panel, роли и member management</span></td>
+        </tr>
+        <tr>
+          <td><strong>Analytics</strong></td>
+          <td>Разпиляна гледка по акаунти</td>
+          <td><span class="yes">Team dashboard и общи отчети</span></td>
+        </tr>
+        <tr>
+          <td><strong>Cards</strong></td>
+          <td>Няма team card benefits</td>
+          <td><span class="yes">Bulk ordering и team card benefits</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout good">
+      <div>✅</div>
+      <div>
+        <strong>Как да го обясним просто</strong>
+        Teams не е "по-евтин сбор от Pro". Teams е фирмена система за до 15 профила: едно плащане, един стандарт, един admin, един dashboard и по-лесен card rollout за целия екип.
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ниво</th>
+          <th>Как звучи</th>
+          <th>Риск</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pro под €4.99</td>
+          <td>Прекалено евтино</td>
+          <td>Сваля perceived value</td>
+        </tr>
+        <tr>
+          <td>Pro €6.99</td>
+          <td><span class="yes">Силен баланс</span></td>
+          <td>Нисък риск, добра launch цена</td>
+        </tr>
+        <tr>
+          <td>Teams €59</td>
+          <td>Подценено</td>
+          <td>Изглежда евтино и опасно underpriced</td>
+        </tr>
+        <tr>
+          <td>Teams €129</td>
+          <td><span class="yes">По-здравословно</span></td>
+          <td>Работи, ако е small-team package</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout orange">
+      <div>💰</div>
+      <div>
+        <strong>Launch pricing summary</strong>
+        Най-чистото решение в момента е: <strong>Free / Pro €6.99 месечно + €20 personalized card add-on / Pro €17.99 на 3 месеца / Pro Annual €69 с 1 personalized card / Teams €129 месечно / €349 на 3 месеца / €1290 годишно / Enterprise custom quote</strong>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="b2b">
+  <div class="container">
+    <div class="section-label">06 - B2B Motion</div>
+    <h2>Teams срещу Enterprise / Bulk</h2>
+    <p class="lead">От разговора ни е ясно, че B2B се затваря основно през срещи и други канали. Значи сайтът трябва да подпомага sales motion-а, а не да се опитва да self-serve-ва всяка фирмена сделка.</p>
+
+    <div class="grid-2">
+      <div class="card good">
+        <h3>Какво да има публично</h3>
+        <ul>
+          <li>Free и Pro като ясни self-serve оферти</li>
+          <li>Teams като small business bridge offer</li>
+          <li>Кратък Enterprise / Bulk блок</li>
+          <li>Ясен CTA за contact sales</li>
+        <li>Teams публично за до 15 профила</li>
+        <li>Ясен trigger: 25+ users или 200+ cards</li>
+        </ul>
+      </div>
+      <div class="card warn">
+        <h3>Какво да не правим публично</h3>
+        <ul>
+          <li>Да обещаваме flat pricing за 200 до 2000 cards</li>
+          <li>Да правим сложна enterprise pricing matrix</li>
+          <li>Да смесваме small teams и bulk procurement в една оферта</li>
+          <li>Да позиционираме сайта като единствен B2B sales channel</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout good">
+      <div>🤝</div>
+      <div>
+        <strong>Правилната sales логика</strong>
+        Free и Pro са self-serve. Teams е публичен bridge offer за до 15 профила. Enterprise / Bulk е sales-led път за по-големи rollout-и, различни card volumes и custom onboarding.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="risks">
+  <div class="container">
+    <div class="section-label">07 - Risks</div>
+    <h2>Какво да не правим</h2>
+
+    <div class="grid-2">
+      <div class="card warn">
+        <h3 style="margin-bottom:6px;">Да не правим Free прекалено силен</h3>
+        <p>Ако free user получава твърде много stored leads, export или прекалено много control, Pro започва да изглежда излишен. Твоят нов лимит от 1 lead на месец е по-здравословен за conversion.</p>
+      </div>
+
+      <div class="card warn">
+        <h3 style="margin-bottom:6px;">Да не държим Teams като единствен B2B пакет</h3>
+        <p>При 200 до 2000 карти вече продаваш rollout, logistics и volume, не само seats. Това трябва да се ценообразува custom.</p>
+      </div>
+
+      <div class="card warn">
+        <h3 style="margin-bottom:6px;">Да не изпращаме free card без qualification</h3>
+        <p>Generic card е силна идея, но ако няма profile score threshold, verified email и shipping payment, ще създаде шум, support и abuse.</p>
+      </div>
+
+      <div class="card warn">
+        <h3 style="margin-bottom:6px;">Да не оставяме vague wording</h3>
+        <p>Думи като "high", "basic", "advanced" са полезни за brainstorming, но не и за implementation. Публичният pricing и вътрешната logic table трябва да останат с точни числа и ясни правила.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="next">
+  <div class="container">
+    <div class="section-label">08 - Next Steps</div>
+    <h2>Какво вече заключваме за имплементация</h2>
+    <p class="lead">След този разговор има достатъчно яснота, за да спрем да въртим pricing-а в кръг. Има още UX и implementation решения, но основната продуктова логика вече е заключена.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <strong>Plan structure</strong>
+          <p>Публично: Free / Pro / Teams / Enterprise. Teams е за екипи до 15 профила. Enterprise / Bulk е custom path за 25+ users или 200+ cards.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <strong>Lead limits</strong>
+          <p>Free е 1 stored lead на месец. Pro е 10 stored leads на месец. Teams и Enterprise се управляват според пакета и rollout-а.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <strong>Card logic</strong>
+          <p>Free може да unlock-не 1 generic card само при profile score над 50, verified email и shipping payment. Personalized card не влиза във Free.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <strong>Pricing</strong>
+          <p>Pro остава на €6.99 / €17.99 / €69, като personalized card на monthly е €20 add-on, а в annual е включена. Teams остава на €129 / €349 / €1290 за до 15 профила като small-team anchor. Bulk rollouts не влизат в тази flat цена.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div>
+          <strong>Implementation direction</strong>
+          <p>Следващата реална стъпка е да прехвърлим тази логика в pricing page copy, billing rules, upgrade prompts и card fulfillment gating без да отваряме отново фундаменталните решения.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout good">
+      <div>🚀</div>
+      <div>
+        <strong>Финален продуктов извод</strong>
+        Най-силната позиция за NinjaCards в момента е: <strong>истински free plan за първи успех, generic card като qualified growth mechanic, Pro за сериозно използване и lead ownership, Teams за малки екипи, а Enterprise / Bulk за rollout-и с много карти и custom terms.</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  Strategy document for <strong>NinjaCards</strong> - pricing, packaging, card logic and go-to-market alignment.
+</div>
+
+</body>
+</html>
+
+<section class="section" id="verdict">
+  <div class="container">
+    <div class="section-label">01 - Verdict</div>
+    <h2>Продуктът се продава като physical networking, което се превръща в digital leads</h2>
+    <p class="lead">Най-здравословната публична структура е <strong>Free / Pro / Teams / Enterprise</strong>, но с една важна разлика: <strong>Teams не трябва да се мисли като краен пакет за всички фирми</strong>. Teams е за малки екипи, а по-големите rollout-и с много карти трябва да отиват в custom motion.</p>
+
+    <div class="verdict">
+      <div class="verdict-icon">🎯</div>
+      <div>
+        <h3>Заключение</h3>
+        <p><strong>Free</strong> дава първо изживяване и 1 реален лийд на месец. <strong>Pro</strong> продава контрол, export, analytics, AI и 10 лийда на месец. <strong>Teams</strong> е за малки екипи с централен контрол и bundled card ordering. <strong>Enterprise / Bulk</strong> е за 25+ users, 200+ cards или по-сложен rollout.</p>
+      </div>
+    </div>
+
+    <div class="grid-3" style="margin-top:22px;">
+      <div class="card good">
+        <h3>Какво печелим</h3>
+        <ul>
+          <li>Free план, който е полезен, но не прекалено щедър</li>
+          <li>Pro оферта, която стъпва на реален usage, не на измислени обеми</li>
+          <li>Team pricing, който не убива маржа при bulk заявки</li>
+          <li>Картата става growth lever, не хаотичен подарък</li>
+        </ul>
+      </div>
+      <div class="card warn">
+        <h3>Какво избягваме</h3>
+        <ul>
+          <li>Free план, който е почти достатъчен завинаги</li>
+          <li>Pro лимити, които са абсурдно високи спрямо реалната употреба</li>
+          <li>Flat team price за сделки с 200 до 2000 карти</li>
+          <li>Безконтролно изпращане на generic cards</li>
+        </ul>
+      </div>
+      <div class="card info">
+        <h3>Ключов принцип</h3>
+        <p>Безплатното ниво трябва да дава <strong>първи успех</strong>. Платеното ниво трябва да продава <strong>lead ownership, follow-up и сериозно използване</strong>. Team и enterprise motion-ът трябва да продава <strong>контрол, rollout и организация</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>

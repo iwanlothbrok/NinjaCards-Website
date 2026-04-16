@@ -1,13 +1,9 @@
 "use client";
 
-import { Key, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
-import { useAuth } from "../context/AuthContext";
-import { BASE_API_URL } from "@/utils/constants";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from '@/navigation';
-import { addToCart, loadCartFromLocalStorage } from "@/lib/cart";
 
 
 export default function Pricing() {
@@ -17,7 +13,7 @@ export default function Pricing() {
     const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
     const handleCheckout = async (name: string) => {
-        router.push('/plans');
+        router.push('/lp-1');
     };
 
     return (
@@ -213,18 +209,18 @@ export default function Pricing() {
                                 className="relative z-10"
                             >
                                 <div className="inline-block px-3 py-1 mb-4 rounded-full bg-gradient-to-r from-amber-400/20 to-orange/20 border border-amber-500/40">
-                                    <span className="text-amber-400 text-xs font-bold uppercase tracking-wider">Enterprise</span>
+                                    <span className="text-amber-400 text-xs font-bold uppercase tracking-wider">Enterprise / Bulk</span>
                                 </div>
                                 <h3 className="text-xl md:text-2xl font-black mb-2">
                                     <span className="bg-gradient-to-r from-amber-200 via-orange to-amber-400 bg-clip-text text-transparent">
-                                        {t("enterprise.title") || "Need more than 100 cards?"}
+                                        {t("enterprise.title") || "Need 25+ users or 200+ cards?"}
                                     </span>
                                 </h3>
                                 <p className="text-gray-300 text-base md:text-lg mb-4 max-w-xl mx-auto leading-relaxed">
-                                    {t("enterprise.description") || "Contact us for custom corporate plans with volume discounts and dedicated support."}
+                                    {t("enterprise.description") || "Talk to sales for custom rollout plans, bulk card volumes and company onboarding."}
                                 </p>
                                 <Link
-                                    href="/contact"
+                                    href="/contact?intent=enterprise-bulk&source=homepage-pricing"
                                     className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-orange to-amber-500 text-black font-bold text-base shadow-2xl shadow-amber-500/50 border-2 border-amber-300 transition-all duration-300 overflow-hidden hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400"
                                 >
                                     <span className="relative z-10 flex items-center justify-center gap-2">

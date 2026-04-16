@@ -244,7 +244,7 @@ const Navbar: React.FC = () => {
                   <li>
                     <Link
                       className="text-white py-2 text-lg font-medium hover:text-orange"
-                      href="/plans"
+                      href="/lp-1"
                       onClick={handleNavLinkClick}
                     >
                       {t("menu.plans")}
