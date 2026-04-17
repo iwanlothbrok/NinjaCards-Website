@@ -1,6 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { Resend } from 'resend';
-import { buildFollowUpEmail, buildStaticFollowUpContent, FollowUpStage, getNextFollowUpAt } from '@/lib/leadFollowUp';
+import {
+    buildFollowUpEmail,
+    buildFollowUpProfileUrl,
+    buildStaticFollowUpContent,
+    FollowUpStage,
+    getNextFollowUpAt,
+} from '@/lib/leadFollowUp';
 
 function getNextStage(currentStage: number): FollowUpStage | null {
     if (currentStage === 0) return 1;
@@ -26,6 +32,8 @@ export async function processDueFollowUps(params?: { limit?: number }) {
             include: {
                 user: {
                     select: {
+                        id: true,
+                        slug: true,
                         name: true,
                         firstName: true,
                         lastName: true,
@@ -57,6 +65,12 @@ export async function processDueFollowUps(params?: { limit?: number }) {
                 owner.name ||
                 [owner.firstName, owner.lastName].filter(Boolean).join(' ') ||
                 'Ninja Card';
+            const profileUrl = buildFollowUpProfileUrl({
+                language: owner.language,
+                slug: owner.slug ?? undefined,
+                userId: owner.id,
+            });
+            const ctaLabel = owner.language === 'en' ? 'View my profile' : 'Разгледай профила ми';
 
             const emailContent = buildStaticFollowUpContent({
                 stage,
@@ -66,6 +80,7 @@ export async function processDueFollowUps(params?: { limit?: number }) {
                 ownerCompany: owner.company ?? undefined,
                 leadName: lead.name,
                 leadMessage: lead.message ?? undefined,
+                profileUrl,
             });
 
             try {
@@ -78,6 +93,8 @@ export async function processDueFollowUps(params?: { limit?: number }) {
                         subject: emailContent.subject,
                         body: emailContent.body,
                         leadName: lead.name,
+                        ctaUrl: profileUrl,
+                        ctaLabel,
                     }),
                 });
 

@@ -1,3 +1,5 @@
+﻿import { buildPublicProfileUrl } from '@/utils/constants';
+
 export type FollowUpStage = 1 | 2 | 3;
 export type FollowUpLanguage = 'bg' | 'en';
 
@@ -9,6 +11,7 @@ type BuildPromptParams = {
     leadName: string;
     leadEmail: string;
     leadMessage?: string;
+    profileUrl?: string;
 };
 
 export function normalizeFollowUpStage(value: unknown): FollowUpStage {
@@ -26,6 +29,20 @@ export function getNextFollowUpAt(createdAt: Date, completedStage: number): Date
         default:
             return null;
     }
+}
+
+export function buildFollowUpProfileUrl(params: {
+    language?: string | null;
+    slug?: string | null;
+    userId?: string | null;
+}): string | undefined {
+    if (!params.userId && !params.slug) return undefined;
+
+    return buildPublicProfileUrl({
+        locale: params.language === 'en' ? 'en' : 'bg',
+        slug: params.slug ?? undefined,
+        userId: params.userId ?? undefined,
+    });
 }
 
 function getStageInstruction(stage: FollowUpStage): string {
@@ -49,6 +66,7 @@ export function buildFollowUpPrompt({
     leadName,
     leadEmail,
     leadMessage,
+    profileUrl,
 }: BuildPromptParams): string {
     const senderName = ownerName || 'Not specified';
     const senderPosition = ownerPosition || 'Not specified';
@@ -67,20 +85,22 @@ The lead's details:
 - Name: ${leadName}
 - Email: ${leadEmail}
 ${cleanLeadMessage ? `- Message they left: "${cleanLeadMessage}"` : '- No message left (they scanned the card and left their contact)'}
+${profileUrl ? `- Sender profile URL: ${profileUrl}` : ''}
 
 Stage instruction:
 ${stageInstruction}
 
 Instructions:
-1. Write a warm, professional follow-up email
-2. If the lead left a message, reference it naturally — show you actually read it
-3. If no message, write a genuine "great to meet you" style opening
-4. The body must include: greeting (e.g. "Здравей, Иван," or "Hi John,"), 3-5 sentences of content, and a sign-off (e.g. "С уважение,\n${senderName}" or "Best,\n${senderName}")
-5. End with one clear, soft, non-pushy call-to-action
-6. Write in the same language the lead's message is in. If no message, default to Bulgarian.
-7. Do NOT use placeholders like [Your Name] — use the actual data provided
-8. Do not mention internal timing like "2 hours" or "7 days"
-9. Sound like a real human, not a template. Vary sentence structure.
+1. Write a warm, professional follow-up email.
+2. If the lead left a message, reference it naturally and show you actually read it.
+3. If no message, write a genuine "great to meet you" style opening.
+4. The body must include a greeting, 3-5 sentences of content, and a sign-off.
+5. End with one clear, soft, non-pushy call-to-action.
+6. If a sender profile URL is provided, naturally include it as the CTA destination when it fits.
+7. Write in the same language as the lead's message. If no message, default to Bulgarian.
+8. Do not use placeholders like [Your Name]; use the actual data provided.
+9. Do not mention internal timing like "2 hours" or "7 days".
+10. Sound like a real human, not a template. Vary sentence structure.
 
 Respond ONLY with valid JSON, no other text:
 {
@@ -106,6 +126,7 @@ export function buildStaticFollowUpContent(params: {
     ownerCompany?: string;
     leadName: string;
     leadMessage?: string;
+    profileUrl?: string;
 }): { subject: string; body: string } {
     const language: FollowUpLanguage = params.language === 'en' ? 'en' : 'bg';
     const firstName = resolveLeadGreetingName(params.leadName);
@@ -113,24 +134,30 @@ export function buildStaticFollowUpContent(params: {
     const hasLeadMessage = Boolean(params.leadMessage?.trim());
     const companyRef = params.ownerCompany ? ` at ${params.ownerCompany}` : '';
     const companyRefBg = params.ownerCompany ? ` в ${params.ownerCompany}` : '';
+    const profileCtaEn = params.profileUrl
+        ? `You can view my profile here and get a quick overview before we continue: ${params.profileUrl}`
+        : 'If you want, just reply here and I will gladly continue the conversation.';
+    const profileCtaBg = params.profileUrl
+        ? `Можеш да разгледаш профила ми тук и да видиш повече за мен, преди да продължим разговора: ${params.profileUrl}`
+        : 'Ако е удобно, просто ми отговори тук и с радост ще продължим разговора.';
 
     if (language === 'en') {
         switch (params.stage) {
             case 1:
                 return {
                     subject: `Great connecting, ${firstName}`,
-                    body: `Hi ${firstName},\n\nThank you for sharing your details with me${companyRef}. I wanted to follow up in case you have any questions or if there is anything I can help you with right away.\n\nIf it is useful, just reply here and I will gladly continue the conversation.\n\nBest,\n${signature}`,
+                    body: `Hi ${firstName},\n\nThank you for sharing your details with me${companyRef}. I wanted to follow up in case you have any questions or if there is anything I can help you with right away.\n\n${profileCtaEn}\n\nBest,\n${signature}`,
                 };
             case 2:
                 return {
                     subject: `Quick follow-up from ${params.ownerName}`,
-                    body: `Hi ${firstName},\n\nI wanted to check back in after we connected${companyRef}.${hasLeadMessage ? ' I also kept your message in mind and would be happy to help with the next step.' : ' If this is still relevant for you, I would be happy to point you in the right direction.'}\n\nIf you want, reply to this email and I can send more details or suggest the best next step.\n\nBest,\n${signature}`,
+                    body: `Hi ${firstName},\n\nI wanted to check back in after we connected${companyRef}.${hasLeadMessage ? ' I also kept your message in mind and would be happy to help with the next step.' : ' If this is still relevant for you, I would be happy to point you in the right direction.'}\n\n${profileCtaEn}\n\nBest,\n${signature}`,
                 };
             case 3:
             default:
                 return {
                     subject: `Still open to connect, ${firstName}?`,
-                    body: `Hi ${firstName},\n\nJust one last gentle follow-up from my side. If this is still something you would like to discuss, I would be happy to continue whenever the timing is right for you.\n\nIf now is not the best moment, no worries at all. If you reply when ready, I will take it from there.\n\nBest,\n${signature}`,
+                    body: `Hi ${firstName},\n\nJust one last gentle follow-up from my side. If this is still something you would like to discuss, I would be happy to continue whenever the timing is right for you.\n\n${profileCtaEn}\n\nBest,\n${signature}`,
                 };
         }
     }
@@ -139,18 +166,18 @@ export function buildStaticFollowUpContent(params: {
         case 1:
             return {
                 subject: `Приятно ми беше да се свържем, ${firstName}`,
-                body: `Здравей, ${firstName},\n\nБлагодаря ти, че остави контактите си${companyRefBg}. Пиша ти с кратко последващо съобщение, в случай че имаш въпроси или има нещо, с което мога да помогна още сега.\n\nАко е удобно, просто ми отговори тук и с радост ще продължим разговора.\n\nПоздрави,\n${signature}`,
+                body: `Здравей, ${firstName},\n\nБлагодаря ти, че остави контактите си${companyRefBg}. Пиша ти с кратко последващо съобщение, в случай че имаш въпроси или има нещо, с което мога да помогна още сега.\n\n${profileCtaBg}\n\nПоздрави,\n${signature}`,
             };
         case 2:
             return {
                 subject: `Кратък follow-up от ${params.ownerName}`,
-                body: `Здравей, ${firstName},\n\nИсках да се върна с кратко последващо съобщение след контакта ни${companyRefBg}.${hasLeadMessage ? ' Видях и това, което сподели, и с удоволствие бих помогнал с конкретна следваща стъпка.' : ' Ако темата все още е актуална за теб, мога да дам насока или повече информация.'}\n\nАко искаш, отговори на този имейл и ще продължим оттам.\n\nПоздрави,\n${signature}`,
+                body: `Здравей, ${firstName},\n\nИсках да се върна с кратко последващо съобщение след контакта ни${companyRefBg}.${hasLeadMessage ? ' Видях и това, което сподели, и с удоволствие бих помогнал с конкретна следваща стъпка.' : ' Ако темата все още е актуална за теб, мога да дам насока или повече информация.'}\n\n${profileCtaBg}\n\nПоздрави,\n${signature}`,
             };
         case 3:
         default:
             return {
                 subject: `Да останем ли във връзка, ${firstName}?`,
-                body: `Здравей, ${firstName},\n\nИзпращам едно последно ненатрапчиво последващо съобщение от моя страна. Ако темата все още е актуална, с удоволствие ще продължим разговора, когато е удобно за теб.\n\nАко моментът не е подходящ сега, няма проблем. Пиши ми, когато решиш, и ще поема нататък.\n\nПоздрави,\n${signature}`,
+                body: `Здравей, ${firstName},\n\nИзпращам едно последно ненатрапчиво последващо съобщение от моя страна. Ако темата все още е актуална, с удоволствие ще продължим разговора, когато е удобно за теб.\n\n${profileCtaBg}\n\nПоздрави,\n${signature}`,
             };
     }
 }
@@ -169,9 +196,17 @@ export function buildFollowUpEmail(params: {
     body: string;
     leadName: string;
     accent?: string;
+    ctaUrl?: string;
+    ctaLabel?: string;
 }): string {
-    const { ownerName, body, leadName, accent = '#f59e0b' } = params;
-    const firstName = leadName.split(' ')[0];
+    const { body, accent = '#f59e0b', ctaUrl, ctaLabel } = params;
+    const ctaHtml = ctaUrl
+        ? `<div style="margin:24px 0 0;text-align:center">
+            <a href="${ctaUrl}" style="display:inline-block;background:linear-gradient(135deg,${accent},${accent}cc);color:#111;text-decoration:none;font-size:13px;font-weight:900;letter-spacing:0.04em;padding:14px 22px;border-radius:999px">
+              ${ctaLabel || 'View Profile'}
+            </a>
+          </div>`
+        : '';
 
     return `<!DOCTYPE html>
 <html lang="bg">
@@ -188,6 +223,7 @@ export function buildFollowUpEmail(params: {
         <tr><td style="height:3px;background:linear-gradient(90deg,transparent,${accent},transparent)"></td></tr>
         <tr><td style="background:#0e1017;border-left:1px solid rgba(255,255,255,0.07);border-right:1px solid rgba(255,255,255,0.07);padding:32px 36px">
           <p style="margin:0;font-size:14px;color:#ccc;line-height:1.9;white-space:pre-line">${body}</p>
+          ${ctaHtml}
         </td></tr>
         <tr><td style="background:#080a0f;border:1px solid rgba(255,255,255,0.07);border-top:none;border-radius:0 0 20px 20px;padding:18px 36px;text-align:center">
           <p style="margin:0;font-size:10px;color:#333">Sent via Ninja Card</p>
