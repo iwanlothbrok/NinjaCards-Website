@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import cors from '@/utils/cors';
 import { getNextFollowUpAt } from '@/lib/leadFollowUp';
 import { getLeadUsageSnapshot } from '@/lib/entitlements';
+import { sendNewLeadNotificationEmail } from '@/lib/leadNotifications';
 
 const prisma = new PrismaClient();
 
@@ -37,6 +38,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const owner = await prisma.user.findUnique({
             where: { id: userId },
             select: {
+                id: true,
+                email: true,
+                name: true,
+                firstName: true,
+                lastName: true,
+                slug: true,
+                language: true,
                 subscription: {
                     select: {
                         plan: true,
@@ -82,6 +90,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     nextFollowUpAt: getNextFollowUpAt(createdAt, 0),
                 },
             });
+
+            try {
+                await sendNewLeadNotificationEmail(owner, lead);
+            } catch (notificationError) {
+                console.error('Failed to send new lead notification:', notificationError);
+            }
+
             return res.status(200).json({
                 success: true,
                 lead,
