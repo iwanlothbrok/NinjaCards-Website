@@ -4,7 +4,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client';
 import cors from '@/utils/cors';
 import { getNextFollowUpAt } from '@/lib/leadFollowUp';
-import { getLeadUsageSnapshot } from '@/lib/entitlements';
 import { sendNewLeadNotificationEmail } from '@/lib/leadNotifications';
 
 const prisma = new PrismaClient();
@@ -57,16 +56,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const leadUsage = await getLeadUsageSnapshot(prisma, userId, owner.subscription?.plan);
-        if (!leadUsage.canStoreAnotherLead) {
-            return res.status(403).json({
-                error: 'Stored lead limit reached for this plan',
-                canonicalPlan: leadUsage.canonicalPlan,
-                storedLeadLimit: leadUsage.storedLeadLimit,
-                currentMonthLeadCount: leadUsage.currentMonthLeadCount,
-            });
-        }
-
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || ''
         const userAgent = req.headers['user-agent'] || ''
         const createdAt = new Date();
@@ -97,14 +86,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 console.error('Failed to send new lead notification:', notificationError);
             }
 
-            return res.status(200).json({
-                success: true,
-                lead,
-                leadUsage: {
-                    ...leadUsage,
-                    currentMonthLeadCount: leadUsage.currentMonthLeadCount + 1,
-                },
-            });
+            return res.status(200).json({ success: true, lead });
         } catch (prismaError) {
             console.error('Failed to create lead in Prisma:', prismaError);
             return res.status(500).json({ error: 'Вътрешна грешка в сървъра: Неуспешно създаване на запис.' });
