@@ -32,15 +32,16 @@ function getResendClient() {
 }
 
 function getLeadNotificationFromEmail() {
+    const preferredSender = 'NinjaCards <leads@ninjacardsnfc.com>';
     const candidate = process.env.LEAD_NOTIFICATION_FROM_EMAIL || process.env.BILLING_FROM_EMAIL || '';
     const normalized = candidate.trim().toLowerCase();
     const blockedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'abv.bg'];
 
     if (blockedDomains.some((domain) => normalized.includes(`@${domain}`))) {
-        return 'NinjaCards <onboarding@resend.dev>';
+        return preferredSender;
     }
 
-    return candidate || 'NinjaCards <onboarding@resend.dev>';
+    return candidate || preferredSender;
 }
 
 function ownerDisplayName(owner: LeadNotificationOwner) {
