@@ -31,6 +31,18 @@ function getResendClient() {
     return new Resend(process.env.RESEND_API_KEY);
 }
 
+function getLeadNotificationFromEmail() {
+    const candidate = process.env.LEAD_NOTIFICATION_FROM_EMAIL || process.env.BILLING_FROM_EMAIL || '';
+    const normalized = candidate.trim().toLowerCase();
+    const blockedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'abv.bg'];
+
+    if (blockedDomains.some((domain) => normalized.includes(`@${domain}`))) {
+        return 'NinjaCards <onboarding@resend.dev>';
+    }
+
+    return candidate || 'NinjaCards <onboarding@resend.dev>';
+}
+
 function ownerDisplayName(owner: LeadNotificationOwner) {
     return owner.name || [owner.firstName, owner.lastName].filter(Boolean).join(' ') || 'NinjaCards user';
 }
@@ -86,7 +98,7 @@ export async function sendNewLeadNotificationEmail(owner: LeadNotificationOwner,
 
     const resend = getResendClient();
     const result = await resend.emails.send({
-        from: process.env.LEAD_NOTIFICATION_FROM_EMAIL || process.env.BILLING_FROM_EMAIL || 'billing@ninjacards.com',
+        from: getLeadNotificationFromEmail(),
         to: owner.email,
         subject,
         text,
