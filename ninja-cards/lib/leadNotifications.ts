@@ -33,7 +33,7 @@ function getResendClient() {
 
 function getLeadNotificationFromEmail() {
     const preferredSender = 'NinjaCards <leads@ninjacardsnfc.com>';
-    const candidate = process.env.LEAD_NOTIFICATION_FROM_EMAIL || process.env.BILLING_FROM_EMAIL || '';
+    const candidate = process.env.LEAD_NOTIFICATION_FROM_EMAIL || '';
     const normalized = candidate.trim().toLowerCase();
     const blockedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'abv.bg'];
 
