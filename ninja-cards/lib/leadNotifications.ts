@@ -1,6 +1,5 @@
 import { Resend } from 'resend';
 import { buildPublicProfileUrl, buildPublicUrl } from '@/utils/constants';
-import { sendEmail } from '@/pages/api/auth/mailgun';
 import { createLeadVcfToken } from '@/lib/leadVcf';
 
 type LeadNotificationOwner = {
@@ -24,7 +23,13 @@ type LeadNotificationLead = {
     sourceDetail?: string | null;
 };
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+function getResendClient() {
+    if (!process.env.RESEND_API_KEY) {
+        throw new Error('Missing RESEND_API_KEY for lead notifications');
+    }
+
+    return new Resend(process.env.RESEND_API_KEY);
+}
 
 function ownerDisplayName(owner: LeadNotificationOwner) {
     return owner.name || [owner.firstName, owner.lastName].filter(Boolean).join(' ') || 'NinjaCards user';
@@ -54,8 +59,7 @@ export async function sendNewLeadNotificationEmail(owner: LeadNotificationOwner,
         `VCF: ${vcfUrl}`,
     ].join('\n');
 
-    if (resend) {
-        const html = `<!DOCTYPE html>
+    const html = `<!DOCTYPE html>
 <html lang="bg">
   <body style="margin:0;padding:24px;background:#0b0f16;font-family:Arial,sans-serif;color:#f8fafc;">
     <div style="max-width:640px;margin:0 auto;background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:18px;overflow:hidden;">
@@ -80,20 +84,16 @@ export async function sendNewLeadNotificationEmail(owner: LeadNotificationOwner,
   </body>
 </html>`;
 
-        const result = await resend.emails.send({
-            from: process.env.LEAD_NOTIFICATION_FROM_EMAIL || process.env.BILLING_FROM_EMAIL || 'NinjaCards <notifications@ninjacardsnfc.com>',
-            to: owner.email,
-            subject,
-            text,
-            html,
-        });
+    const resend = getResendClient();
+    const result = await resend.emails.send({
+        from: process.env.LEAD_NOTIFICATION_FROM_EMAIL || process.env.BILLING_FROM_EMAIL || 'billing@ninjacards.com',
+        to: owner.email,
+        subject,
+        text,
+        html,
+    });
 
-        if (result.error) {
-            throw new Error(`Resend error: ${result.error.message}`);
-        }
-
-        return;
+    if (result.error) {
+        throw new Error(`Resend error: ${result.error.message}`);
     }
-
-    await sendEmail(owner.email, subject, text);
 }
