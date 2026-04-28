@@ -17,6 +17,7 @@ const PUBLIC_HOSTNAME = new URL(PUBLIC_SITE_URL).hostname;
 const APP_HOSTNAME = new URL(APP_SITE_URL).hostname;
 const PUBLIC_CARD_PREFIXES = ['/profileDetails', '/p'];
 const APP_ONLY_PREFIXES = ['/profile', '/admin', '/login', '/changePassword'];
+const USER_AUTH_COOKIE_NAME = 'token';
 
 function hasPrefixedPath(pathname: string, prefixes: string[]) {
   return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
@@ -43,6 +44,11 @@ export default function middleware(request: NextRequest) {
     PUBLIC_HOSTNAME !== APP_HOSTNAME &&
     hasPrefixedPath(pathWithoutLocale, PUBLIC_CARD_PREFIXES)
   ) {
+    const hasUserAuthCookie = Boolean(request.cookies.get(USER_AUTH_COOKIE_NAME)?.value);
+    if (hasUserAuthCookie) {
+      return intlMiddleware(request);
+    }
+
     return redirectTo(PUBLIC_SITE_URL, pathname, search);
   }
 
